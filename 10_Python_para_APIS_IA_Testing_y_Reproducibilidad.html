@@ -1,0 +1,1977 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Material de estudio sobre testing con pytest, TestClient de FastAPI, fixtures y reproducibilidad sin Docker para estudiantes de Estadística.">
+    <title>Semana 10 — Testing y Reproducibilidad de APIs Estadísticas</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3D008D;
+            --secondary: #ED1E79;
+            --navy: #001A4D;
+            --gold: #FDB913;
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --ink: #1E293B;
+            --muted: #64748B;
+            --line: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            line-height: 1.65;
+            font-size: 16px;
+            overflow: hidden;
+        }
+
+        code,
+        pre {
+            font-family: 'Fira Code', Consolas, 'Liberation Mono', monospace;
+        }
+
+        /* Custom scrollbar (Semana III parity) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4A00A8, #FF2D8A);
+        }
+
+        /* ============ HEADER ============ */
+        header.hero {
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2.5rem 1.5rem 2.75rem 1.5rem;
+            text-align: center;
+            border-radius: 0 0 24px 24px;
+        }
+
+        header.hero .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 0.78rem;
+            font-weight: 600;
+            opacity: 0.85;
+            margin-bottom: 0.75rem;
+        }
+
+        header.hero h1 {
+            font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+            font-weight: 800;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.2;
+        }
+
+        header.hero p.subtitle {
+            font-size: 1.05rem;
+            max-width: 760px;
+            margin: 0 auto;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        header.hero .meta {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        header.hero .meta span {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        /* ============ APP SHELL (Semana III-style) ============ */
+        .app-shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Sidebar — USTA navy gradient, independently scrollable */
+        aside.sidebar {
+            flex-shrink: 0;
+            width: 17rem;
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+            color: white;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease, min-width 0.3s ease, opacity 0.25s ease;
+            z-index: 40;
+        }
+
+        aside.sidebar.collapsed {
+            width: 0;
+            min-width: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-brand {
+            padding: 4rem 1.5rem 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h1 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.01em;
+            color: white;
+        }
+
+        .sidebar-brand h1 .accent-pink {
+            color: var(--secondary);
+        }
+
+        .sidebar-brand h1 .accent-gold {
+            color: var(--gold);
+        }
+
+        .sidebar-brand p {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0.4rem 0 0 0;
+            line-height: 1.4;
+        }
+
+        nav.sidebar-nav {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        nav.sidebar-nav button {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.65rem;
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.65);
+            padding: 0.7rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.86rem;
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.3;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+        }
+
+        nav.sidebar-nav button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+
+        nav.sidebar-nav button.active {
+            background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(237, 30, 121, 0.25);
+        }
+
+        nav.sidebar-nav button .nav-num {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.55rem;
+            height: 1.55rem;
+            border-radius: 50%;
+            font-size: 0.74rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.75);
+            line-height: 1;
+        }
+
+        nav.sidebar-nav button.active .nav-num {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+
+        /* Sidebar floating toggle (Semana III parity) */
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 50;
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 50%;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.08);
+        }
+
+        .sidebar-toggle:focus-visible {
+            outline: 2px solid var(--secondary);
+            outline-offset: 3px;
+        }
+
+        /* Mobile overlay when sidebar is open */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: 30;
+        }
+
+        @media (max-width: 900px) {
+            aside.sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+            }
+
+            .sidebar-overlay.is-visible {
+                display: block;
+            }
+        }
+
+        /* Main content pane — independently scrollable */
+        main.content-area {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+            background-color: var(--bg);
+        }
+
+        .content-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem 1.5rem;
+        }
+
+        /* SPA section toggle: only the active section is rendered */
+        section.unit {
+            display: none;
+        }
+
+        section.unit.is-active {
+            display: block;
+            animation: fadeInSection 0.35s ease-out;
+        }
+
+        @keyframes fadeInSection {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============ SECTIONS ============ */
+        section.unit {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2rem 2.25rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--line);
+        }
+
+        @media (max-width: 600px) {
+            section.unit {
+                padding: 1.25rem 1rem;
+            }
+        }
+
+        section.unit h2 {
+            font-size: 1.55rem;
+            color: var(--navy);
+            margin-top: 0;
+            border-bottom: 3px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+            font-weight: 700;
+        }
+
+        section.unit h3 {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-top: 1.75rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        section.unit h4 {
+            font-size: 1.02rem;
+            color: var(--navy);
+            margin-top: 1.25rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        p {
+            margin: 0.6rem 0;
+        }
+
+        ul,
+        ol {
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin: 0.25rem 0;
+        }
+
+        /* Inline code */
+        :not(pre)>code {
+            background: #EEF2FF;
+            color: var(--primary);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.92em;
+            font-weight: 500;
+        }
+
+        /* Code blocks */
+        pre {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 1.05rem 1.15rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 0.86rem;
+            line-height: 1.55;
+            margin: 0.85rem 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        pre code {
+            background: transparent !important;
+            color: inherit !important;
+            padding: 0;
+            font-weight: 400;
+        }
+
+        pre::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        pre::-webkit-scrollbar-track {
+            background: #2d2d3d;
+        }
+
+        pre::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        /* Syntax highlighting */
+        .kw {
+            color: #c678dd;
+            font-weight: 600;
+        }
+
+        .cls {
+            color: #e5c07b;
+        }
+
+        .str {
+            color: #98c379;
+        }
+
+        .cm {
+            color: #6c7086;
+            font-style: italic;
+        }
+
+        .fn {
+            color: #61afef;
+        }
+
+        .num {
+            color: #d19a66;
+        }
+
+        .dec {
+            color: #e06c75;
+        }
+
+        .builtin {
+            color: #56b6c2;
+        }
+
+        .op {
+            color: #abb2bf;
+        }
+
+        /* Boxes */
+        .box {
+            border-radius: 10px;
+            padding: 1rem 1.15rem;
+            margin: 1rem 0;
+            border-left: 4px solid;
+        }
+
+        .box.info {
+            background: #EEF2FF;
+            border-left-color: var(--primary);
+        }
+
+        .box.tip {
+            background: #FFF7E6;
+            border-left-color: var(--gold);
+        }
+
+        .box.warn {
+            background: #FEF2F2;
+            border-left-color: #DC2626;
+        }
+
+        .box.exercise {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.06) 0%, rgba(237, 30, 121, 0.06) 100%);
+            border-left-color: var(--secondary);
+        }
+
+        .box .label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.4rem;
+        }
+
+        .box.info .label {
+            color: var(--primary);
+        }
+
+        .box.tip .label {
+            color: #B45309;
+        }
+
+        .box.warn .label {
+            color: #B91C1C;
+        }
+
+        .box.exercise .label {
+            color: var(--secondary);
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92rem;
+            background: var(--surface);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--navy);
+            color: white;
+            padding: 0.65rem 0.85rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.6rem 0.85rem;
+            border-bottom: 1px solid var(--line);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background: #F8FAFC;
+        }
+
+        /* Pyramid diagram */
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 1.5rem 0;
+            gap: 4px;
+        }
+
+        .pyramid-tier {
+            color: white;
+            text-align: center;
+            padding: 0.7rem 1rem;
+            font-weight: 600;
+            font-size: 0.92rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+        }
+
+        .pyramid-tier .meta-info {
+            display: block;
+            font-size: 0.74rem;
+            font-weight: 400;
+            opacity: 0.92;
+            margin-top: 0.2rem;
+        }
+
+        .pyramid-tier.e2e {
+            background: var(--secondary);
+            width: 35%;
+        }
+
+        .pyramid-tier.integration {
+            background: var(--primary);
+            width: 65%;
+        }
+
+        .pyramid-tier.unit {
+            background: var(--navy);
+            width: 95%;
+        }
+
+        /* Diagram fallback */
+        .ascii-diagram {
+            background: #F1F5F9;
+            border: 1px dashed #94A3B8;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            white-space: pre;
+            overflow-x: auto;
+            color: #334155;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+            color: #CBD5E1;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            font-size: 0.88rem;
+            margin-top: 2.5rem;
+            border-radius: 16px;
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Two column inside section */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 700px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Anchors offset */
+        section.unit {
+            scroll-margin-top: 1.25rem;
+        }
+
+        /* Misc helpers */
+        .small {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* Contenedor de gráficos Plotly */
+        .chart-container {
+            margin: 1.25rem 0 0.5rem 0;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 0.6rem 0.6rem 0.3rem 0.6rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .chart-caption {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin: 0.4rem 0 0.6rem 0;
+            font-style: italic;
+        }
+
+        kbd {
+            background: #F1F5F9;
+            border: 1px solid #CBD5E1;
+            border-bottom-width: 2px;
+            border-radius: 4px;
+            padding: 0.05rem 0.4rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Mostrar u ocultar el menú"
+        title="Mostrar / ocultar menú" type="button">
+        <span id="sidebar-toggle-icon" aria-hidden="true">✕</span>
+    </button>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+    <div class="app-shell">
+
+        <aside id="sidebar" class="sidebar" aria-label="Tabla de contenidos">
+            <div class="sidebar-brand">
+                <h1><span class="accent-pink">py</span>API<span class="accent-gold">Test</span></h1>
+                <p>Python para APIs e IA · Semana X<br>Testing y Reproducibilidad · USTA</p>
+            </div>
+            <nav class="sidebar-nav" aria-label="Secciones">
+                <button type="button" data-target="intro"><span
+                        class="nav-num">1</span><span>Introducción</span></button>
+                <button type="button" data-target="piramide"><span class="nav-num">2</span><span>Pirámide de
+                        testing</span></button>
+                <button type="button" data-target="pytest"><span class="nav-num">3</span><span>Framework
+                        pytest</span></button>
+                <button type="button" data-target="testclient"><span class="nav-num">4</span><span>TestClient de
+                        FastAPI</span></button>
+                <button type="button" data-target="fixtures"><span class="nav-num">5</span><span>Fixtures en
+                        pytest</span></button>
+                <button type="button" data-target="reproducibilidad"><span
+                        class="nav-num">6</span><span>Reproducibilidad sin Docker</span></button>
+                <button type="button" data-target="autoevaluacion"><span
+                        class="nav-num">7</span><span>Autoevaluación</span></button>
+                <button type="button" data-target="resumen"><span class="nav-num">8</span><span>Resumen y
+                        referencias</span></button>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+
+            <header class="hero">
+                <div class="eyebrow">Python para APIs · Semana X</div>
+                <h1>Testing y Reproducibilidad de APIs Estadísticas</h1>
+                <p class="subtitle">Pirámide de testing, pytest, TestClient de FastAPI, fixtures y entornos
+                    reproducibles sin Docker. Material de estudio autónomo para pregrado en Estadística.</p>
+                <div class="meta">
+                    <span>Python 3.11.9</span>
+                    <span>FastAPI ≥ 0.100</span>
+                    <span>pytest ≥ 8.0</span>
+                    <span>Duración estimada: 4 h</span>
+                </div>
+            </header>
+
+            <div class="content-inner">
+
+                <!-- ===================== INTRODUCCIÓN ===================== -->
+                <section id="intro" class="unit">
+                    <h2>1. Introducción</h2>
+                    <p>En las semanas previas se construyó una API estadística con FastAPI: se definieron modelos
+                        Pydantic con <code>@field_validator</code>, se inyectaron dependencias mediante
+                        <code>Depends</code>, se conectó SQLAlchemy a SQLite y se documentaron los endpoints en
+                        Swagger. El servicio funciona en el navegador y responde con códigos HTTP correctos. Sin
+                        embargo, una API que solo se prueba a mano es frágil: cualquier cambio puede invalidar un
+                        cálculo de regresión, modificar la forma de un intervalo de confianza o romper la
+                        serialización de un pronóstico de series temporales sin que el desarrollador lo note.
+                    </p>
+
+                    <p>Esta unidad introduce el conjunto de prácticas que diferencia una API <em>experimental</em>
+                        de una API <em>confiable para producción estadística</em>:</p>
+
+                    <ul>
+                        <li>la <strong>pirámide de testing</strong>, que organiza los esfuerzos de prueba según
+                            su costo y velocidad;</li>
+                        <li><strong>pytest</strong>, el framework de testing más usado en el ecosistema
+                            científico de Python;</li>
+                        <li>el <strong>TestClient</strong> de FastAPI, que permite ejercitar endpoints sin
+                            levantar un servidor;</li>
+                        <li>las <strong>fixtures</strong>, que aíslan los efectos secundarios y construyen datos
+                            de prueba reproducibles;</li>
+                        <li>la <strong>reproducibilidad sin contenedores</strong>, lograda mediante fijación de
+                            versiones, semillas y archivos de configuración deterministas.</li>
+                    </ul>
+
+                    <div class="box info">
+                        <span class="label">Objetivo de aprendizaje</span>
+                        Al finalizar la unidad, el estudiante diseña, escribe y ejecuta una suite automatizada de
+                        pruebas para una API estadística, distingue los niveles de la pirámide, factoriza datos
+                        con fixtures y deja documentado un entorno cuya reconstrucción produzca los mismos
+                        resultados numéricos en otra máquina, sin recurrir a Docker.
+                    </div>
+
+                    <h3>Caso de estudio transversal</h3>
+                    <p>Para mantener un hilo conductor estadístico, los ejemplos giran alrededor de una API
+                        llamada <code>encuestas-api</code> que expone tres endpoints:</p>
+                    <ul>
+                        <li><code>POST /muestras</code> — registra una observación de encuesta (Pydantic valida
+                            edad, ingreso y estrato).</li>
+                        <li><code>GET /resumen/media</code> — devuelve la media muestral del ingreso con su
+                            intervalo de confianza al 95 %.</li>
+                        <li><code>POST /modelos/regresion</code> — ajusta una regresión lineal simple y devuelve
+                            coeficientes, R² y residuales.</li>
+                    </ul>
+                    <p>Sobre esta base se construyen pruebas de los tres niveles de la pirámide.</p>
+                </section>
+
+                <!-- ===================== PIRÁMIDE ===================== -->
+                <section id="piramide" class="unit">
+                    <h2>2. Pirámide de testing</h2>
+
+                    <p>La pirámide de testing, popularizada por Mike Cohn, ordena los tipos de pruebas según
+                        cuántas se escriben de cada una. La base es ancha (muchas pruebas baratas y rápidas) y la
+                        cima es estrecha (pocas pruebas costosas y lentas). En una API estadística la pirámide
+                        luce así:</p>
+
+                    <div class="pyramid" role="img" aria-label="Pirámide de testing con tres niveles">
+                        <div class="pyramid-tier e2e">
+                            End-to-End (E2E)
+                            <span class="meta-info">~5 % · lentas · costosas · alta confianza</span>
+                        </div>
+                        <div class="pyramid-tier integration">
+                            Integración
+                            <span class="meta-info">~15 % · velocidad media · ejercitan colaboradores reales</span>
+                        </div>
+                        <div class="pyramid-tier unit">
+                            Unitarias
+                            <span class="meta-info">~80 % · milisegundos · aislamiento total</span>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div>
+                            <script>window.PlotlyConfig = { MathJaxConfig: 'local' };</script>
+                            <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.5.0.min.js"
+                                integrity="sha256-fHbNLP+GlIXN+efbQec78UkemUz3NJp7UmfGxC1tNxs="
+                                crossorigin="anonymous"></script>
+                            <div id="plotly-piramide_testing" class="plotly-graph-div"
+                                style="height:360px; width:100%;"></div>
+                            <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("plotly-piramide_testing")) { Plotly.newPlot("plotly-piramide_testing", [{ "connector": { "line": { "color": "#CBD5E1", "width": 1 } }, "hovertemplate": "\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003eProporci\u00f3n: %{x}%\u003cbr\u003e%{text}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": ["#ED1E79", "#3D008D", "#001A4D"] }, "text": ["~3-10 pruebas", "~30 pruebas", "~150 pruebas"], "textinfo": "value+percent initial", "textposition": "inside", "x": [5, 15, 80], "y": ["End-to-End", "Integraci\u00f3n", "Unitarias"], "type": "funnel", "xaxis": "x", "yaxis": "y" }, { "cliponaxis": false, "hovertemplate": "\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003eMediana: %{x} ms\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": ["#ED1E79", "#3D008D", "#001A4D"] }, "orientation": "h", "showlegend": false, "text": ["1-10 s c\u002fu", "10-200 ms c\u002fu", "&lt; 10 ms c\u002fu"], "textposition": "outside", "x": [5000, 100, 5], "y": ["End-to-End", "Integraci\u00f3n", "Unitarias"], "type": "bar", "xaxis": "x2", "yaxis": "y2" }], { "template": { "data": { "histogram2dcontour": [{ "type": "histogram2dcontour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "choropleth": [{ "type": "choropleth", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "histogram2d": [{ "type": "histogram2d", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "heatmap": [{ "type": "heatmap", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "contourcarpet": [{ "type": "contourcarpet", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "contour": [{ "type": "contour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "surface": [{ "type": "surface", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "mesh3d": [{ "type": "mesh3d", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "scatter": [{ "fillpattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 }, "type": "scatter" }], "parcoords": [{ "type": "parcoords", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolargl": [{ "type": "scatterpolargl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "bar": [{ "error_x": { "color": "#2a3f5f" }, "error_y": { "color": "#2a3f5f" }, "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "bar" }], "scattergeo": [{ "type": "scattergeo", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolar": [{ "type": "scatterpolar", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "histogram": [{ "marker": { "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "histogram" }], "scattergl": [{ "type": "scattergl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatter3d": [{ "type": "scatter3d", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermap": [{ "type": "scattermap", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermapbox": [{ "type": "scattermapbox", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterternary": [{ "type": "scatterternary", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattercarpet": [{ "type": "scattercarpet", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "carpet": [{ "aaxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "baxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "type": "carpet" }], "table": [{ "cells": { "fill": { "color": "#EBF0F8" }, "line": { "color": "white" } }, "header": { "fill": { "color": "#C8D4E3" }, "line": { "color": "white" } }, "type": "table" }], "barpolar": [{ "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "barpolar" }], "pie": [{ "automargin": true, "type": "pie" }] }, "layout": { "autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": { "color": "#2a3f5f" }, "hovermode": "closest", "hoverlabel": { "align": "left" }, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": { "bgcolor": "#E5ECF6", "angularaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "radialaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "ternary": { "bgcolor": "#E5ECF6", "aaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "baxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "caxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "coloraxis": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "colorscale": { "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]] }, "xaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "yaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "scene": { "xaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "yaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "zaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 } }, "shapedefaults": { "line": { "color": "#2a3f5f" } }, "annotationdefaults": { "arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1 }, "geo": { "bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white" }, "title": { "x": 0.05 }, "mapbox": { "style": "light" } } }, "xaxis": { "anchor": "y", "domain": [0.0, 0.48400000000000004] }, "yaxis": { "anchor": "x", "domain": [0.0, 1.0] }, "xaxis2": { "anchor": "y2", "domain": [0.6040000000000001, 1.0], "title": { "text": "Milisegundos por prueba (log)" }, "type": "log", "gridcolor": "#E2E8F0" }, "yaxis2": { "anchor": "x2", "domain": [0.0, 1.0], "showgrid": false }, "annotations": [{ "font": { "size": 16 }, "showarrow": false, "text": "Distribuci\u00f3n t\u00edpica de la suite", "x": 0.24200000000000002, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper" }, { "font": { "size": 16 }, "showarrow": false, "text": "Duraci\u00f3n por prueba (escala log)", "x": 0.802, "xanchor": "center", "xref": "paper", "y": 1.0, "yanchor": "bottom", "yref": "paper" }], "title": { "font": { "size": 15 }, "text": "\u003cb\u003ePir\u00e1mide de testing en una API estad\u00edstica\u003c\u002fb\u003e", "x": 0.0, "xanchor": "left" }, "height": 360, "showlegend": false, "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 50, "r": 30, "t": 60, "b": 50 }, "paper_bgcolor": "white", "plot_bgcolor": "white" }, { "displayModeBar": false, "responsive": true }) };            </script>
+                        </div>
+                    </div>
+                    <p class="chart-caption">Figura 2.1 — Las pruebas unitarias dominan la suite por
+                        cantidad pero ocupan apenas milisegundos cada una; las E2E son escasas pero pueden
+                        tomar segundos por prueba.</p>
+
+                    <h3>2.1 Pruebas unitarias</h3>
+                    <p>Se centran en una sola unidad lógica, típicamente una función o un método, con todas sus
+                        dependencias reemplazadas. En el contexto estadístico una prueba unitaria valida la
+                        función pura que calcula la media y el error estándar:</p>
+
+                    <pre><code><span class="cm"># app/stats.py</span>
+<span class="kw">from</span> math <span class="kw">import</span> sqrt
+
+<span class="kw">def</span> <span class="fn">media_y_ee</span>(datos: <span class="builtin">list</span>[<span class="builtin">float</span>]) -&gt; <span class="builtin">tuple</span>[<span class="builtin">float</span>, <span class="builtin">float</span>]:
+    <span class="str">"""Devuelve (media, error estándar). Requiere n &gt;= 2."""</span>
+    n = <span class="builtin">len</span>(datos)
+    <span class="kw">if</span> n &lt; <span class="num">2</span>:
+        <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Se requieren al menos 2 observaciones"</span>)
+    media = <span class="builtin">sum</span>(datos) / n
+    var = <span class="builtin">sum</span>((x - media) ** <span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> datos) / (n - <span class="num">1</span>)
+    <span class="kw">return</span> media, sqrt(var / n)</code></pre>
+
+                    <pre><code><span class="cm"># tests/test_stats.py</span>
+<span class="kw">import</span> pytest
+<span class="kw">from</span> app.stats <span class="kw">import</span> media_y_ee
+
+<span class="kw">def</span> <span class="fn">test_media_y_ee_rechaza_una_sola_observacion</span>():
+    <span class="kw">with</span> pytest.<span class="fn">raises</span>(<span class="cls">ValueError</span>, match=<span class="str">"al menos 2"</span>):
+        media_y_ee([<span class="num">5.0</span>])
+
+<span class="kw">def</span> <span class="fn">test_media_y_ee_caso_canonico</span>():
+    media, ee = media_y_ee([<span class="num">2.0</span>, <span class="num">4.0</span>, <span class="num">4.0</span>, <span class="num">4.0</span>, <span class="num">5.0</span>, <span class="num">5.0</span>, <span class="num">7.0</span>, <span class="num">9.0</span>])
+    <span class="kw">assert</span> media == pytest.<span class="fn">approx</span>(<span class="num">5.0</span>)
+    <span class="kw">assert</span> ee == pytest.<span class="fn">approx</span>(<span class="num">0.7071067811865476</span>, rel=<span class="num">1e-9</span>)
+</code></pre>
+
+                    <h3>2.2 Pruebas de integración</h3>
+                    <p>Verifican que dos o más componentes colaboran correctamente. Una prueba de integración
+                        típica en la API de encuestas combina el endpoint <code>POST /muestras</code>, la
+                        validación Pydantic y la persistencia con SQLAlchemy contra una base SQLite en memoria.
+                        El TestClient de FastAPI (sección 4) las mantiene en el orden de decenas
+                        de milisegundos al evitar levantar un servidor real.</p>
+
+                    <h3>2.3 Pruebas extremo a extremo (E2E)</h3>
+                    <p>Levantan el sistema completo, lo más parecido posible al entorno productivo, y lo
+                        ejercitan a través de la interfaz pública. Para una API estadística esto significa
+                        arrancar Uvicorn, conectarse a la base de datos real y enviar peticiones HTTP por la red
+                        local. Son lentas, frágiles ante cambios cosméticos y costosas de mantener; por eso se
+                        reservan para flujos críticos: por ejemplo, asegurar que un cliente externo puede subir
+                        un CSV de encuesta, ajustar una regresión y descargar los coeficientes.</p>
+
+                    <div class="box tip">
+                        <span class="label">Heurística de proporción</span>
+                        Una API estadística mediana suele tener cientos de pruebas unitarias, decenas de
+                        pruebas de integración y unas pocas (3 a 10) pruebas E2E. Si la proporción se invierte,
+                        la suite tarda demasiado y los desarrolladores la ejecutan cada vez con menor
+                        frecuencia, perdiendo su valor.
+                    </div>
+
+                    <h3>2.4 Comparación rápida</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nivel</th>
+                                <th>Qué prueba</th>
+                                <th>Velocidad</th>
+                                <th>Ejemplo estadístico</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Unitaria</td>
+                                <td>Una función pura, aislada.</td>
+                                <td>&lt; 10 ms</td>
+                                <td>Cálculo del estadístico t para una muestra.</td>
+                            </tr>
+                            <tr>
+                                <td>Integración</td>
+                                <td>Endpoint + validación + BD en memoria.</td>
+                                <td>10–200 ms</td>
+                                <td>Insertar una observación y consultar la media.</td>
+                            </tr>
+                            <tr>
+                                <td>E2E</td>
+                                <td>Sistema completo por HTTP real.</td>
+                                <td>1–10 s</td>
+                                <td>Subir CSV, ajustar regresión y descargar JSON.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 2.1</span>
+                        Clasifíquese cada uno de los siguientes tests como unitario, de integración o E2E y
+                        justifíquese la decisión:
+                        <ol>
+                            <li>Verificar que <code>media_y_ee</code> rechaza listas con un solo elemento.</li>
+                            <li>Verificar que <code>POST /muestras</code> con edad negativa devuelve HTTP 422.</li>
+                            <li>Iniciar Uvicorn, enviar 100 peticiones reales y comprobar que la latencia
+                                mediana es menor a 50 ms.</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <!-- ===================== PYTEST ===================== -->
+                <section id="pytest" class="unit">
+                    <h2>3. Framework pytest</h2>
+
+                    <p>pytest es el framework de testing dominante en Python. A diferencia del módulo estándar
+                        <code>unittest</code>, no exige clases ni nomenclatura ceremonial: basta con funciones
+                        cuyo nombre empieza por <code>test_</code> dentro de archivos cuyo nombre también empieza
+                        por <code>test_</code>. Las aserciones se escriben con la palabra clave <code>assert</code>
+                        de Python, y pytest reescribe el bytecode para mostrar el valor real cuando una falla.
+                    </p>
+
+                    <h3>3.1 Estructura de proyecto recomendada</h3>
+                    <pre><code>encuestas-api/
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── stats.py
+│   ├── models.py
+│   └── db.py
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py            <span class="cm"># fixtures compartidas</span>
+│   ├── test_stats.py
+│   ├── test_endpoints.py
+│   └── test_reproducibilidad.py
+├── pyproject.toml
+├── pytest.ini
+└── requirements.txt</code></pre>
+
+                    <h3>3.2 Configuración mínima</h3>
+                    <p>El archivo <code>pytest.ini</code> declara la configuración del proyecto. Se recomienda
+                        como mínimo:</p>
+
+                    <pre><code><span class="cm"># pytest.ini</span>
+[pytest]
+minversion = 8.0
+testpaths = tests
+python_files = test_*.py
+python_functions = test_*
+addopts = -ra --strict-markers --strict-config -q
+markers =
+    slow: pruebas lentas (excluir con -m "not slow")
+    integration: pruebas que tocan la base de datos
+    statistics: pruebas que validan resultados numéricos</code></pre>
+
+                    <p>La opción <code>--strict-markers</code> obliga a declarar cada marcador, evitando
+                        typos silenciosos del tipo <code>@pytest.mark.intgration</code>. La opción
+                        <code>-ra</code> imprime un resumen de pruebas que no fueron <em>passed</em>.
+                    </p>
+
+                    <h3>3.3 Aserciones expresivas</h3>
+                    <p>pytest enriquece <code>assert</code> mostrando los operandos cuando una prueba falla. En
+                        el dominio estadístico, donde rara vez se compara con igualdad estricta, conviene usar
+                        los <em>helpers</em> <code>pytest.approx</code> y <code>math.isclose</code>:</p>
+
+                    <pre><code><span class="kw">import</span> pytest
+<span class="kw">from</span> app.stats <span class="kw">import</span> media_y_ee
+
+<span class="kw">def</span> <span class="fn">test_media_de_normales_centrada_en_cero</span>():
+    <span class="kw">import</span> random
+    random.<span class="fn">seed</span>(<span class="num">42</span>)
+    datos = [random.<span class="fn">gauss</span>(<span class="num">0</span>, <span class="num">1</span>) <span class="kw">for</span> _ <span class="kw">in</span> <span class="builtin">range</span>(<span class="num">1000</span>)]
+    media, ee = media_y_ee(datos)
+    <span class="cm"># Tolerancia: 4 errores estándar evita una prueba inestable (flaky)
+    # sin volverla trivialmente cierta.</span>
+    <span class="kw">assert</span> <span class="builtin">abs</span>(media) &lt; <span class="num">4</span> * ee, <span class="str">f"Media </span>{media}<span class="str"> fuera de banda"</span></code></pre>
+
+                    <h3>3.4 Parametrización</h3>
+                    <p>El decorador <code>@pytest.mark.parametrize</code> ejecuta una misma prueba con varios
+                        juegos de entradas. Cada combinación cuenta como una prueba independiente: si una falla,
+                        pytest indica exactamente cuál.</p>
+
+                    <pre><code><span class="kw">import</span> pytest
+<span class="kw">from</span> app.stats <span class="kw">import</span> media_y_ee
+
+<span class="dec">@pytest.mark.parametrize</span>(
+    <span class="str">"datos, media_esperada"</span>,
+    [
+        ([<span class="num">1.0</span>, <span class="num">2.0</span>, <span class="num">3.0</span>],          <span class="num">2.0</span>),
+        ([<span class="num">10.0</span>, <span class="num">20.0</span>],               <span class="num">15.0</span>),
+        ([-<span class="num">1.0</span>, <span class="num">0.0</span>, <span class="num">1.0</span>],          <span class="num">0.0</span>),
+        ([<span class="num">100.0</span>] * <span class="num">5</span> + [<span class="num">200.0</span>] * <span class="num">5</span>, <span class="num">150.0</span>),
+    ],
+    ids=[<span class="str">"trio"</span>, <span class="str">"par"</span>, <span class="str">"simetrica"</span>, <span class="str">"bimodal"</span>],
+)
+<span class="kw">def</span> <span class="fn">test_media_de_casos_canonicos</span>(datos, media_esperada):
+    media, _ = media_y_ee(datos)
+    <span class="kw">assert</span> media == pytest.<span class="fn">approx</span>(media_esperada)</code></pre>
+
+                    <p>Los identificadores explícitos en <code>ids=[...]</code> facilitan filtrar pruebas con
+                        <code>pytest -k bimodal</code> y producen reportes legibles.
+                    </p>
+
+                    <div class="chart-container">
+                        <div>
+                            <div id="plotly-parametrizacion" class="plotly-graph-div" style="height:380px; width:100%;">
+                            </div>
+                            <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("plotly-parametrizacion")) { Plotly.newPlot("plotly-parametrizacion", [{ "hovertemplate": "\u003cb\u003etrio\u003c\u002fb\u003e\u003cbr\u003ex = %{x}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#3D008D", "line": { "color": "white", "width": 1 }, "opacity": 0.45, "size": 10 }, "mode": "markers", "name": "datos trio", "showlegend": false, "x": [1.0, 2.0, 3.0], "y": ["trio", "trio", "trio"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003etrio\u003c\u002fb\u003e\u003cbr\u003emedia esperada = 2.0\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#ED1E79", "line": { "color": "white", "width": 2 }, "size": 18, "symbol": "diamond" }, "mode": "markers+text", "showlegend": false, "text": ["\u003cb\u003emedia = 2.0\u003c\u002fb\u003e"], "textposition": "top center", "x": [2.0], "y": ["trio"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003epar\u003c\u002fb\u003e\u003cbr\u003ex = %{x}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#3D008D", "line": { "color": "white", "width": 1 }, "opacity": 0.45, "size": 10 }, "mode": "markers", "name": "datos par", "showlegend": false, "x": [10.0, 20.0], "y": ["par", "par"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003epar\u003c\u002fb\u003e\u003cbr\u003emedia esperada = 15.0\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#ED1E79", "line": { "color": "white", "width": 2 }, "size": 18, "symbol": "diamond" }, "mode": "markers+text", "showlegend": false, "text": ["\u003cb\u003emedia = 15.0\u003c\u002fb\u003e"], "textposition": "top center", "x": [15.0], "y": ["par"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003esimetrica\u003c\u002fb\u003e\u003cbr\u003ex = %{x}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#3D008D", "line": { "color": "white", "width": 1 }, "opacity": 0.45, "size": 10 }, "mode": "markers", "name": "datos simetrica", "showlegend": false, "x": [-1.0, 0.0, 1.0], "y": ["simetrica", "simetrica", "simetrica"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003esimetrica\u003c\u002fb\u003e\u003cbr\u003emedia esperada = 0.0\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#ED1E79", "line": { "color": "white", "width": 2 }, "size": 18, "symbol": "diamond" }, "mode": "markers+text", "showlegend": false, "text": ["\u003cb\u003emedia = 0.0\u003c\u002fb\u003e"], "textposition": "top center", "x": [0.0], "y": ["simetrica"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003ebimodal\u003c\u002fb\u003e\u003cbr\u003ex = %{x}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#3D008D", "line": { "color": "white", "width": 1 }, "opacity": 0.45, "size": 10 }, "mode": "markers", "name": "datos bimodal", "showlegend": false, "x": [100.0, 100.0, 100.0, 100.0, 100.0, 200.0, 200.0, 200.0, 200.0, 200.0], "y": ["bimodal", "bimodal", "bimodal", "bimodal", "bimodal", "bimodal", "bimodal", "bimodal", "bimodal", "bimodal"], "type": "scatter" }, { "hovertemplate": "\u003cb\u003ebimodal\u003c\u002fb\u003e\u003cbr\u003emedia esperada = 150.0\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#ED1E79", "line": { "color": "white", "width": 2 }, "size": 18, "symbol": "diamond" }, "mode": "markers+text", "showlegend": false, "text": ["\u003cb\u003emedia = 150.0\u003c\u002fb\u003e"], "textposition": "top center", "x": [150.0], "y": ["bimodal"], "type": "scatter" }], { "template": { "data": { "histogram2dcontour": [{ "type": "histogram2dcontour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "choropleth": [{ "type": "choropleth", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "histogram2d": [{ "type": "histogram2d", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "heatmap": [{ "type": "heatmap", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "contourcarpet": [{ "type": "contourcarpet", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "contour": [{ "type": "contour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "surface": [{ "type": "surface", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "mesh3d": [{ "type": "mesh3d", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "scatter": [{ "fillpattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 }, "type": "scatter" }], "parcoords": [{ "type": "parcoords", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolargl": [{ "type": "scatterpolargl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "bar": [{ "error_x": { "color": "#2a3f5f" }, "error_y": { "color": "#2a3f5f" }, "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "bar" }], "scattergeo": [{ "type": "scattergeo", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolar": [{ "type": "scatterpolar", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "histogram": [{ "marker": { "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "histogram" }], "scattergl": [{ "type": "scattergl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatter3d": [{ "type": "scatter3d", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermap": [{ "type": "scattermap", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermapbox": [{ "type": "scattermapbox", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterternary": [{ "type": "scatterternary", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattercarpet": [{ "type": "scattercarpet", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "carpet": [{ "aaxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "baxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "type": "carpet" }], "table": [{ "cells": { "fill": { "color": "#EBF0F8" }, "line": { "color": "white" } }, "header": { "fill": { "color": "#C8D4E3" }, "line": { "color": "white" } }, "type": "table" }], "barpolar": [{ "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "barpolar" }], "pie": [{ "automargin": true, "type": "pie" }] }, "layout": { "autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": { "color": "#2a3f5f" }, "hovermode": "closest", "hoverlabel": { "align": "left" }, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": { "bgcolor": "#E5ECF6", "angularaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "radialaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "ternary": { "bgcolor": "#E5ECF6", "aaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "baxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "caxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "coloraxis": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "colorscale": { "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]] }, "xaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "yaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "scene": { "xaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "yaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "zaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 } }, "shapedefaults": { "line": { "color": "#2a3f5f" } }, "annotationdefaults": { "arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1 }, "geo": { "bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white" }, "title": { "x": 0.05 }, "mapbox": { "style": "light" } } }, "title": { "text": "\u003cb\u003eParametrizaci\u00f3n en pytest\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003eUna sola funci\u00f3n de prueba ejecutada con 4 juegos de entrada \u2014 cada caso es una prueba independiente.\u003c\u002fspan\u003e", "x": 0.0, "xanchor": "left" }, "xaxis": { "title": { "text": "Valor observado" }, "gridcolor": "#E2E8F0", "zerolinecolor": "#94A3B8" }, "yaxis": { "title": { "text": "ID del caso (par\u00e1metro \u003ccode\u003eids=\u003c\u002fcode\u003e)" }, "categoryorder": "array", "categoryarray": ["bimodal", "simetrica", "par", "trio"], "gridcolor": "#F1F5F9" }, "height": 380, "annotations": [{ "font": { "size": 11 }, "showarrow": false, "text": "\u003cspan style='color:#3D008D'\u003e\u25cf datos\u003c\u002fspan\u003e &nbsp; \u003cspan style='color:#ED1E79'\u003e\u25c6 media esperada\u003c\u002fspan\u003e", "x": 0.99, "xanchor": "right", "xref": "paper", "y": 1.1, "yref": "paper" }], "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 50, "r": 30, "t": 60, "b": 50 }, "paper_bgcolor": "white", "plot_bgcolor": "white" }, { "displayModeBar": false, "responsive": true }) };            </script>
+                        </div>
+                    </div>
+                    <p class="chart-caption">Figura 3.1 — Cada fila corresponde a una invocación
+                        independiente de la misma función de prueba con un juego distinto de datos. El
+                        diamante magenta es el valor de la aserción <code>media == media_esperada</code>;
+                        los círculos púrpura son las observaciones del caso.</p>
+
+                    <h3>3.5 Marcadores</h3>
+                    <p>Los marcadores etiquetan pruebas para seleccionarlas o saltarlas. Los más útiles en una
+                        suite estadística son:</p>
+
+                    <ul>
+                        <li><code>@pytest.mark.skip(reason=...)</code> — omite la prueba siempre.</li>
+                        <li><code>@pytest.mark.skipif(condición, reason=...)</code> — omite condicionalmente.</li>
+                        <li><code>@pytest.mark.xfail</code> — se espera que falle (útil para bugs conocidos).</li>
+                        <li>Marcadores propios declarados en <code>pytest.ini</code>, como
+                            <code>@pytest.mark.slow</code>.
+                        </li>
+                    </ul>
+
+                    <pre><code><span class="kw">import</span> pytest
+<span class="kw">import</span> sys
+
+<span class="dec">@pytest.mark.slow</span>
+<span class="kw">def</span> <span class="fn">test_simulacion_montecarlo_grande</span>():
+    <span class="cm"># Se ejecuta solo cuando se invoca con -m slow</span>
+    ...
+
+<span class="dec">@pytest.mark.skipif</span>(sys.platform == <span class="str">"win32"</span>, reason=<span class="str">"Backend BLAS distinto"</span>)
+<span class="kw">def</span> <span class="fn">test_residuales_consistentes_con_R</span>():
+    ...
+
+<span class="dec">@pytest.mark.xfail</span>(reason=<span class="str">"Bug #142: precisión flotante en estrato vacío"</span>)
+<span class="kw">def</span> <span class="fn">test_resumen_estrato_vacio</span>():
+    ...
+</code></pre>
+
+                    <p>Para ejecutar selectivamente:</p>
+                    <pre><code><span class="cm"># Solo unitarias rápidas:</span>
+pytest -m <span class="str">"not slow"</span>
+
+<span class="cm"># Solo integración:</span>
+pytest -m integration
+
+<span class="cm"># Una prueba específica por nombre:</span>
+pytest tests/test_stats.py::test_media_de_casos_canonicos[bimodal]
+</code></pre>
+
+                    <div class="box tip">
+                        <span class="label">Sugerencia didáctica</span>
+                        Conviene agrupar las pruebas que requieren red, base de datos o simulaciones largas
+                        bajo un marcador propio. Así la ejecución por defecto en el flujo de trabajo del
+                        estudiante es siempre rápida, y las pruebas pesadas se reservan para CI o para una
+                        invocación explícita con <code>-m</code>.
+                    </div>
+                </section>
+
+                <!-- ===================== TESTCLIENT ===================== -->
+                <section id="testclient" class="unit">
+                    <h2>4. TestClient de FastAPI</h2>
+
+                    <p>Probar una API por HTTP real exige levantar Uvicorn, abrir un puerto, hacer peticiones
+                        con <code>httpx</code> o <code>requests</code> y limpiar el proceso al final. FastAPI
+                        ofrece una alternativa elegante: <code>TestClient</code>, una envoltura sobre
+                        <code>httpx.Client</code> que se comunica con la aplicación ASGI directamente, sin
+                        tocar la red. Las peticiones, las cabeceras y los códigos de estado son auténticos,
+                        pero la latencia y las dependencias de sistema son mínimas.
+                    </p>
+
+                    <h3>4.1 Configuración de la aplicación de ejemplo</h3>
+
+                    <pre><code><span class="cm"># app/main.py</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Depends, HTTPException
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator
+<span class="kw">from</span> .stats <span class="kw">import</span> media_y_ee
+
+app = FastAPI(title=<span class="str">"encuestas-api"</span>, version=<span class="str">"1.0.0"</span>)
+
+<span class="kw">class</span> <span class="cls">Observacion</span>(BaseModel):
+    edad: <span class="builtin">int</span> = Field(ge=<span class="num">18</span>, le=<span class="num">120</span>)
+    ingreso: <span class="builtin">float</span> = Field(gt=<span class="num">0</span>)
+    estrato: <span class="builtin">int</span> = Field(ge=<span class="num">1</span>, le=<span class="num">6</span>)
+
+    <span class="dec">@field_validator</span>(<span class="str">"ingreso"</span>)
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">ingreso_no_atipico</span>(<span class="builtin">cls</span>, v: <span class="builtin">float</span>) -&gt; <span class="builtin">float</span>:
+        <span class="kw">if</span> v &gt; <span class="num">1e9</span>:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">"Ingreso fuera de rango plausible"</span>)
+        <span class="kw">return</span> v
+
+<span class="cm"># Almacenamiento en memoria para el ejemplo;
+# en producción se inyecta una sesión de SQLAlchemy.</span>
+_almacen: <span class="builtin">list</span>[Observacion] = []
+
+<span class="kw">def</span> <span class="fn">obtener_almacen</span>() -&gt; <span class="builtin">list</span>[Observacion]:
+    <span class="kw">return</span> _almacen
+
+<span class="dec">@app.post</span>(<span class="str">"/muestras"</span>, status_code=<span class="num">201</span>)
+<span class="kw">def</span> <span class="fn">crear_muestra</span>(obs: Observacion, almacen=Depends(obtener_almacen)):
+    almacen.<span class="fn">append</span>(obs)
+    <span class="kw">return</span> {<span class="str">"id"</span>: <span class="builtin">len</span>(almacen) - <span class="num">1</span>, <span class="str">"obs"</span>: obs}
+
+<span class="dec">@app.get</span>(<span class="str">"/resumen/media"</span>)
+<span class="kw">def</span> <span class="fn">resumen_media</span>(almacen=Depends(obtener_almacen)):
+    <span class="kw">if</span> <span class="builtin">len</span>(almacen) &lt; <span class="num">2</span>:
+        <span class="kw">raise</span> HTTPException(status_code=<span class="num">409</span>,
+                            detail=<span class="str">"Se requieren al menos 2 observaciones"</span>)
+    media, ee = media_y_ee([o.ingreso <span class="kw">for</span> o <span class="kw">in</span> almacen])
+    <span class="kw">return</span> {<span class="str">"n"</span>: <span class="builtin">len</span>(almacen), <span class="str">"media"</span>: media, <span class="str">"error_estandar"</span>: ee,
+            <span class="str">"ic95"</span>: [media - <span class="num">1.96</span> * ee, media + <span class="num">1.96</span> * ee]}
+</code></pre>
+
+                    <h3>4.2 Pruebas con TestClient</h3>
+
+                    <pre><code><span class="cm"># tests/test_endpoints.py</span>
+<span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> app.main <span class="kw">import</span> app
+
+client = TestClient(app)
+
+<span class="kw">def</span> <span class="fn">test_post_muestra_valida_devuelve_201</span>():
+    payload = {<span class="str">"edad"</span>: <span class="num">35</span>, <span class="str">"ingreso"</span>: <span class="num">2_500_000</span>, <span class="str">"estrato"</span>: <span class="num">3</span>}
+    response = client.<span class="fn">post</span>(<span class="str">"/muestras"</span>, json=payload)
+    <span class="kw">assert</span> response.status_code == <span class="num">201</span>
+    cuerpo = response.<span class="fn">json</span>()
+    <span class="kw">assert</span> cuerpo[<span class="str">"obs"</span>][<span class="str">"edad"</span>] == <span class="num">35</span>
+    <span class="kw">assert</span> cuerpo[<span class="str">"obs"</span>][<span class="str">"ingreso"</span>] == <span class="num">2_500_000</span>
+
+<span class="kw">def</span> <span class="fn">test_post_muestra_con_edad_invalida_devuelve_422</span>():
+    response = client.<span class="fn">post</span>(<span class="str">"/muestras"</span>,
+                           json={<span class="str">"edad"</span>: -<span class="num">1</span>, <span class="str">"ingreso"</span>: <span class="num">100</span>, <span class="str">"estrato"</span>: <span class="num">3</span>})
+    <span class="kw">assert</span> response.status_code == <span class="num">422</span>
+    errores = response.<span class="fn">json</span>()[<span class="str">"detail"</span>]
+    <span class="kw">assert</span> <span class="builtin">any</span>(e[<span class="str">"loc"</span>] == [<span class="str">"body"</span>, <span class="str">"edad"</span>] <span class="kw">for</span> e <span class="kw">in</span> errores)
+
+<span class="kw">def</span> <span class="fn">test_resumen_media_falla_con_pocas_observaciones</span>():
+    response = client.<span class="fn">get</span>(<span class="str">"/resumen/media"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="num">409</span></code></pre>
+
+                    <div class="box warn">
+                        <span class="label">Cuidado con el estado compartido</span>
+                        El <code>_almacen</code> del ejemplo es global, así que las pruebas se contaminan unas a
+                        otras según el orden de ejecución. Esto se resuelve sustituyendo la dependencia
+                        <code>obtener_almacen</code> por una versión limpia en cada prueba (sección 4.3) o
+                        encapsulando el estado en una fixture (sección 5).
+                    </div>
+
+                    <h3>4.3 Sustitución de dependencias con <code>app.dependency_overrides</code></h3>
+                    <p>FastAPI permite reemplazar cualquier <code>Depends</code> por una función arbitraria en
+                        tiempo de prueba. Es la herramienta canónica para inyectar bases de datos en memoria,
+                        autenticación falsa o relojes deterministas:</p>
+
+                    <pre><code><span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> app.main <span class="kw">import</span> app, obtener_almacen, Observacion
+
+<span class="kw">def</span> <span class="fn">test_resumen_media_con_almacen_inyectado</span>():
+    <span class="cm"># El endpoint accede a o.ingreso (atributo), por lo que el almacén falso
+    # debe contener instancias de Observacion, no diccionarios crudos.</span>
+    almacen_falso = [
+        Observacion(edad=<span class="num">30</span>, ingreso=<span class="num">1_000</span>, estrato=<span class="num">2</span>),
+        Observacion(edad=<span class="num">40</span>, ingreso=<span class="num">3_000</span>, estrato=<span class="num">4</span>),
+    ]
+    app.dependency_overrides[obtener_almacen] = <span class="kw">lambda</span>: almacen_falso
+
+    <span class="kw">try</span>:
+        client = TestClient(app)
+        r = client.<span class="fn">get</span>(<span class="str">"/resumen/media"</span>)
+        <span class="kw">assert</span> r.status_code == <span class="num">200</span>
+        <span class="kw">assert</span> r.<span class="fn">json</span>()[<span class="str">"media"</span>] == pytest.<span class="fn">approx</span>(<span class="num">2_000</span>)
+    <span class="kw">finally</span>:
+        app.dependency_overrides.<span class="fn">clear</span>()</code></pre>
+
+                    <p>El bloque <code>try/finally</code> garantiza que las modificaciones no se filtren a otras
+                        pruebas. En la próxima sección este patrón se encapsula en una fixture, que lo hace
+                        automático y declarativo.</p>
+
+                    <h3>4.4 Pruebas asíncronas</h3>
+                    <p>El <code>TestClient</code> es síncrono incluso para endpoints declarados con
+                        <code>async def</code>: ejecuta el ciclo de eventos por debajo. Cuando se necesita
+                        código de prueba realmente asíncrono (por ejemplo, para llamar a varios endpoints en
+                        paralelo o para colaborar con corrutinas), se utiliza <code>httpx.AsyncClient</code> con
+                        el plugin <code>pytest-asyncio</code>:
+                    </p>
+
+                    <pre><code><span class="kw">import</span> asyncio, pytest, httpx
+<span class="kw">from</span> app.main <span class="kw">import</span> app
+
+<span class="dec">@pytest.mark.asyncio</span>
+<span class="kw">async</span> <span class="kw">def</span> <span class="fn">test_dos_post_concurrentes</span>():
+    <span class="kw">async</span> <span class="kw">with</span> httpx.<span class="fn">AsyncClient</span>(
+        transport=httpx.<span class="fn">ASGITransport</span>(app=app), base_url=<span class="str">"http://test"</span>
+    ) <span class="kw">as</span> ac:
+        <span class="cm"># asyncio.gather las dispara en paralelo; el orden de respuesta no se asume.</span>
+        r1, r2 = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+            ac.<span class="fn">post</span>(<span class="str">"/muestras"</span>,
+                    json={<span class="str">"edad"</span>: <span class="num">30</span>, <span class="str">"ingreso"</span>: <span class="num">1000</span>, <span class="str">"estrato"</span>: <span class="num">2</span>}),
+            ac.<span class="fn">post</span>(<span class="str">"/muestras"</span>,
+                    json={<span class="str">"edad"</span>: <span class="num">40</span>, <span class="str">"ingreso"</span>: <span class="num">3000</span>, <span class="str">"estrato"</span>: <span class="num">4</span>}),
+        )
+    <span class="kw">assert</span> r1.status_code == <span class="num">201</span> <span class="kw">and</span> r2.status_code == <span class="num">201</span></code></pre>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 4.1</span>
+                        Se desea proteger el endpoint <code>POST /muestras</code> exigiendo una cabecera
+                        <code>X-API-Token</code> validada por una dependencia <code>verificar_token</code>.
+                        Se pide:
+                        <ol>
+                            <li>Escribir la dependencia y aplicarla con <code>Depends</code>.</li>
+                            <li>Probar con TestClient que un POST sin la cabecera devuelve 401.</li>
+                            <li>Probar con TestClient que un POST con la cabecera correcta devuelve 201.</li>
+                        </ol>
+                        Sugerencia: utilícese <code>app.dependency_overrides</code> para inyectar un
+                        verificador permisivo en el caso 3.
+                    </div>
+                </section>
+
+                <!-- ===================== FIXTURES ===================== -->
+                <section id="fixtures" class="unit">
+                    <h2>5. Fixtures en pytest</h2>
+
+                    <p>Una fixture es una función decorada con <code>@pytest.fixture</code> que produce un valor
+                        o un recurso a disposición de las pruebas. pytest las inyecta por nombre: cuando una
+                        función de prueba declara un parámetro cuyo nombre coincide con una fixture disponible,
+                        pytest la ejecuta y le pasa el resultado. El sistema de fixtures cumple tres funciones:
+                        aislar las pruebas, evitar duplicación y modelar el ciclo de vida (setup/teardown) de
+                        los recursos.</p>
+
+                    <h3>5.1 Fixture mínima</h3>
+                    <pre><code><span class="cm"># tests/conftest.py</span>
+<span class="kw">import</span> pytest
+
+<span class="dec">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">muestra_normal_pequena</span>() -&gt; <span class="builtin">list</span>[<span class="builtin">float</span>]:
+    <span class="str">"""Muestra fija para pruebas determinísticas."""</span>
+    <span class="kw">return</span> [<span class="num">2.0</span>, <span class="num">4.0</span>, <span class="num">4.0</span>, <span class="num">4.0</span>, <span class="num">5.0</span>, <span class="num">5.0</span>, <span class="num">7.0</span>, <span class="num">9.0</span>]
+
+<span class="cm"># tests/test_stats.py</span>
+<span class="kw">from</span> app.stats <span class="kw">import</span> media_y_ee
+<span class="kw">import</span> pytest
+
+<span class="kw">def</span> <span class="fn">test_media_constante_via_fixture</span>(muestra_normal_pequena):
+    media, _ = media_y_ee(muestra_normal_pequena)
+    <span class="kw">assert</span> media == pytest.<span class="fn">approx</span>(<span class="num">5.0</span>)</code></pre>
+
+                    <p>Al colocar la fixture en <code>conftest.py</code>, pytest la pone disponible para todas
+                        las pruebas del directorio sin necesidad de importarla.</p>
+
+                    <h3>5.2 Alcance (scope)</h3>
+                    <p>Cada fixture tiene un <em>scope</em> que controla cuántas veces se ejecuta:</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Scope</th>
+                                <th>Frecuencia de ejecución</th>
+                                <th>Cuándo usarlo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>function</code> (por defecto)</td>
+                                <td>Una vez por cada prueba.</td>
+                                <td>Datos que pueden mutarse entre pruebas.</td>
+                            </tr>
+                            <tr>
+                                <td><code>class</code></td>
+                                <td>Una vez por clase de pruebas.</td>
+                                <td>Suite agrupada que comparte estado.</td>
+                            </tr>
+                            <tr>
+                                <td><code>module</code></td>
+                                <td>Una vez por archivo de pruebas.</td>
+                                <td>Cargar un dataset grande de solo lectura.</td>
+                            </tr>
+                            <tr>
+                                <td><code>session</code></td>
+                                <td>Una vez para toda la corrida.</td>
+                                <td>Configuración costosa: motor de BD, modelo entrenado.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="box warn">
+                        <span class="label">Regla de oro</span>
+                        El alcance amplio (module, session) gana velocidad, pero solo es seguro si el recurso es
+                        inmutable. Una BD compartida entre pruebas con scope <code>session</code> exige
+                        transacciones que se reviertan al final de cada prueba; de lo contrario, las pruebas se
+                        contaminan y el orden empieza a importar.
+                    </div>
+
+                    <h3>5.3 Setup y teardown con <code>yield</code></h3>
+                    <p>El patrón canónico para recursos con ciclo de vida (conexiones, archivos, procesos) es
+                        una fixture que entrega el recurso con <code>yield</code> y lo libera en las líneas
+                        posteriores:</p>
+
+                    <pre><code><span class="kw">import</span> pytest
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> create_engine
+<span class="kw">from</span> sqlalchemy.orm <span class="kw">import</span> sessionmaker
+<span class="kw">from</span> app.db <span class="kw">import</span> Base
+
+<span class="dec">@pytest.fixture</span>(scope=<span class="str">"function"</span>)
+<span class="kw">def</span> <span class="fn">db_sesion</span>():
+    <span class="cm"># SETUP: motor SQLite en memoria, esquema creado.</span>
+    engine = create_engine(<span class="str">"sqlite:///:memory:"</span>, future=<span class="builtin">True</span>)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine, future=<span class="builtin">True</span>)
+    sesion = Session()
+
+    <span class="kw">yield</span> sesion
+
+    <span class="cm"># TEARDOWN: cerrar sesión y eliminar BD.</span>
+    sesion.close()
+    Base.metadata.drop_all(engine)
+    engine.dispose()</code></pre>
+
+                    <h3>5.4 Composición de fixtures</h3>
+                    <p>Las fixtures pueden depender unas de otras. pytest resuelve el grafo de dependencias y
+                        las construye en orden. Esta es la forma idiomática de combinar una BD limpia, un
+                        cliente HTTP y datos sembrados:</p>
+
+                    <pre><code><span class="kw">import</span> pytest
+<span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+<span class="kw">from</span> app.main <span class="kw">import</span> app, obtener_almacen
+
+<span class="dec">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">almacen_vacio</span>() -&gt; <span class="builtin">list</span>:
+    <span class="kw">return</span> []
+
+<span class="dec">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">cliente</span>(almacen_vacio):
+    app.dependency_overrides[obtener_almacen] = <span class="kw">lambda</span>: almacen_vacio
+    <span class="kw">with</span> TestClient(app) <span class="kw">as</span> c:
+        <span class="kw">yield</span> c
+    app.dependency_overrides.<span class="fn">clear</span>()
+
+<span class="kw">def</span> <span class="fn">test_post_y_resumen_via_fixture</span>(cliente):
+    cliente.<span class="fn">post</span>(<span class="str">"/muestras"</span>, json={<span class="str">"edad"</span>: <span class="num">30</span>, <span class="str">"ingreso"</span>: <span class="num">1000</span>, <span class="str">"estrato"</span>: <span class="num">2</span>})
+    cliente.<span class="fn">post</span>(<span class="str">"/muestras"</span>, json={<span class="str">"edad"</span>: <span class="num">40</span>, <span class="str">"ingreso"</span>: <span class="num">3000</span>, <span class="str">"estrato"</span>: <span class="num">4</span>})
+    r = cliente.<span class="fn">get</span>(<span class="str">"/resumen/media"</span>)
+    <span class="kw">assert</span> r.status_code == <span class="num">200</span>
+    <span class="kw">assert</span> r.<span class="fn">json</span>()[<span class="str">"n"</span>] == <span class="num">2</span>
+    <span class="kw">assert</span> r.<span class="fn">json</span>()[<span class="str">"media"</span>] == <span class="num">2000</span></code></pre>
+
+                    <h3>5.5 Fábricas de datos parametrizables</h3>
+                    <p>Una fixture que devuelve una <em>función</em> permite generar datos a la medida dentro de
+                        cada prueba. Es el patrón <em>factory-as-fixture</em>:</p>
+
+                    <pre><code><span class="kw">import</span> pytest
+<span class="kw">import</span> random
+
+<span class="dec">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">fabrica_observaciones</span>():
+    <span class="str">"""Devuelve una función que produce listas de observaciones reproducibles."""</span>
+    <span class="kw">def</span> <span class="fn">_fabricar</span>(n: <span class="builtin">int</span>, semilla: <span class="builtin">int</span> = <span class="num">2026</span>, ingreso_medio: <span class="builtin">float</span> = <span class="num">2_000_000</span>):
+        rng = random.<span class="fn">Random</span>(semilla)
+        <span class="kw">return</span> [
+            {
+                <span class="str">"edad"</span>: rng.<span class="fn">randint</span>(<span class="num">18</span>, <span class="num">75</span>),
+                <span class="str">"ingreso"</span>: <span class="builtin">max</span>(<span class="num">1.0</span>, rng.<span class="fn">gauss</span>(ingreso_medio, ingreso_medio * <span class="num">0.2</span>)),
+                <span class="str">"estrato"</span>: rng.<span class="fn">randint</span>(<span class="num">1</span>, <span class="num">6</span>),
+            }
+            <span class="kw">for</span> _ <span class="kw">in</span> <span class="builtin">range</span>(n)
+        ]
+    <span class="kw">return</span> _fabricar
+
+<span class="kw">def</span> <span class="fn">test_resumen_con_30_observaciones</span>(cliente, fabrica_observaciones):
+    <span class="kw">for</span> obs <span class="kw">in</span> fabrica_observaciones(<span class="num">30</span>, semilla=<span class="num">1</span>):
+        cliente.<span class="fn">post</span>(<span class="str">"/muestras"</span>, json=obs)
+    r = cliente.<span class="fn">get</span>(<span class="str">"/resumen/media"</span>)
+    <span class="kw">assert</span> r.<span class="fn">json</span>()[<span class="str">"n"</span>] == <span class="num">30</span>
+    <span class="kw">assert</span> r.<span class="fn">json</span>()[<span class="str">"ic95"</span>][<span class="num">0</span>] &lt; r.<span class="fn">json</span>()[<span class="str">"media"</span>] &lt; r.<span class="fn">json</span>()[<span class="str">"ic95"</span>][<span class="num">1</span>]</code></pre>
+
+                    <p>Como la fábrica recibe la semilla, las pruebas que la utilicen son completamente
+                        deterministas: cada vez que se ejecuten producirán los mismos datos sintéticos.</p>
+
+                    <div class="chart-container">
+                        <div>
+                            <div id="plotly-fabrica_observaciones" class="plotly-graph-div"
+                                style="height:380px; width:100%;"></div>
+                            <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("plotly-fabrica_observaciones")) { Plotly.newPlot("plotly-fabrica_observaciones", [{ "hovertemplate": "Ingreso: %{x}\u003cbr\u003eFrecuencia: %{y}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#3D008D", "line": { "color": "white", "width": 1 }, "opacity": 0.78 }, "name": "Observaciones", "nbinsx": 30, "x": [2346348.9591607717, 2321657.6500404226, 1208993.015717682, 1941132.2834053999, 2227247.7569980584, 2170928.19398795, 1589255.7256016685, 1697493.5986150056, 2104902.0292321993, 1507084.6923336885, 1916585.9793327518, 1321231.3080223333, 2003426.8751984553, 1468402.7141762632, 2034893.0761386594, 2550967.8765322533, 2565615.251087984, 2472343.5968432515, 1301899.305545905, 2228501.6930080554, 1761007.9576775425, 1446022.2931523137, 2075303.2766264915, 2295015.122926739, 2913467.315868887, 1884091.1006736082, 2542424.217274879, 497385.812636385, 1841192.1917439534, 1986409.0537996672, 1725258.4988676112, 2430560.1935804784, 1884290.617269473, 2426945.0201989533, 2445398.2275583004, 1562780.7849633107, 1920853.6989931574, 1958142.975927709, 1907433.2827788396, 1631192.0399682748, 1643738.0309163597, 2189441.41855662, 1596607.593214693, 1758972.1136559045, 2353647.7646935247, 2317546.932816675, 2000499.5360533467, 1458386.6604589424, 1109503.352034477, 2050237.7624411085, 1977338.2292124536, 2416869.842125275, 2408696.532508598, 1795731.746811733, 1909885.8489000425, 1989771.9730314815, 2033506.6406560459, 2207540.694595077, 2595485.356512016, 2188894.215078162, 2140996.435390693, 1878539.1823248935, 1675921.885978939, 1686697.0001341337, 1713390.7308684045, 2032347.3509553901, 2423337.506869501, 1631110.5851591486, 1566154.5672916726, 2120750.8549159816, 3067109.703302433, 1493465.3988388851, 1508506.3324692454, 1855088.0927970596, 1834298.9916936331, 1699691.742536114, 2145376.0759154283, 1550677.2187261153, 1176287.6372035877, 2109885.533625351, 1695078.5218353106, 2136372.043347988, 1987614.5080050156, 2103057.8960834965, 1698571.3990258013, 1552585.419620069, 1530042.284112147, 2126259.9403968416, 1099554.3747450141, 2059392.241281964, 1970721.6218771567, 2460266.110232454, 1253607.3187119938, 1947073.4697552882, 2182012.757042756, 1522489.1377762249, 2630233.0672296393, 1584687.801433185, 1637225.3801478292, 2814936.868785454, 2498465.8595035467, 2354432.92700051, 2105244.582519762, 1530327.7670592326, 1008103.3285458619, 2302279.494125816, 2752782.6847645035, 1842960.4001812472, 1855422.5151114115, 2019052.8561912875, 1951471.8023697413, 2467378.848525395, 2545004.959374141, 2378767.383655699, 1629125.3625292217, 2231101.5554023767, 2008242.966617643, 2000728.663842495, 1188640.911697206, 1549693.4363946451, 2616148.7319235173, 2354352.8078239295, 2007571.0170594708, 2557203.5791953565, 2011668.008631249, 998958.3672815355, 1721506.5339452159, 1504707.913605839, 2195418.6618536892, 2286622.664043649, 1405934.382152419, 1658348.024842554, 2442689.576143755, 1855963.2543034214, 1960283.27730211, 1788385.4017723363, 2090165.705278006, 2524950.956569538, 2789374.6721065943, 1788190.6548530725, 1832062.5311727691, 1995016.6107950213, 1541948.6820319504, 1184437.535651554, 2185237.639324895, 1131333.7363055386, 1857910.3046121493, 2386989.522539283, 2172722.655829528, 1547167.0999670273, 2022181.9395119082, 2063737.1080127982, 2657377.500702349, 2517457.7888225904, 2350230.065025276, 2117152.269021471, 1585424.6166116302, 2545688.103528901, 2471780.615260311, 2077125.8690625313, 1840262.0762469193, 2300504.0705071045, 1906433.696159677, 2180697.62544525, 2494104.6356486836, 1835265.185499381, 2078247.426389386, 1782396.1153763062, 1576725.817403453, 1947571.4027792308, 1720893.1413019937, 2462483.772785524, 1934058.8847835818, 1863232.6474818033, 1787377.8496440146, 2156206.236557628, 2107187.1049392857, 1942343.5025686037, 1265585.4320653905, 1787801.0671204962, 1359895.477345674, 2199915.7655851175, 2237400.479210399, 2583785.7590316376, 2151349.883004505, 1853914.9993351116, 1310603.9638427878, 1868775.4760812912, 1003692.4311037546, 1894106.5246855842, 2411819.569299911, 2652458.4284747876, 1675625.9522821745, 2268443.6188489236, 1861109.5267863772, 2083218.9386260987, 1875763.3599844323, 2345698.825058408, 1960402.6915384543, 2467662.6623502877, 2078340.3234922145, 1592774.8701330584, 1652115.8727523524, 2071586.6831146188, 1798936.2536969716, 2022769.6866387925, 2206094.209650614, 1316386.599351737, 2313436.5869134488, 1289842.4550057496, 2116012.63691182, 2984681.083674623, 2416604.3434312753, 1601932.608653404, 1414096.871820255, 2382224.0182789504, 2348755.70901955, 1516752.0315338052, 2361557.336358632, 1910064.758991087, 2284182.400099137, 2428268.4445700273, 1553129.882107515, 1781664.341381145, 2489810.7918519382, 2403620.428932842, 1513246.7675118756, 1821990.0395749651, 2074071.5683644684, 2325938.1971812574, 1942175.3403217196, 2506243.6151930196, 2251521.4912636103, 2186279.6571012503, 2235399.543732925, 1931410.6580761713, 1730202.2495342544, 1381367.9876050162, 1955721.184545972, 1747620.5869125735, 1674703.4211050011, 1653216.6738458774, 1872291.9160449263, 2751625.7466789754, 1911344.837103013, 2336187.3747767736, 1990172.4397253185, 2143823.377840163, 1273592.0203223042, 2450545.794152381, 2069313.3068862897, 1591951.4481471938, 2179308.373593094, 2017438.5238661198, 2202823.459582844, 2029487.4271555417, 1794262.1111399457, 1517711.5296315819, 2341954.362956279, 1854848.934917822, 2101652.760846863, 1462657.390019038, 1688480.1410499176, 1543360.531591581, 2310404.7894272828, 1841211.3402813235, 2095515.0236452797, 2435479.619966164, 2814068.2208068115, 1892542.0134487913, 1690960.7483773232, 1267444.2393531778, 1620870.5279676584, 1175511.3589011515, 1256525.0878470312, 2622589.5152846766, 1595974.771387875, 2512054.0266280663, 1919283.9761187192, 2033885.3270667833, 1888549.8625392697, 1688590.9780800338, 2692969.5326368054, 1814090.1931746101, 2491499.7938601496, 2475191.2267819196, 1637637.4417274517, 2784306.8289040006, 1646480.5509282113, 1904106.8292060331, 1406466.2994807116, 1761273.1530987364, 2422307.781165075, 2361133.044064184, 2152648.442673785, 2140278.283101767, 1648531.2411679893, 2458794.7145288377, 1946053.4712437396, 1919755.5811998546], "type": "histogram" }], { "template": { "data": { "histogram2dcontour": [{ "type": "histogram2dcontour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "choropleth": [{ "type": "choropleth", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "histogram2d": [{ "type": "histogram2d", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "heatmap": [{ "type": "heatmap", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "contourcarpet": [{ "type": "contourcarpet", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "contour": [{ "type": "contour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "surface": [{ "type": "surface", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "mesh3d": [{ "type": "mesh3d", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "scatter": [{ "fillpattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 }, "type": "scatter" }], "parcoords": [{ "type": "parcoords", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolargl": [{ "type": "scatterpolargl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "bar": [{ "error_x": { "color": "#2a3f5f" }, "error_y": { "color": "#2a3f5f" }, "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "bar" }], "scattergeo": [{ "type": "scattergeo", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolar": [{ "type": "scatterpolar", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "histogram": [{ "marker": { "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "histogram" }], "scattergl": [{ "type": "scattergl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatter3d": [{ "type": "scatter3d", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermap": [{ "type": "scattermap", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermapbox": [{ "type": "scattermapbox", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterternary": [{ "type": "scatterternary", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattercarpet": [{ "type": "scattercarpet", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "carpet": [{ "aaxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "baxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "type": "carpet" }], "table": [{ "cells": { "fill": { "color": "#EBF0F8" }, "line": { "color": "white" } }, "header": { "fill": { "color": "#C8D4E3" }, "line": { "color": "white" } }, "type": "table" }], "barpolar": [{ "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "barpolar" }], "pie": [{ "automargin": true, "type": "pie" }] }, "layout": { "autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": { "color": "#2a3f5f" }, "hovermode": "closest", "hoverlabel": { "align": "left" }, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": { "bgcolor": "#E5ECF6", "angularaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "radialaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "ternary": { "bgcolor": "#E5ECF6", "aaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "baxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "caxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "coloraxis": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "colorscale": { "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]] }, "xaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "yaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "scene": { "xaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "yaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "zaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 } }, "shapedefaults": { "line": { "color": "#2a3f5f" } }, "annotationdefaults": { "arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1 }, "geo": { "bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white" }, "title": { "x": 0.05 }, "mapbox": { "style": "light" } } }, "shapes": [{ "line": { "color": "#ED1E79", "width": 3 }, "type": "line", "x0": 1973966.830211943, "x1": 1973966.830211943, "xref": "x", "y0": 0, "y1": 1, "yref": "y domain" }, { "fillcolor": "#ED1E79", "line": { "width": 0 }, "opacity": 0.1, "type": "rect", "x0": 1927331.1167639769, "x1": 2020602.5436599092, "xref": "x", "y0": 0, "y1": 1, "yref": "y domain" }], "annotations": [{ "font": { "color": "#ED1E79" }, "showarrow": false, "text": "media = 1,973,967", "x": 1973966.830211943, "xanchor": "left", "xref": "x", "y": 1, "yanchor": "top", "yref": "y domain" }, { "font": { "color": "#ED1E79" }, "showarrow": false, "text": "IC 95% = [1,927,331 ; 2,020,603]", "x": 2020602.5436599092, "xanchor": "right", "xref": "x", "y": 0, "yanchor": "bottom", "yref": "y domain" }], "title": { "text": "\u003cb\u003eDatos sint\u00e9ticos de la f\u00e1brica\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003efabrica_observaciones(n=300, semilla=2026) \u2014 n=300, distribuci\u00f3n reproducible bit a bit.\u003c\u002fspan\u003e", "x": 0.0, "xanchor": "left" }, "xaxis": { "title": { "text": "Ingreso (COP)" }, "gridcolor": "#E2E8F0", "tickformat": ",.0f" }, "yaxis": { "title": { "text": "Frecuencia" }, "gridcolor": "#E2E8F0" }, "height": 380, "bargap": 0.05, "showlegend": false, "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 50, "r": 30, "t": 60, "b": 50 }, "paper_bgcolor": "white", "plot_bgcolor": "white" }, { "displayModeBar": false, "responsive": true }) };            </script>
+                        </div>
+                    </div>
+                    <p class="chart-caption">Figura 5.1 — Ingresos sintéticos generados por
+                        <code>fabrica_observaciones(n=300, semilla=2026)</code>. El intervalo de confianza
+                        al 95 % rodea la media muestral; al fijar la semilla la figura se reproduce
+                        bit a bit en cualquier máquina.
+                    </p>
+
+                    <h3>5.6 Parametrización de fixtures</h3>
+                    <p>Una fixture puede declarar <code>params=</code> para que pytest la ejecute repetidamente
+                        con diferentes valores. Esto multiplica todas las pruebas que la consuman:</p>
+
+                    <pre><code><span class="dec">@pytest.fixture</span>(params=[<span class="num">30</span>, <span class="num">100</span>, <span class="num">500</span>], ids=[<span class="str">"n30"</span>, <span class="str">"n100"</span>, <span class="str">"n500"</span>])
+<span class="kw">def</span> <span class="fn">tamano_muestra</span>(request) -&gt; <span class="builtin">int</span>:
+    <span class="kw">return</span> request.param
+
+<span class="kw">def</span> <span class="fn">test_resumen_responde_para_varios_tamanos</span>(cliente, fabrica_observaciones, tamano_muestra):
+    <span class="kw">for</span> obs <span class="kw">in</span> fabrica_observaciones(tamano_muestra, semilla=<span class="num">7</span>):
+        cliente.<span class="fn">post</span>(<span class="str">"/muestras"</span>, json=obs)
+    cuerpo = cliente.<span class="fn">get</span>(<span class="str">"/resumen/media"</span>).<span class="fn">json</span>()
+    <span class="kw">assert</span> cuerpo[<span class="str">"n"</span>] == tamano_muestra
+    <span class="kw">assert</span> cuerpo[<span class="str">"ic95"</span>][<span class="num">0</span>] &lt; cuerpo[<span class="str">"media"</span>] &lt; cuerpo[<span class="str">"ic95"</span>][<span class="num">1</span>]
+    <span class="cm"># Verificar que el IC se estrecha con n requiere comparar entre tamaños:
+    # se delega al ejercicio 7.2 de la autoevaluación.</span></code></pre>
+
+                    <div class="box info">
+                        <span class="label">Diagnóstico de fixtures</span>
+                        El comando <code>pytest --fixtures</code> lista todas las fixtures visibles desde el
+                        directorio actual con su docstring. Es una herramienta valiosa cuando el proyecto crece
+                        y hay riesgo de duplicar fixtures con nombres parecidos.
+                    </div>
+                </section>
+
+                <!-- ===================== REPRODUCIBILIDAD ===================== -->
+                <section id="reproducibilidad" class="unit">
+                    <h2>6. Reproducibilidad sin Docker</h2>
+
+                    <p>Reproducibilidad significa que dos personas, ejecutando el mismo código en dos máquinas
+                        distintas, obtienen los mismos resultados numéricos. En estadística esto es un requisito
+                        científico: una API que ajusta una regresión debe devolver los mismos coeficientes hoy
+                        y dentro de seis meses, en macOS y en Linux. Docker resuelve esta exigencia
+                        encapsulando el sistema operativo, pero introduce una capa adicional cuya curva de
+                        aprendizaje y costo no siempre se justifican en proyectos académicos. Esta sección
+                        presenta una alternativa basada únicamente en <code>venv</code>, fijación estricta de
+                        versiones, semillas explícitas y archivos de configuración deterministas.</p>
+
+                    <h3>6.1 Fijación estricta de dependencias</h3>
+                    <p>El archivo <code>requirements.txt</code> visto en semanas anteriores se generaliza con
+                        dos archivos:</p>
+
+                    <ul>
+                        <li><code>requirements.in</code> — declara únicamente las dependencias de alto nivel
+                            del proyecto (lo que el desarrollador realmente usa).</li>
+                        <li><code>requirements.txt</code> — contiene la versión exacta de cada dependencia y
+                            de cada dependencia transitiva, generada a partir del anterior.</li>
+                    </ul>
+
+                    <pre><code><span class="cm"># requirements.in</span>
+fastapi&gt;=0.110,&lt;0.120
+uvicorn[standard]&gt;=0.30,&lt;0.32
+pydantic&gt;=2.7,&lt;3.0
+sqlalchemy&gt;=2.0,&lt;3.0
+python-dotenv&gt;=1.0,&lt;2.0
+numpy&gt;=1.26,&lt;2.0
+pytest&gt;=8.0,&lt;9.0
+httpx&gt;=0.27,&lt;0.29
+pytest-asyncio&gt;=0.23,&lt;0.25</code></pre>
+
+                    <p>Para resolver versiones transitivas existen dos caminos. El más sencillo, sin
+                        herramientas adicionales:</p>
+
+                    <pre><code><span class="cm"># Crear y activar un entorno virtual limpio.</span>
+python3.11 -m venv .venv
+<span class="builtin">source</span> .venv/bin/activate         <span class="cm"># macOS / Linux</span>
+<span class="cm"># .venv\Scripts\activate         # Windows</span>
+
+<span class="cm"># Instalar las dependencias declaradas.</span>
+pip install -r requirements.in
+
+<span class="cm"># Congelar el árbol completo con versiones exactas.</span>
+pip freeze --exclude-editable &gt; requirements.txt</code></pre>
+
+                    <p>El más robusto utiliza <code>pip-tools</code>, que recalcula el lockfile cuando cambia el
+                        archivo de entrada y produce un fichero ordenado y comentado:</p>
+
+                    <pre><code>pip install pip-tools
+pip-compile --generate-hashes --output-file=requirements.txt requirements.in
+pip-sync requirements.txt</code></pre>
+
+                    <div class="box tip">
+                        <span class="label">Hashes y verificación</span>
+                        El flag <code>--generate-hashes</code> añade <code>--hash=sha256:...</code> a cada
+                        paquete. Cuando alguien clona el repositorio y ejecuta <code>pip install -r
+                    requirements.txt</code>, pip rechaza paquetes cuyo contenido no coincida bit a bit con
+                        el hash registrado. Esto cierra una clase entera de incidentes en los que un paquete se
+                        sobreescribe en PyPI.
+                    </div>
+
+                    <h3>6.2 Versionado del intérprete</h3>
+                    <p>El proyecto declara la versión exacta de Python en dos lugares:</p>
+
+                    <pre><code><span class="cm"># pyproject.toml</span>
+[project]
+name = <span class="str">"encuestas-api"</span>
+version = <span class="str">"1.0.0"</span>
+requires-python = <span class="str">"==3.11.9"</span></code></pre>
+
+                    <pre><code><span class="cm"># .python-version  (lo lee pyenv para activar el intérprete correcto)</span>
+3.11.9</code></pre>
+
+                    <p>El test reproducible verifica esta condición al iniciar la suite:</p>
+
+                    <pre><code><span class="cm"># tests/test_reproducibilidad.py</span>
+<span class="kw">import</span> sys
+
+<span class="kw">def</span> <span class="fn">test_version_de_python</span>():
+    <span class="kw">assert</span> sys.version_info[:<span class="num">3</span>] == (<span class="num">3</span>, <span class="num">11</span>, <span class="num">9</span>), \
+        <span class="str">f"Versión de Python inesperada: </span>{sys.version}<span class="str">"</span>
+</code></pre>
+
+                    <h3>6.3 Semillas y aleatoriedad determinista</h3>
+                    <p>Cualquier procedimiento estadístico que use números aleatorios debe sembrar
+                        explícitamente sus generadores. La semilla se fija antes de cualquier llamada que
+                        consuma aleatoriedad y se documenta en la configuración del proyecto.</p>
+
+                    <pre><code><span class="cm"># app/aleatorio.py</span>
+<span class="kw">import</span> os
+<span class="kw">import</span> random
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">configurar_semillas</span>(semilla: <span class="builtin">int</span> | <span class="builtin">None</span> = <span class="builtin">None</span>) -&gt; <span class="builtin">int</span>:
+    <span class="str">"""Fija las semillas de random y numpy. Devuelve la semilla efectiva."""</span>
+    <span class="kw">if</span> semilla <span class="kw">is</span> <span class="builtin">None</span>:
+        semilla = <span class="builtin">int</span>(os.environ.<span class="fn">get</span>(<span class="str">"APP_SEED"</span>, <span class="str">"2026"</span>))
+    random.<span class="fn">seed</span>(semilla)
+    np.random.<span class="fn">seed</span>(semilla)
+    <span class="kw">return</span> semilla
+
+<span class="cm"># app/regresion.py</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">simular_regresion</span>(n: <span class="builtin">int</span>, beta0: <span class="builtin">float</span>, beta1: <span class="builtin">float</span>):
+    rng = np.random.<span class="fn">default_rng</span>(seed=<span class="num">2026</span>)  <span class="cm"># API moderna preferible</span>
+    x = rng.<span class="fn">uniform</span>(<span class="num">0</span>, <span class="num">10</span>, size=n)
+    eps = rng.<span class="fn">normal</span>(<span class="num">0</span>, <span class="num">1</span>, size=n)
+    y = beta0 + beta1 * x + eps
+    <span class="kw">return</span> x, y</code></pre>
+
+                    <div class="box warn">
+                        <span class="label">Sembrar el RNG global no basta</span>
+                        Las llamadas a <code>np.random.seed</code> sólo afectan al RNG global de NumPy. Las
+                        bibliotecas modernas (NumPy 1.17+, scikit-learn, PyTorch) recomiendan trabajar con
+                        objetos <code>Generator</code> propios (<code>np.random.default_rng(seed)</code>),
+                        porque son aislables y seguros frente a hilos. En la API se prefiere recibir el
+                        generador como parámetro en lugar de depender del estado global.
+                    </div>
+
+                    <h3>6.4 Configuración determinista vía <code>.env</code></h3>
+                    <p>El archivo <code>.env</code> se versiona como plantilla (<code>.env.example</code>) y los
+                        valores reales quedan en <code>.env</code>, ignorado por git. Para reproducibilidad, los
+                        valores numéricos relevantes deben tener formatos exactos:</p>
+
+                    <pre><code><span class="cm"># .env.example</span>
+APP_SEED=2026
+APP_NIVEL_CONFIANZA=0.95
+APP_TOLERANCIA_NUMERICA=1e-9
+APP_BD_URL=sqlite:///./encuestas.db
+APP_LOG_LEVEL=INFO</code></pre>
+
+                    <p>El módulo de configuración carga estos valores con <code>python-dotenv</code> y los
+                        expone como objeto Pydantic, ya conocido por los estudiantes:</p>
+
+                    <pre><code><span class="cm"># app/config.py</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+<span class="kw">from</span> pydantic <span class="kw">import</span> Field
+<span class="kw">from</span> pydantic_settings <span class="kw">import</span> BaseSettings, SettingsConfigDict
+
+<span class="kw">class</span> <span class="cls">Configuracion</span>(BaseSettings):
+    model_config = SettingsConfigDict(env_file=<span class="str">".env"</span>, env_prefix=<span class="str">"APP_"</span>)
+
+    seed: <span class="builtin">int</span> = Field(default=<span class="num">2026</span>, ge=<span class="num">0</span>)
+    nivel_confianza: <span class="builtin">float</span> = Field(default=<span class="num">0.95</span>, gt=<span class="num">0.5</span>, lt=<span class="num">1.0</span>)
+    tolerancia_numerica: <span class="builtin">float</span> = Field(default=<span class="num">1e-9</span>, gt=<span class="num">0</span>)
+    bd_url: <span class="builtin">str</span> = <span class="str">"sqlite:///./encuestas.db"</span>
+
+<span class="dec">@lru_cache</span>
+<span class="kw">def</span> <span class="fn">obtener_config</span>() -&gt; Configuracion:
+    <span class="kw">return</span> Configuracion()</code></pre>
+
+                    <h3>6.5 Pruebas que validan reproducibilidad numérica</h3>
+                    <p>Una suite reproducible incluye pruebas explícitas que ejecutan el procedimiento dos veces
+                        y comparan los resultados con tolerancias acotadas. Estas pruebas son baratas y atrapan
+                        regresiones sutiles, como un cambio de versión de NumPy que altere el orden de
+                        evaluación de un sumatorio:</p>
+
+                    <pre><code><span class="cm"># tests/test_reproducibilidad.py</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> app.aleatorio <span class="kw">import</span> configurar_semillas
+<span class="kw">from</span> app.regresion <span class="kw">import</span> simular_regresion
+
+<span class="kw">def</span> <span class="fn">test_regresion_simulada_es_reproducible</span>():
+    x1, y1 = simular_regresion(<span class="num">100</span>, beta0=<span class="num">2.0</span>, beta1=<span class="num">0.5</span>)
+    x2, y2 = simular_regresion(<span class="num">100</span>, beta0=<span class="num">2.0</span>, beta1=<span class="num">0.5</span>)
+    <span class="kw">assert</span> np.<span class="fn">allclose</span>(x1, x2, rtol=<span class="num">0</span>, atol=<span class="num">0</span>)
+    <span class="kw">assert</span> np.<span class="fn">allclose</span>(y1, y2, rtol=<span class="num">0</span>, atol=<span class="num">0</span>)
+
+<span class="kw">def</span> <span class="fn">test_semilla_global_se_aplica</span>():
+    s1 = configurar_semillas(<span class="num">42</span>)
+    a = np.random.<span class="fn">random</span>(<span class="num">5</span>)
+    s2 = configurar_semillas(<span class="num">42</span>)
+    b = np.random.<span class="fn">random</span>(<span class="num">5</span>)
+    <span class="kw">assert</span> s1 == s2 == <span class="num">42</span>
+    <span class="kw">assert</span> np.<span class="fn">array_equal</span>(a, b)</code></pre>
+
+                    <div class="chart-container">
+                        <div>
+                            <div id="plotly-reproducibilidad" class="plotly-graph-div"
+                                style="height:400px; width:100%;"></div>
+                            <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("plotly-reproducibilidad")) { Plotly.newPlot("plotly-reproducibilidad", [{ "hovertemplate": "Corrida 1\u003cbr\u003ex=%{x:.3f}\u003cbr\u003ey=%{y:.3f}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "#3D008D", "line": { "color": "white", "width": 1 }, "opacity": 0.85, "size": 10 }, "mode": "markers", "name": "Corrida 1", "x": { "dtype": "f8", "bdata": "20sIgyuh\u002fD+DDhn4tZgZQH6e1hPUsBJA4GK2zdmjDUDfeWP+tGQMQBA+gSbonh9AqxYuIVYaIkC0ZDMBY2D8P5RWcjGEHBpAmODnnD3dB0A\u002fUOux2FYjQCePngCiZSJAykwrKVFvGUC+KlAH+hseQHy4dIEsmxRAEOTcbpWEIEBTPmqyau8RQIzPBAnhGgtARJQsPWA7BkCtsJsOTRsCQOImSk5dCBVA\u002fanDHIo8EUDY1Ko0+IYaQFjIJruRb8A\u002f+qE6rHfoEUCNQV8e5zYNQFhvOlZ8Q\u002f8\u002fIBpbMG3LF0AKEM1Rm2kRQPoPhXTT\u002fwdAwS39l9fAAEB0tIY+E34hQIpHxpwD5h9AFCbNA7VEGEAeiQDsqJsLQE5D7aK37yJAhcoP\u002fPuIFkBkzV+OfU8RQJNjZExNAiJA4FTAwR6MCUCtVdjK\u002fNYbQKXzQFEKGwlAskRGPJvsBECdOmRXnAgcQNE5Ykw6OwJAN5oFIHO5E0AT6bLJfTMXQGxDpM2aOf4\u002ffzPuguc\u002fHUDZ5+Zxd\u002fAVQDAIQoEx3BhAl8Xi\u002foPFDUCZWVZrx84QQEDClU8OyxNAMDtyjIDMEkAHXDGviwYbQDnshzJMFhdAWoCtg5ymEEAAduIHw3SSPyWPscjgwh9AIu+akn7GFECyN6x8oh8KQLwUDRiK\u002fxNA6CRhQxfn7T9EftO4FRgiQFngVP1yyyNAiuvwyZbL4j8wf5RKk6gMQFoKpHzcMx1AAPU60JgjCUBPMyfrlq4WQIhAkMivqRBAspvvt+73HkBGaqp1VisjQA7sNqeVxCFAK27eEGHWGEDXtw\u002f61aT5P7gavjb18CJACAZazd8\u002fzj\u002fCAHP0FtEHQLdZLsBxhwZAnBVkgH\u002ffGkCSYzIJmX4TQF6Q2w5uue0\u002fgPLMzEV1wD8QBqJ4MSwYQMdVFRHKqBNAvD7uJScOGEAdpLq3mo8WQO9y+48mzyFARhEqITFeIkABmNtoAx\u002f+P8AZgaqo1yJAbcpZFlKCH0DSUof6oI8ZQCAaE+BgYhpAsMcKIajXFUCxvSNaY1giQBAtn\u002f86qQJAn7Qu6v74F0A=" }, "y": { "dtype": "f8", "bdata": "rATpQk3P+T9WBendbUQVQOjguQRiehlAY8zJANzCC0CVwULJ1xkQQHYfbrjTjhNAOXLvS2DqFUCGMFbHxr7tP7AlddI78RRA3sPFkkLBEUAdSBotkukZQBO85MyZ+x9AMrj9CkOCFUBXFfuys+gWQPO\u002f3UFBXxRAPffoiah3GkD4sdPmD48VQIQkLYUJIwdAZA7fzYaf8T88JH\u002fYpvgJQC2KVa7TERBAc4HetnCCEEC7+SpeuusbQCDIs1F3w+4\u002fG1GR3mIDFEDIJP5HSxYTQA9EwJB1gAtAWFgdzBBfGEAU3St64b4NQDOFFF4ujAZAZABTASFYEECFdLuSqV8cQECdCRjBgh1Ao4BO8rz7FEALU5aPcWUVQJ4vGv3dzhlA+fnJIW4NDkDo24wiiAMBQKKnAY93mhVAmE\u002fpeC2pEUAV5FMhaA8QQCAKeAIU7whA3GZmJ0uoFUCmf2+lbGcZQEvtKm7GuBNAYscM+LrKC0DB6A5udoUDQIYMyYP51xFAIaJsxQD1EEAVEmLIVlUTQMCLyXBmTBVA4Dbe\u002fmpLB0A69OImSZ0WQJKnVbEMGBhAQH9QDu6aE0AAkOoKE2UVQGrKph0uTxRA+UgzGDHiB0C7oUIBtVH8P50mFsz8dRdAez6aHR\u002f1DUAi4Ds0ge0RQHwhOwQblghA2UiXx0gcAEBU2\u002fVRIxURQJMcxPowyB1AiGvI\u002fE1KCEAQtlnjWKYRQHJnz5EGIyFAGKgSyj4LEkCbHxaBZCUPQFecyvlO\u002fBpAXJNBho\u002fNE0DsDQeLAVMeQGuv6xmMvRxAv64CbFrmEEBe\u002fqEEcckQQKOkY9QPXBxAjqddok+DBUAaYLvGpIAGQLBf4PXB1xJAO6OLByb+EUAQYKwl4UIFQPBPM7vWHQ9AZiFKzHIz+j\u002fHoZfxgUIUQDY4cztMhRlAkZpJ9teSGEB6iuBBss8VQMhdng2+Fh5A7EtlFzl1F0CiJqUpFI4NQA07YgU8SB9ACSOYdLbGGkCFfjfSx\u002fYTQNI2UoRZz\u002fg\u002fqjn0koEmFUBTVNGFBc4aQI0lwPnEXwZAgvzvV0UZF0A=" }, "type": "scatter" }, { "hovertemplate": "Corrida 2\u003cbr\u003ex=%{x:.3f}\u003cbr\u003ey=%{y:.3f}\u003cextra\u003e\u003c\u002fextra\u003e", "marker": { "color": "rgba(0,0,0,0)", "line": { "color": "#ED1E79", "width": 2 }, "size": 16 }, "mode": "markers", "name": "Corrida 2", "x": { "dtype": "f8", "bdata": "20sIgyuh\u002fD+DDhn4tZgZQH6e1hPUsBJA4GK2zdmjDUDfeWP+tGQMQBA+gSbonh9AqxYuIVYaIkC0ZDMBY2D8P5RWcjGEHBpAmODnnD3dB0A\u002fUOux2FYjQCePngCiZSJAykwrKVFvGUC+KlAH+hseQHy4dIEsmxRAEOTcbpWEIEBTPmqyau8RQIzPBAnhGgtARJQsPWA7BkCtsJsOTRsCQOImSk5dCBVA\u002fanDHIo8EUDY1Ko0+IYaQFjIJruRb8A\u002f+qE6rHfoEUCNQV8e5zYNQFhvOlZ8Q\u002f8\u002fIBpbMG3LF0AKEM1Rm2kRQPoPhXTT\u002fwdAwS39l9fAAEB0tIY+E34hQIpHxpwD5h9AFCbNA7VEGEAeiQDsqJsLQE5D7aK37yJAhcoP\u002fPuIFkBkzV+OfU8RQJNjZExNAiJA4FTAwR6MCUCtVdjK\u002fNYbQKXzQFEKGwlAskRGPJvsBECdOmRXnAgcQNE5Ykw6OwJAN5oFIHO5E0AT6bLJfTMXQGxDpM2aOf4\u002ffzPuguc\u002fHUDZ5+Zxd\u002fAVQDAIQoEx3BhAl8Xi\u002foPFDUCZWVZrx84QQEDClU8OyxNAMDtyjIDMEkAHXDGviwYbQDnshzJMFhdAWoCtg5ymEEAAduIHw3SSPyWPscjgwh9AIu+akn7GFECyN6x8oh8KQLwUDRiK\u002fxNA6CRhQxfn7T9EftO4FRgiQFngVP1yyyNAiuvwyZbL4j8wf5RKk6gMQFoKpHzcMx1AAPU60JgjCUBPMyfrlq4WQIhAkMivqRBAspvvt+73HkBGaqp1VisjQA7sNqeVxCFAK27eEGHWGEDXtw\u002f61aT5P7gavjb18CJACAZazd8\u002fzj\u002fCAHP0FtEHQLdZLsBxhwZAnBVkgH\u002ffGkCSYzIJmX4TQF6Q2w5uue0\u002fgPLMzEV1wD8QBqJ4MSwYQMdVFRHKqBNAvD7uJScOGEAdpLq3mo8WQO9y+48mzyFARhEqITFeIkABmNtoAx\u002f+P8AZgaqo1yJAbcpZFlKCH0DSUof6oI8ZQCAaE+BgYhpAsMcKIajXFUCxvSNaY1giQBAtn\u002f86qQJAn7Qu6v74F0A=" }, "y": { "dtype": "f8", "bdata": "rATpQk3P+T9WBendbUQVQOjguQRiehlAY8zJANzCC0CVwULJ1xkQQHYfbrjTjhNAOXLvS2DqFUCGMFbHxr7tP7AlddI78RRA3sPFkkLBEUAdSBotkukZQBO85MyZ+x9AMrj9CkOCFUBXFfuys+gWQPO\u002f3UFBXxRAPffoiah3GkD4sdPmD48VQIQkLYUJIwdAZA7fzYaf8T88JH\u002fYpvgJQC2KVa7TERBAc4HetnCCEEC7+SpeuusbQCDIs1F3w+4\u002fG1GR3mIDFEDIJP5HSxYTQA9EwJB1gAtAWFgdzBBfGEAU3St64b4NQDOFFF4ujAZAZABTASFYEECFdLuSqV8cQECdCRjBgh1Ao4BO8rz7FEALU5aPcWUVQJ4vGv3dzhlA+fnJIW4NDkDo24wiiAMBQKKnAY93mhVAmE\u002fpeC2pEUAV5FMhaA8QQCAKeAIU7whA3GZmJ0uoFUCmf2+lbGcZQEvtKm7GuBNAYscM+LrKC0DB6A5udoUDQIYMyYP51xFAIaJsxQD1EEAVEmLIVlUTQMCLyXBmTBVA4Dbe\u002fmpLB0A69OImSZ0WQJKnVbEMGBhAQH9QDu6aE0AAkOoKE2UVQGrKph0uTxRA+UgzGDHiB0C7oUIBtVH8P50mFsz8dRdAez6aHR\u002f1DUAi4Ds0ge0RQHwhOwQblghA2UiXx0gcAEBU2\u002fVRIxURQJMcxPowyB1AiGvI\u002fE1KCEAQtlnjWKYRQHJnz5EGIyFAGKgSyj4LEkCbHxaBZCUPQFecyvlO\u002fBpAXJNBho\u002fNE0DsDQeLAVMeQGuv6xmMvRxAv64CbFrmEEBe\u002fqEEcckQQKOkY9QPXBxAjqddok+DBUAaYLvGpIAGQLBf4PXB1xJAO6OLByb+EUAQYKwl4UIFQPBPM7vWHQ9AZiFKzHIz+j\u002fHoZfxgUIUQDY4cztMhRlAkZpJ9teSGEB6iuBBss8VQMhdng2+Fh5A7EtlFzl1F0CiJqUpFI4NQA07YgU8SB9ACSOYdLbGGkCFfjfSx\u002fYTQNI2UoRZz\u002fg\u002fqjn0koEmFUBTVNGFBc4aQI0lwPnEXwZAgvzvV0UZF0A=" }, "type": "scatter" }, { "hovertemplate": "\u0177 = %{y:.3f}\u003cextra\u003e\u003c\u002fextra\u003e", "line": { "color": "#001A4D", "dash": "dash", "width": 2 }, "mode": "lines", "name": "OLS: \u0177 = 2.259 + 0.471\u00b7x", "x": { "dtype": "f8", "bdata": "AAAAAAAAAACIxvrQWB\u002fKP4jG+tBYH9o\u002f5hS8nIKX4z+IxvrQWB\u002fqPxW8nIKXU\u002fA\u002f5hS8nIKX8z+3bdu2bdv2P4jG+tBYH\u002fo\u002fWR8a60Nj\u002fT8VvJyCl1MAQH5orA+N9QFA5hS8nIKXA0BOwcspeDkFQLdt27Zt2wZAIBrrQ2N9CECIxvrQWB8KQPByCl5OwQtAWR8a60NjDUDCyyl4OQUPQBW8nIKXUxBASZIkSZIkEUB+aKwPjfURQLI+NNaHxhJA5hS8nIKXE0Aa60NjfWgUQE7Byyl4ORVAg5dT8HIKFkC3bdu2bdsWQOtDY31orBdAIBrrQ2N9GEBU8HIKXk4ZQIjG+tBYHxpAvJyCl1PwGkDwcgpeTsEbQCVJkiRJkhxAWR8a60NjHUCN9aGxPjQeQMLLKXg5BR9A9qGxPjTWH0AVvJyCl1MgQC+n4OUUvCBASZIkSZIkIUBjfWisD40hQH5orA+N9SFAmFPwcgpeIkCyPjTWh8YiQMwpeDkFLyNA5hS8nIKXI0AAAAAAAAAkQA==" }, "y": { "dtype": "f8", "bdata": "7LI9W5MRAkBW9jjfX9YCQL85NGMsmwNAKX0v5\u002fhfBECTwCprxSQFQPwDJu+R6QVAZkchc16uBkDQihz3KnMHQDrOF3v3NwhAoxET\u002f8P8CEANVQ6DkMEJQHaYCQddhgpA4NsEiylLC0BKHwAP9g8MQLRi+5LC1AxAHqb2Fo+ZDUCH6fGaW14OQPAs7R4oIw9AWnDoovTnD0Di2XGTYFYQQJd7b9XGuBBATB1tFy0bEUAAv2pZk30RQLZgaJv53xFAagJm3V9CEkAfpGMfxqQSQNRFYWEsBxNAiOdeo5JpE0A+iVzl+MsTQPIqWidfLhRAqMxXacWQFEBcblWrK\u002fMUQBEQU+2RVRVAxrFQL\u002fi3FUB6U05xXhoWQDD1S7PEfBZA5JZJ9SrfFkCZOEc3kUEXQE7aRHn3oxdAAnxCu10GGEC4HUD9w2gYQGy\u002fPT8qyxhAIWE7gZAtGUDWAjnD9o8ZQIukNgVd8hlAQEY0R8NUGkD15zGJKbcaQKmJL8uPGRtAXistDfZ7G0ATzSpPXN4bQA==" }, "type": "scatter" }], { "template": { "data": { "histogram2dcontour": [{ "type": "histogram2dcontour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "choropleth": [{ "type": "choropleth", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "histogram2d": [{ "type": "histogram2d", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "heatmap": [{ "type": "heatmap", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "contourcarpet": [{ "type": "contourcarpet", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "contour": [{ "type": "contour", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "surface": [{ "type": "surface", "colorbar": { "outlinewidth": 0, "ticks": "" }, "colorscale": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]] }], "mesh3d": [{ "type": "mesh3d", "colorbar": { "outlinewidth": 0, "ticks": "" } }], "scatter": [{ "fillpattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 }, "type": "scatter" }], "parcoords": [{ "type": "parcoords", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolargl": [{ "type": "scatterpolargl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "bar": [{ "error_x": { "color": "#2a3f5f" }, "error_y": { "color": "#2a3f5f" }, "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "bar" }], "scattergeo": [{ "type": "scattergeo", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterpolar": [{ "type": "scatterpolar", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "histogram": [{ "marker": { "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "histogram" }], "scattergl": [{ "type": "scattergl", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatter3d": [{ "type": "scatter3d", "line": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermap": [{ "type": "scattermap", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattermapbox": [{ "type": "scattermapbox", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scatterternary": [{ "type": "scatterternary", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "scattercarpet": [{ "type": "scattercarpet", "marker": { "colorbar": { "outlinewidth": 0, "ticks": "" } } }], "carpet": [{ "aaxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "baxis": { "endlinecolor": "#2a3f5f", "gridcolor": "white", "linecolor": "white", "minorgridcolor": "white", "startlinecolor": "#2a3f5f" }, "type": "carpet" }], "table": [{ "cells": { "fill": { "color": "#EBF0F8" }, "line": { "color": "white" } }, "header": { "fill": { "color": "#C8D4E3" }, "line": { "color": "white" } }, "type": "table" }], "barpolar": [{ "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "barpolar" }], "pie": [{ "automargin": true, "type": "pie" }] }, "layout": { "autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": { "color": "#2a3f5f" }, "hovermode": "closest", "hoverlabel": { "align": "left" }, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "polar": { "bgcolor": "#E5ECF6", "angularaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "radialaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "ternary": { "bgcolor": "#E5ECF6", "aaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "baxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" }, "caxis": { "gridcolor": "white", "linecolor": "white", "ticks": "" } }, "coloraxis": { "colorbar": { "outlinewidth": 0, "ticks": "" } }, "colorscale": { "sequential": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "sequentialminus": [[0.0, "#0d0887"], [0.1111111111111111, "#46039f"], [0.2222222222222222, "#7201a8"], [0.3333333333333333, "#9c179e"], [0.4444444444444444, "#bd3786"], [0.5555555555555556, "#d8576b"], [0.6666666666666666, "#ed7953"], [0.7777777777777778, "#fb9f3a"], [0.8888888888888888, "#fdca26"], [1.0, "#f0f921"]], "diverging": [[0, "#8e0152"], [0.1, "#c51b7d"], [0.2, "#de77ae"], [0.3, "#f1b6da"], [0.4, "#fde0ef"], [0.5, "#f7f7f7"], [0.6, "#e6f5d0"], [0.7, "#b8e186"], [0.8, "#7fbc41"], [0.9, "#4d9221"], [1, "#276419"]] }, "xaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "yaxis": { "gridcolor": "white", "linecolor": "white", "ticks": "", "title": { "standoff": 15 }, "zerolinecolor": "white", "automargin": true, "zerolinewidth": 2 }, "scene": { "xaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "yaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 }, "zaxis": { "backgroundcolor": "#E5ECF6", "gridcolor": "white", "linecolor": "white", "showbackground": true, "ticks": "", "zerolinecolor": "white", "gridwidth": 2 } }, "shapedefaults": { "line": { "color": "#2a3f5f" } }, "annotationdefaults": { "arrowcolor": "#2a3f5f", "arrowhead": 0, "arrowwidth": 1 }, "geo": { "bgcolor": "white", "landcolor": "#E5ECF6", "subunitcolor": "white", "showland": true, "showlakes": true, "lakecolor": "white" }, "title": { "x": 0.05 }, "mapbox": { "style": "light" } } }, "annotations": [{ "bgcolor": "rgba(255,255,255,0.85)", "bordercolor": "#CBD5E1", "borderpad": 6, "borderwidth": 1, "font": { "size": 12 }, "showarrow": false, "text": "\u003cb style='color:#16A34A'\u003e\u2713 array_equal(corrida1, corrida2) = True\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='color:#64748B;font-size:11px'\u003eMisma semilla \u2192 mismos puntos, mismo modelo.\u003c\u002fspan\u003e", "x": 0.02, "xanchor": "left", "xref": "paper", "y": 0.98, "yanchor": "top", "yref": "paper" }], "title": { "text": "\u003cb\u003eReproducibilidad de simular_regresion(n=100, \u03b2\u2080=2, \u03b2\u2081=0.5)\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003eDos invocaciones independientes con seed=2026 producen exactamente los mismos puntos.\u003c\u002fspan\u003e", "x": 0.0, "xanchor": "left" }, "xaxis": { "title": { "text": "x" }, "gridcolor": "#E2E8F0", "zerolinecolor": "#94A3B8" }, "yaxis": { "title": { "text": "y" }, "gridcolor": "#E2E8F0", "zerolinecolor": "#94A3B8" }, "legend": { "orientation": "h", "yanchor": "bottom", "y": -0.25, "xanchor": "center", "x": 0.5, "bgcolor": "rgba(0,0,0,0)" }, "height": 400, "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 50, "r": 30, "t": 60, "b": 50 }, "paper_bgcolor": "white", "plot_bgcolor": "white" }, { "displayModeBar": false, "responsive": true }) };            </script>
+                        </div>
+                    </div>
+                    <p class="chart-caption">Figura 6.1 — Dos invocaciones independientes de
+                        <code>simular_regresion(n=100, β₀=2, β₁=0.5)</code> con la misma semilla producen
+                        arreglos que coinciden bit a bit. Si la prueba
+                        <code>test_regresion_simulada_es_reproducible</code> fallara, la causa más
+                        probable sería un cambio de versión de NumPy o un olvido de fijar la semilla.
+                    </p>
+
+                    <h3>6.6 Lista de comprobación de reproducibilidad</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Aspecto</th>
+                                <th>Mecanismo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Versión de Python</td>
+                                <td><code>requires-python</code> en <code>pyproject.toml</code> +
+                                    <code>.python-version</code> + test que lo valida.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Dependencias directas</td>
+                                <td><code>requirements.in</code> con rangos compatibles.</td>
+                            </tr>
+                            <tr>
+                                <td>Dependencias transitivas</td>
+                                <td><code>requirements.txt</code> con versiones fijas y hashes.</td>
+                            </tr>
+                            <tr>
+                                <td>Aislamiento del entorno</td>
+                                <td><code>venv</code> exclusivo del proyecto, ignorado por git.</td>
+                            </tr>
+                            <tr>
+                                <td>Semillas aleatorias</td>
+                                <td>Fijación explícita por configuración, sin valores por defecto en el
+                                    código de negocio.</td>
+                            </tr>
+                            <tr>
+                                <td>Configuración numérica</td>
+                                <td><code>.env.example</code> versionado con valores deterministas.</td>
+                            </tr>
+                            <tr>
+                                <td>Validación automática</td>
+                                <td>Tests que comparan ejecuciones repetidas con tolerancia acotada.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="box info">
+                        <span class="label">¿Y el sistema operativo?</span>
+                        Sin Docker, las diferencias entre macOS, Linux y Windows pueden manifestarse en el
+                        último bit decimal de operaciones flotantes y en backends BLAS distintos. Para una API
+                        estadística académica esto rara vez es relevante; las tolerancias del orden de
+                        <code>1e-9</code> a <code>1e-6</code> en <code>pytest.approx</code> y
+                        <code>numpy.allclose</code> absorben esa variación. Cuando se requiera reproducibilidad
+                        bit a bit, el siguiente paso natural sí es Docker o <code>conda-lock</code>.
+                    </div>
+                </section>
+
+                <!-- ===================== AUTOEVALUACIÓN ===================== -->
+                <section id="autoevaluacion" class="unit">
+                    <h2>7. Autoevaluación</h2>
+
+                    <p>Los siguientes ejercicios consolidan los temas de la unidad. Se recomienda resolverlos
+                        sobre el repositorio <code>encuestas-api</code> que sirve de hilo conductor.</p>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.1 — Pirámide</span>
+                        Elabórese una tabla con cinco pruebas para la API de encuestas. Para cada una se debe
+                        indicar nivel de la pirámide, qué garantiza, qué no garantiza y costo aproximado de
+                        ejecución.
+                    </div>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.2 — pytest básico</span>
+                        Escríbase un módulo <code>app/intervalos.py</code> con la función
+                        <code>intervalo_confianza(datos, nivel)</code> que devuelva el IC de la media. A
+                        continuación se piden:
+                        <ol>
+                            <li>Tres pruebas unitarias que cubran un nivel de 0.90, 0.95 y 0.99.</li>
+                            <li>Una prueba parametrizada que verifique la propiedad: a mayor nivel, mayor
+                                ancho del intervalo.</li>
+                            <li>Un marcador <code>statistics</code> aplicado a estas pruebas y configurado en
+                                <code>pytest.ini</code>.
+                            </li>
+                        </ol>
+                    </div>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.3 — TestClient</span>
+                        Añádase un endpoint <code>POST /modelos/regresion</code> que reciba dos arreglos de la
+                        misma longitud y devuelva pendiente, intercepto y R² calculados con NumPy. Pruébese,
+                        usando <code>TestClient</code>:
+                        <ol>
+                            <li>Que arreglos de longitud distinta producen un 422.</li>
+                            <li>Que <code>x = [0, 1, 2, 3]</code> y <code>y = [1, 3, 5, 7]</code> producen
+                                pendiente 2 e intercepto 1, con tolerancia <code>1e-9</code>.</li>
+                            <li>Que cuando todos los <code>x</code> son iguales, el endpoint responde 409 con
+                                un mensaje claro.</li>
+                        </ol>
+                    </div>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.4 — Fixtures</span>
+                        Diséñese una fixture con scope <code>session</code> que cree un motor SQLAlchemy
+                        contra SQLite en memoria y construya el esquema una sola vez. Sobre ella, defínase
+                        una segunda fixture con scope <code>function</code> que abra una transacción al
+                        inicio y haga rollback al terminar. Justifíquese por qué esta combinación equilibra
+                        velocidad y aislamiento.
+                    </div>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.5 — Fábrica de datos</span>
+                        Escríbase una fixture <code>fabrica_serie_temporal</code> que devuelva una función
+                        capaz de generar una serie con tendencia lineal y ruido normal, parametrizable por
+                        longitud, pendiente, varianza del ruido y semilla. Documéntese su contrato en el
+                        <em>docstring</em>.
+                    </div>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.6 — Reproducibilidad</span>
+                        Sobre el repositorio del curso, agréguese un test
+                        <code>test_dependencias_fijas</code> que lea <code>requirements.txt</code> y
+                        verifique que ningún paquete usa <code>&gt;=</code> ni <code>~=</code>; sólo
+                        <code>==</code>. Discútase, en máximo 200 palabras, qué garantiza esta restricción y
+                        qué problema sigue sin garantizar.
+                    </div>
+
+                    <div class="box exercise">
+                        <span class="label">Ejercicio 7.7 — Síntesis</span>
+                        Tómese un commit en el que la suite de pruebas pase y modifíquese el código de
+                        <code>media_y_ee</code> para introducir un sesgo (por ejemplo, dividir entre
+                        <code>n</code> en lugar de <code>n-1</code>). Identifíquense las pruebas que detectan
+                        el sesgo, las que no lo detectan y propóngase qué prueba faltaba.
+                    </div>
+                </section>
+
+                <!-- ===================== RESUMEN ===================== -->
+                <section id="resumen" class="unit">
+                    <h2>8. Resumen y referencias</h2>
+
+                    <h3>8.1 Resumen ejecutivo</h3>
+                    <ol>
+                        <li>La pirámide de testing prescribe muchas pruebas baratas (unitarias), algunas
+                            intermedias (integración) y pocas costosas (E2E). Una API estadística saludable
+                            respeta esa proporción.</li>
+                        <li>pytest reemplaza la ceremonia de <code>unittest</code> por funciones simples,
+                            aserciones legibles y un sistema de fixtures expresivo. Sus marcadores y la
+                            parametrización permiten cubrir muchos casos sin duplicar código.</li>
+                        <li><code>TestClient</code> de FastAPI ejecuta peticiones contra la aplicación ASGI
+                            sin levantar un servidor real. Sustituyendo dependencias con
+                            <code>app.dependency_overrides</code> se aíslan endpoints de la base de datos y
+                            de servicios externos.
+                        </li>
+                        <li>Las fixtures con <code>yield</code> modelan el ciclo de vida de los recursos. El
+                            scope determina cuántas veces se crean; las fábricas-fixture entregan datos
+                            sintéticos parametrizables y deterministas.</li>
+                        <li>Reproducibilidad sin Docker se logra fijando la versión de Python, congelando
+                            dependencias con hashes, sembrando explícitamente cada generador aleatorio,
+                            documentando la configuración numérica en <code>.env</code> y validando todo lo
+                            anterior con tests automatizados.</li>
+                    </ol>
+
+                    <h3>8.2 Comandos útiles</h3>
+                    <pre><code><span class="cm"># Ejecutar toda la suite con resumen detallado:</span>
+pytest -ra
+
+<span class="cm"># Solo pruebas que coincidan con un patrón en el nombre:</span>
+pytest -k <span class="str">"regresion and not slow"</span>
+
+<span class="cm"># Mostrar las 10 pruebas más lentas:</span>
+pytest --durations=10
+
+<span class="cm"># Detener al primer fallo (útil para depurar):</span>
+pytest -x
+
+<span class="cm"># Reejecutar solo las pruebas que fallaron en la última corrida:</span>
+pytest --lf
+
+<span class="cm"># Listar fixtures disponibles:</span>
+pytest --fixtures</code></pre>
+
+                    <h3>8.3 Referencias oficiales</h3>
+                    <ul>
+                        <li>pytest — Documentación oficial: <code>https://docs.pytest.org/</code></li>
+                        <li>FastAPI — Testing: <code>https://fastapi.tiangolo.com/tutorial/testing/</code></li>
+                        <li>FastAPI — Sustituir dependencias en pruebas:
+                            <code>https://fastapi.tiangolo.com/advanced/testing-dependencies/</code>
+                        </li>
+                        <li>httpx — Cliente síncrono y asíncrono: <code>https://www.python-httpx.org/</code></li>
+                        <li>NumPy — Random Generator API:
+                            <code>https://numpy.org/doc/stable/reference/random/generator.html</code>
+                        </li>
+                        <li>pip-tools — Gestión reproducible de dependencias:
+                            <code>https://github.com/jazzband/pip-tools</code>
+                        </li>
+                        <li>PEP 517 / PEP 621 — <code>pyproject.toml</code> como fuente de verdad:
+                            <code>https://peps.python.org/pep-0621/</code>
+                        </li>
+                    </ul>
+
+                    <h3>8.4 Próximos pasos</h3>
+                    <p>Una vez consolidada la suite reproducible, la siguiente unidad cubre la integración
+                        continua: ejecutar <code>pytest</code> en cada <code>git push</code>, generar
+                        reportes de cobertura con <code>pytest-cov</code> y bloquear merges si la cobertura
+                        cae por debajo de un umbral. La pirámide construida en esta semana es la base sobre
+                        la que ese pipeline se vuelve verdaderamente útil.</p>
+                </section>
+
+                <footer>
+                    <p>Material académico — Programa de Estadística · Semana X · Python para APIs.</p>
+                    <p class="small">Documento autocontenido (gráficos por Plotly CDN). Versión del material: 2026-04
+                        rev. 2 · Compatible con Python
+                        3.11.9, FastAPI ≥ 0.100, pytest ≥ 8.0.</p>
+                </footer>
+
+            </div><!-- /.content-inner -->
+        </main>
+    </div><!-- /.app-shell -->
+
+    <script>
+        (function () {
+            'use strict';
+
+            const sections = Array.from(document.querySelectorAll('section.unit'));
+            const navButtons = Array.from(document.querySelectorAll('nav.sidebar-nav button[data-target]'));
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const contentArea = document.querySelector('main.content-area');
+
+            // Plotly chart IDs that need a resize call when their section becomes visible
+            // (charts created with newPlot inside display:none containers render at 0×0).
+            const PLOTLY_IDS = [
+                'plotly-piramide_testing',
+                'plotly-parametrizacion',
+                'plotly-fabrica_observaciones',
+                'plotly-reproducibilidad'
+            ];
+
+            function resizeVisiblePlotlyCharts() {
+                if (typeof Plotly === 'undefined' || !Plotly.Plots) return;
+                PLOTLY_IDS.forEach(function (id) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    if (el.offsetParent === null) return; // still hidden
+                    try { Plotly.Plots.resize(el); } catch (e) { /* noop */ }
+                });
+            }
+
+            function showSection(targetId, opts) {
+                opts = opts || {};
+                let matched = false;
+                sections.forEach(function (sec) {
+                    const isMatch = sec.id === targetId;
+                    sec.classList.toggle('is-active', isMatch);
+                    if (isMatch) matched = true;
+                });
+                if (!matched && sections.length) {
+                    sections[0].classList.add('is-active');
+                    targetId = sections[0].id;
+                }
+                navButtons.forEach(function (btn) {
+                    btn.classList.toggle('active', btn.dataset.target === targetId);
+                    if (btn.dataset.target === targetId) {
+                        btn.setAttribute('aria-current', 'page');
+                    } else {
+                        btn.removeAttribute('aria-current');
+                    }
+                });
+                if (!opts.preserveScroll && contentArea) {
+                    contentArea.scrollTop = 0;
+                }
+                if (!opts.skipHash) {
+                    if (history.replaceState) {
+                        history.replaceState(null, '', '#' + targetId);
+                    } else {
+                        window.location.hash = targetId;
+                    }
+                }
+                // Plotly charts inside the newly shown section need a resize.
+                window.requestAnimationFrame(function () {
+                    setTimeout(resizeVisiblePlotlyCharts, 30);
+                });
+            }
+
+            function isMobile() {
+                return window.matchMedia('(max-width: 900px)').matches;
+            }
+
+            function setSidebar(open) {
+                if (!sidebar) return;
+                sidebar.classList.toggle('collapsed', !open);
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.toggle('is-visible', open && isMobile());
+                }
+                if (sidebarToggleIcon) {
+                    sidebarToggleIcon.textContent = open ? '✕' : '☰';
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.setAttribute('aria-expanded', String(open));
+                }
+            }
+
+            // Initial state: sidebar open on desktop, collapsed on mobile
+            setSidebar(!isMobile());
+
+            navButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    showSection(btn.dataset.target);
+                    if (isMobile()) setSidebar(false);
+                });
+            });
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function () {
+                    const isOpen = !sidebar.classList.contains('collapsed');
+                    setSidebar(!isOpen);
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            // Re-evaluate sidebar state on resize (desktop ↔ mobile transitions)
+            let resizeTimer;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    if (!isMobile()) {
+                        setSidebar(true);
+                    }
+                    resizeVisiblePlotlyCharts();
+                }, 120);
+            });
+
+            // Initial section: from URL hash if valid, otherwise first section
+            const initialHash = window.location.hash ? window.location.hash.slice(1) : '';
+            const initialId = sections.some(function (s) { return s.id === initialHash; })
+                ? initialHash
+                : (sections[0] ? sections[0].id : '');
+            if (initialId) {
+                showSection(initialId, { preserveScroll: true, skipHash: true });
+            }
+
+            // React to manual hash changes (e.g., user pastes a deep link)
+            window.addEventListener('hashchange', function () {
+                const id = window.location.hash.slice(1);
+                if (sections.some(function (s) { return s.id === id; })) {
+                    showSection(id, { skipHash: true });
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>
