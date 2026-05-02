@@ -1,0 +1,8 @@
+archive/images/
+models/
+venv_sam/
+.git/
+.claude/
+__pycache__/
+*.pyc
+.DS_Store
