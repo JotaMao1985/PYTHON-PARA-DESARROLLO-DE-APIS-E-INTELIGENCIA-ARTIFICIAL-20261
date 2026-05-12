@@ -30,3 +30,6 @@ venv_sam/
 
 # Claude Code
 .claude/
+
+# Segundo cerebro (notas personales de docencia, no material curricular)
+cerebro/
