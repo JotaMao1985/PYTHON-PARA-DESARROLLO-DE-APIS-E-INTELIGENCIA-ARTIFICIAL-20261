@@ -63,10 +63,24 @@ start index.html     # Windows
 ├── index.html                  # Portada con navegación a los módulos
 ├── 0_Syllabus_P_A_IA.html      # Syllabus
 ├── 1_…  …  13_…                # Materiales numerados por sesión
-├── Proyecto_I/                 # Plantilla del proyecto integrador
-├── app/                        # Ejemplos de aplicación FastAPI
-├── data/                       # Datasets de apoyo
+├── Proyecto_I/                 # Submódulo: solución de referencia del proyecto integrador
+├── Examples/                   # Demos pedagógicas (FastAPI, Docker, IA) — ver Examples/README.md
+├── app/                        # Pipeline de clasificación de documentos
+├── data/                       # Datasets de apoyo (PDFs sintéticos)
 └── *.ipynb / *.py              # Notebooks y scripts complementarios
+```
+
+### Clonar con submódulos
+
+`Proyecto_I/` apunta al repo independiente
+[proyecto-integrador-riesgo-2026I](https://github.com/JotaMao1985/proyecto-integrador-riesgo-2026I).
+
+```bash
+# Clonar el curso incluyendo el integrador
+git clone --recurse-submodules https://github.com/JotaMao1985/PYTHON-PARA-DESARROLLO-DE-APIS-E-INTELIGENCIA-ARTIFICIAL-20261.git
+
+# Si ya lo clonaste sin submódulos:
+git submodule update --init --recursive
 ```
 
 ## Docente
