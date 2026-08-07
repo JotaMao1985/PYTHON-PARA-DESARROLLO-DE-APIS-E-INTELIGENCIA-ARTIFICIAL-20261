@@ -777,7 +777,7 @@ print(f"✓ Variable creada: {var.nombre}")
 print(f"  Nivel de confianza: {var.nivel_confianza}%")
 
 # 2. Error: desviación negativa
-print("\n=== Ejemplo 2: Error de validación ===")
+print("\\n=== Ejemplo 2: Error de validación ===")
 try:
     v = VariableEstadistica(
         nombre="Edad", 
@@ -788,7 +788,7 @@ except Exception as e:
     print(f"✗ Error: {e}")
 
 # 3. Error: nivel de confianza no es múltiplo de 5
-print("\n=== Ejemplo 3: Múltiplo inválido ===")
+print("\\n=== Ejemplo 3: Múltiplo inválido ===")
 try:
     v = VariableEstadistica(
         nombre="Test",
@@ -800,7 +800,7 @@ except Exception as e:
     print(f"✗ Error: {e}")
 
 # 4. Error: código postal inválido
-print("\n=== Ejemplo 4: Pattern inválido ===")
+print("\\n=== Ejemplo 4: Pattern inválido ===")
 try:
     p = Paciente(
         email="paciente@hospital.com",
