@@ -519,7 +519,7 @@
                                 <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-1"><code><span class="text-green-500 italic"># main.py — ❌ ANTIPATRÓN</span>
 <span class="text-pink-500 font-bold">from</span> sqlalchemy <span class="text-pink-500 font-bold">import</span> create_engine
 
-DATABASE_URL = <span class="text-yellow-300">"postgresql://admin:<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7724020712052412140512031846454437464e455946414f5946594247">[email&#160;protected]</a>:5432/encuestas_db"</span>
+DATABASE_URL = <span class="text-yellow-300">"postgresql://admin:SuperSecreto123@192.168.1.50:5432/encuestas_db"</span>
 API_KEY_REDCAP = <span class="text-yellow-300">"abc123xyz789"</span>
 
 engine = create_engine(DATABASE_URL)</code></pre>
@@ -1508,7 +1508,7 @@ app = FastAPI(
     </div>
 
     <!-- Sidebar Toggle Script -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script id="sidebar-toggle-script">
+    <script id="sidebar-toggle-script">
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('main-sidebar');
             const toggleBtn = document.getElementById('sidebar-toggle');
