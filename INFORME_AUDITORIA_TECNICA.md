@@ -487,10 +487,13 @@ está en la lista está verificado; lo que no está puede seguir ahí.
 5. **El orden lo manda el cronograma**, no la gravedad: lo que se dicta antes se arregla
    antes. Aplica a las Fases 2 y 3.
 
-**Sigue abierto:**
+6. **No hay módulos intocables.** Los 13 entran en la Fase 2.
+7. **La sesión de 4 h se reparte en 60 min de teoría + 180 min de práctica guiada.**
+   Coincide con lo que el syllabus ya declara (`CONFIG.minutosTeoria: 60`,
+   `CONFIG.minutosPractica: 180`, línea 1911): **no hay que tocar el syllabus**. Lo que sí
+   cambia es la Fase 2 — ver §10.2.
 
-6. **¿Hay módulos intocables?** Alguno que ya hayas revisado y prefieras que no mire.
-7. **El reparto 60/180 min de la sesión de 4 h**, heredado del plan del syllabus.
+**Con esto no queda ninguna pregunta abierta**, salvo confirmar la lectura del punto 4.
 
 ### 10.1 Orden de trabajo que se deriva del cronograma
 
@@ -502,6 +505,21 @@ Fase 3 corrige en ese mismo orden. Dos consecuencias que conviene ver ahora:
 - El **módulo 5** (reorientación a FastAPI, §12.2) es el trabajo más pesado y le toca
   pronto. Su ficha de Fase 2 debería redactarse cuanto antes para no reescribirlo dos
   veces.
+
+### 10.2 Lo que el reparto 60/180 añade a la Fase 2
+
+Confirmado el reparto, cada ficha de módulo tiene que responder dos preguntas más, que
+hasta ahora no estaban en los criterios C1–C4:
+
+- **¿La teoría del módulo cabe en 60 minutos?** No es retórico. Los módulos pesan entre
+  72 KB y **714 KB**: el 7 es diez veces el 4. Un módulo que necesita dos horas de
+  exposición no se arregla puliéndolo, se parte o se reparte en trabajo autónomo.
+- **¿El módulo aporta 180 minutos de práctica guiada?** Es el bloque grande de la sesión
+  y es donde se preparan los criterios de rúbrica. Un módulo que sea todo exposición deja
+  tres horas de clase sin material.
+
+Esto convierte el desequilibrio de tamaños (§2.4) de una observación estética en un
+criterio medible. La ficha de cada módulo debe estimar ambos tiempos y decir si cuadran.
 
 ---
 
