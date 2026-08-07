@@ -3229,9 +3229,9 @@ logger = logging.getLogger(__name__)
 <span class="text-yellow-400">@</span>classmethod
 <span class="text-pink-500 font-bold">def </span>validar_edad(cls, v: int) -&gt; int:
     <span class="text-green-500 italic"># "Corregir" edades negativas aplicando valor absoluto</span>
-<span class="text-pink-500 font-bold">if </span>v &lt; 0:
+    <span class="text-pink-500 font-bold">if </span>v &lt; 0:
         <span class="text-pink-500 font-bold">return </span>abs(v)  <span class="text-green-500 italic"># SILENCIOSAMENTE convierte -25 en 25</span>
-<span class="text-pink-500 font-bold">return </span>v
+    <span class="text-pink-500 font-bold">return </span>v
 </code></pre>
                                 </div>
                                 <div class="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
@@ -3274,13 +3274,13 @@ logger = logging.getLogger(__name__)
                                             data-language="python" id="code-block-8"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># IMPLEMENTACIÓN CORRECTA</span>
 <span class="text-yellow-400">@</span>field_validator('edad')
 <span class="text-yellow-400">@</span>classmethod
-    <span class="text-pink-500 font-bold">def </span>validar_edad(cls, v: int) -&gt; int:
-        <span class="text-pink-500 font-bold">if </span>v &lt; 0:
-            raise ValueError(
-                f"Edad con valor negativo detectado: {v}. "
-                "Este dato debe ser revisado manualmente."
-            )
-        <span class="text-pink-500 font-bold">return </span>v
+<span class="text-pink-500 font-bold">def </span>validar_edad(cls, v: int) -&gt; int:
+    <span class="text-pink-500 font-bold">if </span>v &lt; 0:
+        raise ValueError(
+            f"Edad con valor negativo detectado: {v}. "
+            "Este dato debe ser revisado manualmente."
+        )
+    <span class="text-pink-500 font-bold">return </span>v
 </code></pre>
                                     </div>
                                     <p class="text-gray-700 leading-relaxed mb-5"><em>Completar:</em> Proponer un
@@ -5301,7 +5301,7 @@ for sesion_data in sesiones_simuladas:
         <span class="text-blue-400">print</span>(f"   ✅ VALIDADA")
         <span class="text-blue-400">print</span>(f"   Vehículos procesados: {resultado['n_vehiculos']}")
     <span class="text-pink-500 font-bold">else:</span>
-<span class="text-blue-400">print</span>(f"   ❌ RECHAZADA")
+        <span class="text-blue-400">print</span>(f"   ❌ RECHAZADA")
         for error in resultado['errores']:
             <span class="text-blue-400">print</span>(f"   • Campo: {error['campo']}")
             <span class="text-blue-400">print</span>(f"     Error: {error['mensaje'][:60]}...")
