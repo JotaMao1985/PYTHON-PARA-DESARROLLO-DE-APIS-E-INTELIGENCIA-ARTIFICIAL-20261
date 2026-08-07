@@ -359,10 +359,10 @@
                             <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">¿Qué es un ORM y por qué existe?</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Imagina que hablas español y necesitas comunicarte con alguien que solo habla japonés. Podrías aprender japonés (escribir SQL directamente), o podrías usar un <strong>traductor</strong> que convierte lo que dices al idioma del otro. Un <strong>ORM</strong> (Object-Relational Mapper) es exactamente ese traductor: te permite trabajar con <strong>objetos Python normales</strong> — clases, atributos, listas — y el ORM traduce todo eso a instrucciones SQL detrás de escena.</p>
 
-                            <p class="text-gray-700 leading-relaxed mb-5">En lugar de escribir <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">INSERT INTO usuarios (nombre, email) VALUES ('Ada', '<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="42232623022f232b2e6c212d2f">[email&#160;protected]</a>')</code>, simplemente escribes:</p>
+                            <p class="text-gray-700 leading-relaxed mb-5">En lugar de escribir <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">INSERT INTO usuarios (nombre, email) VALUES ('Ada', 'ada@mail.com')</code>, simplemente escribes:</p>
 
                             <div class="bg-gray-900 text-gray-100 rounded-xl p-5 font-mono text-sm leading-relaxed my-4 shadow-lg">
-<pre>usuario = Usuario(nombre=<span class="text-yellow-300">"Ada"</span>, email=<span class="text-yellow-300">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="42232623022f232b2e6c212d2f">[email&#160;protected]</a>"</span>)
+<pre>usuario = Usuario(nombre=<span class="text-yellow-300">"Ada"</span>, email=<span class="text-yellow-300">"ada@mail.com"</span>)
 session.add(usuario)
 session.commit()</pre>
                             </div>
@@ -617,7 +617,7 @@ Base.metadata.create_all(engine)
 
 <span class="text-green-500 italic"># ═══ ENFOQUE 1: ORM — el "traductor" trabaja por ti ═══</span>
 <span class="text-pink-500 font-bold">with</span> Session(engine) <span class="text-pink-500 font-bold">as</span> session:
-    nuevo = Usuario(nombre=<span class="text-yellow-300">"Ada Lovelace"</span>, email=<span class="text-yellow-300">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5f3e3b3e1f3a273e322f333a713c3032">[email&#160;protected]</a>"</span>)
+    nuevo = Usuario(nombre=<span class="text-yellow-300">"Ada Lovelace"</span>, email=<span class="text-yellow-300">"ada@example.com"</span>)
     session.add(nuevo)
     session.commit()
 
@@ -629,7 +629,7 @@ Base.metadata.create_all(engine)
 <span class="text-pink-500 font-bold">with</span> engine.connect() <span class="text-pink-500 font-bold">as</span> conn:
     conn.execute(
         text(<span class="text-yellow-300">"INSERT INTO usuarios (nombre, email) VALUES (:nombre, :email)"</span>),
-        {<span class="text-yellow-300">"nombre"</span>: <span class="text-yellow-300">"Grace Hopper"</span>, <span class="text-yellow-300">"email"</span>: <span class="text-yellow-300">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="412633202224012439202c312d246f222e2c">[email&#160;protected]</a>"</span>}
+        {<span class="text-yellow-300">"nombre"</span>: <span class="text-yellow-300">"Grace Hopper"</span>, <span class="text-yellow-300">"email"</span>: <span class="text-yellow-300">"grace@example.com"</span>}
     )
     conn.commit()
 
@@ -1951,7 +1951,7 @@ ignore = ["B008"]  # Necesario para Depends() de FastAPI</pre></div>
     </div>
 
     <!-- Sidebar Toggle Script -->
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script id="sidebar-toggle-script">
+    <script id="sidebar-toggle-script">
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('main-sidebar');
             const toggleBtn = document.getElementById('sidebar-toggle');
