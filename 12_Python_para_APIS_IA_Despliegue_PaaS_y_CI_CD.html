@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Material de estudio sobre despliegue de APIs estadísticas en PaaS (Railway, Render), variables de entorno, CI/CD con GitHub Actions y logs de producción para estudiantes de Estadística.">
+        content="Material de estudio sobre despliegue de APIs estadísticas en PaaS (Render), variables de entorno, CI/CD con GitHub Actions y logs de producción para estudiantes de Estadística.">
     <title>Semana 12 — Despliegue, PaaS y CI/CD · Python para APIs e IA</title>
     <meta name="dc.date" content="2026-II">
     <meta name="course.period" content="2026-II">
     <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
     <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
     <meta property="og:title" content="Semana 12 — Despliegue, PaaS y CI/CD · Python para APIs e IA">
-    <meta property="og:description" content="Material de estudio sobre despliegue de APIs estadísticas en PaaS (Railway, Render), variables de entorno, CI/CD con GitHub Actions y logs de producción para estudiantes de Estadística.">
+    <meta property="og:description" content="Material de estudio sobre despliegue de APIs estadísticas en PaaS (Render), variables de entorno, CI/CD con GitHub Actions y logs de producción para estudiantes de Estadística.">
     <meta property="og:type" content="article">
     <meta name="author" content="Javier Mauricio Sierra">
 
@@ -892,7 +892,7 @@
                 </button>
                 <button type="button" data-target="railway">
                     <span class="nav-icon" aria-hidden="true"><i class="fas fa-server"></i></span>
-                    <span class="nav-label">Railway / Render</span>
+                    <span class="nav-label">Render</span>
                     <span class="nav-num">6</span>
                 </button>
                 <button type="button" data-target="autoevaluacion">
@@ -915,7 +915,7 @@
                 <h1>Despliegue, PaaS y CI/CD para APIs Estadísticas</h1>
                 <p class="subtitle">Concepto de PaaS, gestión de variables de entorno entre desarrollo y
                     producción, integración continua con GitHub Actions, observación de logs en producción y
-                    despliegue automático en Railway y Render mediante detección de Dockerfile.</p>
+                    despliegue automático en Render mediante detección de Dockerfile.</p>
                 <div class="meta">
                     <span>Python 3.11.9</span>
                     <span>FastAPI ≥ 0.100</span>
@@ -966,7 +966,7 @@
                     <li>la lectura e interpretación de <strong>logs en producción</strong>, generados con el
                         módulo <code>logging</code> de la biblioteca estándar y enviados a la salida
                         estándar del contenedor;</li>
-                    <li>el flujo de <strong>despliegue en Railway y Render con detección automática del
+                    <li>el flujo de <strong>despliegue en Render con detección automática del
                         Dockerfile</strong>, sin necesidad de configurar servidores ni imágenes manualmente.</li>
                 </ul>
 
@@ -976,7 +976,7 @@
                     de entorno separadas para desarrollo y producción mediante una clase tipada con
                     Pydantic Settings, escribe un workflow de GitHub Actions que ejecuta <code>pytest</code>
                     en cada cambio, instrumenta su API con logging por niveles de severidad y publica su
-                    servicio en Railway o Render aprovechando la detección automática del
+                    servicio en Render aprovechando la detección automática del
                     <code>Dockerfile</code>.
                 </div>
 
@@ -1132,7 +1132,7 @@
                 </table>
 
                 <div class="box info">
-                    <span class="label">Por qué Railway y Render en este curso</span>
+                    <span class="label">Por qué Render en este curso</span>
                     Ambos ofrecen capa gratuita suficiente para fines docentes, despliegue desde GitHub con un
                     par de clics y, sobre todo, <em>detectan automáticamente el Dockerfile</em>. Esto permite
                     aprovechar la imagen Docker construida en la semana anterior sin reescribir
@@ -1300,7 +1300,7 @@ encuestas.db
                     <code>Dockerfile</code> con <code>ENV</code>; se inyectan en tiempo de ejecución.
                 </div>
 
-                <h3>3.4 Variables en Railway y Render</h3>
+                <h3>3.4 Variables en Render</h3>
                 <p>Ambos proveedores ofrecen un panel donde se definen las variables y se inyectan al
                     contenedor antes del arranque. Para la API estadística, una configuración productiva
                     típica luce así:</p>
@@ -1315,11 +1315,10 @@ APP_NIVEL_CONFIANZA=0.95
 <span class="cm"># PORT lo inyecta automáticamente el proveedor; no debe definirse a mano</span>
 </code></pre>
 
-                <p>Cuando se aprovisiona una base de datos PostgreSQL gestionada (un <em>add-on</em> en
-                    Railway o un servicio de base en Render), el proveedor expone una variable como
+                <p>Cuando se aprovisiona una base de datos PostgreSQL gestionada (un servicio de base de datos de Render), el proveedor expone una variable como
                     <code>DATABASE_URL</code> que puede referenciarse desde la configuración:</p>
 
-<pre><code><span class="cm"># Railway permite escribir referencias entre variables:</span>
+<pre><code><span class="cm"># Render permite referenciar variables de otros servicios:</span>
 APP_BD_URL=${{Postgres.DATABASE_URL}}
 </code></pre>
 
@@ -1388,7 +1387,7 @@ APP_BD_URL=${{Postgres.DATABASE_URL}}
                     <div class="pipeline-arrow" aria-hidden="true">›</div>
                     <div class="pipeline-step">
                         <span class="num">04</span>CD: build + deploy
-                        <span class="desc">Railway/Render reconstruye y publica.</span>
+                        <span class="desc">Render reconstruye y publica.</span>
                     </div>
                 </div>
 
@@ -1492,7 +1491,7 @@ APP_BD_URL=${{Postgres.DATABASE_URL}}
                 <p>El despliegue automático se configura una sola vez:</p>
 
                 <ol>
-                    <li>En Railway o Render se selecciona <em>Deploy from GitHub repo</em> y se autoriza el
+                    <li>En Render se selecciona <em>Deploy from GitHub repo</em> y se autoriza el
                         acceso al repositorio.</li>
                     <li>Se elige la rama de seguimiento (típicamente <code>main</code>).</li>
                     <li>Se configuran las variables de entorno productivas en el panel.</li>
@@ -1501,7 +1500,7 @@ APP_BD_URL=${{Postgres.DATABASE_URL}}
                 </ol>
 
                 <p>El estudiante observará que, al fusionar un PR aprobado, en cuestión de uno o dos minutos
-                    Railway/Render compila el Dockerfile y publica la nueva versión. Si los tests del PR
+                    Render compila el Dockerfile y publica la nueva versión. Si los tests del PR
                     pasaron, hay una probabilidad muy alta de que el despliegue también lo haga.</p>
 
                 <div class="box info">
@@ -1684,7 +1683,7 @@ router = <span class="fn">APIRouter</span>()
                 </div>
 
                 <h3>5.5 Cómo se ven los logs en producción</h3>
-                <p>Una traza típica de la API en Railway o Render durante una petición exitosa luce así (los
+                <p>Una traza típica de la API en Render durante una petición exitosa luce así (los
                     colores corresponden al nivel):</p>
 
                 <div class="log-window" role="log" aria-label="Ejemplo de logs en producción">
@@ -1713,7 +1712,7 @@ router = <span class="fn">APIRouter</span>()
                     esa salida. Para el alcance de este curso es suficiente con el formateador de texto
                     descrito en 5.3.</p>
 
-                <h3>5.7 Lectura de logs en Railway y Render</h3>
+                <h3>5.7 Lectura de logs en Render</h3>
                 <p>Ambos paneles ofrecen una vista en vivo de la salida estándar y estándar de error del
                     contenedor. Las funciones típicas son:</p>
                 <ul>
@@ -1729,16 +1728,16 @@ router = <span class="fn">APIRouter</span>()
                     El undécimo principio de los <em>Twelve-Factor Apps</em> dice: <em>logs as event
                     streams</em>. La aplicación no debe preocuparse por archivos de log, rotación ni
                     destino: simplemente escribe a <code>stdout</code>. La plataforma se encarga del resto.
-                    Esto es exactamente lo que hacen Railway y Render.
+                    Esto es exactamente lo que hacen Render.
                 </div>
             </section>
 
             <!-- ===================== RAILWAY / RENDER ===================== -->
             <section id="railway" class="unit">
-                <h2>6. Railway / Render: detección automática de Dockerfile</h2>
+                <h2>6. Render: detección automática de Dockerfile</h2>
 
                 <h3>6.1 ¿Cómo deciden estos PaaS qué construir?</h3>
-                <p>Cuando se conecta un repositorio a Railway o Render, el proveedor inspecciona los
+                <p>Cuando se conecta un repositorio a Render, el proveedor inspecciona los
                     archivos de la raíz para decidir el método de construcción:</p>
 
                 <div class="ascii-diagram">¿Existe Dockerfile en la raíz?
@@ -1754,7 +1753,7 @@ router = <span class="fn">APIRouter</span>()
                     Render) se ignoran. Esto da control total sobre la imagen y deja al proveedor sólo el
                     rol de construir, ejecutar y exponer.</p>
 
-                <h3>6.2 Requisitos del Dockerfile para Railway / Render</h3>
+                <h3>6.2 Requisitos del Dockerfile para Render</h3>
                 <p>El Dockerfile multi-stage de la semana anterior ya cumple casi todo lo necesario. Sólo
                     requiere dos confirmaciones:</p>
                 <ol>
@@ -1804,27 +1803,26 @@ router = <span class="fn">APIRouter</span>()
                     cada <code>logger.info(...)</code> se ve casi en tiempo real.
                 </div>
 
-                <h3>6.3 Flujo de despliegue en Railway</h3>
+                <h3>6.3 Flujo de despliegue en Render</h3>
                 <p>El procedimiento típico, ya en posesión del Dockerfile anterior, es:</p>
                 <ol>
-                    <li>Crear cuenta en <code>railway.app</code> y autorizar el acceso al repositorio
+                    <li>Crear cuenta en <code>render.com</code> y autorizar el acceso al repositorio
                         GitHub.</li>
                     <li>Pulsar <em>New Project ▸ Deploy from GitHub repo</em> y seleccionar el repositorio
                         de la API.</li>
-                    <li>Railway detecta el <code>Dockerfile</code> y construye la primera versión sin
+                    <li>Render detecta el <code>Dockerfile</code> y construye la primera versión sin
                         intervención adicional.</li>
                     <li>En <em>Variables</em> se introducen <code>APP_ENTORNO=production</code>,
                         <code>APP_DEBUG=false</code>, <code>APP_LOG_LEVEL=INFO</code>,
                         <code>APP_BD_URL</code>, etc. La variable <code>PORT</code> se inyecta automáticamente
                         y no debe definirse a mano.</li>
                     <li>En <em>Settings ▸ Networking</em> se genera un dominio público
-                        (<code>encuestas-api.up.railway.app</code>). Opcionalmente se asigna uno propio.</li>
+                        (<code>encuestas-api.onrender.com</code>). Opcionalmente se asigna uno propio.</li>
                     <li>Cualquier <em>push</em> futuro a la rama elegida dispara un nuevo
                         <em>build</em> + <em>deploy</em>.</li>
                 </ol>
 
-                <h3>6.4 Flujo de despliegue en Render</h3>
-                <p>El procedimiento es análogo, con dos diferencias prácticas:</p>
+                <p>Dos detalles de Render que conviene tener presentes desde el primer despliegue:</p>
                 <ol>
                     <li>Render distingue entre <em>Web Service</em> (servicio HTTP) y otros tipos
                         (background worker, cron job, base de datos). Para la API se elige
@@ -1835,43 +1833,14 @@ router = <span class="fn">APIRouter</span>()
                         <em>health check</em> periódico desde un servicio externo.</li>
                 </ol>
 
-                <h3>6.5 Comparativa rápida</h3>
 
-                <div class="platform-grid">
-                    <div class="platform-card">
-                        <h4>Railway</h4>
-                        <ul>
-                            <li>Cuotas por horas de uso al mes.</li>
-                            <li>Add-ons sencillos para PostgreSQL, MySQL, Redis.</li>
-                            <li>Referencias entre variables (<code>${{Postgres.DATABASE_URL}}</code>).</li>
-                            <li>Despliegue muy rápido para Dockerfile pequeños.</li>
-                        </ul>
-                    </div>
-                    <div class="platform-card">
-                        <h4>Render</h4>
-                        <ul>
-                            <li>Suspende servicios gratuitos por inactividad.</li>
-                            <li>Bases gestionadas con backups automáticos.</li>
-                            <li>Configuración declarativa en <code>render.yaml</code> (Infraestructura como
-                                código).</li>
-                            <li>Mejor visualización histórica de despliegues.</li>
-                        </ul>
-                    </div>
+                <div class="box info">
+                    <span class="label">¿Y las otras plataformas?</span>
+                    Railway, Fly.io o Heroku resuelven lo mismo con flujos muy parecidos, y lo que
+                    aprendas aquí se traslada a cualquiera de ellas: detectar el Dockerfile, inyectar
+                    <code>PORT</code> y desplegar desde GitHub es el patrón común. Este curso trabaja
+                    y evalúa sobre <strong>Render</strong>, que es la plataforma que declara el syllabus.
                 </div>
-
-                <p>La Figura 6.1 sintetiza la comparación en ocho dimensiones operativas relevantes para el
-                    curso. Ambas plataformas detectan automáticamente el Dockerfile; las diferencias se
-                    concentran en el modelo de plan gratuito, en el soporte de Infraestructura como Código y
-                    en utilidades específicas como las referencias entre variables de Railway.</p>
-
-                <div class="chart-container">
-<div>                            <div id="plotly-railway-render" class="plotly-graph-div" style="height:480px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("plotly-railway-render")) {                    Plotly.newPlot(                        "plotly-railway-render",                        [{"fill":"toself","fillcolor":"rgba(61,0,141,0.25)","hovertemplate":"\u003cb\u003eRailway\u003c\u002fb\u003e \u00b7 %{theta}\u003cbr\u003eCalificaci\u00f3n: %{r}\u002f5\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#3D008D","width":2},"name":"Railway","r":[5,5,4,3,2,4,5,5,5],"theta":["Detecci\u00f3n Dockerfile","Velocidad de build","Add-ons gestionados","Plan gratuito (horas\u002fmes)","IaC declarativa","Logs en vivo","Referencias entre variables","Integraci\u00f3n GitHub","Detecci\u00f3n Dockerfile"],"type":"scatterpolar"},{"fill":"toself","fillcolor":"rgba(237,30,121,0.25)","hovertemplate":"\u003cb\u003eRender\u003c\u002fb\u003e \u00b7 %{theta}\u003cbr\u003eCalificaci\u00f3n: %{r}\u002f5\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ED1E79","width":2},"name":"Render","r":[5,4,5,4,5,5,4,5,5],"theta":["Detecci\u00f3n Dockerfile","Velocidad de build","Add-ons gestionados","Plan gratuito (horas\u002fmes)","IaC declarativa","Logs en vivo","Referencias entre variables","Integraci\u00f3n GitHub","Detecci\u00f3n Dockerfile"],"type":"scatterpolar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"family":"Montserrat, Helvetica Neue, Arial, sans-serif","size":12,"color":"#1E293B"},"margin":{"l":60,"r":60,"t":80,"b":60},"title":{"text":"\u003cb\u003eRailway vs. Render: capacidades comparadas\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003eEscala 1\u20135 \u00b7 valoraci\u00f3n did\u00e1ctica para una API estad\u00edstica acad\u00e9mica \u00b7 \u003ci\u003ePlan gratuito\u003c\u002fi\u003e medido por horas mensuales totales\u003c\u002fspan\u003e","x":0},"polar":{"radialaxis":{"tickfont":{"size":10},"visible":true,"range":[0,5],"gridcolor":"#E2E8F0"},"angularaxis":{"tickfont":{"size":11},"gridcolor":"#E2E8F0"},"bgcolor":"white"},"legend":{"orientation":"h","y":-0.05,"x":0.5,"xanchor":"center"},"paper_bgcolor":"white","plot_bgcolor":"white","height":480},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
-</div>
-                <p class="chart-caption">Figura 6.1 — Railway destaca en velocidad de build y en
-                    referencias entre variables; Render destaca en plan gratuito (más horas mensuales),
-                    en <em>Infrastructure as Code</em> con <code>render.yaml</code> y en add-ons
-                    gestionados con backups automáticos. Las calificaciones son ilustrativas y reflejan el
-                    estado en 2026; los planes comerciales evolucionan rápidamente.</p>
 
                 <h3>6.6 Health check para alta disponibilidad</h3>
                 <p>Ambos proveedores aceptan un endpoint que el balanceador consulta para decidir si el
@@ -1887,7 +1856,7 @@ router = <span class="fn">APIRouter</span>()
     <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>}
 </code></pre>
 
-                <p>En Railway no es obligatorio definirlo (la simple aceptación de conexiones TCP basta).
+                <p>En Render no es obligatorio definirlo (la simple aceptación de conexiones TCP basta).
                     En Render se configura en <em>Settings ▸ Health Check Path = /healthz</em>. El nombre
                     <code>/healthz</code> es una convención de Kubernetes adoptada por la comunidad: la
                     <code>z</code> al final reduce la probabilidad de colisión con un endpoint de negocio.</p>
@@ -1928,7 +1897,7 @@ router = <span class="fn">APIRouter</span>()
                     <span class="label">Ejercicio 7.1 — IaaS, PaaS y SaaS</span>
                     Clasifíquense los siguientes servicios en IaaS, PaaS o SaaS y justifíquese brevemente:
                     (a) una máquina virtual de DigitalOcean en la que el usuario instala Ubuntu y Nginx;
-                    (b) Railway desplegando un Dockerfile; (c) Google Sheets; (d) un cluster gestionado de
+                    (b) Render desplegando un Dockerfile; (c) Google Sheets; (d) un cluster gestionado de
                     Kubernetes en GCP donde el usuario administra los <em>deployments</em>; (e) Heroku
                     ejecutando una aplicación Django con un buildpack.
                 </div>
@@ -1937,7 +1906,7 @@ router = <span class="fn">APIRouter</span>()
                     <ul>
                         <li>(a) <strong>IaaS</strong>: el proveedor entrega virtualización y red; el usuario
                             administra SO, runtime, middleware y aplicación.</li>
-                        <li>(b) <strong>PaaS</strong>: Railway gestiona SO, runtime y red; el usuario
+                        <li>(b) <strong>PaaS</strong>: Render gestiona SO, runtime y red; el usuario
                             entrega código (Dockerfile) y datos.</li>
                         <li>(c) <strong>SaaS</strong>: el usuario sólo consume la aplicación final; ni el
                             código ni los datos están bajo su control de implementación.</li>
@@ -2043,7 +2012,7 @@ numpy.linalg.LinAlgError: Singular matrix</code></pre>
                 <div class="box exercise">
                     <span class="label">Ejercicio 7.5 — Variables de entorno</span>
                     Identifíquense los problemas en el siguiente <code>Dockerfile</code> en el contexto de
-                    un despliegue en Railway, y propónganse correcciones:
+                    un despliegue en Render, y propónganse correcciones:
 <pre><code><span class="kw">FROM</span> python:3.11.9-slim-bookworm
 <span class="kw">ENV</span> APP_BD_URL=postgresql://prod_user:s3cret@db:5432/encuestas
 <span class="kw">COPY</span> . /app
@@ -2061,7 +2030,7 @@ numpy.linalg.LinAlgError: Singular matrix</code></pre>
                         <li><strong><code>--host 127.0.0.1</code>:</strong> el contenedor sólo aceptará
                             tráfico desde sí mismo y el balanceador no podrá alcanzarlo. Debe ser
                             <code>0.0.0.0</code>.</li>
-                        <li><strong>Puerto fijo:</strong> Railway inyecta <code>PORT</code>. La forma
+                        <li><strong>Puerto fijo:</strong> Render inyecta <code>PORT</code>. La forma
                             correcta es <code>--port ${PORT:-8000}</code> con
                             <code>CMD ["sh", "-c", "..."]</code>.</li>
                         <li><strong><code>COPY . /app</code> sin orden:</strong> impide cachear la capa de
@@ -2148,14 +2117,14 @@ router = <span class="fn">APIRouter</span>()
                         se inyectan desde el panel del proveedor. Pydantic Settings unifica la lectura con
                         tipos verificables.</li>
                     <li>CI/CD básico se construye con dos piezas: <em>GitHub Actions</em> ejecutando
-                        <code>pytest</code> en cada push y el PaaS (Railway o Render) reconstruyendo y
+                        <code>pytest</code> en cada push y el PaaS (Render) reconstruyendo y
                         desplegando al fusionar en <code>main</code>. La protección de rama materializa la
                         política de calidad.</li>
                     <li>Los logs en producción se emiten con el módulo <code>logging</code>, escriben a
                         <code>stdout</code> y los recoge el proveedor. Los niveles
                         <code>DEBUG</code>/<code>INFO</code>/<code>WARNING</code>/<code>ERROR</code>/<code>CRITICAL</code>
                         permiten filtrar y diagnosticar; los datos sensibles nunca se registran.</li>
-                    <li>Railway y Render detectan automáticamente el <code>Dockerfile</code> en la raíz del
+                    <li>Render detectan automáticamente el <code>Dockerfile</code> en la raíz del
                         repositorio. Basta con que el <code>CMD</code> use <code>${PORT:-8000}</code> y
                         escuche en <code>0.0.0.0</code> para que la imagen multi-stage de la semana
                         anterior funcione sin modificaciones.</li>
@@ -2217,7 +2186,7 @@ gh secret list
                     <p>Material académico — Programa de Estadística · Semana V · Python para APIs.</p>
                     <p class="small">Documento autocontenido (gráficos servidos por Plotly CDN). Versión
                         del material: 2026-04 rev. 2 · Compatible con Python 3.11.9, FastAPI ≥ 0.100,
-                        Docker, GitHub Actions, Railway y Render.</p>
+                        Docker, GitHub Actions, Render.</p>
                 </footer>
 
             </div><!-- /.content-inner -->
