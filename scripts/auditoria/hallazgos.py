@@ -406,7 +406,7 @@ def main() -> int:
 
 
 def a_markdown(pruebas) -> str:
-    hoy = "2026-08-07"
+    hoy = "2026-08-08"
     L = [
         "# Estado de los hallazgos de la auditoría",
         "",

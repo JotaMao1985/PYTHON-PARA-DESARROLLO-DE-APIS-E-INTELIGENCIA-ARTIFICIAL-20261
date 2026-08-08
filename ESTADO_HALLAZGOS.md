@@ -1,7 +1,7 @@
 # Estado de los hallazgos de la auditoría
 
 **Asignatura:** Python para Desarrollo de APIs e IA · USTA · Estadística · 2026-II  
-**Generado:** 2026-08-07 por `scripts/auditoria/hallazgos.py --markdown`
+**Generado:** 2026-08-08 por `scripts/auditoria/hallazgos.py --markdown`
 
 > **No edites esta tabla a mano.** El registro vive en `scripts/auditoria/hallazgos.py`,
 > y 41 de los 53 hallazgos llevan una prueba que se ejecuta contra los

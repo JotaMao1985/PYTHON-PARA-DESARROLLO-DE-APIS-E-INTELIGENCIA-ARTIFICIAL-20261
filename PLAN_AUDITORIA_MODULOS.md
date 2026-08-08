@@ -1,10 +1,10 @@
 # Plan de auditoría de los 13 módulos del curso
 
 **Asignatura:** Python para Desarrollo de APIs e IA · USTA · Estadística · 2026-II
-**Fecha:** 2026-08-06 · **Cerrado el 2026-08-07**
+**Fecha:** 2026-08-06 · **Cerrado el 2026-08-08**
 **Estado:** **EJECUTADO.** Las tres fases están hechas y los 13 módulos, corregidos.
 
-> **Cierre (2026-08-07).** Fase 1 → `INFORME_AUDITORIA_TECNICA.md`, Fase 2 →
+> **Cierre (2026-08-08).** Fase 1 → `INFORME_AUDITORIA_TECNICA.md`, Fase 2 →
 > `INFORME_AUDITORIA_PEDAGOGICA.md`, Fase 3 → `PLAN_FASE_3.md` + `INFORME_FASE_3.md`.
 >
 > El docente eligió la **Opción A revisada completa** (§3), con el módulo 5 dentro. Los

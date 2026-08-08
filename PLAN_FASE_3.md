@@ -1,7 +1,7 @@
 # Plan de ejecución — Fase 3 (correcciones)
 
 **Asignatura:** Python para Desarrollo de APIs e IA · USTA · Estadística · 2026-II
-**Fecha:** 2026-08-07 · **Las clases empiezan mañana, 8 de agosto.**
+**Fecha:** 2026-08-08 · **La semana 1 empieza hoy.**
 **Deriva de:** `PLAN_AUDITORIA_MODULOS.md` §2 (Fase 3) · `INFORME_AUDITORIA_TECNICA.md` · `INFORME_AUDITORIA_PEDAGOGICA.md`
 
 ---
@@ -10,7 +10,7 @@
 
 Estaban en §9 del informe pedagógico y son la razón de que la Fase 3 no empezara antes.
 
-| | Pregunta | Decisión del docente (2026-08-07) |
+| | Pregunta | Decisión del docente (2026-08-08) |
 |---|---|---|
 | **D1** | Alcance | **Opción A revisada completa**, incluida la reorientación del módulo 5 de Flask a FastAPI |
 | **D2** | Criterio 14 «Tablero (frontend)», 3 % | **Añadir material de tablero al módulo 13.** La rúbrica no se toca |
@@ -131,7 +131,7 @@ Cada módulo, antes de pasar al siguiente:
 ### 3.2 Checkpoints
 
 > **Checkpoint 3.1 — tras T2.** Los dos módulos que se dictan estas dos semanas quedan
-> corregidos y verificados. Es el mínimo entregable antes de mañana.
+> corregidos y verificados. Es el mínimo entregable antes de la primera sesión.
 
 > **Checkpoint 3.2 — tras T5b.** Los cuatro bloqueantes pedagógicos cerrados (P1 queda
 > para T13 por ser del módulo 13). El corte I cae en la semana 5.

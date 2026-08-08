@@ -1,7 +1,7 @@
 # Informe de correcciones — Fase 3
 
 **Asignatura:** Python para Desarrollo de APIs e Inteligencia Artificial · USTA · Estadística · 2026-II
-**Fecha:** 2026-08-07 · **Las clases empiezan mañana, 8 de agosto.**
+**Fecha:** 2026-08-08 · **La semana 1 empieza hoy.**
 **Alcance ejecutado:** Opción A revisada **completa**, incluida la reorientación del módulo 5.
 **Corresponde a:** Fase 3 y Checkpoint 3 del `PLAN_AUDITORIA_MODULOS.md` · plan de ejecución en `PLAN_FASE_3.md`
 **Fases anteriores:** `INFORME_AUDITORIA_TECNICA.md` (1) · `INFORME_AUDITORIA_PEDAGOGICA.md` (2)
@@ -36,7 +36,7 @@ al corregir:
 
 ## 1. Las cuatro decisiones que abrieron la fase
 
-Estaban abiertas en §9 del informe pedagógico y las cerró el docente el 2026-08-07:
+Estaban abiertas en §9 del informe pedagógico y las cerró el docente el 2026-08-08:
 
 | | Pregunta | Decisión |
 |---|---|---|
