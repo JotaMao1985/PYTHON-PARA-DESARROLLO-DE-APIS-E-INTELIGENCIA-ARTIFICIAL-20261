@@ -8,7 +8,14 @@
         content="Curso intensivo de Python 3.11 para estadísticos: Protocolos HTTP, JSON vs Pickle, Pydantic y Entornos Virtuales.">
     <meta name="author" content="Javier Mauricio Sierra">
     <meta name="keywords" content="Python, estadística, data science, APIs, HTTP, JSON, Pickle, Pydantic, venv, Docker">
-    <title>Semana II - Ingeniería de Datos y Despliegue</title>
+    <title>Semana 2 — Serialización y el protocolo HTTP · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 2 — Serialización y el protocolo HTTP · Python para APIs e IA">
+    <meta property="og:description" content="Curso intensivo de Python 3.11 para estadísticos: Protocolos HTTP, JSON vs Pickle, Pydantic y Entornos Virtuales.">
+    <meta property="og:type" content="article">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -333,8 +340,8 @@
                     <div>
                         <h1 class="text-xl font-bold text-white leading-tight tracking-tight">Ingeniería de Datos con
                             Python</h1>
-                        <p class="text-xs text-white/70 font-medium tracking-wide">SESIÓN 2 • PROTOCOLOS Y CALIDAD •
-                            USTA</p>
+                        <p class="text-xs text-white/70 font-medium tracking-wide">SEMANA 2 • ESTADÍSTICA • USTA •
+                            2026-II</p>
                     </div>
                 </div>
                 <nav class="hidden md:flex items-center gap-4 text-sm mt-4 md:mt-0">
@@ -361,11 +368,23 @@
             </div>
 
             <!-- Visual Progress Map -->
-            <div class="relative flex justify-between items-center max-w-3xl mx-auto" id="pipeline-container">
+            <div class="relative flex justify-between items-center max-w-3xl mx-auto overflow-x-auto pb-1" id="pipeline-container">
                 <!-- Steps injected via JS -->
             </div>
         </div>
     </header>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-2"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-2" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 2 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Verbos, códigos de estado y cabeceras</li><li style="margin:0 0 .3rem 0;">JSON frente a Pickle: por qué Pickle no viaja</li><li style="margin:0 0 .3rem 0;">requirements.txt y el congelado de dependencias</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Parsear un JSON de entrada y validarlo a mano</li><li style="margin:0 0 .3rem 0;">Responder con un diccionario serializado</li><li style="margin:0 0 .3rem 0;">Congelar las dependencias del proyecto</li><li style="margin:0 0 .3rem 0;">Redactar los esquemas de entrada y salida del dataset elegido</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Validación con Pydantic (adelanto de la semana 4)</li><li style="margin:0 0 .3rem 0;">Bonus: funciones en Python (repaso, por debajo del nivel de la semana)</li><li style="margin:0 0 .3rem 0;">Las lecturas recomendadas del cierre</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">El bloque de Pydantic es un adelanto deliberado: aquí se ve para qué sirve validar de forma declarativa, y la semana 4 es un módulo entero dedicado a ello. El bonus de funciones es un repaso de apoyo: si ya escribes funciones con soltura, sáltatelo.</p>
+</section>
+
 
     <div class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 gap-8">
 
@@ -389,7 +408,7 @@
     </div>
 
     <!-- Tip Pedagógico Fijo -->
-    <div class="fixed bottom-4 left-4 md:w-72 tip-box p-4 rounded-xl shadow-lg z-40" id="tip-pedagogico">
+    <div class="fixed bottom-4 left-4 right-4 md:right-auto md:w-72 tip-box p-4 rounded-xl shadow-lg z-40" id="tip-pedagogico">
         <div class="flex justify-between items-start">
             <div>
                 <h4 class="font-bold text-primary text-sm mb-1 flex items-center gap-2">
@@ -788,7 +807,7 @@ print("¡Conservó la Fecha y la Tupla exactas!")`,
                     id: "m3",
                     title: "Módulo 3: Validación con Pydantic",
                     shortTitle: "Pydantic",
-                    objective: "Implementar validación estricta de tipos para asegurar la calidad de los datos de entrada, usando Modelos, Field, Validadores y el patrón de limpieza de DataFrames.",
+                    objective: "Implementar validación estricta de tipos para asegurar la calidad de los datos de entrada, usando Modelos, Field, Validadores y el patrón de limpieza de DataFrames. Es un adelanto deliberado de la semana 4, que es un módulo entero dedicado a Pydantic: aquí basta con que veas para qué sirve validar de forma declarativa y por qué un esquema es mejor que una tanda de ifs.",
                     duration: "40 min",
                     content: {
                         concept: {
@@ -1132,7 +1151,7 @@ pip freeze > requirements.txt
                     id: "m7",
                     title: "Módulo 5 (Bonus): Funciones en Python",
                     shortTitle: "Funciones",
-                    objective: "Aprender a encapsular lógica y reutilizar código mediante funciones.",
+                    objective: "Aprender a encapsular lógica y reutilizar código mediante funciones. Es material de apoyo, por debajo del nivel de la semana 2: está aquí como red de seguridad para quien llegue con poca práctica en Python. Si ya escribes funciones con soltura, sáltatelo — no se expone en clase ni se evalúa.",
                     duration: "25 min",
                     content: {
                         concept: {
@@ -1297,10 +1316,13 @@ echo "✅ Proyecto listo para trabajar"`,
                         ],
                         chartData: {
                             type: 'radar',
-                            label: 'Competencias Desarrolladas',
-                            labels: ['Rendimiento (Py3.11)', 'Aislamiento (Venv/Conda)', 'Contenedores (Docker)', 'Control Versiones (Git)', 'Validación (Decoradores)'],
-                            data: [85, 90, 70, 80, 85],
-                            description: "Mapa de competencias técnicas cubiertas en este curso."
+                            titulo: 'Reparto del tiempo de esta sesión',
+                            label: 'Minutos declarados',
+                            unidad: 'min',
+                            max: 40,
+                            labels: ['Protocolo HTTP', 'JSON frente a Pickle', 'Pydantic (adelanto)', 'requirements.txt', 'Funciones (bonus)', 'Síntesis'],
+                            data: [40, 30, 40, 20, 25, 15],
+                            description: "Los minutos que este material declara para cada bloque, leídos de la cabecera de cada lección: suman 170. Son los de esta semana —HTTP, serialización y dependencias—, no los de la anterior. Dos de los seis bloques no son materia de la semana 2: «Pydantic» es un adelanto de la semana 4 y «Funciones» es un repaso de apoyo."
                         }
                     }
                 }
@@ -1330,7 +1352,7 @@ echo "✅ Proyecto listo para trabajar"`,
             pipelineContainer.innerHTML = '';
             courseData.modules.forEach((mod, index) => {
                 const step = document.createElement('div');
-                step.className = `relative flex flex-col items-center z-10 flex-1 step-connector cursor-pointer group`;
+                step.className = `relative flex flex-col items-center z-10 flex-1 min-w-[76px] step-connector cursor-pointer group`;
                 if (index === courseData.modules.length - 1) step.classList.remove('step-connector');
 
                 // State classes
@@ -1567,7 +1589,7 @@ echo "✅ Proyecto listo para trabajar"`,
                             <span class="usta-gradient text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">
                                 <i class="fas fa-chart-pie text-xs"></i>
                             </span>
-                            Competencias Desarrolladas
+                            ${mod.content.chartData.titulo || 'Competencias Desarrolladas'}
                         </h3>
                         <div class="flex flex-col md:flex-row items-center gap-6">
                             <div class="w-full md:w-1/2" style="height: 320px;">
@@ -1581,9 +1603,9 @@ echo "✅ Proyecto listo para trabajar"`,
                                             <span class="text-gray-700">${label}</span>
                                             <div class="flex items-center gap-2">
                                                 <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                    <div class="h-full usta-gradient rounded-full" style="width: ${mod.content.chartData.data[i]}%"></div>
+                                                    <div class="h-full usta-gradient rounded-full" style="width: ${Math.round(100 * mod.content.chartData.data[i] / (mod.content.chartData.max || 100))}%"></div>
                                                 </div>
-                                                <span class="text-xs font-bold text-primary">${mod.content.chartData.data[i]}%</span>
+                                                <span class="text-xs font-bold text-primary">${mod.content.chartData.data[i]}${mod.content.chartData.unidad ? ' ' + mod.content.chartData.unidad : '%'}</span>
                                             </div>
                                         </div>
                                     `).join('')}
@@ -1748,7 +1770,7 @@ echo "✅ Proyecto listo para trabajar"`,
                     data: {
                         labels: data.labels,
                         datasets: [{
-                            label: 'Competencias',
+                            label: data.label || 'Competencias',
                             data: data.data,
                             backgroundColor: 'rgba(61, 0, 141, 0.15)',
                             borderColor: '#3D008D',
@@ -1765,7 +1787,7 @@ echo "✅ Proyecto listo para trabajar"`,
                             r: {
                                 angleLines: { display: true, color: 'rgba(0,0,0,0.1)' },
                                 suggestedMin: 0,
-                                suggestedMax: 100,
+                                suggestedMax: data.max || 100,
                                 ticks: { backdropColor: 'transparent' }
                             }
                         }
@@ -1775,8 +1797,13 @@ echo "✅ Proyecto listo para trabajar"`,
         }
 
         function startTimer() {
-            let mins = 120;
+            // El total se DERIVA de la duración que declara cada lección. Estaba escrito
+            // a mano como 120 y las seis lecciones suman 170: cincuenta minutos de
+            // diferencia dentro del mismo archivo (P7 del informe pedagógico).
+            let mins = courseData.modules.reduce(
+                (t, m) => t + (parseInt(m.duration, 10) || 0), 0);
             const timeDisplay = document.getElementById('time-remaining');
+            if (timeDisplay) timeDisplay.innerText = mins;
             setInterval(() => {
                 if (mins > 0) {
                     mins--;

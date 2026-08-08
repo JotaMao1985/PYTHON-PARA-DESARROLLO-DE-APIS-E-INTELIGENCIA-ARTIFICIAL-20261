@@ -125,6 +125,28 @@ REPARTO: dict[int, dict] = {
                 "la semana 11. El trabajo autónomo de esta semana es seleccionar el "
                 "dataset del proyecto y modularizar su limpieza.",
     },
+    2: {
+        "exposicion": [
+            "Verbos, códigos de estado y cabeceras",
+            "JSON frente a Pickle: por qué Pickle no viaja",
+            "requirements.txt y el congelado de dependencias",
+        ],
+        "practica": [
+            "Parsear un JSON de entrada y validarlo a mano",
+            "Responder con un diccionario serializado",
+            "Congelar las dependencias del proyecto",
+            "Redactar los esquemas de entrada y salida del dataset elegido",
+        ],
+        "consulta": [
+            "Validación con Pydantic (adelanto de la semana 4)",
+            "Bonus: funciones en Python (repaso, por debajo del nivel de la semana)",
+            "Las lecturas recomendadas del cierre",
+        ],
+        "nota": "El bloque de Pydantic es un adelanto deliberado: aquí se ve para qué "
+                "sirve validar de forma declarativa, y la semana 4 es un módulo entero "
+                "dedicado a ello. El bonus de funciones es un repaso de apoyo: si ya "
+                "escribes funciones con soltura, sáltatelo.",
+    },
 }
 
 
