@@ -36,3 +36,6 @@ cerebro/
 
 # Respaldos de la auditoria (Fases 1 y 3): copias locales previas a cada edicion
 *.html.bak
+
+# Piloto de migracion a LP-CORE: artefacto de medicion, no material del curso
+_piloto_*.html
