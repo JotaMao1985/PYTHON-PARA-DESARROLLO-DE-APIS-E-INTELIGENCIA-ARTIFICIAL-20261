@@ -606,6 +606,11 @@ def insertar_reparto(n: int, semanas: dict[int, dict], ancla: str,
     módulo porque hay cinco stacks. El ancla se pasa a mano y se comprueba que
     aparezca exactamente una vez: si aparece dos, el script se niega en vez de
     insertar en el sitio equivocado.
+
+    Aviso para quien repita esto: en los módulos 5, 7, 8 y 9 el ancla que se usó
+    fue `<main class="max-w-6xl ...">`. Al cerrar F4 ese elemento pasó a ser un
+    `<div>` —eran dos `<main>` anidados, que es inválido—, así que hoy el ancla
+    de esos cuatro es `<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">`.
     """
     if n not in REPARTO:
         raise SystemExit(f"El módulo {n} no tiene reparto decidido en REPARTO")

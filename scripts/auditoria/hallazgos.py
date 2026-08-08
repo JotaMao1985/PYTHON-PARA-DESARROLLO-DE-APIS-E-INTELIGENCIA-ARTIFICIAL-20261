@@ -331,7 +331,7 @@ H = [
     # ── Fase 3 · hallazgos nuevos ─────────────────────────────────────────
     ("F1", 3, "importante", "1", "`TypeError` en consola cada 60 s, en el primer módulo del curso", CERRADO, "Fase 3", "5e17c40", p_guarda_temporizador),
     ("F2", 3, "importante", "8, 9", "Marcado desbalanceado: un `<main>` que nunca se cierra *(preexistente)*", CERRADO, "Fase 3", "a25ebdb", p_estructura_html),
-    ("F4", 3, "importante", "5, 7, 8, 9", "Dos `<main>` anidados: landmark duplicado, inválido en HTML", ABIERTO, "—", "", p_main_anidado),
+    ("F4", 3, "importante", "5, 7, 8, 9", "Dos `<main>` anidados: landmark duplicado, inválido en HTML", CERRADO, "Fase 3", "1f13603", p_main_anidado),
     ("F3", 3, "nota", "7", "El módulo **sí** tiene 82 fórmulas: corrige al informe de la Fase 2 §7.3", NOTA, "Fase 3", "7d69b57", None),
 
     # ── Cobertura del RA que la Fase 3 cerró de paso ──────────────────────
@@ -457,9 +457,6 @@ def a_markdown(pruebas) -> str:
         "C7": "Requiere leer los bloques en contexto, uno a uno",
         "C9": "La Fase 1 demostró que no rompe ningún icono",
         "Q4": "Añadir gráficas es contenido nuevo, no corrección",
-        "F4": "Encontrado al arreglar F2. Es un cambio de dos etiquetas por módulo y "
-              "nada en el CSS ni en el JS apunta a `main`, pero afecta a cuatro archivos "
-              "y toca decidirlo, no colarlo",
         "C5": "Quedan 3 referencias a «2025» en el módulo 6",
         "P6": "El bloque de reparto ya separa exposición de consulta; falta volver a medir la prosa",
         "P14": "El módulo 7 sigue sin dirigirse al estudiante",

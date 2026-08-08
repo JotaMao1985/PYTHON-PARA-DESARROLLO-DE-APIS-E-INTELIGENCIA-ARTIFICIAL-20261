@@ -19,9 +19,9 @@ python3 scripts/auditoria/hallazgos.py --abiertos  # sólo lo que queda por hace
 
 | Estado | | Qué significa |
 |---|---|---|
-| ✔ Cerrado | **45** | Corregido y verificado |
+| ✔ Cerrado | **46** | Corregido y verificado |
 | ◐ Parcial | **0** | Cerrado en unos módulos y abierto en otros |
-| ✘ Abierto | **7** | Sigue ahí, con motivo declarado |
+| ✘ Abierto | **6** | Sigue ahí, con motivo declarado |
 | · Nota | **1** | Corrección a un informe, no un defecto |
 | | **53** | |
 
@@ -39,7 +39,6 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | **C7** | 7, 13 | Bloques de código que continúan a otro sin decirlo | ✘ abierto | Requiere leer los bloques en contexto, uno a uno |
 | **C9** | 11 módulos | Font Awesome 6.0.0 frente al 6.5.2 del syllabus | ✘ abierto | La Fase 1 demostró que no rompe ningún icono |
 | **Q4** | 7 | El módulo más pesado del curso no tiene ni una gráfica | ✘ abierto | Añadir gráficas es contenido nuevo, no corrección |
-| **F4** | 5, 7, 8, 9 | Dos `<main>` anidados: landmark duplicado, inválido en HTML | ✘ abierto | Encontrado al arreglar F2. Es un cambio de dos etiquetas por módulo y nada en el CSS ni en el JS apunta a `main`, pero afecta a cuatro archivos y toca decidirlo, no colarlo |
 
 ---
 
@@ -97,7 +96,7 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | Q6 | 2 | cosmético | 3 | Termina en un generador de clases con IA, no en el puente | ✔ cerrado | Fase 3 | `35412a2` |
 | F1 | 3 | importante | 1 | `TypeError` en consola cada 60 s, en el primer módulo del curso | ✔ cerrado | Fase 3 | `5e17c40` |
 | F2 | 3 | importante | 8, 9 | Marcado desbalanceado: un `<main>` que nunca se cierra *(preexistente)* | ✔ cerrado | Fase 3 | `a25ebdb` |
-| F4 | 3 | importante | 5, 7, 8, 9 | Dos `<main>` anidados: landmark duplicado, inválido en HTML | ✘ abierto | — | — |
+| F4 | 3 | importante | 5, 7, 8, 9 | Dos `<main>` anidados: landmark duplicado, inválido en HTML | ✔ cerrado | Fase 3 | `1f13603` |
 | F3 | 3 | nota | 7 | El módulo **sí** tiene 82 fórmulas: corrige al informe de la Fase 2 §7.3 | · nota | Fase 3 | `7d69b57` |
 | R1 | 2 | importante | 4 | El syllabus asigna el error HTTP 422 y el módulo no lo mencionaba | ✔ cerrado | Fase 3 | `278175c` |
 
