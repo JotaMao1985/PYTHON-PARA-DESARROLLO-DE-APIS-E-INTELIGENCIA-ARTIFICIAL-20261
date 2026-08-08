@@ -7,7 +7,14 @@
     <meta name="description"
         content="Estudio Autónomo: Validación de Datos con Pydantic para estadísticos. Modelos, Field, validadores y DataFrames.">
     <meta name="author" content="Javier Mauricio Sierra">
-    <title>Estudio Autónomo: Validación de Datos con Pydantic — USTA</title>
+    <title>Semana 4 — Pydantic: validación declarativa · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 4 — Pydantic: validación declarativa · Python para APIs e IA">
+    <meta property="og:description" content="Estudio Autónomo: Validación de Datos con Pydantic para estadísticos. Modelos, Field, validadores y DataFrames.">
+    <meta property="og:type" content="article">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -243,6 +250,18 @@
 </head>
 
 <body>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-4"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-4" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 4 · <strong>módulo de estudio autónomo</strong>. El syllabus no asigna sesión de exposición a esta semana: el material está escrito para recorrerlo entero por tu cuenta.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Recorrido del material</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">a tu ritmo</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">El tipo como fuente de verdad</li><li style="margin:0 0 .3rem 0;">Modelos, campos y coerción</li><li style="margin:0 0 .3rem 0;">Field, valores por defecto y campos opcionales</li><li style="margin:0 0 .3rem 0;">Validadores de campo con @field_validator</li><li style="margin:0 0 .3rem 0;">Serialización y deserialización</li><li style="margin:0 0 .3rem 0;">El error 422 como respuesta HTTP</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Trabajo sobre el proyecto</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">entregable de la semana</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Construir los modelos de entrada y salida de tu dataset</li><li style="margin:0 0 .3rem 0;">Provocar a propósito cada tipo de error de validación</li><li style="margin:0 0 .3rem 0;">Dejar los esquemas del proyecto listos para la semana 6</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">de apoyo</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Validación de DataFrames de Pandas</li><li style="margin:0 0 .3rem 0;">Autoevaluación</li><li style="margin:0 0 .3rem 0;">Referencia bibliográfica</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Ésta es la única semana sin sesión de exposición: el syllabus la declara «módulo de estudio autónomo: recorrer el material completo». Por eso este material es más corto que el resto — no le falta nada, está dimensionado para lo que es. Entorno: Python 3.11.9.</p>
+</section>
+
     <div id="root"></div>
 
     <!-- Scroll to Top Button -->
@@ -945,6 +964,108 @@ class MedicionLab(BaseModel):
 dato = MedicionLab(concentracion="12,5", estado="LIQUIDO")
 print(dato)
 # Output: concentracion=12.5 estado='liquido'`
+            },
+            {
+                id: 'error_422',
+                title: 'Del ValidationError al error HTTP 422',
+                codeTitle: 'Qué le llega a quien consume tu API cuando la validación falla',
+                icon: 'AlertTriangle',
+                content: (
+                    <div>
+                        <p className="mb-4">
+                            Hasta aquí, cuando la validación falla, Pydantic lanza un
+                            <code> ValidationError</code> y tu programa se detiene. Eso está bien en un script.
+                            Pero a partir de la semana 6 tus modelos no los vas a instanciar tú: los va a
+                            instanciar <strong>FastAPI</strong> cuando llegue una petición de alguien a quien no
+                            puedes explicarle nada. <strong>Esta sección es sobre qué ve esa persona.</strong>
+                        </p>
+
+                        <div className="usta-card p-5 mt-6 mb-4">
+                            <h4 className="font-bold text-lg text-primary mb-3 flex items-center gap-2">
+                                <i className="fas fa-triangle-exclamation"></i> Por qué 422 y no 400
+                            </h4>
+                            <p className="text-sm mb-3">
+                                Los dos son errores del cliente, y la diferencia importa:
+                            </p>
+                            <ul className="list-disc pl-5 space-y-2 text-sm">
+                                <li>
+                                    <strong>400 Bad Request</strong> — el mensaje está roto. No es JSON válido, le
+                                    falta una llave, viene truncado. El servidor <em>no pudo ni leerlo</em>.
+                                </li>
+                                <li>
+                                    <strong>422 Unprocessable Content</strong> — el mensaje se leyó
+                                    perfectamente, es JSON impecable, pero <em>lo que dice</em> no vale: la edad es
+                                    negativa, falta un campo obligatorio, el estado no está entre los permitidos.
+                                    La sintaxis está bien y la semántica no.
+                                </li>
+                            </ul>
+                            <p className="text-sm mt-3">
+                                Un <code>ValidationError</code> de Pydantic es siempre del segundo tipo —el JSON
+                                llegó bien, si no no habría llegado a Pydantic—, y por eso FastAPI lo traduce a
+                                422 y no a 400. <strong>No tienes que escribir ese código: es el comportamiento
+                                por defecto</strong> en cuanto declaras el modelo como tipo del parámetro.
+                            </p>
+                        </div>
+
+                        <div className="usta-card p-5 mb-4">
+                            <h4 className="font-bold text-lg text-secondary mb-3 flex items-center gap-2">
+                                <i className="fas fa-list-check"></i> Cómo leer el cuerpo del 422
+                            </h4>
+                            <p className="text-sm mb-3">
+                                La respuesta trae una lista <code>detail</code> con <strong>un elemento por cada
+                                error</strong>, no sólo por el primero. Cada elemento tiene:
+                            </p>
+                            <ul className="list-disc pl-5 space-y-1 text-sm">
+                                <li><code>loc</code> — dónde está el problema, como una ruta: <code>["body", "edad"]</code>.</li>
+                                <li><code>msg</code> — qué pasa, en texto legible.</li>
+                                <li><code>type</code> — el código de la regla incumplida, para tratarlo en el cliente.</li>
+                            </ul>
+                            <p className="text-sm mt-3 text-gray-600 italic">
+                                Es la razón por la que conviene poner mensajes claros en tus validadores: el texto
+                                que escribes en el <code>raise ValueError(...)</code> es exactamente el que va a
+                                leer quien consuma tu API.
+                            </p>
+                        </div>
+                    </div>
+                ),
+                pythonCode: `# ═══════════════════════════════════════════════════════════
+# DEL ValidationError DE PYDANTIC AL 422 DE HTTP
+# Este bloque se ejecuta sin FastAPI: muestra la MISMA estructura
+# de error que FastAPI devuelve en el cuerpo de la respuesta 422.
+# ═══════════════════════════════════════════════════════════
+import json
+from pydantic import BaseModel, Field, ValidationError
+
+
+class Encuestado(BaseModel):
+    """El contrato: esto es lo que la API acepta."""
+    id_encuestado: int
+    edad: int = Field(ge=0, le=120, description="Edad en anios cumplidos")
+    ingreso: float = Field(gt=0)
+
+
+# --- Peticion con TRES cosas mal a la vez ---
+payload_malo = {"id_encuestado": "abc", "edad": -5, "ingreso": 0}
+
+try:
+    Encuestado(**payload_malo)
+except ValidationError as e:
+    # .errors() es la lista que FastAPI pone tal cual en {"detail": [...]}
+    print("Numero de errores:", len(e.errors()))
+    for err in e.errors():
+        print(f"  loc={list(err['loc'])}  type={err['type']}")
+
+    # Asi se ve el cuerpo de la respuesta HTTP 422 que recibe el cliente:
+    cuerpo_422 = {"detail": [
+        {"loc": ["body", *err["loc"]], "msg": err["msg"], "type": err["type"]}
+        for err in e.errors()
+    ]}
+    print("\\nCuerpo de la respuesta 422:")
+    print(json.dumps(cuerpo_422, indent=2, ensure_ascii=False)[:400])
+
+# El punto: Pydantic reporta los TRES errores de una vez, no se para en el
+# primero. Quien consume tu API arregla todo de una pasada en vez de
+# descubrir los fallos de uno en uno.`
             },
             {
                 id: 'dataframe_validation',

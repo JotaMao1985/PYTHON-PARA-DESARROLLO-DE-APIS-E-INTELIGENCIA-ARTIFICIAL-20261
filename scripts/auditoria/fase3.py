@@ -169,6 +169,31 @@ REPARTO: dict[int, dict] = {
                 "semana: enseña qué parte de lo que has visto hoy reaparece en las "
                 "semanas 4, 6 y 9. El entorno es Python 3.11.9, el mismo de la semana 1.",
     },
+    4: {
+        "modo": "autonomo",
+        "exposicion": [
+            "El tipo como fuente de verdad",
+            "Modelos, campos y coerción",
+            "Field, valores por defecto y campos opcionales",
+            "Validadores de campo con @field_validator",
+            "Serialización y deserialización",
+            "El error 422 como respuesta HTTP",
+        ],
+        "practica": [
+            "Construir los modelos de entrada y salida de tu dataset",
+            "Provocar a propósito cada tipo de error de validación",
+            "Dejar los esquemas del proyecto listos para la semana 6",
+        ],
+        "consulta": [
+            "Validación de DataFrames de Pandas",
+            "Autoevaluación",
+            "Referencia bibliográfica",
+        ],
+        "nota": "Ésta es la única semana sin sesión de exposición: el syllabus la "
+                "declara «módulo de estudio autónomo: recorrer el material completo». "
+                "Por eso este material es más corto que el resto — no le falta nada, "
+                "está dimensionado para lo que es. Entorno: Python 3.11.9.",
+    },
 }
 
 
@@ -230,14 +255,29 @@ def titulo_esperado(n: int, semanas: dict[int, dict]) -> str:
 # ---------------------------------------------------------------------------
 def bloque_reparto(n: int, semanas: dict[int, dict], exposicion: list[str],
                    practica: list[str], consulta: list[str],
-                   nota: str | None = None) -> str:
+                   nota: str | None = None, modo: str = "sesion") -> str:
     """
     HTML plano con estilos en línea: tiene que verse igual en los cinco stacks.
     Sin Tailwind (10-12 no lo cargan), sin React (nueve no lo usan) y sin clases
     propias (colisionarían con la hoja de cada módulo).
+
+    `modo="autonomo"` es para el módulo 4, que el syllabus define como estudio
+    autónomo. Fingirle un reparto 60/180 seria declarar una sesión que no existe.
     """
     s = semanas[n]
     P, S, N = "#3D008D", "#ED1E79", "#001A4D"
+
+    if modo == "autonomo":
+        rotulos = ("Recorrido del material", "Trabajo sobre el proyecto", "Material de consulta")
+        cifras = ("a tu ritmo", "entregable de la semana", "de apoyo")
+        subtitulo = (f"Semana {s['n']} · <strong>módulo de estudio autónomo</strong>. "
+                     f"El syllabus no asigna sesión de exposición a esta semana: el "
+                     f"material está escrito para recorrerlo entero por tu cuenta.")
+    else:
+        rotulos = ("Exposición", "Práctica guiada", "Material de consulta")
+        cifras = (f"{MINUTOS_TEORIA} min", f"{MINUTOS_PRACTICA} min", "fuera de sesión")
+        subtitulo = (f"Semana {s['n']} · sesión de 4 h · {MINUTOS_TEORIA} min de "
+                     f"exposición y {MINUTOS_PRACTICA} min de práctica guiada.")
 
     def columna(titulo: str, minutos: str, color: str, items: list[str]) -> str:
         lis = "".join(
@@ -254,9 +294,9 @@ def bloque_reparto(n: int, semanas: dict[int, dict], exposicion: list[str],
         )
 
     partes = [
-        columna("Exposición", f"{MINUTOS_TEORIA} min", P, exposicion),
-        columna("Práctica guiada", f"{MINUTOS_PRACTICA} min", S, practica),
-        columna("Material de consulta", "fuera de sesión", "#0E7490", consulta),
+        columna(rotulos[0], cifras[0], P, exposicion),
+        columna(rotulos[1], cifras[1], S, practica),
+        columna(rotulos[2], cifras[2], "#0E7490", consulta),
     ]
 
     pie = ""
@@ -275,9 +315,7 @@ def bloque_reparto(n: int, semanas: dict[int, dict], exposicion: list[str],
         f'box-shadow:0 1px 3px rgba(0,0,0,.06);">\n'
         f'  <h2 id="reparto-titulo-{n}" style="margin:0 0 .2rem 0;font-size:1rem;'
         f'font-weight:800;color:{N};">Cómo se usa este material en la sesión</h2>\n'
-        f'  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">'
-        f'Semana {s["n"]} · sesión de 4 h · {MINUTOS_TEORIA} min de exposición '
-        f'y {MINUTOS_PRACTICA} min de práctica guiada.</p>\n'
+        f'  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">{subtitulo}</p>\n'
         f'  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">\n    '
         + "\n    ".join(partes)
         + f'\n  </div>{pie}\n</section>\n'
@@ -367,7 +405,7 @@ def insertar_reparto(n: int, semanas: dict[int, dict], ancla: str,
 
     r = REPARTO[n]
     bloque = bloque_reparto(n, semanas, r["exposicion"], r["practica"],
-                            r["consulta"], r.get("nota"))
+                            r["consulta"], r.get("nota"), r.get("modo", "sesion"))
     corte = texto.index(ancla) + len(ancla)
     nuevo = texto[:corte] + bloque + texto[corte:]
 
@@ -413,7 +451,7 @@ def main() -> int:
             return 1
         r = REPARTO[n]
         print(bloque_reparto(n, semanas, r["exposicion"], r["practica"],
-                             r["consulta"], r.get("nota")))
+                             r["consulta"], r.get("nota"), r.get("modo", "sesion")))
         return 0
 
     if args.insertar_reparto:
