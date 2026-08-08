@@ -147,6 +147,28 @@ REPARTO: dict[int, dict] = {
                 "dedicado a ello. El bonus de funciones es un repaso de apoyo: si ya "
                 "escribes funciones con soltura, sáltatelo.",
     },
+    3: {
+        "exposicion": [
+            "Clases, constructor y atributos",
+            "Métodos y métodos especiales",
+            "Composición frente a herencia, y polimorfismo",
+            "Por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero",
+        ],
+        "practica": [
+            "Convertir el módulo de limpieza de la semana 1 en una clase con estado",
+            "Separar responsabilidades del pipeline en clases distintas",
+            "Escribir la dataclass de la observación del proyecto, con sus tipos",
+            "Comprobar en Python 3.11.9 que @dataclass no valida los tipos que declara",
+        ],
+        "consulta": [
+            "Constructor IA: generar una clase a partir de un concepto",
+            "Conexión a una API desde Python",
+            "Referencia bibliográfica",
+        ],
+        "nota": "La sección «Por qué esto es el cimiento del curso» es la bisagra de la "
+                "semana: enseña qué parte de lo que has visto hoy reaparece en las "
+                "semanas 4, 6 y 9. El entorno es Python 3.11.9, el mismo de la semana 1.",
+    },
 }
 
 
