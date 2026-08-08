@@ -1438,7 +1438,14 @@ echo "✅ Proyecto listo para trabajar"`,
         }
 
         function startTimer() {
-            let mins = 120;
+            // El total se DERIVA de la duración que declara cada lección: así el reloj
+            // no puede contradecir al material. Suma 145 min.
+            let mins = courseData.modules.reduce(
+                (t, m) => t + (parseInt(m.duration, 10) || 0), 0);
+            // Este módulo no pinta el reloj en la cabecera. Sin esta guarda,
+            // timeDisplay es null y el intervalo lanzaba un TypeError cada minuto.
+            if (!timeDisplay) return;
+            timeDisplay.innerText = mins;
             setInterval(() => {
                 if (mins > 0) {
                     mins--;
