@@ -194,6 +194,30 @@ REPARTO: dict[int, dict] = {
                 "Por eso este material es más corto que el resto — no le falta nada, "
                 "está dimensionado para lo que es. Entorno: Python 3.11.9.",
     },
+    5: {
+        "exposicion": [
+            "El ciclo petición-respuesta, de principio a fin",
+            "Servidor web, WSGI y ASGI: qué cambió y por qué",
+            "Routing con FastAPI, y cómo se leía en Flask",
+            "Síncrono frente a asíncrono",
+        ],
+        "practica": [
+            "Levantar un servidor mínimo con uvicorn --reload",
+            "Exponer la limpieza de datos de la semana 1 como endpoint",
+            "Escribir el endpoint de estadísticas descriptivas del ejercicio",
+            "Redactar el contrato de la API del proyecto: qué recibe y qué devuelve",
+        ],
+        "consulta": [
+            "Flask frente a los frameworks modernos (sección 3)",
+            "El detalle de Starlette, Werkzeug y Jinja2",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "Flask aparece en este módulo como <strong>término de comparación</strong>, "
+                "no como herramienta de trabajo: es lo que el syllabus pide para esta "
+                "semana («Flask frente a los frameworks modernos») y lo que vas a "
+                "encontrar en el código Python que ya está en producción. Lo que tú "
+                "escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.",
+    },
 }
 
 
@@ -242,7 +266,27 @@ def estado(n: int, semanas: dict[int, dict]) -> dict:
         "og_title": og_actual(texto, "title"),
         "periodo": PERIODO in texto,
         "reparto": 'data-fase3="reparto"' in texto,
+        "iconos_huerfanos": iconos_huerfanos(n),
     }
+
+
+def iconos_huerfanos(n: int) -> list[str]:
+    """
+    Iconos que una lección declara y que el mapa `Icons` del módulo no define.
+
+    En los módulos React, el icono se resuelve con `Icons[leccion.icon]`. Si el
+    nombre no existe, eso vale `undefined`, React intenta renderizar undefined
+    como componente y lanza «Cannot read properties of undefined». Paso al añadir
+    la lección del error 422 al módulo 4 con icon: 'AlertTriangle', que no estaba
+    definido — y el error no se ve en la pantalla, sólo en la consola.
+    """
+    texto = ruta_modulo(n).read_text(encoding="utf-8")
+    m = re.search(r"const Icons = \{(.*?)\n        \};", texto, re.S)
+    if not m:
+        return []          # el módulo no usa este patrón
+    definidos = set(re.findall(r"^\s{12}([A-Za-z]+):", m.group(1), re.M))
+    usados = set(re.findall(r"icon: '([A-Za-z]+)'", texto))
+    return sorted(usados - definidos)
 
 
 def titulo_esperado(n: int, semanas: dict[int, dict]) -> str:
@@ -499,6 +543,12 @@ def main() -> int:
             f"{'✓' if f['reparto'] else '✗':>3}   {f['titulo']}"
         )
     print("-" * 110)
+    rotos = [(f["modulo"], f["iconos_huerfanos"]) for f in filas if f["iconos_huerfanos"]]
+    if rotos:
+        print("ICONOS SIN DEFINIR (React renderiza undefined y lanza en consola):")
+        for n_mod, nombres in rotos:
+            print(f"    módulo {n_mod}: {', '.join(nombres)}")
+        print("-" * 110)
     print(f"Títulos conformes: {ok}/13 · "
           f"description {sum(1 for f in filas if f['description'])}/13 · "
           f"author {sum(1 for f in filas if f['author'])}/13 · "

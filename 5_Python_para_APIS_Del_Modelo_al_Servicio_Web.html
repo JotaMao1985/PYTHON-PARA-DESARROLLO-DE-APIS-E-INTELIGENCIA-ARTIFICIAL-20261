@@ -7,7 +7,14 @@
     <meta content="Material de estudio autónomo: Del Modelo Estadístico al Servicio Web — APIs con Python"
         name="description" />
     <meta content="Material basado en fuentes académicas reconocidas" name="author" />
-    <title>Python para APIs e IA: Del Modelo Estadístico al Servicio Web</title>
+    <title>Semana 5 — Del modelo estadístico al servicio web · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 5 — Del modelo estadístico al servicio web · Python para APIs e IA">
+    <meta property="og:description" content="width=device-width, initial-scale=1.0&quot; name=&quot;viewport&quot; /&gt; &lt;meta content=&quot;Material de estudio autónomo: Del Modelo Estadístico al Servicio Web — APIs con Python">
+    <meta property="og:type" content="article">
     <link href="https://fonts.googleapis.com" rel="preconnect" />
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -306,6 +313,18 @@
                     <!-- MÓDULO 0: INTRODUCCIÓN MOTIVACIONAL        -->
                     <!-- ═══════════════════════════════════════════ -->
                     <article class="mb-16" id="modulo-0">
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-5"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-5" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 5 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">El ciclo petición-respuesta, de principio a fin</li><li style="margin:0 0 .3rem 0;">Servidor web, WSGI y ASGI: qué cambió y por qué</li><li style="margin:0 0 .3rem 0;">Routing con FastAPI, y cómo se leía en Flask</li><li style="margin:0 0 .3rem 0;">Síncrono frente a asíncrono</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Levantar un servidor mínimo con uvicorn --reload</li><li style="margin:0 0 .3rem 0;">Exponer la limpieza de datos de la semana 1 como endpoint</li><li style="margin:0 0 .3rem 0;">Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li style="margin:0 0 .3rem 0;">Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Flask frente a los frameworks modernos (sección 3)</li><li style="margin:0 0 .3rem 0;">El detalle de Starlette, Werkzeug y Jinja2</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Flask aparece en este módulo como <strong>término de comparación</strong>, no como herramienta de trabajo: es lo que el syllabus pide para esta semana («Flask frente a los frameworks modernos») y lo que vas a encontrar en el código Python que ya está en producción. Lo que tú escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.</p>
+</section>
+
                         <section class="usta-card p-6 md:p-8 mb-8">
                             <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
                                 <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0"
@@ -407,20 +426,29 @@
                                 <strong>Analogía:</strong> Si el servidor web es el <em>maître</em> que recibe al cliente en el restaurante, <strong>WSGI es el protocolo de comunicación entre el maître y la cocina</strong>. Define exactamente cómo se pasa el pedido (la petición) y cómo se devuelve el plato (la respuesta).
                             </div>
 
-                            <p class="text-gray-700 leading-relaxed mb-5">Cuando usas Flask, en realidad estás trabajando sobre dos bibliotecas fundamentales: <strong>Werkzeug</strong>, que es el toolkit WSGI que se encarga de toda la comunicación HTTP (parsear peticiones, construir respuestas, manejar headers y cookies), y <strong>Jinja2</strong>, el motor de templates que permite renderizar páginas HTML dinámicas. Flask envuelve ambas y les agrega routing, configuración y una estructura de aplicación coherente. Para nuestro caso de uso (APIs JSON para modelos estadísticos), Werkzeug hace el trabajo pesado bajo el capó, mientras que Jinja2 queda en segundo plano ya que no renderizamos HTML sino que devolvemos datos estructurados.</p>
+                            <p class="text-gray-700 leading-relaxed mb-5">WSGI tiene una limitación de origen, y conviene verla ahora porque explica todo lo que viene después: <strong>es síncrono por diseño</strong>. La PEP 3333 se escribió en 2010, cuando el problema era estandarizar, no concurrir. Una aplicación WSGI atiende una petición, la termina, y sólo entonces empieza la siguiente. Por eso apareció <strong>ASGI</strong> (<em>Asynchronous Server Gateway Interface</em>): el mismo papel de idioma común entre servidor y aplicación, pero con <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">async</code> desde la base. <strong>Es el que vas a usar en este curso</strong>, y el módulo 4 explica qué se gana con él.</p>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Cuando usas <strong>FastAPI</strong>, en realidad trabajas sobre dos piezas: <strong>Starlette</strong>, el toolkit ASGI que se encarga de toda la comunicación HTTP —parsear peticiones, construir respuestas, manejar cabeceras y rutas—, y <strong>Pydantic</strong>, que valida y serializa los datos, y que ya conoces de la semana 4. FastAPI envuelve las dos y añade la generación automática de la documentación a partir de tus tipos. Es el mismo reparto que en la generación anterior —Flask envolvía <strong>Werkzeug</strong> (HTTP) y <strong>Jinja2</strong> (plantillas HTML)—, con una diferencia que importa: la segunda pieza ya no sirve para pintar páginas, sino para <em>validar datos</em>, porque lo que devuelve una API estadística no es HTML, es JSON.</p>
 
                             <details class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 cursor-pointer group shadow-sm transition-all duration-300 hover:shadow-md">
                                 <summary class="font-semibold text-blue-800 list-none flex items-center justify-between">
                                     <div class="flex items-center gap-2">
                                         <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-                                        ¿Qué es Werkzeug exactamente?
+                                        ¿Qué son Starlette y Werkzeug exactamente?
                                     </div>
                                     <span class="transition group-open:rotate-180"><svg fill="none" class="w-5 h-5 text-blue-600" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
                                 </summary>
                                 <div class="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
-                                    <p><strong>Werkzeug</strong> (del alemán: "herramienta") es una biblioteca WSGI completa que implementa los detalles de bajo nivel del protocolo HTTP en Python. Cuando Flask recibe una petición, es Werkzeug quien parsea la URL, los headers, el body y los query parameters, construyendo un objeto <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Request</code> limpio que tu función de vista puede usar. De manera similar, cuando devuelves un <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">jsonify()</code>, Werkzeug construye la respuesta HTTP con los headers correctos. El servidor de desarrollo de Flask (<code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">flask run</code>) también es provisto por Werkzeug.</p>
-                                    <p class="mt-2"><strong>Jinja2</strong>, por su parte, es el motor de plantillas que permite generar HTML dinámico. Aunque no lo usaremos directamente en este módulo (nuestras APIs devuelven JSON, no páginas web), es importante saber que existe porque es la otra mitad de la arquitectura de Flask. Cuando ves aplicaciones Flask con <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">render_template()</code>, ahí es donde Jinja2 entra en acción.</p>
-                                    <p class="mt-2 text-xs italic opacity-80">* En FastAPI, la equivalencia sería: Starlette = Werkzeug (manejo HTTP), Pydantic = sistema de validación (sin equivalente directo en Flask puro).</p>
+                                    <p><strong>Starlette</strong> es el framework ASGI ligero sobre el que está construido FastAPI. Cuando llega una petición, es Starlette quien parsea la URL, las cabeceras, el cuerpo y los parámetros de consulta, y quien construye el objeto <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Request</code>. También es suyo el sistema de rutas, el middleware y el manejo de WebSockets. FastAPI le añade encima la capa que te interesa como estadístico: leer tus type hints, validar con Pydantic y generar la documentación en <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">/docs</code>.</p>
+                                    <p class="mt-2"><strong>Werkzeug</strong> (del alemán: "herramienta") es su equivalente en el mundo WSGI, y es lo que hay debajo de Flask. Hace el mismo trabajo —parsear la petición, construir la respuesta— pero de forma síncrona. El servidor de desarrollo de Flask (<code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">flask run</code>) lo provee Werkzeug, igual que el de FastAPI lo provee <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">uvicorn</code>. Merece la pena conocerlo porque vas a encontrar muchísimo código Python en producción escrito sobre él.</p>
+                                    <p class="mt-2"><strong>Jinja2</strong> es la otra mitad de Flask: el motor de plantillas que genera HTML dinámico. No lo usamos aquí porque nuestras APIs devuelven JSON, no páginas. En FastAPI ese hueco lo ocupa Pydantic, que no pinta nada: valida. Es un buen resumen de en qué cambió el oficio entre 2010 y hoy.</p>
+                                    <table class="w-full mt-3 text-xs border-collapse">
+                                        <tr class="border-b border-blue-200"><th class="text-left py-1 font-bold">Papel</th><th class="text-left py-1 font-bold">Generación WSGI</th><th class="text-left py-1 font-bold">Generación ASGI</th></tr>
+                                        <tr class="border-b border-blue-100"><td class="py-1">Framework</td><td class="py-1">Flask</td><td class="py-1"><strong>FastAPI</strong></td></tr>
+                                        <tr class="border-b border-blue-100"><td class="py-1">Capa HTTP</td><td class="py-1">Werkzeug</td><td class="py-1"><strong>Starlette</strong></td></tr>
+                                        <tr class="border-b border-blue-100"><td class="py-1">Segunda pieza</td><td class="py-1">Jinja2 (plantillas)</td><td class="py-1"><strong>Pydantic</strong> (validación)</td></tr>
+                                        <tr><td class="py-1">Servidor</td><td class="py-1">Gunicorn</td><td class="py-1"><strong>Uvicorn</strong></td></tr>
+                                    </table>
                                 </div>
                             </details>
 
@@ -455,10 +483,10 @@
     <span class="text-pink-500 font-bold">return</span> [<span class="text-yellow-300">b"Hola desde una app WSGI pura"</span>]</code></pre>
                             </div>
 
-                            <p class="text-gray-700 leading-relaxed mb-5">Nadie escribe aplicaciones así en la práctica. Para eso existen los frameworks como Flask, que encapsulan esta complejidad.</p>
+                            <p class="text-gray-700 leading-relaxed mb-5">Nadie escribe aplicaciones así en la práctica. Para eso existen los frameworks —FastAPI hoy, Flask en la generación anterior—, que encapsulan esta complejidad. Lo que acabas de ver es lo que <em>no</em> vas a tener que escribir nunca.</p>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.3 De desarrollo a producción: Gunicorn y Waitress</h3>
-                            <p class="text-gray-700 leading-relaxed mb-5">Flask incluye un servidor de desarrollo (<code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">flask run</code>), pero ese servidor <strong>no es apto para producción</strong> porque procesa una sola petición a la vez. Para producción necesitas un servidor WSGI real:</p>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.3 De desarrollo a producción: Uvicorn y Gunicorn</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Todo framework trae un servidor de desarrollo —<code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">uvicorn --reload</code> en FastAPI, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">flask run</code> en Flask— y <strong>ninguno de los dos es apto para producción</strong>: recargan el código en caliente, no gestionan varios procesos y no están endurecidos frente a un cliente hostil. En producción se lanza el mismo servidor con otra configuración, o se le pone un gestor de procesos delante:</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
                                 <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
@@ -473,7 +501,16 @@
                                     </button>
                                 </div>
                                 <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono"
-                                    data-language="bash" id="code-block-gunicorn"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Gunicorn (Linux/macOS) — el estándar de la industria</span>
+                                    data-language="bash" id="code-block-gunicorn"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># ── ASGI: lo que usa este curso ──────────────────────────</span>
+<span class="text-green-500 italic"># Desarrollo: recarga al guardar. NO usar en produccion.</span>
+uvicorn app.main:app --reload
+
+<span class="text-green-500 italic"># Produccion: varios procesos, sin recarga.</span>
+<span class="text-green-500 italic"># Es la linea que ira en el Dockerfile de la semana 11.</span>
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+<span class="text-green-500 italic"># ── WSGI: la generacion anterior, para que la reconozcas ─</span>
+<span class="text-green-500 italic"># Gunicorn con una app Flask</span>
 gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
 
 <span class="text-green-500 italic"># Waitress (multiplataforma, incluye Windows)</span>
@@ -574,19 +611,19 @@ waitress-serve --port=8000 app:app</code></pre>
                             <div class="space-y-6">
                                 <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm transition-all hover:shadow-md">
                                     <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded mb-3">Nivel Medio</span>
-                                    <p class="text-gray-800 font-medium mb-4">¿Por qué el servidor de desarrollo de Flask (<code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">flask run</code>) no es adecuado para producción?</p>
+                                    <p class="text-gray-800 font-medium mb-4">¿Por qué <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">uvicorn --reload</code> no es adecuado para producción?</p>
                                     <div class="space-y-2 mb-4">
                                         <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
                                             <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
-                                            <span class="text-sm text-gray-700">A) Porque Flask no soporta el protocolo HTTP y necesita un adaptador externo para recibir peticiones.</span>
+                                            <span class="text-sm text-gray-700">A) Porque Uvicorn no soporta el protocolo HTTP y necesita un adaptador externo para recibir peticiones.</span>
                                         </label>
                                         <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
                                             <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
-                                            <span class="text-sm text-gray-700 font-medium">B) Porque es un servidor de un solo hilo que procesa una petición a la vez, sin gestión de workers ni concurrencia, lo que lo hace inviable bajo carga real.</span>
+                                            <span class="text-sm text-gray-700 font-medium">B) Porque <code class="font-mono text-xs">--reload</code> vigila el sistema de archivos y reinicia el proceso ante cualquier cambio, arranca un solo worker y desactiva optimizaciones: gasta recursos y deja el servicio caído durante cada reinicio.</span>
                                         </label>
                                         <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
                                             <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
-                                            <span class="text-sm text-gray-700">C) Porque el servidor de desarrollo de Flask solo acepta peticiones POST y no GET.</span>
+                                            <span class="text-sm text-gray-700">C) Porque Uvicorn en modo desarrollo solo acepta peticiones POST y no GET.</span>
                                         </label>
                                     </div>
                                     <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
@@ -599,7 +636,7 @@ waitress-serve --port=8000 app:app</code></pre>
                                         </summary>
                                         <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
                                             <strong>Respuesta Correcta: B</strong><br><br>
-                                            El servidor de desarrollo de Flask está diseñado para depuración local. Procesa las peticiones de forma secuencial (una a la vez), no gestiona múltiples procesos worker, y carece de características de seguridad y rendimiento necesarias en producción. Un servidor WSGI como Gunicorn puede lanzar múltiples workers (procesos) para atender peticiones concurrentemente, y además se integra con proxies como Nginx para SSL y balanceo de carga.
+                                            El modo <code class="font-mono text-xs">--reload</code> está diseñado para depuración local: vigila el sistema de archivos y reinicia el proceso cada vez que guardas, lo que en producción significa consumo constante de recursos y un corte del servicio en cada reinicio. Además arranca con un solo worker. El binario es el mismo —en producción se lanza <code class="font-mono text-xs">uvicorn app.main:app --workers 4</code> sin <code class="font-mono text-xs">--reload</code>—, y es esa línea la que acabará en el Dockerfile de la semana 11. Ojo con la trampa de la opción A: Uvicorn <em>sí</em> habla HTTP; eso es justamente lo que hace.
                                         </div>
                                     </details>
                                 </div>
@@ -660,43 +697,8 @@ waitress-serve --port=8000 app:app</code></pre>
                             <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">2.1 ¿Qué es el routing?</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">El <em>routing</em> es el mecanismo que conecta una URL con una función de Python. Cuando alguien visita <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">/predict</code>, el framework necesita saber qué función ejecutar. Es el equivalente a un directorio telefónico: dado un "número" (la URL), te conecta con la "persona" (la función) correcta.</p>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 Routing en Flask</h3>
-                            <p class="text-gray-700 leading-relaxed mb-5">Flask usa el decorador <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.route()</code> para definir rutas:</p>
-
-                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
-                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
-                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
-                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Flask — routing.py</span>
-                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-flask-route', this)" title="Copiar al portapapeles">
-                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
-                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                                    </button>
-                                </div>
-                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-route"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
-
-app = Flask(__name__)
-
-<span class="text-green-500 italic"># Ruta estática simple</span>
-<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/health"</span>)
-<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">health_check</span>():
-    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"status"</span>: <span class="text-yellow-300">"ok"</span>})
-
-<span class="text-green-500 italic"># Variable de ruta: captura un valor dinámico de la URL</span>
-<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/dataset/&lt;string:dataset_name&gt;/summary"</span>)
-<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">dataset_summary</span>(dataset_name: str):
-    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"dataset"</span>: dataset_name, <span class="text-yellow-300">"rows"</span>: <span class="text-orange-300">1500</span>})
-
-<span class="text-green-500 italic"># Query parameters: valores opcionales después del '?'</span>
-<span class="text-green-500 italic"># Ejemplo: GET /filter?min_age=25&amp;max_age=60</span>
-<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/filter"</span>)
-<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">filter_data</span>():
-    min_age = request.args.get(<span class="text-yellow-300">"min_age"</span>, default=<span class="text-orange-300">0</span>, type=int)
-    max_age = request.args.get(<span class="text-yellow-300">"max_age"</span>, default=<span class="text-orange-300">120</span>, type=int)
-    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age})</code></pre>
-                            </div>
-
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 Routing en FastAPI</h3>
-                            <p class="text-gray-700 leading-relaxed mb-5">FastAPI aprovecha el <em>type hinting</em> de Python para definir parámetros de forma declarativa. Observa cómo el mismo routing se simplifica:</p>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 Routing en FastAPI</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Éste es el que vas a usar en el proyecto, así que empezamos por él. FastAPI declara una ruta por cada método HTTP —<code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.get</code>, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.post</code>— y aprovecha el <em>type hinting</em> que ya usas desde la semana 1: al escribir <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">min_age: int</code> no estás documentando, estás <strong>declarando una validación</strong>. Si llega otra cosa, FastAPI responde 422 —el error que viste en la semana 4— sin que tú escribas una línea:</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
                                 <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
@@ -728,6 +730,41 @@ app = FastAPI()
     max_age: int = Query(default=<span class="text-orange-300">120</span>, le=<span class="text-orange-300">150</span>, description=<span class="text-yellow-300">"Edad máxima"</span>),
 ):
     <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age}</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 El mismo routing en Flask, para que lo reconozcas</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Esto es lo que vas a encontrar en la mayor parte del codigo Python que ya esta en produccion, asi que conviene que lo leas sin esfuerzo. Flask usa el mismo decorador <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.route()</code> para todos los metodos HTTP, y los parametros hay que sacarlos y convertirlos a mano: fijate en <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">request.args.get(..., type=int)</code>, que es la linea que en FastAPI no existe porque la escribe el type hint.</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Flask — routing.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-flask-route', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-route"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
+
+app = Flask(__name__)
+
+<span class="text-green-500 italic"># Ruta estática simple</span>
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/health"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">health_check</span>():
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"status"</span>: <span class="text-yellow-300">"ok"</span>})
+
+<span class="text-green-500 italic"># Variable de ruta: captura un valor dinámico de la URL</span>
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/dataset/&lt;string:dataset_name&gt;/summary"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">dataset_summary</span>(dataset_name: str):
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"dataset"</span>: dataset_name, <span class="text-yellow-300">"rows"</span>: <span class="text-orange-300">1500</span>})
+
+<span class="text-green-500 italic"># Query parameters: valores opcionales después del '?'</span>
+<span class="text-green-500 italic"># Ejemplo: GET /filter?min_age=25&amp;max_age=60</span>
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/filter"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">filter_data</span>():
+    min_age = request.args.get(<span class="text-yellow-300">"min_age"</span>, default=<span class="text-orange-300">0</span>, type=int)
+    max_age = request.args.get(<span class="text-yellow-300">"max_age"</span>, default=<span class="text-orange-300">120</span>, type=int)
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age})</code></pre>
                             </div>
 
                             <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Tabla Comparativa de Routing</h3>
@@ -1080,7 +1117,7 @@ app = FastAPI()
                             <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
                                 <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-3">Ejercicio 1 — Diagnóstico</span>
                                 <h4 class="text-lg font-bold text-navy mb-3">Diagnóstico de escalabilidad</h4>
-                                <p class="text-gray-700 leading-relaxed mb-4">Dado un endpoint Flask que: (1) lee un CSV grande (~2s), (2) consulta una API externa (~0.5s), y (3) calcula estadísticas descriptivas.</p>
+                                <p class="text-gray-700 leading-relaxed mb-4">Dado un endpoint <strong>síncrono</strong> que: (1) lee un CSV grande (~2s), (2) consulta una API externa (~0.5s), y (3) calcula estadísticas descriptivas.</p>
                                 <p class="text-gray-700 leading-relaxed mb-2"><strong>a)</strong> Si recibe 20 peticiones simultáneas con 4 workers de Gunicorn, ¿cuántas quedan en espera?</p>
                                 <p class="text-gray-700 leading-relaxed mb-2"><strong>b)</strong> Identifica cuáles pasos son I/O-bound y cuáles CPU-bound.</p>
                                 <p class="text-gray-700 leading-relaxed"><strong>c)</strong> Reescribe el endpoint con FastAPI + <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">async/await</code>. ¿Qué pasos puedes paralelizar con <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">asyncio.gather()</code>?</p>
@@ -1089,9 +1126,9 @@ app = FastAPI()
                             <!-- Ejercicio 2 -->
                             <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
                                 <span class="inline-block px-3 py-1 bg-secondary text-white text-xs font-bold rounded-full mb-3">Ejercicio 2 — Migración</span>
-                                <h4 class="text-lg font-bold text-navy mb-3">De Flask a FastAPI: Endpoint de estadísticas descriptivas</h4>
-                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Parte A (Flask):</strong> Crea un endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /stats/&lt;dataset_id&gt;</code> que genere un DataFrame simulado con <code>numpy.random</code>, calcule media, mediana, desviación estándar, min, max y cuartiles, y devuelva el resultado como JSON.</p>
-                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Parte B (FastAPI):</strong> Migra la lógica a FastAPI. Añade un query parameter opcional <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">columns: int = 5</code>, define un modelo Pydantic <code>StatsResponse</code> para la respuesta, y verifica la documentación automática en <code>/docs</code>.</p>
+                                <h4 class="text-lg font-bold text-navy mb-3">Endpoint de estadísticas descriptivas, y qué cuesta hacerlo sin FastAPI</h4>
+                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Parte A (FastAPI):</strong> Crea un endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /stats/{dataset_id}</code> que genere un DataFrame simulado con <code>numpy.random</code>, calcule media, mediana, desviación estándar, mínimo, máximo y cuartiles, y lo devuelva como JSON. Añade un parámetro de consulta opcional <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">columns: int = 5</code>, define el modelo Pydantic <code>StatsResponse</code> de la respuesta y comprueba que <code>/docs</code> lo documenta solo.</p>
+                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Parte B (el contraste):</strong> Escribe a mano lo que la Parte A no te obligó a escribir: valida que <code>columns</code> sea un entero positivo, devuelve un 422 con la lista de errores cuando no lo sea, y redacta la documentación del endpoint. Es el mismo endpoint sin la capa que FastAPI te regala. Compara las dos versiones en líneas de código — ése es el resultado del ejercicio.</p>
                             </div>
 
                             <!-- Ejercicio 3 -->
