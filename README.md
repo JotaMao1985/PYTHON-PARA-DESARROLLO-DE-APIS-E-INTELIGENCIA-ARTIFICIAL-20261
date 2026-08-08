@@ -110,11 +110,17 @@ git submodule update --init --recursive
 **Al 2026-08-08:** las tres fases de auditoría están cerradas y los 13 módulos corregidos —
 46 de 53 hallazgos cerrados, 6 abiertos y todos cosméticos.
 
+El hueco de lenguajes de LP-CORE, que bloqueaba la cola de migración, **quedó cerrado el 8 de
+agosto**: el resaltador ya conoce Dockerfile, YAML, SQL y TOML, y de paso se arregló `shell`, que
+llevaba roto desde el principio sin que nadie lo notara. `ensamblar.py` ahora falla si alguien
+declara una gramática sin cargarla, así que el defecto no puede repetirse. El plan, lo que se
+midió y las cifras corregidas están en
+[`PLAN_LENGUAJES_LPCORE.md`](PLAN_LENGUAJES_LPCORE.md).
+
 **Lo siguiente**, por decisión del docente (Opción B ya + Opción C por bloques durante el
-semestre): cerrar el hueco de lenguajes de LP-CORE antes de migrar ningún módulo más. El
-resaltador no conoce Dockerfile, YAML ni SQL, y los 22 bloques de Dockerfile están en los
-módulos 11 y 13, que encabezan la cola. El detalle y por qué no se parchea en el HTML están en
-[`PILOTO_LPCORE.md`](PILOTO_LPCORE.md) §2 y §5.
+semestre): terminar el módulo 11 completo sobre LP-CORE —con las 3 gráficas de Plotly y las 8
+tablas, que es lo único que queda sin medir— antes de estimar los doce restantes. Las incógnitas
+están en [`PILOTO_LPCORE.md`](PILOTO_LPCORE.md) §3.
 
 ## Auditoría del material
 
