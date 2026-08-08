@@ -9,7 +9,14 @@
     <meta name="author" content="Javier Mauricio Sierra">
     <meta name="keywords"
         content="Python, estadística, data science, pattern matching, entornos virtuales, Git, decoradores, scipy, pandas">
-    <title>Python para APIs e IA - Clase II</title>
+    <title>Semana 1 — Del script al entorno de producción · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 1 — Del script al entorno de producción · Python para APIs e IA">
+    <meta property="og:description" content="Curso intensivo de Python 3.11 para estadísticos: Pattern Matching, entornos virtuales, Git y decoradores para validación de datos.">
+    <meta property="og:type" content="article">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -255,7 +262,7 @@
                     <div>
                         <h1 class="text-xl font-bold text-white leading-tight tracking-tight">Python para APIs e IA
                             Aplicada</h1>
-                        <p class="text-xs text-white/70 font-medium tracking-wide">CLASE II • ESTADÍSTICA • USTA</p>
+                        <p class="text-xs text-white/70 font-medium tracking-wide">SEMANA 1 • ESTADÍSTICA • USTA • 2026-II</p>
                     </div>
                 </div>
                 <nav class="hidden md:flex items-center gap-4 text-sm mt-4 md:mt-0">
@@ -278,11 +285,32 @@
             </div>
 
             <!-- Visual Progress Map -->
-            <div class="relative flex justify-between items-center max-w-3xl mx-auto" id="pipeline-container">
+            <div class="relative flex justify-between items-center max-w-3xl mx-auto overflow-x-auto pb-1" id="pipeline-container">
                 <!-- Steps injected via JS -->
             </div>
         </div>
     </header>
+<!-- Fase 3 · apertura de la semana 1 (C3: motivar, no indexar) -->
+<section data-fase3="apertura" aria-labelledby="apertura-titulo-1"
+    style="max-width:1100px;margin:1.5rem auto 0 auto;padding:1.35rem 1.5rem;background:#FAF7FF;border:1px solid #E9D8FD;border-left:5px solid #ED1E79;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;">
+  <h2 id="apertura-titulo-1" style="margin:0 0 .6rem 0;font-size:1.28rem;font-weight:800;color:#3D008D;line-height:1.25;">Hoy tu código deja de ser sólo tuyo</h2>
+  <p style="margin:0 0 .7rem 0;font-size:.95rem;color:#334155;line-height:1.6;">Hasta ahora, un análisis que corre en tu portátil es un análisis que funciona. A partir de esta semana eso deja de bastar: el proyecto de este curso termina en una <strong>URL pública</strong> que alguien abre desde otra máquina, con otro sistema operativo, sin poder preguntarte nada.</p>
+  <p style="margin:0 0 .7rem 0;font-size:.95rem;color:#334155;line-height:1.6;">Entre esas dos cosas —un script que corre aquí y un servicio que corre en cualquier parte— hay cuatro piezas, y son las de hoy: la <strong>versión de Python</strong> que el curso fija, el <strong>entorno</strong> que aísla tus dependencias, el <strong>repositorio</strong> que guarda tu historia y los <strong>decoradores</strong>. Los decoradores parecen el tema menor de la lista y son el que más vas a usar: Pydantic, FastAPI y SQLAlchemy son, en buena medida, decoradores. Si hoy entiendes qué hace una <code style="background:#EDE9FE;padding:.05rem .3rem;border-radius:4px;">@</code>, las semanas 4, 6 y 9 te van a costar la mitad.</p>
+  <p style="margin:0;font-size:.95rem;color:#334155;line-height:1.6;">No vas a escribir una API hoy. Vas a montar el sitio donde va a vivir.</p>
+</section>
+
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-1"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-1" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 1 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Por qué Python 3.11.9: rendimiento y estabilidad</li><li style="margin:0 0 .3rem 0;">Entornos virtuales: venv frente a conda</li><li style="margin:0 0 .3rem 0;">Git para un solo desarrollador</li><li style="margin:0 0 .3rem 0;">Decoradores como guardianes</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Instalar Python 3.11.9 y crear el entorno virtual</li><li style="margin:0 0 .3rem 0;">Inicializar el repositorio y hacer el primer commit</li><li style="margin:0 0 .3rem 0;">Escribir un script con type hinting estricto</li><li style="margin:0 0 .3rem 0;">Escribir un decorador propio de validación</li><li style="margin:0 0 .3rem 0;">Pipeline completo: de idea a análisis reproducible</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Docker frente a entornos virtuales (adelanto de la semana 11)</li><li style="margin:0 0 .3rem 0;">Bonus: limpieza en Pandas y modularización</li><li style="margin:0 0 .3rem 0;">Las cinco lecturas recomendadas del cierre</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">El bloque de Docker es un adelanto deliberado: da el criterio para elegir entre venv y contenedor, pero construir imágenes es materia de la semana 11. El trabajo autónomo de esta semana es seleccionar el dataset del proyecto y modularizar su limpieza.</p>
+</section>
+
 
     <div class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 gap-8">
 
@@ -302,7 +330,7 @@
     </div>
 
     <!-- Tip Pedagógico Fijo -->
-    <div class="fixed bottom-4 left-4 md:w-72 tip-box p-4 rounded-xl shadow-lg z-40" id="tip-pedagogico">
+    <div class="fixed bottom-4 left-4 right-4 md:right-auto md:w-72 tip-box p-4 rounded-xl shadow-lg z-40" id="tip-pedagogico">
         <div class="flex justify-between items-start">
             <div>
                 <h4 class="font-bold text-primary text-sm mb-1 flex items-center gap-2">
@@ -493,7 +521,7 @@ def detectar_outliers_iqr(df: pd.DataFrame, columna: str, factor: float = 1.5) -
                             label: 'Mejora de Rendimiento (Tiempo Relativo)',
                             labels: ['Python 3.9', 'Python 3.10', 'Python 3.11'],
                             data: [1.0, 0.9, 0.65], // Normalized execution time
-                            description: "Tiempo de ejecución normalizado para operaciones matemáticas estándar (menor es mejor)."
+                            description: "Tiempo de ejecución relativo, normalizado a Python 3.9 (menor es mejor). Son órdenes de magnitud, no una medición propia: la documentación oficial de CPython —«What's New In Python 3.11», sección Faster CPython— declara entre un 10 % y un 60 % de mejora frente a 3.10 según la carga, y ~1,25× de media en el conjunto de referencia pyperformance. Fíjate en la forma: el salto grande está entre 3.10 y 3.11, no entre 3.9 y 3.10."
                         }
                     }
                 },
@@ -578,7 +606,7 @@ pip install -r requirements.txt  # Instala EXACTAMENTE las mismas versiones
                     id: "m3",
                     title: "Módulo 3: Docker vs Entornos Virtuales",
                     shortTitle: "Contenedores",
-                    objective: "Comprender cuándo usar Docker frente a venv/conda para garantizar reproducibilidad total del análisis.",
+                    objective: "Comprender cuándo usar Docker frente a venv/conda para garantizar reproducibilidad total del análisis. Es un adelanto deliberado de la semana 11: aquí basta con que sepas qué problema resuelve Docker y cuándo elegirlo. Escribir Dockerfiles, las construcciones multietapa y la imagen base python:3.11.9-slim-bookworm son materia de esa semana, no de ésta.",
                     duration: "25 min",
                     content: {
                         concept: {
@@ -965,10 +993,13 @@ echo "✅ Proyecto listo para trabajar"`,
                         ],
                         chartData: {
                             type: 'radar',
-                            label: 'Competencias Desarrolladas',
-                            labels: ['Rendimiento (Py3.11)', 'Aislamiento (Venv/Conda)', 'Contenedores (Docker)', 'Control Versiones (Git)', 'Validación (Decoradores)'],
-                            data: [85, 90, 70, 80, 85],
-                            description: "Mapa de competencias técnicas cubiertas en este curso."
+                            titulo: 'Reparto del tiempo de esta sesión',
+                            label: 'Minutos declarados',
+                            unidad: 'min',
+                            max: 30,
+                            labels: ['Python 3.11', 'Entornos virtuales', 'Docker (adelanto)', 'Git y GitHub', 'Decoradores', 'Síntesis'],
+                            data: [25, 25, 25, 30, 25, 15],
+                            description: "Los minutos que este material declara para cada bloque, leídos de la cabecera de cada lección: suman 145 min. No mide competencia adquirida —eso no se puede medir con una gráfica al final de la sesión—, mide dónde se va el tiempo. «Docker (adelanto)» es un anticipo deliberado de la semana 11."
                         }
                     }
                 }
@@ -998,7 +1029,7 @@ echo "✅ Proyecto listo para trabajar"`,
             pipelineContainer.innerHTML = '';
             courseData.modules.forEach((mod, index) => {
                 const step = document.createElement('div');
-                step.className = `relative flex flex-col items-center z-10 flex-1 step-connector cursor-pointer group`;
+                step.className = `relative flex flex-col items-center z-10 flex-1 min-w-[76px] step-connector cursor-pointer group`;
                 if (index === courseData.modules.length - 1) step.classList.remove('step-connector');
 
                 // State classes
@@ -1006,7 +1037,7 @@ echo "✅ Proyecto listo para trabajar"`,
                 const isDone = completedModules.has(index);
 
                 step.innerHTML = `
-                    <div class="step-circle w-10 h-10 rounded-full flex items-center justify-center border-2 bg-white transition-all duration-300 
+                    <div class="step-circle w-10 h-10 flex-shrink-0 rounded-full flex items-center justify-center border-2 bg-white transition-all duration-300
                         ${isActive ? 'border-orange-600 bg-orange-600 text-white shadow-lg scale-110' :
                         isDone ? 'border-emerald-500 bg-emerald-500 text-white' : 'border-gray-300 text-gray-400 group-hover:border-gray-400'}">
                         ${isDone ? '✓' : index + 1}
@@ -1192,7 +1223,7 @@ echo "✅ Proyecto listo para trabajar"`,
                             <span class="usta-gradient text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">
                                 <i class="fas fa-chart-pie text-xs"></i>
                             </span>
-                            Competencias Desarrolladas
+                            ${mod.content.chartData.titulo || 'Competencias Desarrolladas'}
                         </h3>
                         <div class="flex flex-col md:flex-row items-center gap-6">
                             <div class="w-full md:w-1/2" style="height: 320px;">
@@ -1206,9 +1237,9 @@ echo "✅ Proyecto listo para trabajar"`,
                                             <span class="text-gray-700">${label}</span>
                                             <div class="flex items-center gap-2">
                                                 <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-                                                    <div class="h-full usta-gradient rounded-full" style="width: ${mod.content.chartData.data[i]}%"></div>
+                                                    <div class="h-full usta-gradient rounded-full" style="width: ${Math.round(100 * mod.content.chartData.data[i] / (mod.content.chartData.max || 100))}%"></div>
                                                 </div>
-                                                <span class="text-xs font-bold text-primary">${mod.content.chartData.data[i]}%</span>
+                                                <span class="text-xs font-bold text-primary">${mod.content.chartData.data[i]}${mod.content.chartData.unidad ? ' ' + mod.content.chartData.unidad : '%'}</span>
                                             </div>
                                         </div>
                                     `).join('')}
@@ -1361,7 +1392,7 @@ echo "✅ Proyecto listo para trabajar"`,
                     data: {
                         labels: data.labels,
                         datasets: [{
-                            label: 'Competencias Logradas',
+                            label: data.label || 'Competencias Logradas',
                             data: data.data,
                             backgroundColor: 'rgba(61, 0, 141, 0.15)',
                             borderColor: '#3D008D',
@@ -1378,13 +1409,13 @@ echo "✅ Proyecto listo para trabajar"`,
                             r: {
                                 angleLines: { display: true, color: 'rgba(0,0,0,0.1)' },
                                 suggestedMin: 0,
-                                suggestedMax: 100,
+                                suggestedMax: data.max || 100,
                                 pointLabels: {
                                     font: { size: 11 },
                                     color: '#374151'
                                 },
                                 ticks: {
-                                    stepSize: 20,
+                                    stepSize: (data.max || 100) / 5,
                                     backdropColor: 'transparent',
                                     color: '#6B7280',
                                     font: { size: 10 }
