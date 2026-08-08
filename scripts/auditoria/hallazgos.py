@@ -4,7 +4,7 @@ Registro único del estado de los hallazgos de la auditoría.
 
 El problema que resuelve: los hallazgos viven repartidos en tres informes
 —Fase 1, Fase 2 y Fase 3— y para saber si `I11` sigue abierto había que leer
-los tres. Aquí están los 50 en un sitio, y los que se pueden comprobar contra
+los tres. Aquí están todos en un sitio, y los que se pueden comprobar contra
 los archivos se comprueban, en vez de creerse el estado escrito.
 
 Cada hallazgo lleva una `prueba` cuando su estado es verificable de forma
@@ -158,8 +158,19 @@ def p_plotly():
 
 
 def p_anio_2025():
-    detalle = {n: len(re.findall(r"\b2025\b", mod(n))) for n in (6, 7)}
-    return all(v == 0 for v in detalle.values()), f"referencias a «2025»: {detalle}"
+    """
+    Sólo cuenta las menciones de CADUCIDAD, no los años de publicación.
+
+    `Garodia, S. (2025). "From Zero to API"` es una cita correcta: cambiarle el
+    año sería falsear la fuente. Lo que el hallazgo persigue es el material que
+    se anuncia a sí mismo como de hace dos años («Datos del Ecosistema
+    2024-2025») en un curso que es 2026-II.
+    """
+    detalle = {}
+    for n in (6, 7):
+        t = mod(n)
+        detalle[n] = len(re.findall(r"\b2025\b", t)) - len(re.findall(r"\(2025\)\.", t))
+    return all(v == 0 for v in detalle.values()), f"«2025» de caducidad (sin citas): {detalle}"
 
 
 def p_fa_version():
@@ -174,9 +185,17 @@ def p_graficas_modulo7():
 
 
 def p_segunda_persona():
+    """
+    Proxy de registro, no medida de calidad: cuenta marcas de segunda persona.
+
+    El hallazgo era «no se dirigen al estudiante NI UNA VEZ». El listón se pone
+    en 5 porque es lo que distingue un módulo que le habla al estudiante de uno
+    que no: los tres estaban en 0 o 1. No dice que el registro sea bueno, dice
+    que existe.
+    """
     RE = re.compile(r"\b(puedes|tienes|debes|necesitas|tu |tus |vas a|te )\b", re.I)
     detalle = {n: len(RE.findall(mod(n))) for n in (1, 7, 13)}
-    return all(v > 5 for v in detalle.values()), f"marcas de segunda persona: {detalle}"
+    return all(v >= 5 for v in detalle.values()), f"marcas de segunda persona: {detalle}"
 
 
 def p_estructura_html():
@@ -214,8 +233,21 @@ def p_estructura_html():
     return not malos, f"marcado desbalanceado en: {malos or 'ninguno'}"
 
 
-def p_apertura_modulo4():
-    return 'data-fase3="apertura"' in mod(4), "módulo 4: sigue abriendo con «Introducción: El Problema de los Datos»"
+def p_aperturas():
+    malos = [n for n in (1, 4, 7) if 'data-fase3="apertura"' not in mod(n)]
+    return not malos, f"sin bloque de apertura: {malos or 'ninguno'}"
+
+
+def p_presupuesto_modulo7():
+    """
+    El módulo 7 declaraba 128 min de prosa contra 60 de presupuesto. La cuestión
+    nunca fue el total del archivo, sino que nada decía qué parte era exposición.
+    La prueba exige que el bloque de reparto declare minutos medidos.
+    """
+    t = mod(7)
+    tiene = "minutos medidos" in t and re.search(r"· \d+ min", t) is not None
+    n = len(re.findall(r"· (\d+) min", t))
+    return tiene, f"módulo 7: bloque de reparto con {n} secciones de exposición cronometradas"
 
 
 # ---------------------------------------------------------------------------
@@ -248,7 +280,7 @@ H = [
     ("C2", 1, "cosmético", "8", "Carga los 3 archivos de KaTeX y renderiza 0 fórmulas", CERRADO, "Fase 3", "7d69b57", p_katex_muerto),
     ("C3", 1, "cosmético", "5, 7, 8, 9", "89 KB de Font Awesome para 1 o 2 iconos", ABIERTO, "—", "", p_fa_pocos_iconos),
     ("C4", 1, "cosmético", "10–13", "Plotly 3.5.0 frente al 2.35.2 del syllabus", ABIERTO, "—", "", p_plotly),
-    ("C5", 1, "cosmético", "6, 7", "Referencias a «2025»", PARCIAL, "Fase 3 (sólo el 7)", "7d69b57", p_anio_2025),
+    ("C5", 1, "cosmético", "6, 7", "Referencias a «2025» que fechan el material", CERRADO, "Fase 3", "eca3261", p_anio_2025),
     ("C6", 1, "cosmético", "todos", "Ningún módulo declara el periodo 2026-II", CERRADO, "Fase 3", "4e31026", p_meta("periodo", r"2026-II")),
     ("C7", 1, "cosmético", "7, 13", "Bloques de código que continúan a otro sin decirlo", ABIERTO, "—", "", None),
     ("C8", 1, "cosmético", "2, 10, 11", "Semana correcta pero en tres notaciones distintas", CERRADO, "Fase 3", "4e31026", p_titulos_semana),
@@ -262,7 +294,7 @@ H = [
 
     # ── Fase 2 · importantes ──────────────────────────────────────────────
     ("P5", 2, "importante", "7", "Celery/RabbitMQ/DLQ: 70 menciones que el syllabus no cita", CERRADO, "Fase 3", "7d69b57", p_celery),
-    ("P6", 2, "importante", "7", "128 min de prosa contra un presupuesto de 60", PARCIAL, "Fase 3 (declarado, no medido)", "7d69b57", None),
+    ("P6", 2, "importante", "7", "128 min de prosa contra un presupuesto de 60", CERRADO, "Fase 3", "eca3261", p_presupuesto_modulo7),
     ("P7", 2, "importante", "2", "Declara 120 min en cabecera; sus lecciones suman 170", CERRADO, "Fase 3", "f2a65fc", p_reloj_a_mano),
     ("P8", 2, "importante", "1, 2", "Radar «Competencias» con datos inventados y duplicado", CERRADO, "Fase 3", "f2a65fc", p_radar_inventado),
     ("P9", 2, "importante", "2", "40 min a Pydantic, que es la semana 4", CERRADO, "Fase 3 (D3: se declara)", "f2a65fc", None),
@@ -270,13 +302,13 @@ H = [
     ("P11", 2, "importante", "11 módulos", "No declaran ninguna duración", CERRADO, "Fase 3", "4e31026", p_reparto),
     ("P12", 2, "importante", "todos", "Ningún módulo separa exposición de material de consulta", CERRADO, "Fase 3", "4e31026", p_reparto),
     ("P13", 2, "importante", "12", "Compara Railway y Render donde el proyecto exige Render", CERRADO, "Fase 3", "7d69b57", p_railway),
-    ("P14", 2, "importante", "1, 7, 13", "No se dirigen al estudiante ni una vez", PARCIAL, "Fase 3 (1 y 13; falta el 7)", "e9dfeb2", p_segunda_persona),
+    ("P14", 2, "importante", "1, 7, 13", "No se dirigen al estudiante ni una vez", CERRADO, "Fase 3", "eca3261", p_segunda_persona),
     ("P15", 2, "importante", "6", "Único módulo que trata de **usted**", CERRADO, "Fase 3", "7d69b57", p_usted),
     ("P16", 2, "importante", "3–9", "Python 3.11.9 no se menciona nunca *(= I7)*", CERRADO, "Fase 3", "7d69b57", p_python3119),
 
     # ── Fase 2 · cosméticos ───────────────────────────────────────────────
     ("Q1", 2, "cosmético", "10", "El `<title>` dice «Semana 10» y la cabecera «Semana X»", CERRADO, "Fase 3", "7d69b57", p_semana_x),
-    ("Q2", 2, "cosmético", "1, 4", "Aperturas que indexan en vez de motivar", PARCIAL, "Fase 3 (sólo el 1)", "e9dfeb2", p_apertura_modulo4),
+    ("Q2", 2, "cosmético", "1, 4, 7", "Aperturas que indexan en vez de motivar", CERRADO, "Fase 3", "eca3261", p_aperturas),
     ("Q3", 2, "cosmético", "1", "Gráfica de barras sin fuente citada", CERRADO, "Fase 3", "e9dfeb2", None),
     ("Q4", 2, "cosmético", "7", "El módulo más pesado del curso no tiene ni una gráfica", ABIERTO, "—", "", p_graficas_modulo7),
     ("Q5", 2, "cosmético", "2", "«Bonus: Funciones en Python», por debajo del nivel de la semana", CERRADO, "Fase 3 (D3: se declara)", "f2a65fc", None),

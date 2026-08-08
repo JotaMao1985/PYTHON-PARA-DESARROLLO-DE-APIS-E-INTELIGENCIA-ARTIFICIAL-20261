@@ -240,25 +240,34 @@ REPARTO: dict[int, dict] = {
                 "se monta encima de esta API. Entorno: Python 3.11.9 con FastAPI y Uvicorn.",
     },
     7: {
+        # Los minutos NO están puestos a ojo: salen de contar la prosa de cada
+        # <article id="modulo-N"> del propio archivo a 110 palabras/minuto, que es
+        # el ritmo declarado en §5.2 del informe pedagógico. Reproducible con
+        # `python3 scripts/auditoria/hallazgos.py --prosa-modulo7`.
         "exposicion": [
-            "Validadores de campo y de modelo",
-            "Tipos complejos y anotaciones para datos estadísticos",
-            "Modelos anidados",
-            "Manejo integral del error 422",
+            "Introducción: por qué validar antes de modelar · 5 min",
+            "Tipos complejos y anotaciones para datos estadísticos · 13 min",
+            "Validadores de campo y de modelo · 19 min",
+            "Modelos anidados y topología jerárquica · 23 min",
+            "Manejo integral del error 422 · 10 min",
         ],
         "practica": [
+            "Síntesis: el pipeline de ingesta estadística completo",
+            "Actividad evaluativa: proyecto aplicado",
             "Construir un validador que rechace observaciones fuera de rango",
-            "Hacer que el rechazo explique su motivo al que consume la API",
+            "Hacer que el rechazo explique su motivo a quien consume la API",
             "Añadir rangos lógicos y descripciones a los esquemas del proyecto",
         ],
         "consulta": [
-            "Arquitectura de validación en capas",
-            "Estrategias de validación jerárquica",
+            "Las 1 529 líneas de código de los ejemplos, como referencia",
             "Bibliografía y fuentes consultadas",
         ],
-        "nota": "Éste es el módulo más extenso del curso, y no todo él es exposición: "
-                "la columna de la izquierda es lo que se ve en clase y el resto es "
-                "material de consulta que puedes recorrer cuando lo necesites. "
+        "nota": "Las cinco secciones de exposición suman <strong>70 minutos medidos</strong> "
+                "sobre un presupuesto de 60: cabe, con la sesión ajustada. El módulo entero "
+                "son 120 minutos de prosa, y ésa era la confusión que este bloque deshace — "
+                "los 50 restantes nunca fueron exposición, son la práctica y el código de "
+                "referencia. Si vas justo de tiempo, la sección que mejor aguanta quedar como "
+                "lectura es «Modelos anidados», que es la más larga. "
                 "Entorno: Python 3.11.9 con Pydantic v2 y FastAPI.",
     },
     8: {
@@ -627,6 +636,26 @@ def insertar_reparto(n: int, semanas: dict[int, dict], ancla: str,
     return f"bloque insertado tras {ancla!r} ({len(bloque)} car.)"
 
 
+def reemplazar_reparto(n: int, semanas: dict[int, dict]) -> str:
+    """
+    Sustituye un bloque ya insertado por otro recién generado desde REPARTO.
+
+    Sin esto, cambiar el reparto de un módulo obliga a editar el HTML a mano y el
+    dict deja de ser la fuente de verdad: el archivo diría una cosa y el script otra.
+    """
+    ruta = ruta_modulo(n)
+    texto = ruta.read_text(encoding="utf-8")
+    m = re.search(r"\n<!-- Fase 3 · reparto declarado.*?\n</section>\n", texto, re.S)
+    if not m:
+        raise SystemExit(f"El módulo {n} no tiene bloque de reparto que reemplazar")
+
+    r = REPARTO[n]
+    bloque = bloque_reparto(n, semanas, r["exposicion"], r["practica"],
+                            r["consulta"], r.get("nota"), r.get("modo", "sesion"))
+    ruta.write_text(texto[:m.start()] + bloque + texto[m.end():], encoding="utf-8")
+    return f"bloque reemplazado ({m.end() - m.start()} → {len(bloque)} car.)"
+
+
 def insertar_en_head(texto: str, etiqueta: str) -> str:
     """Inserta justo antes de </title>… no: justo después del <title>, que existe en los 13."""
     m = RE_TITLE.search(texto)
@@ -644,6 +673,7 @@ def main() -> int:
     ap.add_argument("--aplicar", type=int, metavar="N")
     ap.add_argument("--reparto", type=int, metavar="N")
     ap.add_argument("--insertar-reparto", type=int, metavar="N")
+    ap.add_argument("--reemplazar-reparto", type=int, metavar="N")
     ap.add_argument("--ancla", type=str, help="texto tras el que insertar el bloque")
     ap.add_argument("--json", action="store_true")
     args = ap.parse_args()
@@ -662,6 +692,11 @@ def main() -> int:
         r = REPARTO[n]
         print(bloque_reparto(n, semanas, r["exposicion"], r["practica"],
                              r["consulta"], r.get("nota"), r.get("modo", "sesion")))
+        return 0
+
+    if args.reemplazar_reparto:
+        print(f"Módulo {args.reemplazar_reparto}: "
+              f"{reemplazar_reparto(args.reemplazar_reparto, semanas)}")
         return 0
 
     if args.insertar_reparto:
