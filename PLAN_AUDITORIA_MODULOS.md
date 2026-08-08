@@ -1,8 +1,21 @@
 # Plan de auditoría de los 13 módulos del curso
 
 **Asignatura:** Python para Desarrollo de APIs e IA · USTA · Estadística · 2026-II
-**Fecha:** 2026-08-06
-**Estado:** PLAN. **No se ha modificado ningún módulo.**
+**Fecha:** 2026-08-06 · **Cerrado el 2026-08-07**
+**Estado:** **EJECUTADO.** Las tres fases están hechas y los 13 módulos, corregidos.
+
+> **Cierre (2026-08-07).** Fase 1 → `INFORME_AUDITORIA_TECNICA.md`, Fase 2 →
+> `INFORME_AUDITORIA_PEDAGOGICA.md`, Fase 3 → `PLAN_FASE_3.md` + `INFORME_FASE_3.md`.
+>
+> El docente eligió la **Opción A revisada completa** (§3), con el módulo 5 dentro. Los
+> **cuatro bloqueantes pedagógicos están cerrados** —P1 tablero, P2 y P3 del módulo 3, P4
+> del módulo 5— además de los seis técnicos que ya se habían corregido en la Fase 1. Los
+> 13 módulos cumplen ahora la convención de título, metadatos, periodo y reparto 60/180:
+> **13/13 en las seis comprobaciones**, desde 0/13 en cuatro de ellas.
+>
+> Aparecieron **tres hallazgos que ninguna de las dos fases de sólo lectura había visto**
+> (§0 del informe de la Fase 3), y quedan abiertos los cosméticos y las opciones **B** y
+> **C**, que siguen siendo trabajo de semestre.
 
 ---
 
