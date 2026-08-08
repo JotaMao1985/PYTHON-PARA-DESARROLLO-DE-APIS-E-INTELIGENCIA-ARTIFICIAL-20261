@@ -1,0 +1,125 @@
+<meta charset="utf-8">
+<title>Portada Moodle — Python para APIs e IA</title>
+<style>
+  /* ------------------------------------------------------------------
+     Capa de texto y marca de la portada. El fondo (ilustracion ComfyUI)
+     entra por --fondo; si no existe todavia, queda el degradado
+     placeholder y la composicion se puede validar igual.
+     Formatos: .f-banner 1920x480 (cabecera) | .f-card 1600x900 (tarjeta).
+     ------------------------------------------------------------------ */
+  :root {
+    --morado:  #3D008D;
+    --magenta: #ED1E79;
+    --navy:    #001A4D;
+    --base:    #030A20;
+    --fondo:   url("fondo.png");
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: var(--base); }
+
+  .lienzo {
+    position: relative;
+    overflow: hidden;
+    font-family: "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+    color: #fff;
+    background-color: var(--navy);
+    /* Dos capas: la ilustracion y, debajo, un degradado placeholder. Si --fondo
+       aun no resuelve a un archivo, el navegador descarta esa capa y muestra el
+       degradado, asi que la composicion se valida sin haber generado nada. */
+    background-image: var(--fondo),
+      radial-gradient(120% 160% at 72% 30%, #2A1466 0%, #10093A 45%, var(--base) 100%);
+    background-size: cover, cover;
+    background-position: center 42%, center;
+    background-repeat: no-repeat, no-repeat;
+  }
+  .f-banner { width: 1920px; height: 480px; }
+  .f-card   { width: 1600px; height: 900px; }
+
+  /* Velo de contraste: garantiza legibilidad pase lo que pase en la
+     ilustracion. En banner cae hacia la izquierda; en card, hacia abajo. */
+  .velo { position: absolute; inset: 0; z-index: 1; }
+  .f-banner .velo {
+    background: linear-gradient(100deg,
+      rgba(3,10,32,.96) 0%, rgba(3,10,32,.90) 34%,
+      rgba(3,10,32,.55) 60%, rgba(3,10,32,.30) 100%);
+  }
+  .f-card .velo {
+    background:
+      radial-gradient(80% 70% at 50% 52%, rgba(3,10,32,.72) 0%, rgba(3,10,32,.30) 60%, rgba(3,10,32,0) 100%),
+      linear-gradient(180deg, rgba(3,10,32,.55) 0%, rgba(3,10,32,.18) 40%, rgba(3,10,32,.85) 100%);
+  }
+
+  .contenido { position: relative; z-index: 2; height: 100%; display: flex; }
+
+  /* ---------- Banner 4:1 ---------- */
+  .f-banner .contenido {
+    align-items: center; justify-content: space-between; padding: 0 96px;
+  }
+  .f-banner .regla { width: 72px; height: 6px; margin-bottom: 26px; }
+  .f-banner .titulo { font-size: 86px; }
+  .f-banner .bajada { font-size: 25px; margin-top: 20px; }
+  .f-banner .sello  { width: 186px; height: 186px; }
+
+  /* ---------- Card 16:9 ---------- */
+  /* Composicion centrada a proposito: los temas de Moodle recortan la
+     tarjeta desde el centro, asi que todo lo critico vive ahi. */
+  .f-card .contenido {
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 0 120px; gap: 0;
+  }
+  /* order:-1 sube el sello sobre el titulo pese a ir despues en el DOM. */
+  .f-card .marca { order: -1; flex-direction: column; align-items: center; margin-bottom: 44px; }
+  .f-card .regla { width: 96px; height: 7px; margin: 0 auto 30px; }
+  .f-card .titulo { font-size: 108px; }
+  .f-card .bajada { font-size: 31px; margin-top: 26px; }
+  .f-card .sello  { width: 210px; height: 210px; }
+
+  /* ---------- Elementos compartidos ---------- */
+  .regla { background: linear-gradient(90deg, var(--morado), var(--magenta)); border-radius: 99px; }
+
+  .titulo {
+    font-weight: 600;
+    letter-spacing: -.022em;
+    line-height: 1.02;
+    text-shadow: 0 2px 28px rgba(0,0,0,.55);
+  }
+
+  .bajada {
+    font-weight: 500;
+    letter-spacing: .012em;
+    color: rgba(255,255,255,.80);
+    text-shadow: 0 1px 14px rgba(0,0,0,.6);
+  }
+
+  .marca { display: flex; align-items: center; gap: 18px; flex-direction: column; }
+  .sello { display: block; filter: drop-shadow(0 6px 22px rgba(0,0,0,.55)); }
+  .vigilada {
+    font-size: 12px; font-weight: 600; letter-spacing: .16em;
+    text-transform: uppercase; color: rgba(255,255,255,.62);
+    white-space: nowrap;
+  }
+
+  /* Filete institucional inferior. */
+  .filete {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 7px; z-index: 3;
+    background: linear-gradient(90deg, var(--morado) 0%, #7A1BA8 45%, var(--magenta) 100%);
+  }
+</style>
+
+<div class="lienzo {{FORMATO}}">
+  <div class="velo"></div>
+  <div class="contenido">
+    <div class="texto">
+      <div class="regla"></div>
+      <h1 class="titulo">Python para APIs e IA</h1>
+      <p class="bajada">Facultad de Estadística · Universidad Santo Tomás · 2026-II</p>
+    </div>
+    <div class="marca">
+      <img class="sello" src="../../assets/portada/logo_usta_sello.png" alt="Universidad Santo Tomás">
+      <span class="vigilada">Vigilada Mineducación</span>
+    </div>
+  </div>
+  <div class="filete"></div>
+</div>

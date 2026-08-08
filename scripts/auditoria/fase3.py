@@ -218,6 +218,172 @@ REPARTO: dict[int, dict] = {
                 "encontrar en el código Python que ya está en producción. Lo que tú "
                 "escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.",
     },
+    6: {
+        "exposicion": [
+            "El type hinting como contrato ejecutable",
+            "Routers y organización modular del proyecto",
+            "OpenAPI, Swagger UI y Redoc: documentación que no se escribe",
+            "async/await: cuándo aporta y cuándo no",
+        ],
+        "practica": [
+            "Reescribir en FastAPI el servicio de la semana 5",
+            "Recorrer la documentación interactiva generada en /docs",
+            "Partir la aplicación en routers por responsabilidad",
+            "Migrar el proyecto con validación estricta en cada endpoint",
+        ],
+        "consulta": [
+            "Comparativa histórica con Flask y Django",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "Es la semana en la que el proyecto deja de ser un script: a partir de "
+                "aquí todo lo demás —dependencias, base de datos, pruebas, contenedor— "
+                "se monta encima de esta API. Entorno: Python 3.11.9 con FastAPI y Uvicorn.",
+    },
+    7: {
+        "exposicion": [
+            "Validadores de campo y de modelo",
+            "Tipos complejos y anotaciones para datos estadísticos",
+            "Modelos anidados",
+            "Manejo integral del error 422",
+        ],
+        "practica": [
+            "Construir un validador que rechace observaciones fuera de rango",
+            "Hacer que el rechazo explique su motivo al que consume la API",
+            "Añadir rangos lógicos y descripciones a los esquemas del proyecto",
+        ],
+        "consulta": [
+            "Arquitectura de validación en capas",
+            "Estrategias de validación jerárquica",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "Éste es el módulo más extenso del curso, y no todo él es exposición: "
+                "la columna de la izquierda es lo que se ve en clase y el resto es "
+                "material de consulta que puedes recorrer cuando lo necesites. "
+                "Entorno: Python 3.11.9 con Pydantic v2 y FastAPI.",
+    },
+    8: {
+        "exposicion": [
+            "De lo duro a lo flexible: variables de entorno",
+            "El patrón de inyección de dependencias",
+            "Reutilización: conexión a base de datos y carga de configuración",
+        ],
+        "practica": [
+            "Escribir una dependencia de parámetros comunes y aplicarla a varias rutas",
+            "Configurar el entorno local con un archivo .env",
+            "Cargar los settings del proyecto desde variables de entorno",
+        ],
+        "consulta": [
+            "Antipatrones de configuración embebida",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "El ejemplo de la cadena de conexión con la credencial embebida está "
+                "ahí para enseñar por qué NO se hace: es el antipatrón, no el patrón. "
+                "Entorno: Python 3.11.9 con FastAPI Depends y python-dotenv.",
+    },
+    9: {
+        "exposicion": [
+            "ORM frente a SQL en crudo: qué se gana y qué se paga",
+            "SQLAlchemy Core y ORM",
+            "Modelado y migraciones con Alembic",
+            "SQLite para desarrollo local",
+        ],
+        "practica": [
+            "Conectar la API a SQLite",
+            "Registrar el histórico de peticiones recibidas",
+            "Crear la tabla de predicciones del proyecto y persistir entrada y salida",
+        ],
+        "consulta": [
+            "Relaciones entre tablas y carga diferida",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "El histórico de predicciones que montes aquí es lo que la semana 13 "
+                "va a rellenar con las salidas del modelo. Entorno: Python 3.11.9 con "
+                "SQLAlchemy, SQLite y Alembic.",
+    },
+    10: {
+        "exposicion": [
+            "La pirámide de testing",
+            "pytest y el TestClient de FastAPI",
+            "Fixtures: preparar el estado sin repetirse",
+            "Qué significa que un resultado sea reproducible",
+        ],
+        "practica": [
+            "Escribir pruebas para las respuestas correctas",
+            "Escribir una prueba por cada modo de fallo previsto",
+            "Cubrir al menos tres endpoints del proyecto",
+            "Documentar cómo clonar el proyecto y ejecutarlo desde cero",
+        ],
+        "consulta": [
+            "Cobertura y sus límites",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "«Cada modo de fallo previsto» es la parte que se suele saltar y la que "
+                "la rúbrica mira: una API que sólo tiene pruebas del camino feliz no "
+                "está probada. Entorno: Python 3.11.9 con pytest, httpx y TestClient.",
+    },
+    11: {
+        "exposicion": [
+            "Del entorno virtual al contenedor",
+            "Contenedores frente a máquinas virtuales",
+            "Estructura del Dockerfile y la imagen base python:3.11.9-slim-bookworm",
+            "Construcción multietapa",
+        ],
+        "practica": [
+            "Escribir el Dockerfile del proyecto",
+            "Construir la imagen y ejecutarla",
+            "Comprobar que la API se comporta igual dentro del contenedor",
+        ],
+        "consulta": [
+            "Optimización del tamaño de imagen y del caché de capas",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "Aquí se cierra el adelanto que abrió la semana 1: allí bastaba con "
+                "saber cuándo elegir un contenedor, y ésta es la semana en la que se "
+                "construye. La imagen que salga de aquí es la que se despliega en la 12.",
+    },
+    12: {
+        "exposicion": [
+            "Qué es una plataforma como servicio",
+            "Variables de entorno en producción frente a desarrollo",
+            "Integración continua con GitHub Actions",
+            "Lectura de logs de producción",
+        ],
+        "practica": [
+            "Conectar el repositorio a Render",
+            "Configurar el entorno de producción y sus secretos",
+            "Desplegar la imagen construida en la semana 11",
+            "Dejar el workflow de integración continua en verde",
+        ],
+        "consulta": [
+            "Otras plataformas del mercado y en qué se diferencian",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "La plataforma de este curso es <strong>Render</strong>: es la que el "
+                "syllabus declara y la que la rúbrica del proyecto evalúa. El hito de "
+                "esta semana es una API desplegada y accesible públicamente.",
+    },
+    13: {
+        "exposicion": [
+            "Ciclo de vida del modelo: entrenar, serializar, cargar, predecir",
+            "El patrón Singleton para no recargar el modelo en cada petición",
+            "Coste de las dependencias de ML sobre el tamaño de la imagen",
+            "Consistencia entre entrenamiento y servicio",
+        ],
+        "practica": [
+            "Entrenar un modelo y serializarlo con joblib",
+            "Servirlo desde un endpoint que lo cargue una sola vez al arranque",
+            "Construir el tablero mínimo que consume ese endpoint",
+            "Reconstruir la imagen con el modelo dentro",
+        ],
+        "consulta": [
+            "Comparativa de formatos de serialización",
+            "Bibliografía y fuentes consultadas",
+        ],
+        "nota": "El tablero es el criterio 14 de la rúbrica del proyecto: pesa un 3 % y "
+                "no necesita ser bonito, necesita existir, consumir tu API real y "
+                "mostrar el resultado. El taller de la semana 15 lo integra con el "
+                "resto del sistema.",
+    },
 }
 
 

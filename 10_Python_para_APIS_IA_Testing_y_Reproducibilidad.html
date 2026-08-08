@@ -6,7 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Material de estudio sobre testing con pytest, TestClient de FastAPI, fixtures y reproducibilidad sin Docker para estudiantes de Estadística.">
-    <title>Semana 10 — Testing y Reproducibilidad de APIs Estadísticas</title>
+    <title>Semana 10 — Testing y reproducibilidad · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 10 — Testing y reproducibilidad · Python para APIs e IA">
+    <meta property="og:description" content="Material de estudio sobre testing con pytest, TestClient de FastAPI, fixtures y reproducibilidad sin Docker para estudiantes de Estadística.">
+    <meta property="og:type" content="article">
+    <meta name="author" content="Javier Mauricio Sierra">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -721,6 +729,18 @@
                     <span>Duración estimada: 4 h</span>
                 </div>
             </header>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-10"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-10" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 10 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">La pirámide de testing</li><li style="margin:0 0 .3rem 0;">pytest y el TestClient de FastAPI</li><li style="margin:0 0 .3rem 0;">Fixtures: preparar el estado sin repetirse</li><li style="margin:0 0 .3rem 0;">Qué significa que un resultado sea reproducible</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Escribir pruebas para las respuestas correctas</li><li style="margin:0 0 .3rem 0;">Escribir una prueba por cada modo de fallo previsto</li><li style="margin:0 0 .3rem 0;">Cubrir al menos tres endpoints del proyecto</li><li style="margin:0 0 .3rem 0;">Documentar cómo clonar el proyecto y ejecutarlo desde cero</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Cobertura y sus límites</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">«Cada modo de fallo previsto» es la parte que se suele saltar y la que la rúbrica mira: una API que sólo tiene pruebas del camino feliz no está probada. Entorno: Python 3.11.9 con pytest, httpx y TestClient.</p>
+</section>
+
 
             <div class="content-inner">
 
