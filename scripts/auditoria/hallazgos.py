@@ -233,6 +233,20 @@ def p_estructura_html():
     return not malos, f"marcado desbalanceado en: {malos or 'ninguno'}"
 
 
+def p_main_anidado():
+    """
+    Un documento HTML admite un solo `<main>`, y anidarlos no es válido.
+
+    Los cuatro módulos de barra lateral abren `<main class="flex-1 ...">` para la
+    zona con scroll y, dentro, otro `<main class="max-w-6xl ...">` que es sólo un
+    contenedor de ancho. Para un lector de pantalla eso son dos landmarks
+    principales, que es como no tener ninguno. Se descubrió al reconstruir la
+    pila de etiquetas para arreglar F2.
+    """
+    malos = [n for n in range(1, 14) if len(re.findall(r"<main\b", mod(n))) > 1]
+    return not malos, f"con <main> anidado: {malos or 'ninguno'}"
+
+
 def p_aperturas():
     malos = [n for n in (1, 4, 7) if 'data-fase3="apertura"' not in mod(n)]
     return not malos, f"sin bloque de apertura: {malos or 'ninguno'}"
@@ -316,7 +330,8 @@ H = [
 
     # ── Fase 3 · hallazgos nuevos ─────────────────────────────────────────
     ("F1", 3, "importante", "1", "`TypeError` en consola cada 60 s, en el primer módulo del curso", CERRADO, "Fase 3", "5e17c40", p_guarda_temporizador),
-    ("F2", 3, "importante", "8, 9", "Marcado desbalanceado: un `<main>` que nunca se cierra *(preexistente)*", ABIERTO, "—", "", p_estructura_html),
+    ("F2", 3, "importante", "8, 9", "Marcado desbalanceado: un `<main>` que nunca se cierra *(preexistente)*", CERRADO, "Fase 3", "a25ebdb", p_estructura_html),
+    ("F4", 3, "importante", "5, 7, 8, 9", "Dos `<main>` anidados: landmark duplicado, inválido en HTML", ABIERTO, "—", "", p_main_anidado),
     ("F3", 3, "nota", "7", "El módulo **sí** tiene 82 fórmulas: corrige al informe de la Fase 2 §7.3", NOTA, "Fase 3", "7d69b57", None),
 
     # ── Cobertura del RA que la Fase 3 cerró de paso ──────────────────────
@@ -442,7 +457,9 @@ def a_markdown(pruebas) -> str:
         "C7": "Requiere leer los bloques en contexto, uno a uno",
         "C9": "La Fase 1 demostró que no rompe ningún icono",
         "Q4": "Añadir gráficas es contenido nuevo, no corrección",
-        "F2": "Preexistente. Tocar marcado desbalanceado en 166 y 222 KB es más arriesgado que dejarlo",
+        "F4": "Encontrado al arreglar F2. Es un cambio de dos etiquetas por módulo y "
+              "nada en el CSS ni en el JS apunta a `main`, pero afecta a cuatro archivos "
+              "y toca decidirlo, no colarlo",
         "C5": "Quedan 3 referencias a «2025» en el módulo 6",
         "P6": "El bloque de reparto ya separa exposición de consulta; falta volver a medir la prosa",
         "P14": "El módulo 7 sigue sin dirigirse al estudiante",
