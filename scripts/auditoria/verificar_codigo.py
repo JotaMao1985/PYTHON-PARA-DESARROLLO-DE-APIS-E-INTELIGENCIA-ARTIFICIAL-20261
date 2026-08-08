@@ -30,6 +30,7 @@ from importlib.util import find_spec
 from pathlib import Path
 
 SALIDA = Path(__file__).resolve().parent / "salida"
+RAIZ = Path(__file__).resolve().parents[2]
 
 STDLIB = set(sys.stdlib_module_names)
 
@@ -120,7 +121,28 @@ def main() -> int:
     ap.add_argument("--ejecutar", action="store_true", help="ejecuta los bloques ejecutables")
     args = ap.parse_args()
 
-    bloques = json.loads((SALIDA / "bloques.json").read_text(encoding="utf-8"))
+    # Este script NO extrae: consume el bloques.json que produce extraer_codigo.py.
+    # Si alguien edita un modulo y verifica sin volver a extraer, obtiene un verde
+    # que no corresponde al archivo que tiene delante. Paso durante la Fase 3 y
+    # costo dos commits con una cifra equivocada, asi que ahora se comprueba.
+    ruta_bloques = SALIDA / "bloques.json"
+    if not ruta_bloques.exists():
+        print("Falta bloques.json. Ejecuta antes: python3 scripts/auditoria/extraer_codigo.py")
+        return 2
+    mtime_json = ruta_bloques.stat().st_mtime
+    desfasados = [
+        p.name for p in sorted(RAIZ.glob("[0-9]*_*.html"))
+        if p.stat().st_mtime > mtime_json
+    ]
+    if desfasados:
+        print("bloques.json es mas antiguo que estos modulos, asi que verificarlo "
+              "no dice nada del archivo actual:")
+        for nombre in desfasados:
+            print(f"    {nombre}")
+        print("\nEjecuta antes: python3 scripts/auditoria/extraer_codigo.py")
+        return 2
+
+    bloques = json.loads(ruta_bloques.read_text(encoding="utf-8"))
     python = [b for b in bloques if b["lenguaje"] == "python"]
     print(f"{len(python)} bloques de Python de {len(bloques)} bloques totales.\n")
 
