@@ -105,6 +105,17 @@ git clone --recurse-submodules https://github.com/JotaMao1985/PYTHON-PARA-DESARR
 git submodule update --init --recursive
 ```
 
+## Estado del trabajo y siguiente paso
+
+**Al 2026-08-08:** las tres fases de auditoría están cerradas y los 13 módulos corregidos —
+46 de 53 hallazgos cerrados, 6 abiertos y todos cosméticos.
+
+**Lo siguiente**, por decisión del docente (Opción B ya + Opción C por bloques durante el
+semestre): cerrar el hueco de lenguajes de LP-CORE antes de migrar ningún módulo más. El
+resaltador no conoce Dockerfile, YAML ni SQL, y los 22 bloques de Dockerfile están en los
+módulos 11 y 13, que encabezan la cola. El detalle y por qué no se parchea en el HTML están en
+[`PILOTO_LPCORE.md`](PILOTO_LPCORE.md) §2 y §5.
+
 ## Auditoría del material
 
 Los 13 módulos se auditaron en tres fases (agosto de 2026). El estado de cada
