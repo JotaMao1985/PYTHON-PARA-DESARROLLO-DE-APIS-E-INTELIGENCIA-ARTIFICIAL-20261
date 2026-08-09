@@ -1,0 +1,76 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m10",
+  "salida": "_migrado_10_lpcore.html",
+  "titulo_html": "Semana 10 — Testing y reproducibilidad · Python para APIs e IA",
+  "descripcion": "Semana 10 del curso Python para Desarrollo de APIs e Inteligencia Artificial: pirámide de testing, pytest, TestClient de FastAPI, fixtures y reproducibilidad. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "10",
+    "titulo": "Testing y reproducibilidad",
+    "subtitulo": "Automatizar la verificación del comportamiento de la API",
+    "lema": "Una prueba que nunca ha fallado no ha demostrado nada todavía.",
+    "notaPie": "Material de la Semana 10. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Automatizar la verificación del comportamiento de la API con pruebas unitarias y de integración.",
+    "contenidoSyllabus": "La pirámide de testing. pytest. TestClient de FastAPI. Fixtures. Qué significa que un resultado sea reproducible.",
+    "temas": [
+      "pytest",
+      "TestClient",
+      "Fixtures",
+      "Reproducibilidad"
+    ],
+    "storageKey": "usta_2026i_apis_cap10"
+  },
+  "secciones": [
+    {
+      "id": "intro",
+      "componente": "IntroSection",
+      "titulo": "1. Introducción",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "piramide",
+      "componente": "PiramideSection",
+      "titulo": "2. Pirámide de testing",
+      "icono": "Layers"
+    },
+    {
+      "id": "pytest",
+      "componente": "PytestSection",
+      "titulo": "3. Framework pytest",
+      "icono": "Bug"
+    },
+    {
+      "id": "testclient",
+      "componente": "TestclientSection",
+      "titulo": "4. TestClient de FastAPI",
+      "icono": "Workflow"
+    },
+    {
+      "id": "fixtures",
+      "componente": "FixturesSection",
+      "titulo": "5. Fixtures en pytest",
+      "icono": "Grid"
+    },
+    {
+      "id": "reproducibilidad",
+      "componente": "ReproducibilidadSection",
+      "titulo": "6. Reproducibilidad sin Docker",
+      "icono": "Repeat"
+    },
+    {
+      "id": "autoevaluacion",
+      "componente": "AutoevaluacionSection",
+      "titulo": "7. Autoevaluación",
+      "icono": "Award"
+    },
+    {
+      "id": "resumen",
+      "componente": "ResumenSection",
+      "titulo": "8. Resumen y referencias",
+      "icono": "GitBranch"
+    }
+  ]
+}

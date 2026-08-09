@@ -26,6 +26,7 @@ Uso:
 
 import argparse
 import html
+import json
 import re
 import sys
 from pathlib import Path
@@ -74,12 +75,26 @@ def detectar_lang(codigo):
        re.match(r"^#\s*requirements(\.[\w.]+)?\b", primera):
         return "text"
 
+    # Salida de registro: marca de tiempo ISO al principio de la línea. Va
+    # antes que nada porque un traceback de Python dentro del log dispararía
+    # la regla de `python` y saldría resaltado como si fuera código fuente.
+    if len(re.findall(r"^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}", s, re.M)) >= 2:
+        return "text"
+
     # Dockerfile: basta con `FROM` al principio de línea, o con dos o más
     # instrucciones. Exigir ambas cosas dejaba fuera los fragmentos que el
     # material usa para señalar un antipatrón, que empiezan por COPY.
+    # Una instrucción suelta también cuenta si el comentario de cabecera
+    # dice de qué archivo se ha recortado.
     instr = len(re.findall(r"^\s*(RUN|COPY|CMD|ENTRYPOINT|WORKDIR|EXPOSE|ENV|USER|ARG)\s", s, re.M))
-    if re.search(r"^\s*FROM\s+\S", s, re.M) or instr >= 2:
+    if re.search(r"^\s*FROM\s+\S", s, re.M) or instr >= 2 or \
+       (instr >= 1 and re.search(r"[Dd]ockerfile", primera)):
         return "dockerfile"
+
+    # Bloques de variables de entorno (paneles de PaaS, .env). Se resaltan
+    # con bash, que es la gramática que entiende `CLAVE=valor` y `#`.
+    if len(re.findall(r"^[A-Z][A-Z0-9_]*=", s, re.M)) >= 2:
+        return "shell"
 
     # JSON: se ignoran los comentarios de cabecera que el material añade
     # encima (`# app/modelo.json — …`), que no son parte del JSON.
@@ -117,6 +132,16 @@ def titulo_de(codigo):
     primera = codigo.strip().split("\n")[0].strip()
     m = re.match(r"^(?:#|//|--)\s*([\w./-]+\.\w+|Dockerfile|\.dockerignore)\b", primera)
     return m.group(1) if m else None
+
+
+def atributo(texto):
+    """Texto extraído del material, listo para ir entre comillas dobles.
+
+    El material entrecomilla dentro de las etiquetas —«nunca está
+    "terminada"»— y eso cierra el atributo antes de tiempo. Babel falla con
+    un error de sintaxis que no dice de qué caja viene.
+    """
+    return texto.replace("&", "&amp;").replace('"', "&quot;")
 
 
 def escapar_jsx(texto):
@@ -165,7 +190,7 @@ def convertir_boxes(cuerpo, avisos):
         etq = re.search(r'<span class="label">(.*?)</span>', cuerpo_box, re.S)
         label = texto_plano(etq.group(1)).strip() if etq else None
         resto = re.sub(r'<span class="label">.*?</span>', "", cuerpo_box, count=1, flags=re.S)
-        attr = f' label="{label}"' if label else ""
+        attr = f' label="{atributo(label)}"' if label else ""
         return f'<Box type="{tipo}"{attr}>{resto}</Box>'
 
     return re.sub(r'<div class="box ([^"]*)">(.*?)</div>', uno, cuerpo, flags=re.S)
@@ -235,6 +260,25 @@ def limpiar_jsx(cuerpo):
     return cuerpo
 
 
+def tramo_envoltorio(cuerpo, clase):
+    """(inicio, fin) del primer `<div class="…">` con esa clase, equilibrado.
+
+    Hace falta contar: dentro del envoltorio de una gráfica hay un
+    `<div class="plotly-graph-div"></div>` vacío, y una expresión regular
+    perezosa cierra ahí en vez de en el `</div>` que toca — se quedaba con
+    los `<script>` de carga y dejaba fuera el del `newPlot`.
+    """
+    m = re.search(r'<div class="' + re.escape(clase) + r'"[^>]*>', cuerpo)
+    if not m:
+        return None
+    nivel, i = 1, m.end()
+    for t in re.finditer(r"<div\b[^>]*>|</div>", cuerpo[m.end():]):
+        nivel += 1 if t.group(0).startswith("<div") else -1
+        if nivel == 0:
+            return m.start(), m.end() + t.end()
+    return None      # sin cerrar: se deja como está y ya avisará el newPlot
+
+
 def convertir_seccion(bruto, id_seccion, graficas, avisos):
     cuerpo = bruto
 
@@ -247,6 +291,24 @@ def convertir_seccion(bruto, id_seccion, graficas, avisos):
     # comillas que cualquier otra pasada estropearía.
     for cid in graficas.get(id_seccion, []):
         comp = graficas["componentes"][cid]
+
+        # El material envuelve cada gráfica en `.chart-container` y le pone
+        # debajo un `<p class="chart-caption">`. `ChartFrame` ya dibuja el
+        # marco y el pie, así que dejar el envoltorio daría dos tarjetas y
+        # dos pies. Se absorben ambos: el texto del pie pasa a la prop, que
+        # es donde LP-CORE lo espera, y de paso sobran dos clases de CSS.
+        tramo = tramo_envoltorio(cuerpo, "chart-container")
+        if tramo:
+            ini, fin = tramo
+            pie_m = re.match(r'\s*<p class="chart-caption">(.*?)</p>', cuerpo[fin:], re.S)
+            if pie_m:
+                fin += pie_m.end()
+            pie = " ".join(texto_plano(pie_m.group(1)).split()) if pie_m else ""
+            attr = f' caption="{atributo(pie)}"' if pie else ""
+            cuerpo = cuerpo[:ini] + f"<{comp}{attr} />" + cuerpo[fin:]
+            continue
+
+        # Sin envoltorio: se sustituye el `<script>` a secas.
         cuerpo = re.sub(r"<div[^>]*>\s*<script>.*?newPlot.*?</script>\s*</div>",
                         f"<{comp} />", cuerpo, count=1, flags=re.S)
         cuerpo = re.sub(r"<script>.*?newPlot.*?</script>", f"<{comp} />",
@@ -273,6 +335,12 @@ def convertir_seccion(bruto, id_seccion, graficas, avisos):
     for i, b in enumerate(marcas):
         cuerpo = cuerpo.replace(f"@@BLOQUE{i}@@", b)
 
+    # Un `newPlot` que sobrevive es una gráfica que nadie sustituyó: o falta
+    # su entrada en graficas.json, o el `<script>` tiene otra forma. Se avisa
+    # en vez de dejar un <script> crudo dentro del JSX, que no compilaría.
+    if "newPlot" in cuerpo:
+        avisos.append("queda un <script> de Plotly sin sustituir — ¿ejecutó graficas.py?")
+
     return cuerpo.strip()
 
 
@@ -283,6 +351,9 @@ def main():
     p.add_argument("--seccion", help="id de una sola sección")
     p.add_argument("--todas", action="store_true")
     p.add_argument("--salida", type=Path, help="carpeta donde escribir los .jsx")
+    p.add_argument("--graficas", type=Path,
+                   help="graficas.json que produce graficas.py; sin él las gráficas "
+                        "se dejan como están y se avisa")
     args = p.parse_args()
 
     if not args.archivo.exists():
@@ -295,18 +366,15 @@ def main():
         print("ERROR: no se encontró ninguna <section id=…>.", file=sys.stderr)
         return 1
 
-    # Qué gráfica va en qué sección. Se declara aquí porque depende del
-    # módulo; `graficas.py` genera los componentes con estos mismos nombres.
-    GRAFICAS = {
-        "vms": ["chart-vm-vs-contenedor"],
-        "imagen-base": ["chart-imagen-base"],
-        "multistage": ["chart-multistage"],
-        "componentes": {
-            "chart-vm-vs-contenedor": "GraficaVmContenedor",
-            "chart-imagen-base": "GraficaImagenBase",
-            "chart-multistage": "GraficaMultistage",
-        },
-    }
+    # Qué gráfica va en qué sección. Lo produce `graficas.py`, que es quien
+    # genera los componentes, para que los nombres no se declaren dos veces.
+    GRAFICAS = {"componentes": {}}
+    if args.graficas:
+        if not args.graficas.exists():
+            print(f"ERROR: no existe {args.graficas}. Ejecute antes graficas.py.", file=sys.stderr)
+            return 1
+        d = json.loads(args.graficas.read_text(encoding="utf-8"))
+        GRAFICAS = dict(d["mapa"], componentes=d["componentes"])
 
     elegidas = [(c, i) for c, i in secciones
                 if args.todas or i == args.seccion]

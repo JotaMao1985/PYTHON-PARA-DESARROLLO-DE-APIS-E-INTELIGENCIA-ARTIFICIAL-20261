@@ -37,5 +37,9 @@ cerebro/
 # Respaldos de la auditoria (Fases 1 y 3): copias locales previas a cada edicion
 *.html.bak
 
-# Piloto de migracion a LP-CORE: artefacto de medicion, no material del curso
+# Migracion a LP-CORE. Nada de esto se versiona porque es DERIVADO: se
+# regenera con scripts/migracion/{graficas,convertir,montar}.py a partir del
+# modulo heredado y de su receta, que si estan en el repositorio.
 _piloto_*.html
+_migrado_*.html
+build/

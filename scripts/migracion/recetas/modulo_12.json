@@ -1,0 +1,76 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m12",
+  "salida": "_migrado_12_lpcore.html",
+  "titulo_html": "Semana 12 — Despliegue, PaaS y CI/CD · Python para APIs e IA",
+  "descripcion": "Semana 12 del curso Python para Desarrollo de APIs e Inteligencia Artificial: plataformas como servicio, variables de entorno en producción, GitHub Actions y lectura de logs. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "12",
+    "titulo": "Despliegue, PaaS y CI/CD",
+    "subtitulo": "Publicar la API containerizada y verificarla en cada cambio",
+    "lema": "Desplegar a mano una vez es una anécdota; desplegar a mano cada vez es una deuda.",
+    "notaPie": "Material de la Semana 12. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Publicar la API containerizada en internet y automatizar su verificación en cada cambio.",
+    "contenidoSyllabus": "El concepto de plataforma como servicio. Variables de entorno en producción frente a desarrollo. Integración continua con GitHub Actions. Lectura de logs.",
+    "temas": [
+      "Render",
+      "GitHub Actions",
+      "Variables de entorno",
+      "Logs"
+    ],
+    "storageKey": "usta_2026i_apis_cap12"
+  },
+  "secciones": [
+    {
+      "id": "intro",
+      "componente": "IntroSection",
+      "titulo": "1. Introducción",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "paas",
+      "componente": "PaasSection",
+      "titulo": "2. Concepto de PaaS",
+      "icono": "Layers"
+    },
+    {
+      "id": "env",
+      "componente": "EnvSection",
+      "titulo": "3. Variables de entorno",
+      "icono": "Grid"
+    },
+    {
+      "id": "cicd",
+      "componente": "CicdSection",
+      "titulo": "4. CI/CD con GitHub Actions",
+      "icono": "GitBranch"
+    },
+    {
+      "id": "logs",
+      "componente": "LogsSection",
+      "titulo": "5. Logs de producción",
+      "icono": "FileCode"
+    },
+    {
+      "id": "railway",
+      "componente": "RailwaySection",
+      "titulo": "6. Render y el Dockerfile",
+      "icono": "Workflow"
+    },
+    {
+      "id": "autoevaluacion",
+      "componente": "AutoevaluacionSection",
+      "titulo": "7. Autoevaluación",
+      "icono": "Award"
+    },
+    {
+      "id": "resumen",
+      "componente": "ResumenSection",
+      "titulo": "8. Resumen y referencias",
+      "icono": "Binary"
+    }
+  ]
+}
