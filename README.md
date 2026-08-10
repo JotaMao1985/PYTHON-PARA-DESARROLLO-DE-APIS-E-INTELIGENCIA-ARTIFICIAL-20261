@@ -117,10 +117,32 @@ declara una gramática sin cargarla, así que el defecto no puede repetirse. El 
 midió y las cifras corregidas están en
 [`PLAN_LENGUAJES_LPCORE.md`](PLAN_LENGUAJES_LPCORE.md).
 
-**Lo siguiente**, por decisión del docente (Opción B ya + Opción C por bloques durante el
-semestre): terminar el módulo 11 completo sobre LP-CORE —con las 3 gráficas de Plotly y las 8
-tablas, que es lo único que queda sin medir— antes de estimar los doce restantes. Las incógnitas
-están en [`PILOTO_LPCORE.md`](PILOTO_LPCORE.md) §3.
+**Al 2026-08-09: tres módulos migrados a LP-CORE** —el 10, el 11 y el 12— y la migración
+convertida en un proceso de cuatro guiones con una receta por módulo, documentado en
+[`scripts/migracion/README.md`](scripts/migracion/README.md). Las tres incógnitas que dejó el
+piloto están resueltas: `ChartFrame` acepta la salida de `plotly.io.to_html` con una conversión
+mecánica, las tablas no necesitan componente porque `.prose-lp` ya las estiliza, y el `<head>` lo
+pone `montar.py`.
+
+El HTML migrado (`_migrado_*.html`) **no se versiona**: es salida derivada y se regenera con los
+guiones a partir del módulo heredado y su receta, que sí están en el repositorio.
+
+**Lo siguiente**, por orden de coste creciente:
+
+| Familia | Módulos | Qué falta |
+|---|---|---|
+| HTML plano, pequeños | 1, 2 | que `convertir.py` sepa trocear por `<h2>` cuando no hay `<section id>` |
+| HTML plano con SVG | 5, 7, 8, 9 | lo anterior **más** pasar a camelCase 1 919 atributos con guion repartidos en 231 diagramas |
+| React con navegación propia | 3, 4, 6, 13 | no es conversión: hay que re-alojar sus componentes en el `curriculum` |
+
+Los módulos 1 y 2 son los más baratos —2 y 3 bloques de código— y ya estaban señalados en
+[`PILOTO_LPCORE.md`](PILOTO_LPCORE.md) §4.2 como incompatibles con `migrar.py`.
+
+> **Dependencia con el otro curso.** La librería LP-CORE vive en el repositorio de Lógica de
+> Programación Financiera, y este curso la comparte. Si alguien la cambia allí, hay que
+> re-ensamblar y volver a montar estos módulos. Los cambios que necesitó este curso —las
+> gramáticas de Prism y sacar el nombre de la asignatura del `App` a `CONFIG`— están en la rama
+> `lp-core/gramaticas-de-resaltado` de aquel repositorio, todavía sin fusionar a `main`.
 
 ## Auditoría del material
 
