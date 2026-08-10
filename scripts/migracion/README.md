@@ -3,9 +3,28 @@
 Convierte un módulo heredado en un capítulo de LP-CORE, la librería de
 componentes que este curso comparte con Lógica de Programación Financiera.
 
-**El HTML migrado no se versiona.** Es salida derivada: se regenera con estos
-guiones a partir del módulo original y de su receta, que sí están en el
-repositorio. `.gitignore` cubre `_migrado_*.html` y `build/`.
+**El capítulo montado sustituye al heredado y conserva su nombre.** El heredado
+pasa a `heredado/`, con el mismo nombre, y a partir de ahí sólo lo leen estos
+guiones.
+
+```text
+1_Python_para_APIS_IA.html            ← el capítulo LP-CORE: es lo que se publica
+heredado/1_Python_para_APIS_IA.html   ← la fuente: sólo la leen los guiones
+```
+
+Así el capítulo montado **sí se versiona**, que es la única forma de que llegue
+a los estudiantes: `.github/workflows/static.yml` publica el repositorio tal cual
+desde `main`, e `index.html` y el syllabus enlazan por nombre. Al conservarlo, no
+hubo que tocar ni un enlace.
+
+El heredado se guarda —en vez de sobrescribirlo y confiar en el historial de
+git— porque **LP-CORE está vivo**: vive en el repositorio de Lógica de
+Programación Financiera, que sigue en desarrollo, y cada cambio de la librería
+obliga a volver a montar estos capítulos. Sin la fuente a mano habría que
+editarlos a mano, que es justo lo que la cadena evita.
+
+Lo intermedio (`build/`) no se versiona: no lo lee nadie y se rehace en un
+segundo.
 
 Hay **dos bocas de entrada**, porque el material heredado no es homogéneo, y
 una sola cadena de salida. Lo que cambia es de dónde se saca el contenido; el
@@ -33,7 +52,7 @@ mismos.
 **Familia `<section id>`** (10, 11, 12):
 
 ```bash
-N=11; F=$(ls ${N}_Python*.html)
+N=11; F=heredado/$(ls heredado | grep "^${N}_Python")
 
 python3 scripts/migracion/graficas.py  "$F" --salida build/migracion/m$N
 python3 scripts/migracion/convertir.py "$F" --todas \
@@ -46,7 +65,7 @@ python3 scripts/migracion/montar.py    scripts/migracion/recetas/modulo_$N.json
 objeto que el texto, así que no hay paso aparte.
 
 ```bash
-N=1; F=$(ls ${N}_Python*.html)
+N=1; F=heredado/$(ls heredado | grep "^${N}_Python")
 
 python3 scripts/migracion/convertir_datos.py "$F" --salida build/migracion/m$N
 python3 scripts/migracion/estilos.py         "$F" --piezas build/migracion/m$N
@@ -115,8 +134,8 @@ para que el resultado no dependa de desde dónde se invoque:
 ```jsonc
 {
   "base":    "../../Usta 2026II/…/lp-base.html",  // la plantilla vive en el otro curso
-  "piezas":  "build/migracion/m11",
-  "salida":  "_migrado_11_lpcore.html",
+  "piezas":  "build/migracion/m11",               // lo intermedio, no se versiona
+  "salida":  "11_Python_para_APIS_IA_Contenedores_y_Docker.html",  // el nombre de siempre
   "config":  { /* lo que el App lee: titulo, ra, horas, asignatura, lema… */ },
   "secciones": [ { "id": "vms", "componente": "VmsSection",
                    "titulo": "3. Contenedores vs máquinas virtuales",

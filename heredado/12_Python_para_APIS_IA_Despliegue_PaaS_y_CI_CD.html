@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Material de estudio sobre despliegue de APIs estadísticas en PaaS (Render), variables de entorno, CI/CD con GitHub Actions y logs de producción para estudiantes de Estadística.">
+    <title>Semana 12 — Despliegue, PaaS y CI/CD · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 12 — Despliegue, PaaS y CI/CD · Python para APIs e IA">
+    <meta property="og:description" content="Material de estudio sobre despliegue de APIs estadísticas en PaaS (Render), variables de entorno, CI/CD con GitHub Actions y logs de producción para estudiantes de Estadística.">
+    <meta property="og:type" content="article">
+    <meta name="author" content="Javier Mauricio Sierra">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #3D008D;
+            --secondary: #ED1E79;
+            --navy: #001A4D;
+            --gold: #FDB913;
+            --bg: #F8FAFC;
+            --surface: #FFFFFF;
+            --ink: #1E293B;
+            --muted: #64748B;
+            --line: #E2E8F0;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--ink);
+            margin: 0;
+            line-height: 1.65;
+            font-size: 16px;
+            overflow: hidden;
+        }
+
+        code, pre {
+            font-family: 'Fira Code', 'SF Mono', Consolas, 'Liberation Mono', monospace;
+        }
+
+        /* ============ USTA UTILITIES ============ */
+        .usta-gradient {
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .usta-header-bg {
+            background: linear-gradient(180deg, var(--navy) 0%, #002868 100%);
+        }
+
+        .usta-card {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .usta-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4A00A8, #FF2D8A);
+        }
+
+        /* ============ HEADER ============ */
+        header.hero {
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 2.5rem 1.5rem 2.75rem 1.5rem;
+            text-align: center;
+            border-radius: 0 0 24px 24px;
+        }
+
+        header.hero .eyebrow {
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 0.78rem;
+            font-weight: 600;
+            opacity: 0.85;
+            margin-bottom: 0.75rem;
+        }
+
+        header.hero h1 {
+            font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+            font-weight: 800;
+            margin: 0 0 0.75rem 0;
+            line-height: 1.2;
+        }
+
+        header.hero p.subtitle {
+            font-size: 1.05rem;
+            max-width: 760px;
+            margin: 0 auto;
+            opacity: 0.95;
+            font-weight: 400;
+        }
+
+        header.hero .meta {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        header.hero .meta span {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        /* ============ APP SHELL ============ */
+        .app-shell {
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        aside.sidebar {
+            flex-shrink: 0;
+            width: 17rem;
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+            color: white;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease, min-width 0.3s ease, opacity 0.25s ease;
+            z-index: 40;
+        }
+
+        aside.sidebar.collapsed {
+            width: 0;
+            min-width: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+
+        .sidebar-brand {
+            padding: 4rem 1.5rem 1.25rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-brand h1 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: -0.01em;
+            color: white;
+        }
+
+        .sidebar-brand h1 .accent-pink { color: var(--secondary); }
+        .sidebar-brand h1 .accent-gold { color: var(--gold); }
+
+        .sidebar-brand p {
+            font-size: 0.72rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin: 0.4rem 0 0 0;
+            line-height: 1.4;
+        }
+
+        nav.sidebar-nav {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        nav.sidebar-nav button {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            width: 100%;
+            text-align: left;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 0.75rem 0.9rem;
+            border-radius: 10px;
+            font-size: 0.86rem;
+            font-family: inherit;
+            font-weight: 500;
+            line-height: 1.3;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+        }
+
+        nav.sidebar-nav button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            transform: translateX(2px);
+        }
+
+        nav.sidebar-nav button.active {
+            background: linear-gradient(90deg, rgba(61, 0, 141, 0.35) 0%, rgba(237, 30, 121, 0.18) 100%);
+            color: white;
+            box-shadow: inset 4px 0 0 var(--secondary), 0 4px 14px rgba(237, 30, 121, 0.18);
+        }
+
+        nav.sidebar-nav button .nav-icon {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.7rem;
+            height: 1.7rem;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.85);
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        nav.sidebar-nav button.active .nav-icon {
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(237, 30, 121, 0.4);
+        }
+
+        nav.sidebar-nav button .nav-label {
+            flex: 1;
+            min-width: 0;
+            font-weight: 500;
+        }
+
+        nav.sidebar-nav button.active .nav-label {
+            font-weight: 600;
+        }
+
+        nav.sidebar-nav button .nav-num {
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.55rem;
+            height: 1.55rem;
+            border-radius: 50%;
+            font-size: 0.72rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.12);
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1;
+        }
+
+        nav.sidebar-nav button.active .nav-num {
+            background: rgba(255, 255, 255, 0.22);
+            color: white;
+        }
+
+        .sidebar-toggle {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 50;
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            width: 2.4rem;
+            height: 2.4rem;
+            border-radius: 50%;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .sidebar-toggle:hover { transform: scale(1.08); }
+        .sidebar-toggle:focus-visible {
+            outline: 2px solid var(--secondary);
+            outline-offset: 3px;
+        }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.25);
+            z-index: 30;
+        }
+
+        @media (max-width: 900px) {
+            aside.sidebar {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                left: 0;
+            }
+            .sidebar-overlay.is-visible { display: block; }
+        }
+
+        main.content-area {
+            flex: 1;
+            min-width: 0;
+            overflow-y: auto;
+            background-color: var(--bg);
+        }
+
+        .content-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem 1.5rem;
+        }
+
+        section.unit { display: none; }
+        section.unit.is-active {
+            display: block;
+            animation: fadeInSection 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeInSection {
+            from { opacity: 0; transform: translateY(10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        section.unit {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 2.25rem 2.5rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--line);
+            scroll-margin-top: 1.25rem;
+            transition: box-shadow 0.3s ease;
+        }
+
+        section.unit:hover {
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.10);
+        }
+
+        @media (max-width: 600px) {
+            section.unit { padding: 1.5rem 1.15rem; }
+        }
+
+        section.unit h2 {
+            font-size: 1.7rem;
+            color: var(--navy);
+            margin: 0 0 1.5rem 0;
+            padding: 0.4rem 0 0.4rem 1rem;
+            border-left: 5px solid;
+            border-image: linear-gradient(180deg, var(--primary), var(--secondary)) 1;
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+        }
+
+        section.unit h3 {
+            font-size: 1.22rem;
+            color: var(--primary);
+            margin-top: 2rem;
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+
+        section.unit h3:first-of-type { margin-top: 1.25rem; }
+
+        section.unit h4 {
+            font-size: 1.02rem;
+            color: var(--navy);
+            margin-top: 1.35rem;
+            margin-bottom: 0.45rem;
+            font-weight: 700;
+        }
+
+        p { margin: 0.6rem 0; }
+        ul, ol { padding-left: 1.5rem; }
+        li { margin: 0.3rem 0; }
+
+        :not(pre) > code {
+            background: rgba(61, 0, 141, 0.08);
+            color: var(--primary);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.92em;
+            font-weight: 500;
+        }
+
+        section.unit a:not(.no-style) {
+            color: var(--primary);
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(237, 30, 121, 0.4);
+            transition: color 0.2s ease, border-color 0.2s ease;
+        }
+
+        section.unit a:not(.no-style):hover {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+        }
+
+        section.unit a code {
+            color: inherit;
+        }
+
+        pre {
+            background: #1e1e2e;
+            color: #cdd6f4;
+            padding: 1.05rem 1.15rem;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 0.86rem;
+            line-height: 1.55;
+            margin: 0.85rem 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        pre code {
+            background: transparent !important;
+            color: inherit !important;
+            padding: 0;
+            font-weight: 400;
+        }
+
+        pre::-webkit-scrollbar { height: 8px; }
+        pre::-webkit-scrollbar-track { background: #2d2d3d; }
+        pre::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        /* Resaltado sintáctico */
+        .kw { color: #c678dd; font-weight: 600; }
+        .cls { color: #e5c07b; }
+        .str { color: #98c379; }
+        .cm { color: #6c7086; font-style: italic; }
+        .fn { color: #61afef; }
+        .num { color: #d19a66; }
+        .dec { color: #e06c75; }
+        .builtin { color: #56b6c2; }
+        .op { color: #abb2bf; }
+        .yml-key { color: #61afef; }
+        .yml-val { color: #98c379; }
+
+        /* Cajas — estilo USTA */
+        .box {
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+            margin: 1.2rem 0;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .box.info {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.08) 0%, rgba(237, 30, 121, 0.08) 100%);
+            border-left-color: var(--primary);
+            border: 1px solid rgba(61, 0, 141, 0.15);
+            border-left-width: 4px;
+        }
+
+        .box.tip {
+            background: linear-gradient(135deg, rgba(253, 185, 19, 0.12) 0%, rgba(253, 185, 19, 0.04) 100%);
+            border-left-color: var(--gold);
+            border: 1px solid rgba(253, 185, 19, 0.30);
+            border-left-width: 4px;
+        }
+
+        .box.warn {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(220, 38, 38, 0.02) 100%);
+            border-left-color: #DC2626;
+            border: 1px solid rgba(220, 38, 38, 0.20);
+            border-left-width: 4px;
+        }
+
+        .box.exercise {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.06) 0%, rgba(237, 30, 121, 0.10) 100%);
+            border-left-color: var(--secondary);
+            border: 1px solid rgba(237, 30, 121, 0.20);
+            border-left-width: 4px;
+        }
+
+        .box .label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .box .label::before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.85rem;
+        }
+
+        .box.info .label { color: var(--primary); }
+        .box.info .label::before { content: "\f05a"; }
+        .box.tip .label { color: #B45309; }
+        .box.tip .label::before { content: "\f0eb"; }
+        .box.warn .label { color: #B91C1C; }
+        .box.warn .label::before { content: "\f071"; }
+        .box.exercise .label { color: var(--secondary); }
+        .box.exercise .label::before { content: "\f303"; }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.25rem 0;
+            font-size: 0.92rem;
+            background: var(--surface);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        th {
+            background: linear-gradient(140deg, var(--navy) 0%, #002868 100%);
+            color: white;
+            padding: 0.75rem 0.95rem;
+            text-align: left;
+            font-weight: 700;
+            font-size: 0.86rem;
+            letter-spacing: 0.02em;
+        }
+
+        td {
+            padding: 0.65rem 0.95rem;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        tr:last-child td { border-bottom: none; }
+        tr:nth-child(even) { background: #F8FAFC; }
+        tr:hover td { background: rgba(61, 0, 141, 0.04); }
+
+        /* Diagrama de capas (PaaS) */
+        .stack-diagram {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+
+        .stack-col {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stack-col h4 {
+            margin: 0;
+            padding: 0.6rem 0.85rem;
+            color: white;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .stack-col[data-kind="iaas"] h4 { background: var(--navy); }
+        .stack-col[data-kind="paas"] h4 { background: var(--primary); }
+        .stack-col[data-kind="saas"] h4 { background: var(--secondary); }
+
+        .stack-layer {
+            padding: 0.45rem 0.7rem;
+            border-top: 1px solid var(--line);
+            font-size: 0.78rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .stack-layer.user {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .stack-layer.provider {
+            background: #F1F5F9;
+            color: var(--muted);
+            text-decoration: line-through;
+            text-decoration-color: rgba(100, 116, 139, 0.4);
+        }
+
+        .stack-legend {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .stack-diagram { grid-template-columns: 1fr; }
+        }
+
+        /* Pipeline CI/CD */
+        .pipeline {
+            display: flex;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+            align-items: stretch;
+        }
+
+        .pipeline-step {
+            flex: 1 1 140px;
+            background: linear-gradient(140deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 0.85rem 0.75rem;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(61, 0, 141, 0.18);
+            position: relative;
+        }
+
+        .pipeline-step .num {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.7;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+        }
+
+        .pipeline-step .desc {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 400;
+            opacity: 0.92;
+            margin-top: 0.3rem;
+            line-height: 1.3;
+        }
+
+        .pipeline-arrow {
+            display: flex;
+            align-items: center;
+            font-size: 1.4rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        @media (max-width: 700px) {
+            .pipeline { flex-direction: column; }
+            .pipeline-arrow { transform: rotate(90deg); justify-content: center; }
+        }
+
+        /* Logs sample */
+        .log-window {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 1rem 1.15rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid #1e293b;
+        }
+
+        .log-window .log-info  { color: #93C5FD; }
+        .log-window .log-warn  { color: #FDB913; }
+        .log-window .log-error { color: #F87171; }
+        .log-window .log-debug { color: #94A3B8; }
+        .log-window .log-time  { color: #64748B; }
+
+        /* Plataformas comparadas */
+        .platform-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .platform-card {
+            background: var(--surface);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 1.15rem 1.25rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+
+        .platform-card:hover {
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+            transform: translateY(-3px);
+        }
+
+        .platform-card h4 {
+            margin: 0 0 0.6rem 0;
+            color: var(--primary);
+            font-size: 1.02rem;
+            font-weight: 700;
+            padding-bottom: 0.45rem;
+            border-bottom: 2px solid;
+            border-image: linear-gradient(90deg, var(--primary), var(--secondary)) 1;
+        }
+
+        @media (max-width: 700px) {
+            .platform-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(180deg, var(--navy) 0%, #002868 100%);
+            color: #CBD5E1;
+            padding: 2.25rem 1.5rem;
+            text-align: center;
+            font-size: 0.88rem;
+            margin-top: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.10);
+        }
+
+        footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+        footer a:hover { text-decoration: underline; }
+
+        .small {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        kbd {
+            background: #F1F5F9;
+            border: 1px solid #CBD5E1;
+            border-bottom-width: 2px;
+            border-radius: 4px;
+            padding: 0.05rem 0.4rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85em;
+        }
+
+        details {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.04) 0%, rgba(237, 30, 121, 0.04) 100%);
+            border-left: 4px solid var(--primary);
+            border-radius: 10px;
+            padding: 0.85rem 1.1rem;
+            margin: 0.7rem 0 1.1rem 0;
+            border: 1px solid rgba(61, 0, 141, 0.12);
+            border-left-width: 4px;
+            transition: box-shadow 0.2s ease;
+        }
+
+        details[open] {
+            box-shadow: 0 4px 14px rgba(61, 0, 141, 0.10);
+        }
+
+        details summary {
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--primary);
+            -webkit-user-select: none;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        details summary::before {
+            content: "\f054";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 0.75rem;
+            color: var(--secondary);
+            transition: transform 0.2s ease;
+        }
+
+        details[open] summary {
+            transform: none;
+            margin-bottom: 0.6rem;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        .ascii-diagram {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%);
+            border: 1px dashed #94A3B8;
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            white-space: pre;
+            overflow-x: auto;
+            color: #334155;
+            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Contenedor de gráficos Plotly */
+        .chart-container {
+            margin: 1.5rem 0 0.5rem 0;
+            background: white;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 0.85rem 0.85rem 0.4rem 0.85rem;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+        }
+
+        .chart-caption {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin: 0.4rem 0 0.7rem 0;
+            font-style: italic;
+        }
+    </style>
+
+    <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+    <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.5.0.min.js"
+        integrity="sha256-fHbNLP+GlIXN+efbQec78UkemUz3NJp7UmfGxC1tNxs=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+    <button id="sidebar-toggle" class="sidebar-toggle" aria-label="Mostrar u ocultar el menú" title="Mostrar / ocultar menú" type="button">
+        <i id="sidebar-toggle-icon" class="fas fa-times" aria-hidden="true"></i>
+    </button>
+
+    <div id="sidebar-overlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+    <div class="app-shell">
+
+        <aside id="sidebar" class="sidebar" aria-label="Tabla de contenidos">
+            <div class="sidebar-brand">
+                <h1><span class="accent-pink">py</span>API<span class="accent-gold">Deploy</span></h1>
+                <p>Python para APIs e IA · Semana V<br>Despliegue, PaaS y CI/CD · USTA</p>
+            </div>
+            <nav class="sidebar-nav" aria-label="Secciones">
+                <button type="button" data-target="intro">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-flag-checkered"></i></span>
+                    <span class="nav-label">Introducción</span>
+                    <span class="nav-num">1</span>
+                </button>
+                <button type="button" data-target="paas">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-cloud"></i></span>
+                    <span class="nav-label">Concepto de PaaS</span>
+                    <span class="nav-num">2</span>
+                </button>
+                <button type="button" data-target="env">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-key"></i></span>
+                    <span class="nav-label">Variables de entorno</span>
+                    <span class="nav-num">3</span>
+                </button>
+                <button type="button" data-target="cicd">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-code-branch"></i></span>
+                    <span class="nav-label">CI/CD con GitHub</span>
+                    <span class="nav-num">4</span>
+                </button>
+                <button type="button" data-target="logs">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-terminal"></i></span>
+                    <span class="nav-label">Logs de producción</span>
+                    <span class="nav-num">5</span>
+                </button>
+                <button type="button" data-target="railway">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-server"></i></span>
+                    <span class="nav-label">Render</span>
+                    <span class="nav-num">6</span>
+                </button>
+                <button type="button" data-target="autoevaluacion">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-clipboard-check"></i></span>
+                    <span class="nav-label">Autoevaluación</span>
+                    <span class="nav-num">7</span>
+                </button>
+                <button type="button" data-target="resumen">
+                    <span class="nav-icon" aria-hidden="true"><i class="fas fa-book-open"></i></span>
+                    <span class="nav-label">Resumen y referencias</span>
+                    <span class="nav-num">8</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+
+            <header class="hero">
+                <div class="eyebrow">Python para APIs · Semana V</div>
+                <h1>Despliegue, PaaS y CI/CD para APIs Estadísticas</h1>
+                <p class="subtitle">Concepto de PaaS, gestión de variables de entorno entre desarrollo y
+                    producción, integración continua con GitHub Actions, observación de logs en producción y
+                    despliegue automático en Render mediante detección de Dockerfile.</p>
+                <div class="meta">
+                    <span>Python 3.11.9</span>
+                    <span>FastAPI ≥ 0.100</span>
+                    <span>Docker (multi-stage)</span>
+                    <span>Duración estimada: 4 h</span>
+                </div>
+            </header>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-12"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-12" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 12 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Qué es una plataforma como servicio</li><li style="margin:0 0 .3rem 0;">Variables de entorno en producción frente a desarrollo</li><li style="margin:0 0 .3rem 0;">Integración continua con GitHub Actions</li><li style="margin:0 0 .3rem 0;">Lectura de logs de producción</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Conectar el repositorio a Render</li><li style="margin:0 0 .3rem 0;">Configurar el entorno de producción y sus secretos</li><li style="margin:0 0 .3rem 0;">Desplegar la imagen construida en la semana 11</li><li style="margin:0 0 .3rem 0;">Dejar el workflow de integración continua en verde</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Otras plataformas del mercado y en qué se diferencian</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">La plataforma de este curso es <strong>Render</strong>: es la que el syllabus declara y la que la rúbrica del proyecto evalúa. El hito de esta semana es una API desplegada y accesible públicamente.</p>
+</section>
+
+
+            <div class="content-inner">
+
+            <!-- ===================== INTRODUCCIÓN ===================== -->
+            <section id="intro" class="unit">
+                <h2>1. Introducción</h2>
+
+                <p>Hasta esta semana, la API estadística <code>encuestas-api</code> se ha desarrollado en una
+                    máquina local: el estudiante levanta Uvicorn con <code>uvicorn app.main:app --reload</code>,
+                    persiste sus datos en SQLite, prueba con <code>pytest</code> y, en la semana anterior,
+                    empaquetó el servicio en una imagen Docker basada en
+                    <code>python:3.11.9-slim-bookworm</code>. El siguiente paso natural consiste en
+                    <em>publicar</em> esa API para que un par académico, un revisor de tesis o un cliente
+                    estadístico la consulte sin necesidad de tener el repositorio ni el intérprete de Python
+                    instalado.</p>
+
+                <p>Esta unidad aborda el conjunto de prácticas que separan una API funcional en
+                    <code>localhost</code> de una API publicada con un dominio público, despliegue automático
+                    y observabilidad básica:</p>
+
+                <ul>
+                    <li>el <strong>concepto de Plataforma como Servicio (PaaS)</strong> y su lugar dentro del
+                        modelo IaaS / PaaS / SaaS;</li>
+                    <li>la diferencia entre <strong>variables de entorno en desarrollo y en producción</strong>,
+                        y cómo se gestionan en cada caso sin filtrar secretos;</li>
+                    <li><strong>CI/CD básico</strong> con <em>GitHub Actions</em>: ejecutar la suite de pruebas
+                        en cada <em>push</em> y desplegar automáticamente al fusionar en
+                        <code>main</code>;</li>
+                    <li>la lectura e interpretación de <strong>logs en producción</strong>, generados con el
+                        módulo <code>logging</code> de la biblioteca estándar y enviados a la salida
+                        estándar del contenedor;</li>
+                    <li>el flujo de <strong>despliegue en Render con detección automática del
+                        Dockerfile</strong>, sin necesidad de configurar servidores ni imágenes manualmente.</li>
+                </ul>
+
+                <div class="box info">
+                    <span class="label">Objetivo de aprendizaje</span>
+                    Al finalizar la unidad, el estudiante distingue PaaS de IaaS y SaaS, configura variables
+                    de entorno separadas para desarrollo y producción mediante una clase tipada con
+                    Pydantic Settings, escribe un workflow de GitHub Actions que ejecuta <code>pytest</code>
+                    en cada cambio, instrumenta su API con logging por niveles de severidad y publica su
+                    servicio en Render aprovechando la detección automática del
+                    <code>Dockerfile</code>.
+                </div>
+
+                <h3>1.1 Hilo conductor</h3>
+                <p>Se continúa con la API <code>encuestas-api</code> introducida en semanas previas, que
+                    expone los endpoints <code>POST /muestras</code>, <code>GET /resumen/media</code> y
+                    <code>POST /modelos/regresion</code>. La diferencia es que ahora el servicio será
+                    desplegado en un proveedor PaaS, con su base de datos en producción, sus variables de
+                    entorno bien gestionadas y un <em>pipeline</em> que ejecuta las pruebas antes de cada
+                    publicación.</p>
+
+                <div class="box tip">
+                    <span class="label">Conexión con semanas previas</span>
+                    Esta unidad asume el dominio de los temas previos del curso: <code>requirements.txt</code>
+                    fijado, validadores de Pydantic, <code>Depends</code> de FastAPI, <code>python-dotenv</code>
+                    para configuración local, suite con <code>pytest</code> y <code>TestClient</code>, y
+                    <code>Dockerfile</code> multi-stage con base <code>python:3.11.9-slim-bookworm</code>.
+                </div>
+            </section>
+
+            <!-- ===================== PaaS ===================== -->
+            <section id="paas" class="unit">
+                <h2>2. Concepto de PaaS</h2>
+
+                <p>El modelo de servicios en la nube clasifica las plataformas según qué partes del
+                    <em>stack</em> tecnológico administra el proveedor y qué partes administra el equipo de
+                    desarrollo. Las tres categorías canónicas son <strong>IaaS</strong>
+                    (Infraestructura como Servicio), <strong>PaaS</strong> (Plataforma como Servicio) y
+                    <strong>SaaS</strong> (Software como Servicio).</p>
+
+                <h3>2.1 IaaS, PaaS y SaaS: división de responsabilidades</h3>
+
+                <div class="stack-diagram" role="img" aria-label="Comparación de capas IaaS, PaaS, SaaS">
+                    <div class="stack-col" data-kind="iaas">
+                        <h4>IaaS</h4>
+                        <div class="stack-layer user">Aplicación</div>
+                        <div class="stack-layer user">Datos</div>
+                        <div class="stack-layer user">Runtime</div>
+                        <div class="stack-layer user">Middleware</div>
+                        <div class="stack-layer user">SO</div>
+                        <div class="stack-layer provider">Virtualización</div>
+                        <div class="stack-layer provider">Servidores</div>
+                        <div class="stack-layer provider">Red</div>
+                    </div>
+                    <div class="stack-col" data-kind="paas">
+                        <h4>PaaS</h4>
+                        <div class="stack-layer user">Aplicación</div>
+                        <div class="stack-layer user">Datos</div>
+                        <div class="stack-layer provider">Runtime</div>
+                        <div class="stack-layer provider">Middleware</div>
+                        <div class="stack-layer provider">SO</div>
+                        <div class="stack-layer provider">Virtualización</div>
+                        <div class="stack-layer provider">Servidores</div>
+                        <div class="stack-layer provider">Red</div>
+                    </div>
+                    <div class="stack-col" data-kind="saas">
+                        <h4>SaaS</h4>
+                        <div class="stack-layer provider">Aplicación</div>
+                        <div class="stack-layer provider">Datos</div>
+                        <div class="stack-layer provider">Runtime</div>
+                        <div class="stack-layer provider">Middleware</div>
+                        <div class="stack-layer provider">SO</div>
+                        <div class="stack-layer provider">Virtualización</div>
+                        <div class="stack-layer provider">Servidores</div>
+                        <div class="stack-layer provider">Red</div>
+                    </div>
+                </div>
+                <p class="stack-legend">En verde, capas administradas por el equipo de desarrollo. En gris,
+                    capas administradas por el proveedor.</p>
+
+                <p>El esquema deja claro el <em>trade-off</em> central: cuanto más alto se sube en la
+                    pila, menos control existe sobre la infraestructura, pero también menos esfuerzo se
+                    invierte en operación. Como referencia, suele añadirse un cuarto modelo,
+                    <strong>On-premise</strong> (servidores propios en sala de cómputo), donde el equipo
+                    administra absolutamente todas las capas. La Figura 2.1 sitúa los cuatro modelos en
+                    un plano de control contra carga operativa, donde se evidencia que PaaS es el punto
+                    óptimo para una API estadística académica: el equipo conserva control sobre el
+                    código, los datos y la lógica estadística, mientras delega parches del kernel,
+                    balanceadores y certificados TLS al proveedor.</p>
+
+                <div class="chart-container">
+<div>                            <div id="plotly-paas-cuadrante" class="plotly-graph-div" style="height:400px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("plotly-paas-cuadrante")) {                    Plotly.newPlot(                        "plotly-paas-cuadrante",                        [{"hovertemplate":"\u003cb\u003e%{text}\u003c\u002fb\u003e\u003cbr\u003eControl sobre la pila: %{x:.1f}\u002f5\u003cbr\u003eCarga operativa: %{y:.1f}\u002f5\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#001A4D","#3D008D","#ED1E79","#FDB913"],"line":{"color":"white","width":3},"opacity":0.92,"size":[44,50,70,44]},"mode":"markers+text","showlegend":false,"text":["On-premise","IaaS","PaaS","SaaS"],"textfont":{"color":"#1E293B","family":"Montserrat, Helvetica Neue, Arial, sans-serif","size":13},"textposition":["top right","top right","bottom right","bottom right"],"x":[4.8,4.0,2.2,0.5],"y":[4.8,3.8,1.5,0.4],"type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"shapes":[{"fillcolor":"rgba(237,30,121,0.10)","line":{"color":"#ED1E79","dash":"dot","width":1},"type":"rect","x0":1.5,"x1":2.9,"y0":0.8,"y1":2.2}],"annotations":[{"font":{"color":"#ED1E79","size":11},"showarrow":false,"text":"\u003ci\u003esweet spot\u003c\u002fi\u003e acad\u00e9mico","x":2.2,"y":2.4},{"arrowcolor":"rgba(0,26,77,0.45)","arrowhead":3,"arrowsize":1.2,"arrowwidth":1.5,"ax":4.0,"axref":"x","ay":3.8,"ayref":"y","showarrow":true,"text":"","x":2.2,"xref":"x","y":1.5,"yref":"y"}],"font":{"family":"Montserrat, Helvetica Neue, Arial, sans-serif","size":12,"color":"#1E293B"},"margin":{"l":70,"r":40,"t":70,"b":60},"title":{"text":"\u003cb\u003eControl sobre la pila vs. carga operativa\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003ePaaS combina control suficiente con esfuerzo operativo bajo\u003c\u002fspan\u003e","x":0},"xaxis":{"title":{"text":"Control sobre la pila \u2192"},"range":[-0.5,6],"gridcolor":"#E2E8F0","zerolinecolor":"#94A3B8"},"yaxis":{"title":{"text":"Carga operativa \u2192"},"range":[-0.5,6],"gridcolor":"#E2E8F0","zerolinecolor":"#94A3B8"},"paper_bgcolor":"white","plot_bgcolor":"white","height":400},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+</div>
+                <p class="chart-caption">Figura 2.1 — Cada modelo se ubica según cuánto del <em>stack</em>
+                    queda bajo gestión propia (eje X) y cuánta operación demanda al equipo (eje Y).
+                    El círculo rosado y más grande representa PaaS, dentro del recuadro punteado que
+                    delimita el <em>sweet spot</em> académico; la flecha sugiere el desplazamiento natural
+                    desde IaaS hacia PaaS cuando se prioriza la simplicidad operativa sobre el control
+                    fino del entorno.</p>
+
+                <h3>2.2 ¿Qué hace exactamente un PaaS?</h3>
+                <p>Un PaaS recibe el código fuente o una imagen Docker y se encarga de:</p>
+                <ol>
+                    <li><strong>Construir</strong> la aplicación: ejecutar
+                        <code>docker build</code> o invocar <em>buildpacks</em> que detectan el lenguaje
+                        (Python, Node, Go, …) e instalan dependencias.</li>
+                    <li><strong>Aprovisionar</strong> recursos: contenedores, balanceadores,
+                        almacenamiento, certificados TLS, dominios.</li>
+                    <li><strong>Ejecutar</strong> el contenedor con la cantidad de CPU y memoria solicitada,
+                        reiniciándolo si falla.</li>
+                    <li><strong>Exponer</strong> el servicio en un dominio público con HTTPS.</li>
+                    <li><strong>Recolectar</strong> logs, métricas y, en algunos casos, trazas distribuidas.</li>
+                    <li><strong>Inyectar</strong> variables de entorno y secretos al contenedor en el
+                        arranque (detalle en §3).</li>
+                </ol>
+
+                <p>Lo que <em>no</em> hace un PaaS, y se sigue gestionando del lado del estudiante, es:
+                    escribir las migraciones, definir validadores Pydantic, decidir esquemas de la base de
+                    datos, mantener el código de regresión y diseñar la API.</p>
+
+                <h3>2.3 Principales proveedores PaaS</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Proveedor</th>
+                            <th>Modelo principal</th>
+                            <th>Detección de Dockerfile</th>
+                            <th>Notas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Railway</td>
+                            <td>Buildpacks Nixpacks o Dockerfile</td>
+                            <td>Automática si existe <code>Dockerfile</code> en la raíz</td>
+                            <td>Plan gratuito limitado por horas; PostgreSQL/Redis como <em>plugins</em>.</td>
+                        </tr>
+                        <tr>
+                            <td>Render</td>
+                            <td>Buildpacks o Dockerfile</td>
+                            <td>Detecta Dockerfile o se declara en <code>render.yaml</code></td>
+                            <td>Plan gratuito con suspensión por inactividad; bases gestionadas opcionales.</td>
+                        </tr>
+                        <tr>
+                            <td>Fly.io</td>
+                            <td>Dockerfile (obligatorio)</td>
+                            <td>Sí (CLI <code>flyctl</code>)</td>
+                            <td>Despliegue en múltiples regiones; orientado a baja latencia.</td>
+                        </tr>
+                        <tr>
+                            <td>Google App Engine</td>
+                            <td>Buildpacks o contenedor</td>
+                            <td>Soporta contenedores en App Engine Flex</td>
+                            <td>Integración nativa con servicios GCP; curva de aprendizaje mayor.</td>
+                        </tr>
+                        <tr>
+                            <td>Heroku</td>
+                            <td>Buildpacks (Procfile) o Container Registry</td>
+                            <td>Sí, vía Container Registry</td>
+                            <td>Pionero del concepto PaaS; ya no ofrece capa gratuita.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="box info">
+                    <span class="label">Por qué Render en este curso</span>
+                    Ambos ofrecen capa gratuita suficiente para fines docentes, despliegue desde GitHub con un
+                    par de clics y, sobre todo, <em>detectan automáticamente el Dockerfile</em>. Esto permite
+                    aprovechar la imagen Docker construida en la semana anterior sin reescribir
+                    configuraciones específicas del proveedor.
+                </div>
+
+                <h3>2.4 ¿Cuándo NO usar PaaS?</h3>
+                <ul>
+                    <li>Cuando la carga es masiva y predecible: una infraestructura propia (IaaS o
+                        Kubernetes administrado) suele ser más económica a partir de cierto volumen.</li>
+                    <li>Cuando hay restricciones regulatorias estrictas sobre la región física donde residen
+                        los datos, y el PaaS no las garantiza.</li>
+                    <li>Cuando se requiere <em>customización profunda</em> del sistema operativo, drivers
+                        especializados (GPU sin soporte oficial, hardware FPGA, etc.) o configuraciones de
+                        red que el proveedor no expone.</li>
+                </ul>
+
+                <p>Para una API estadística que sirve modelos de regresión, intervalos de confianza o
+                    pronósticos de baja a media intensidad, ninguno de los tres puntos suele aplicar.</p>
+            </section>
+
+            <!-- ===================== ENV VARS ===================== -->
+            <section id="env" class="unit">
+                <h2>3. Variables de entorno: desarrollo vs. producción</h2>
+
+                <p>Las variables de entorno son el mecanismo estándar para inyectar configuración a un
+                    proceso sin tocar el código fuente. La metodología de los <em>Twelve-Factor Apps</em>,
+                    referencia de la industria, postula su tercer principio: <strong>la configuración debe
+                    almacenarse en el entorno</strong>, no en archivos versionados ni en constantes.</p>
+
+                <h3>3.1 Qué cambia entre desarrollo y producción</h3>
+                <p>El estudiante ya conoce <code>python-dotenv</code> y los archivos <code>.env</code> para
+                    desarrollo. La diferencia con producción es conceptual y operativa:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Desarrollo (local)</th>
+                            <th>Producción (PaaS)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Origen de las variables</td>
+                            <td>Archivo <code>.env</code> leído por <code>python-dotenv</code>.</td>
+                            <td>Inyección directa por el proveedor; <code>.env</code> no se sube.</td>
+                        </tr>
+                        <tr>
+                            <td>Base de datos</td>
+                            <td>SQLite local: <code>sqlite:///./encuestas.db</code>.</td>
+                            <td>PostgreSQL gestionado: <code>postgresql+psycopg://…</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>Recarga automática</td>
+                            <td><code>uvicorn --reload</code>.</td>
+                            <td>Deshabilitada; reinicio sólo en redeploy.</td>
+                        </tr>
+                        <tr>
+                            <td>Nivel de log</td>
+                            <td><code>DEBUG</code> o <code>INFO</code>.</td>
+                            <td><code>INFO</code> o <code>WARNING</code>.</td>
+                        </tr>
+                        <tr>
+                            <td>Documentación interactiva</td>
+                            <td>Swagger UI y Redoc abiertos.</td>
+                            <td>Pueden ocultarse o protegerse.</td>
+                        </tr>
+                        <tr>
+                            <td>Secretos</td>
+                            <td>En <code>.env</code> ignorado por git.</td>
+                            <td>En el panel del proveedor o gestor de secretos.</td>
+                        </tr>
+                        <tr>
+                            <td>Puerto</td>
+                            <td>Fijo (por ejemplo, <code>8000</code>).</td>
+                            <td>Asignado por el proveedor vía variable <code>PORT</code>.</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>La Figura 3.1 visualiza la misma comparación en un eje cualitativo de "endurecimiento":
+                    cada línea conecta el valor en desarrollo con el valor en producción para una misma
+                    dimensión, y el desplazamiento horizontal sintetiza cuánto cambia la configuración
+                    al cruzar la frontera local → PaaS.</p>
+
+                <div class="chart-container">
+<div>                            <div id="plotly-env-dev-prod" class="plotly-graph-div" style="height:440px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("plotly-env-dev-prod")) {                    Plotly.newPlot(                        "plotly-env-dev-prod",                        [{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,4.0],"y":["Origen de variables","Origen de variables"],"type":"scatter"},{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,4.0],"y":["Base de datos","Base de datos"],"type":"scatter"},{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,3.0],"y":["Recarga autom\u00e1tica","Recarga autom\u00e1tica"],"type":"scatter"},{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,3.5],"y":["Nivel de log","Nivel de log"],"type":"scatter"},{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,2.5],"y":["Documentaci\u00f3n \u002fdocs","Documentaci\u00f3n \u002fdocs"],"type":"scatter"},{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,4.5],"y":["Secretos","Secretos"],"type":"scatter"},{"hoverinfo":"skip","line":{"color":"rgba(100,116,139,0.45)","width":2},"mode":"lines","showlegend":false,"x":[1.0,4.0],"y":["Puerto de escucha","Puerto de escucha"],"type":"scatter"},{"hovertemplate":"\u003cb\u003eDesarrollo\u003c\u002fb\u003e\u003cbr\u003e%{y}\u003cbr\u003e%{text}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#001A4D","line":{"color":"white","width":2},"size":18},"mode":"markers","name":"Desarrollo","text":[".env + python-dotenv","SQLite local","uvicorn --reload","DEBUG \u002f INFO","Abierta",".env (ignorado en git)","Fijo (8000)"],"x":[1.0,1.0,1.0,1.0,1.0,1.0,1.0],"y":["Origen de variables","Base de datos","Recarga autom\u00e1tica","Nivel de log","Documentaci\u00f3n \u002fdocs","Secretos","Puerto de escucha"],"type":"scatter"},{"hovertemplate":"\u003cb\u003eProducci\u00f3n\u003c\u002fb\u003e\u003cbr\u003e%{y}\u003cbr\u003e%{text}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#ED1E79","line":{"color":"white","width":2},"size":18},"mode":"markers","name":"Producci\u00f3n","text":["Panel del PaaS","PostgreSQL gestionado","Deshabilitada","INFO \u002f WARNING","Restringida","Gestor de secretos","$PORT inyectado"],"x":[4.0,4.0,3.0,3.5,2.5,4.5,4.0],"y":["Origen de variables","Base de datos","Recarga autom\u00e1tica","Nivel de log","Documentaci\u00f3n \u002fdocs","Secretos","Puerto de escucha"],"type":"scatter"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"family":"Montserrat, Helvetica Neue, Arial, sans-serif","size":12,"color":"#1E293B"},"margin":{"l":190,"r":40,"t":90,"b":70},"title":{"text":"\u003cb\u003eConfiguraci\u00f3n: desarrollo vs. producci\u00f3n\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003eCada l\u00ednea conecta el valor en cada entorno para una misma dimensi\u00f3n; pase el cursor para ver el detalle textual\u003c\u002fspan\u003e","x":0},"xaxis":{"title":{"text":"Posici\u00f3n relativa (1 = local sencillo \u00b7 5 = producci\u00f3n endurecida)"},"range":[0,5.3],"gridcolor":"#E2E8F0","zerolinecolor":"#94A3B8"},"yaxis":{"autorange":"reversed","gridcolor":"#E2E8F0"},"legend":{"orientation":"h","y":-0.18,"x":0.5,"xanchor":"center"},"paper_bgcolor":"white","plot_bgcolor":"white","height":440},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+</div>
+                <p class="chart-caption">Figura 3.1 — En desarrollo (azul navy), todas las dimensiones se
+                    resuelven con herramientas locales sencillas: <code>.env</code>, SQLite,
+                    <code>--reload</code>, log abierto. En producción (rosa USTA), cada dimensión sube
+                    en complejidad y endurecimiento: panel del PaaS, PostgreSQL gestionado, secretos
+                    centralizados, puerto inyectado, documentación restringida. La diferencia más
+                    pronunciada está en el manejo de secretos.</p>
+
+                <h3>3.2 Configuración tipada con Pydantic Settings</h3>
+                <p>Una buena práctica, ya esbozada en la Semana IV, consiste en exponer toda la configuración
+                    a través de un objeto Pydantic. Eso unifica la lectura de variables y deja todo el
+                    sistema de tipos como fuente de verdad:</p>
+
+<pre><code><span class="cm"># app/config.py</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+<span class="kw">from</span> pydantic <span class="kw">import</span> Field
+<span class="kw">from</span> pydantic_settings <span class="kw">import</span> BaseSettings, SettingsConfigDict
+
+<span class="kw">class</span> <span class="cls">Configuracion</span>(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=<span class="str">".env"</span>,
+        env_prefix=<span class="str">"APP_"</span>,
+        extra=<span class="str">"ignore"</span>,
+    )
+
+    <span class="cm"># Generales</span>
+    entorno: <span class="builtin">str</span> = Field(default=<span class="str">"development"</span>)        <span class="cm"># development | production</span>
+    debug: <span class="builtin">bool</span> = Field(default=<span class="cls">True</span>)
+    log_level: <span class="builtin">str</span> = Field(default=<span class="str">"INFO"</span>)
+
+    <span class="cm"># Persistencia</span>
+    bd_url: <span class="builtin">str</span> = Field(default=<span class="str">"sqlite:///./encuestas.db"</span>)
+
+    <span class="cm"># Numéricos del dominio estadístico</span>
+    seed: <span class="builtin">int</span> = Field(default=<span class="num">2026</span>, ge=<span class="num">0</span>)
+    nivel_confianza: <span class="builtin">float</span> = Field(default=<span class="num">0.95</span>, gt=<span class="num">0.5</span>, lt=<span class="num">1.0</span>)
+
+<span class="dec">@lru_cache</span>
+<span class="kw">def</span> <span class="fn">obtener_config</span>() -&gt; Configuracion:
+    <span class="kw">return</span> Configuracion()
+</code></pre>
+
+                <p>El estudiante reconocerá el patrón: <code>obtener_config</code> se inyecta con
+                    <code>Depends</code> en cualquier endpoint y la cache asegura que la lectura ocurre una
+                    sola vez por proceso.</p>
+
+                <h3>3.3 Archivos <code>.env</code> y <code>.env.example</code></h3>
+                <p>El archivo <code>.env</code> queda en la raíz del proyecto y <strong>se ignora en git</strong>.
+                    En su lugar se versiona una plantilla <code>.env.example</code> con los nombres de las
+                    variables y valores ficticios. La estructura típica es:</p>
+
+<pre><code><span class="cm"># .env.example  (versionado, sin valores reales)</span>
+APP_ENTORNO=development
+APP_DEBUG=true
+APP_LOG_LEVEL=INFO
+APP_BD_URL=sqlite:///./encuestas.db
+APP_SEED=2026
+APP_NIVEL_CONFIANZA=0.95
+</code></pre>
+
+                <p>El <code>.gitignore</code> debe contener al menos:</p>
+
+<pre><code><span class="cm"># .gitignore</span>
+.env
+.env.*.local
+__pycache__/
+*.pyc
+.venv/
+encuestas.db
+</code></pre>
+
+                <div class="box warn">
+                    <span class="label">Errores frecuentes</span>
+                    Subir <code>.env</code> al repositorio expone credenciales. Aun después de eliminarlo,
+                    los secretos quedan en el historial de git: lo correcto es <em>rotarlos</em> en el
+                    proveedor antes de continuar. Por la misma razón nunca se incluyen secretos en el
+                    <code>Dockerfile</code> con <code>ENV</code>; se inyectan en tiempo de ejecución.
+                </div>
+
+                <h3>3.4 Variables en Render</h3>
+                <p>Ambos proveedores ofrecen un panel donde se definen las variables y se inyectan al
+                    contenedor antes del arranque. Para la API estadística, una configuración productiva
+                    típica luce así:</p>
+
+<pre><code><span class="cm"># Variables configuradas en el panel del PaaS (no en el repositorio)</span>
+APP_ENTORNO=production
+APP_DEBUG=false
+APP_LOG_LEVEL=INFO
+APP_BD_URL=postgresql+psycopg://usuario:secreto@host:5432/encuestas
+APP_SEED=2026
+APP_NIVEL_CONFIANZA=0.95
+<span class="cm"># PORT lo inyecta automáticamente el proveedor; no debe definirse a mano</span>
+</code></pre>
+
+                <p>Cuando se aprovisiona una base de datos PostgreSQL gestionada (un servicio de base de datos de Render), el proveedor expone una variable como
+                    <code>DATABASE_URL</code> que puede referenciarse desde la configuración:</p>
+
+<pre><code><span class="cm"># Render permite referenciar variables de otros servicios:</span>
+APP_BD_URL=${{Postgres.DATABASE_URL}}
+</code></pre>
+
+                <h3>3.5 El puerto en producción: <code>$PORT</code></h3>
+                <p>Una diferencia operativa importante: el PaaS decide en qué puerto el contenedor debe
+                    escuchar y comunica esa decisión por la variable <code>PORT</code>. El comando de
+                    arranque debe usar esa variable, no un número fijo. Para Uvicorn:</p>
+
+<pre><code><span class="cm"># Comando de arranque dentro del Dockerfile</span>
+<span class="kw">CMD</span> [<span class="str">"sh"</span>, <span class="str">"-c"</span>, <span class="str">"uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"</span>]
+</code></pre>
+
+                <p>La sintaxis <code>${PORT:-8000}</code> es la expansión POSIX habitual: si <code>PORT</code>
+                    no está definida, se usa <code>8000</code>. Esto mantiene compatibilidad con
+                    <code>docker run -p 8000:8000</code> en local y con la inyección del proveedor en
+                    producción.</p>
+
+                <div class="box tip">
+                    <span class="label">Bind a 0.0.0.0, no a 127.0.0.1</span>
+                    En desarrollo se trabaja con <code>127.0.0.1</code> porque sólo el propio equipo se
+                    conecta. En un contenedor de producción, el tráfico llega desde fuera del contenedor:
+                    Uvicorn debe escuchar en <code>0.0.0.0</code> para aceptarlo. Si no, el proveedor
+                    reportará el servicio como caído.
+                </div>
+            </section>
+
+            <!-- ===================== CI/CD ===================== -->
+            <section id="cicd" class="unit">
+                <h2>4. CI/CD básico con GitHub</h2>
+
+                <h3>4.1 ¿Qué es CI/CD?</h3>
+                <p>El acrónimo combina dos prácticas relacionadas:</p>
+                <ul>
+                    <li><strong>CI (Continuous Integration / Integración Continua):</strong> en cada cambio
+                        que se sube al repositorio, un servidor automatizado instala dependencias, ejecuta
+                        las pruebas y reporta el resultado. El objetivo es detectar regresiones antes de que
+                        lleguen a la rama principal.</li>
+                    <li><strong>CD (Continuous Delivery / Continuous Deployment):</strong> cuando los
+                        cambios fusionan en la rama principal, se construye el artefacto (imagen Docker) y se
+                        publica en producción <em>de forma automática</em>. <em>Delivery</em> deja el
+                        artefacto listo y un humano lo aprueba; <em>Deployment</em> publica directamente.</li>
+                </ul>
+
+                <h3>4.2 El pipeline completo</h3>
+
+                <p>El reparto concreto de responsabilidades entre GitHub Actions (la pieza CI) y el PaaS
+                    (la pieza CD) se detalla en §4.5; aquí basta con visualizar el orden temporal del
+                    flujo, desde que el estudiante hace <code>git push</code> hasta que la nueva versión
+                    queda publicada.</p>
+
+                <div class="pipeline" role="img" aria-label="Pipeline CI/CD: push, tests, build, deploy">
+                    <div class="pipeline-step">
+                        <span class="num">01</span>git push
+                        <span class="desc">El estudiante sube cambios a GitHub.</span>
+                    </div>
+                    <div class="pipeline-arrow" aria-hidden="true">›</div>
+                    <div class="pipeline-step">
+                        <span class="num">02</span>CI: pytest
+                        <span class="desc">Actions instala deps y ejecuta la suite.</span>
+                    </div>
+                    <div class="pipeline-arrow" aria-hidden="true">›</div>
+                    <div class="pipeline-step">
+                        <span class="num">03</span>Merge a main
+                        <span class="desc">Si pasa, se acepta el PR.</span>
+                    </div>
+                    <div class="pipeline-arrow" aria-hidden="true">›</div>
+                    <div class="pipeline-step">
+                        <span class="num">04</span>CD: build + deploy
+                        <span class="desc">Render reconstruye y publica.</span>
+                    </div>
+                </div>
+
+                <p>En la práctica del curso, GitHub Actions se ocupa del paso de CI (ejecutar
+                    <code>pytest</code> y, opcionalmente, construir la imagen) y el PaaS se ocupa del paso
+                    de CD (reconstruir y publicar al detectar un push en <code>main</code>).</p>
+
+                <p>La Figura 4.1 cuantifica el costo en tiempo de cada fase, distinguiendo la primera
+                    ejecución de las posteriores (cuando la caché de <code>pip</code> y la caché de capas
+                    de Docker están calientes). Conocer estos órdenes de magnitud ayuda a interpretar la
+                    duración de un workflow y a identificar cuellos de botella reales.</p>
+
+                <div class="chart-container">
+<div>                            <div id="plotly-cicd-fases" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("plotly-cicd-fases")) {                    Plotly.newPlot(                        "plotly-cicd-fases",                        [{"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003ePrimera vez: %{x} s\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#3D008D"},"name":"Primera ejecuci\u00f3n","orientation":"h","text":["3 s","18 s","65 s","6 s","25 s","90 s","35 s"],"textposition":"outside","x":[3,18,65,6,25,90,35],"y":["Checkout","Setup Python 3.11.9","pip install","ruff check","pytest -ra","docker build (PaaS)","Deploy + healthcheck"],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{y}\u003c\u002fb\u003e\u003cbr\u003eCon cach\u00e9: %{x} s\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#ED1E79"},"name":"Con cach\u00e9 de pip \u002f Docker","orientation":"h","text":["3 s","5 s","9 s","6 s","25 s","28 s","35 s"],"textposition":"outside","x":[3,5,9,6,25,28,35],"y":["Checkout","Setup Python 3.11.9","pip install","ruff check","pytest -ra","docker build (PaaS)","Deploy + healthcheck"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"family":"Montserrat, Helvetica Neue, Arial, sans-serif","size":12,"color":"#1E293B"},"margin":{"l":170,"r":60,"t":90,"b":60},"title":{"text":"\u003cb\u003eDuraci\u00f3n t\u00edpica de cada fase del pipeline\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003eRunner \u003ccode\u003eubuntu-latest\u003c\u002fcode\u003e \u00b7 CI: checkout \u2192 pytest \u00b7 CD: docker build \u2192 deploy. La cach\u00e9 ahorra ~70 s por iteraci\u00f3n.\u003c\u002fspan\u003e","x":0},"xaxis":{"title":{"text":"Segundos"},"gridcolor":"#E2E8F0","range":[0,110]},"yaxis":{"autorange":"reversed"},"legend":{"orientation":"h","y":-0.15,"x":0.5,"xanchor":"center"},"paper_bgcolor":"white","plot_bgcolor":"white","barmode":"group","height":420},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+</div>
+                <p class="chart-caption">Figura 4.1 — La caché de <code>pip</code> activada por
+                    <code>actions/setup-python@v5</code> y la caché de capas de Docker reducen
+                    drásticamente el tiempo del pipeline. El cuello de botella estable suele ser
+                    <code>pytest</code>, que no se acelera por caché. Valores aproximados, dependientes del
+                    tamaño del proyecto y la región del runner.</p>
+
+                <h3>4.3 Anatomía de un workflow de GitHub Actions</h3>
+                <p>Los workflows son archivos YAML alojados en
+                    <code>.github/workflows/</code>. Cada uno declara:</p>
+                <ul>
+                    <li><strong>Disparadores</strong> (<code>on</code>): qué evento lo dispara
+                        (<code>push</code>, <code>pull_request</code>, <code>schedule</code>, …).</li>
+                    <li><strong>Trabajos</strong> (<code>jobs</code>): unidades que se ejecutan en una máquina
+                        virtual <em>runner</em>.</li>
+                    <li><strong>Pasos</strong> (<code>steps</code>): comandos o acciones reutilizables, una
+                        tras otra dentro del trabajo.</li>
+                </ul>
+
+                <p>Para la API <code>encuestas-api</code>, un workflow mínimo que ejecuta
+                    <code>pytest</code> en cada <em>push</em> y cada <em>pull request</em> hacia
+                    <code>main</code> tiene esta forma:</p>
+
+<pre><code><span class="cm"># .github/workflows/ci.yml</span>
+<span class="yml-key">name</span>: <span class="yml-val">CI - tests</span>
+
+<span class="yml-key">on</span>:
+  <span class="yml-key">push</span>:
+    <span class="yml-key">branches</span>: [<span class="yml-val">main</span>]
+  <span class="yml-key">pull_request</span>:
+    <span class="yml-key">branches</span>: [<span class="yml-val">main</span>]
+
+<span class="yml-key">jobs</span>:
+  <span class="yml-key">tests</span>:
+    <span class="yml-key">runs-on</span>: <span class="yml-val">ubuntu-latest</span>
+    <span class="yml-key">steps</span>:
+      - <span class="yml-key">name</span>: <span class="yml-val">Clonar repositorio</span>
+        <span class="yml-key">uses</span>: <span class="yml-val">actions/checkout@v4</span>
+
+      - <span class="yml-key">name</span>: <span class="yml-val">Configurar Python 3.11.9</span>
+        <span class="yml-key">uses</span>: <span class="yml-val">actions/setup-python@v5</span>
+        <span class="yml-key">with</span>:
+          <span class="yml-key">python-version</span>: <span class="yml-val">"3.11.9"</span>
+          <span class="yml-key">cache</span>: <span class="yml-val">"pip"</span>
+
+      - <span class="yml-key">name</span>: <span class="yml-val">Instalar dependencias</span>
+        <span class="yml-key">run</span>: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - <span class="yml-key">name</span>: <span class="yml-val">Ejecutar suite con pytest</span>
+        <span class="yml-key">env</span>:
+          <span class="yml-key">APP_ENTORNO</span>: <span class="yml-val">test</span>
+          <span class="yml-key">APP_DEBUG</span>: <span class="yml-val">"false"</span>
+          <span class="yml-key">APP_LOG_LEVEL</span>: <span class="yml-val">WARNING</span>
+          <span class="yml-key">APP_BD_URL</span>: <span class="yml-val">sqlite:///./test.db</span>
+        <span class="yml-key">run</span>: pytest -ra --maxfail=1
+</code></pre>
+
+                <h4>Lectura del workflow paso a paso</h4>
+                <ol>
+                    <li><code>actions/checkout@v4</code> clona el repositorio dentro del runner.</li>
+                    <li><code>actions/setup-python@v5</code> instala exactamente Python 3.11.9, la misma
+                        versión usada en desarrollo y dentro del Dockerfile.</li>
+                    <li>El paso <em>Instalar dependencias</em> aprovecha la caché de <code>pip</code>: en
+                        ejecuciones siguientes, sólo descarga lo nuevo.</li>
+                    <li>Las variables de entorno se inyectan en el bloque <code>env</code> de la última
+                        etapa para que la suite encuentre la configuración esperada.</li>
+                    <li><code>pytest -ra --maxfail=1</code> reporta todos los resultados y se detiene en el
+                        primer fallo, lo cual deja el log más legible.</li>
+                </ol>
+
+                <h3>4.4 Proteger la rama principal</h3>
+                <p>Por sí sola, la presencia de un workflow no impide que un cambio defectuoso entre en
+                    <code>main</code>. Para que CI sea efectivo, en la configuración del repositorio se
+                    define una <em>regla de protección de rama</em> que exige:</p>
+                <ul>
+                    <li>Todos los cambios entran a <code>main</code> sólo a través de pull request.</li>
+                    <li>El check <code>tests</code> debe estar en estado verde antes de fusionar.</li>
+                    <li>Opcionalmente, se requiere al menos una revisión humana del PR.</li>
+                </ul>
+
+                <p>Con esta protección activada, un compañero o el propio estudiante no puede fusionar un
+                    cambio que rompa una prueba; el botón de <em>merge</em> aparece deshabilitado.</p>
+
+                <h3>4.5 Conexión del PaaS con GitHub: la pieza CD</h3>
+                <p>El despliegue automático se configura una sola vez:</p>
+
+                <ol>
+                    <li>En Render se selecciona <em>Deploy from GitHub repo</em> y se autoriza el
+                        acceso al repositorio.</li>
+                    <li>Se elige la rama de seguimiento (típicamente <code>main</code>).</li>
+                    <li>Se configuran las variables de entorno productivas en el panel.</li>
+                    <li>El proveedor instala un <em>webhook</em> en GitHub: cada <em>push</em> al branch
+                        seguido dispara automáticamente un <em>build</em> y un <em>deploy</em>.</li>
+                </ol>
+
+                <p>El estudiante observará que, al fusionar un PR aprobado, en cuestión de uno o dos minutos
+                    Render compila el Dockerfile y publica la nueva versión. Si los tests del PR
+                    pasaron, hay una probabilidad muy alta de que el despliegue también lo haga.</p>
+
+                <div class="box info">
+                    <span class="label">Patrón didáctico recomendado</span>
+                    Para un curso de pregrado, <strong>CI con GitHub Actions + CD nativo del PaaS</strong>
+                    cubre el 95 % de los casos sin complicaciones. Los workflows de Actions con pasos de
+                    <code>docker login</code> + <code>docker push</code> a un registro propio son posibles,
+                    pero suelen ser una fuente de fallos por permisos y se reservan para etapas más
+                    avanzadas.
+                </div>
+
+                <h3>4.6 Workflow extendido: lint y cobertura</h3>
+                <p>Cuando la suite crece, conviene añadir verificaciones complementarias en el mismo
+                    workflow:</p>
+
+<pre><code>      - <span class="yml-key">name</span>: <span class="yml-val">Lint con ruff</span>
+        <span class="yml-key">run</span>: |
+          pip install ruff==0.5.0
+          ruff check app tests
+
+      - <span class="yml-key">name</span>: <span class="yml-val">Cobertura mínima del 85 %</span>
+        <span class="yml-key">run</span>: |
+          pip install pytest-cov==5.0.0
+          pytest --cov=app --cov-report=term-missing --cov-fail-under=85
+</code></pre>
+
+                <p>El parámetro <code>--cov-fail-under=85</code> hace fallar el workflow si la cobertura
+                    cae por debajo del umbral, materializando una política objetiva sobre el repositorio.</p>
+            </section>
+
+            <!-- ===================== LOGS ===================== -->
+            <section id="logs" class="unit">
+                <h2>5. Logs de producción</h2>
+
+                <h3>5.1 ¿Por qué <code>print</code> no es suficiente en producción?</h3>
+                <p>Durante el desarrollo es habitual usar <code>print</code> para inspeccionar el flujo del
+                    programa. En producción, sin embargo, esa práctica acarrea problemas:</p>
+                <ul>
+                    <li>No hay forma de filtrar por severidad (no se distingue una advertencia inofensiva
+                        de un error crítico).</li>
+                    <li>No incluyen marca de tiempo, módulo origen ni identificador de proceso.</li>
+                    <li>No se pueden silenciar selectivamente sin tocar el código.</li>
+                    <li>No tienen contexto consistente entre módulos: en un servicio con muchos endpoints
+                        es imposible saber con certeza qué archivo o función emitió cada mensaje.</li>
+                </ul>
+
+                <p>El módulo <code>logging</code> de la biblioteca estándar resuelve los cuatro puntos.</p>
+
+                <h3>5.2 Niveles de severidad</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nivel</th>
+                            <th>Valor numérico</th>
+                            <th>Cuándo emitirlo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>DEBUG</code></td><td>10</td>
+                            <td>Detalle interno útil sólo al depurar (valor de un coeficiente intermedio).</td>
+                        </tr>
+                        <tr>
+                            <td><code>INFO</code></td><td>20</td>
+                            <td>Eventos normales (petición recibida, modelo ajustado correctamente).</td>
+                        </tr>
+                        <tr>
+                            <td><code>WARNING</code></td><td>30</td>
+                            <td>Situación inusual pero recuperable (matriz de diseño cercana a singular).</td>
+                        </tr>
+                        <tr>
+                            <td><code>ERROR</code></td><td>40</td>
+                            <td>Una operación falló pero el servicio sigue arriba (excepción no controlada
+                                en un endpoint).</td>
+                        </tr>
+                        <tr>
+                            <td><code>CRITICAL</code></td><td>50</td>
+                            <td>Falla que pone en riesgo el servicio completo (BD inalcanzable).</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>La Figura 5.1 ilustra la distribución típica de eventos por severidad en una API
+                    estadística saludable. La forma esperada es altamente asimétrica: <code>INFO</code>
+                    domina por volumen, mientras que <code>ERROR</code> y <code>CRITICAL</code> son raros
+                    pero precisamente por eso merecen alertas inmediatas. Una distribución muy distinta
+                    (por ejemplo, 20 % de ERROR) sería un síntoma claro de un problema en producción.</p>
+
+                <div class="chart-container">
+<div>                            <div id="plotly-logs-distribucion" class="plotly-graph-div" style="height:380px; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("plotly-logs-distribucion")) {                    Plotly.newPlot(                        "plotly-logs-distribucion",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e%{y}% del total\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#94A3B8","#3D008D","#FDB913","#EF4444","#7F1D1D"],"line":{"color":"white","width":1}},"showlegend":false,"text":["0 % (off en prod)","95 %","4 %","0.85 %","0.10 %"],"textfont":{"size":11},"textposition":"outside","x":["DEBUG","INFO","WARNING","ERROR","CRITICAL"],"y":[0.05,95.0,4.0,0.85,0.1],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"font":{"family":"Montserrat, Helvetica Neue, Arial, sans-serif","size":12,"color":"#1E293B"},"margin":{"l":80,"r":30,"t":80,"b":60},"title":{"text":"\u003cb\u003eDistribuci\u00f3n t\u00edpica de eventos por severidad\u003c\u002fb\u003e\u003cbr\u003e\u003cspan style='font-size:12px;color:#64748B'\u003eAPI saludable en producci\u00f3n \u00b7 escala logar\u00edtmica para visibilizar niveles raros\u003c\u002fspan\u003e","x":0},"yaxis":{"title":{"text":"% del total (escala log)"},"type":"log","gridcolor":"#E2E8F0","range":[-1.5,2.3]},"paper_bgcolor":"white","plot_bgcolor":"white","xaxis":{"title":{"text":"Nivel de severidad"}},"height":380},                        {"displayModeBar": false, "responsive": true}                    )                };            </script>        </div>
+</div>
+                <p class="chart-caption">Figura 5.1 — En una API estadística sana, INFO concentra cerca del
+                    95 % de los eventos. La escala logarítmica permite ver simultáneamente niveles que
+                    difieren en órdenes de magnitud: ERROR y CRITICAL son menos del 1 %, pero su cantidad
+                    absoluta y tendencia diaria son métricas clave de observabilidad.</p>
+
+                <h3>5.3 Configuración mínima para FastAPI</h3>
+                <p>El siguiente módulo configura el logging al inicio del proceso. La política es:</p>
+                <ul>
+                    <li>El nivel se lee de <code>APP_LOG_LEVEL</code>.</li>
+                    <li>El destino es la salida estándar (<code>sys.stdout</code>); el PaaS la captura.</li>
+                    <li>El formato incluye timestamp ISO, nivel, módulo y mensaje.</li>
+                </ul>
+
+<pre><code><span class="cm"># app/logs.py</span>
+<span class="kw">import</span> logging
+<span class="kw">import</span> sys
+<span class="kw">from</span> app.config <span class="kw">import</span> obtener_config
+
+<span class="kw">def</span> <span class="fn">configurar_logging</span>() -&gt; <span class="cls">None</span>:
+    config = <span class="fn">obtener_config</span>()
+    nivel = <span class="builtin">getattr</span>(logging, config.log_level.<span class="fn">upper</span>(), logging.INFO)
+
+    formato = <span class="str">"%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"</span>
+    fecha = <span class="str">"%Y-%m-%dT%H:%M:%S%z"</span>
+
+    handler = logging.<span class="fn">StreamHandler</span>(sys.stdout)
+    handler.<span class="fn">setFormatter</span>(logging.<span class="fn">Formatter</span>(formato, datefmt=fecha))
+
+    root = logging.<span class="fn">getLogger</span>()
+    root.<span class="fn">setLevel</span>(nivel)
+    root.handlers = [handler]
+    <span class="cm"># Acalla el ruido de Uvicorn por debajo de WARNING en producción</span>
+    logging.<span class="fn">getLogger</span>(<span class="str">"uvicorn.access"</span>).<span class="fn">setLevel</span>(
+        logging.WARNING <span class="kw">if</span> config.entorno == <span class="str">"production"</span> <span class="kw">else</span> logging.INFO
+    )
+</code></pre>
+
+                <p>Y en el módulo principal de la aplicación se invoca antes de instanciar FastAPI:</p>
+
+<pre><code><span class="cm"># app/main.py</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> app.logs <span class="kw">import</span> configurar_logging
+
+<span class="fn">configurar_logging</span>()
+app = <span class="fn">FastAPI</span>(title=<span class="str">"encuestas-api"</span>, version=<span class="str">"0.5.0"</span>)
+</code></pre>
+
+                <h3>5.4 Emisión de logs desde un endpoint</h3>
+                <p>El logger se obtiene por nombre de módulo (<code>__name__</code>) y se emiten mensajes
+                    con el nivel correspondiente. Es importante <em>no concatenar</em> strings: se usa el
+                    <em>lazy formatting</em> de <code>%</code>, que solo formatea si el log se emite:</p>
+
+<pre><code><span class="cm"># app/api/regresion.py</span>
+<span class="kw">import</span> logging
+<span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, HTTPException
+<span class="kw">from</span> app.schemas <span class="kw">import</span> RegresionInput  <span class="cm"># modelo Pydantic con campos x, y</span>
+
+logger = logging.<span class="fn">getLogger</span>(__name__)
+router = <span class="fn">APIRouter</span>()
+
+<span class="dec">@router.post(</span><span class="str">"/modelos/regresion"</span><span class="dec">)</span>
+<span class="kw">def</span> <span class="fn">ajustar</span>(payload: RegresionInput):
+    logger.<span class="fn">info</span>(<span class="str">"Ajuste solicitado: n=%d"</span>, <span class="builtin">len</span>(payload.x))
+
+    <span class="kw">try</span>:
+        resultado = <span class="fn">ajuste_ols</span>(payload.x, payload.y)
+    <span class="kw">except</span> <span class="cls">ValueError</span> <span class="kw">as</span> e:
+        logger.<span class="fn">warning</span>(<span class="str">"Datos inadecuados: %s"</span>, e)
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(status_code=<span class="num">422</span>, detail=<span class="builtin">str</span>(e))
+    <span class="kw">except</span> <span class="cls">Exception</span>:
+        logger.<span class="fn">exception</span>(<span class="str">"Fallo inesperado en ajuste"</span>)
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(status_code=<span class="num">500</span>, detail=<span class="str">"Error interno"</span>)
+
+    logger.<span class="fn">info</span>(<span class="str">"Ajuste OK: R2=%.4f"</span>, resultado.r2)
+    <span class="kw">return</span> resultado
+</code></pre>
+
+                <p>El método <code>logger.exception</code> registra el mensaje y, automáticamente, la traza
+                    completa de la excepción en curso. Es la forma correcta de capturar fallas inesperadas
+                    sin perder información para el diagnóstico posterior.</p>
+
+                <div class="box warn">
+                    <span class="label">Nunca se registran datos sensibles</span>
+                    Los logs son leídos por administradores, copiados a sistemas de búsqueda y, eventualmente,
+                    archivados. No deben contener: credenciales, tokens, números de identificación
+                    personales, ni los datos crudos de las observaciones cuando el conjunto sea
+                    confidencial. Sí se registran tamaños, identificadores anónimos y resúmenes
+                    estadísticos.
+                </div>
+
+                <h3>5.5 Cómo se ven los logs en producción</h3>
+                <p>Una traza típica de la API en Render durante una petición exitosa luce así (los
+                    colores corresponden al nivel):</p>
+
+                <div class="log-window" role="log" aria-label="Ejemplo de logs en producción">
+<span class="log-time">2026-04-30T14:22:11+0000</span> | <span class="log-info">INFO    </span> | app.main          | Aplicación inicializada en entorno=production
+<span class="log-time">2026-04-30T14:22:42+0000</span> | <span class="log-info">INFO    </span> | app.api.regresion | Ajuste solicitado: n=128
+<span class="log-time">2026-04-30T14:22:42+0000</span> | <span class="log-info">INFO    </span> | app.api.regresion | Ajuste OK: R2=0.8731
+<span class="log-time">2026-04-30T14:22:55+0000</span> | <span class="log-warn">WARNING </span> | app.api.regresion | Datos inadecuados: longitudes desiguales x=10, y=12
+<span class="log-time">2026-04-30T14:23:09+0000</span> | <span class="log-error">ERROR   </span> | app.api.regresion | Fallo inesperado en ajuste
+<span class="log-time">                          </span>   <span class="log-debug">Traceback (most recent call last):</span>
+<span class="log-time">                          </span>   <span class="log-debug">  File "/app/app/stats.py", line 47, in ajuste_ols</span>
+<span class="log-time">                          </span>   <span class="log-debug">    XtX_inv = numpy.linalg.inv(XtX)</span>
+<span class="log-time">                          </span>   <span class="log-debug">numpy.linalg.LinAlgError: Singular matrix</span>
+                </div>
+
+                <h3>5.6 Logs estructurados (opcional)</h3>
+                <p>Cuando los logs van a ser procesados por un sistema externo (Datadog, Grafana Loki,
+                    Elastic Stack), se prefiere el formato JSON, donde cada línea es un objeto independiente.
+                    Esto permite filtrar por campos sin recurrir a expresiones regulares:</p>
+
+<pre><code><span class="cm"># Log estructurado, una línea por evento</span>
+{<span class="str">"ts"</span>: <span class="str">"2026-04-30T14:22:42Z"</span>, <span class="str">"level"</span>: <span class="str">"INFO"</span>, <span class="str">"logger"</span>: <span class="str">"app.api.regresion"</span>,
+ <span class="str">"event"</span>: <span class="str">"ajuste_ok"</span>, <span class="str">"n"</span>: <span class="num">128</span>, <span class="str">"r2"</span>: <span class="num">0.8731</span>, <span class="str">"duracion_ms"</span>: <span class="num">42</span>}
+</code></pre>
+
+                <p>Bibliotecas como <code>structlog</code> o <code>python-json-logger</code> simplifican
+                    esa salida. Para el alcance de este curso es suficiente con el formateador de texto
+                    descrito en 5.3.</p>
+
+                <h3>5.7 Lectura de logs en Render</h3>
+                <p>Ambos paneles ofrecen una vista en vivo de la salida estándar y estándar de error del
+                    contenedor. Las funciones típicas son:</p>
+                <ul>
+                    <li>Filtrar por nivel (<code>WARNING</code> o superior).</li>
+                    <li>Buscar por subcadena (por ejemplo, <code>R2=</code>).</li>
+                    <li>Descargar el log de las últimas 24-72 horas para análisis fuera de línea.</li>
+                    <li>Ver el log histórico de una <em>build</em>: útil para depurar fallos de
+                        construcción del Dockerfile.</li>
+                </ul>
+
+                <div class="box tip">
+                    <span class="label">Doce factores y los logs</span>
+                    El undécimo principio de los <em>Twelve-Factor Apps</em> dice: <em>logs as event
+                    streams</em>. La aplicación no debe preocuparse por archivos de log, rotación ni
+                    destino: simplemente escribe a <code>stdout</code>. La plataforma se encarga del resto.
+                    Esto es exactamente lo que hacen Render.
+                </div>
+            </section>
+
+            <!-- ===================== RAILWAY / RENDER ===================== -->
+            <section id="railway" class="unit">
+                <h2>6. Render: detección automática de Dockerfile</h2>
+
+                <h3>6.1 ¿Cómo deciden estos PaaS qué construir?</h3>
+                <p>Cuando se conecta un repositorio a Render, el proveedor inspecciona los
+                    archivos de la raíz para decidir el método de construcción:</p>
+
+                <div class="ascii-diagram">¿Existe Dockerfile en la raíz?
+   │
+   ├── Sí ──► Construir con `docker build .`        ◄──── ruta usada en este curso
+   │
+   └── No  ──► Detectar lenguaje (Python, Node, ...)
+                  ├── requirements.txt    → buildpack Python
+                  ├── package.json        → buildpack Node
+                  └── go.mod              → buildpack Go</div>
+
+                <p>Cuando hay un Dockerfile, los <em>buildpacks</em> (Nixpacks en Railway, sistema propio en
+                    Render) se ignoran. Esto da control total sobre la imagen y deja al proveedor sólo el
+                    rol de construir, ejecutar y exponer.</p>
+
+                <h3>6.2 Requisitos del Dockerfile para Render</h3>
+                <p>El Dockerfile multi-stage de la semana anterior ya cumple casi todo lo necesario. Sólo
+                    requiere dos confirmaciones:</p>
+                <ol>
+                    <li>El comando <code>CMD</code> debe usar la variable <code>$PORT</code>.</li>
+                    <li>El proceso debe escuchar en <code>0.0.0.0</code>.</li>
+                </ol>
+
+                <p>Una versión productiva completa, compatible con ambos proveedores, es:</p>
+
+<pre><code><span class="cm"># ============================ Etapa de construcción</span>
+<span class="kw">FROM</span> python:3.11.9-slim-bookworm <span class="kw">AS</span> builder
+
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+<span class="kw">WORKDIR</span> /build
+
+<span class="kw">COPY</span> requirements.txt .
+<span class="kw">RUN</span> pip install --prefix=/install -r requirements.txt
+
+<span class="cm"># ============================ Etapa final</span>
+<span class="kw">FROM</span> python:3.11.9-slim-bookworm
+
+<span class="kw">ENV</span> PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+<span class="cm"># Usuario sin privilegios</span>
+<span class="kw">RUN</span> useradd --create-home --uid 1000 api
+<span class="kw">USER</span> api
+
+<span class="kw">WORKDIR</span> /app
+
+<span class="kw">COPY</span> --from=builder /install /usr/local
+<span class="kw">COPY</span> --chown=api:api app ./app
+
+<span class="cm"># El proveedor inyecta PORT; en local cae a 8000</span>
+<span class="kw">EXPOSE</span> 8000
+<span class="kw">CMD</span> [<span class="str">"sh"</span>, <span class="str">"-c"</span>, <span class="str">"uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"</span>]
+</code></pre>
+
+                <div class="box info">
+                    <span class="label">Por qué <code>PYTHONUNBUFFERED=1</code></span>
+                    Sin esta variable, Python amortigua su salida estándar y los logs aparecen en bloques
+                    grandes y con retraso en el panel del proveedor. Con <code>PYTHONUNBUFFERED=1</code>,
+                    cada <code>logger.info(...)</code> se ve casi en tiempo real.
+                </div>
+
+                <h3>6.3 Flujo de despliegue en Render</h3>
+                <p>El procedimiento típico, ya en posesión del Dockerfile anterior, es:</p>
+                <ol>
+                    <li>Crear cuenta en <code>render.com</code> y autorizar el acceso al repositorio
+                        GitHub.</li>
+                    <li>Pulsar <em>New Project ▸ Deploy from GitHub repo</em> y seleccionar el repositorio
+                        de la API.</li>
+                    <li>Render detecta el <code>Dockerfile</code> y construye la primera versión sin
+                        intervención adicional.</li>
+                    <li>En <em>Variables</em> se introducen <code>APP_ENTORNO=production</code>,
+                        <code>APP_DEBUG=false</code>, <code>APP_LOG_LEVEL=INFO</code>,
+                        <code>APP_BD_URL</code>, etc. La variable <code>PORT</code> se inyecta automáticamente
+                        y no debe definirse a mano.</li>
+                    <li>En <em>Settings ▸ Networking</em> se genera un dominio público
+                        (<code>encuestas-api.onrender.com</code>). Opcionalmente se asigna uno propio.</li>
+                    <li>Cualquier <em>push</em> futuro a la rama elegida dispara un nuevo
+                        <em>build</em> + <em>deploy</em>.</li>
+                </ol>
+
+                <p>Dos detalles de Render que conviene tener presentes desde el primer despliegue:</p>
+                <ol>
+                    <li>Render distingue entre <em>Web Service</em> (servicio HTTP) y otros tipos
+                        (background worker, cron job, base de datos). Para la API se elige
+                        <em>Web Service</em>.</li>
+                    <li>El plan gratuito <em>suspende</em> el servicio tras 15 minutos sin tráfico; la
+                        primera petición tras la suspensión tarda algunos segundos en arrancar el
+                        contenedor. Para evitarlo, se cambia al plan pagado o se mantiene un
+                        <em>health check</em> periódico desde un servicio externo.</li>
+                </ol>
+
+
+                <div class="box info">
+                    <span class="label">¿Y las otras plataformas?</span>
+                    Railway, Fly.io o Heroku resuelven lo mismo con flujos muy parecidos, y lo que
+                    aprendas aquí se traslada a cualquiera de ellas: detectar el Dockerfile, inyectar
+                    <code>PORT</code> y desplegar desde GitHub es el patrón común. Este curso trabaja
+                    y evalúa sobre <strong>Render</strong>, que es la plataforma que declara el syllabus.
+                </div>
+
+                <h3>6.6 Health check para alta disponibilidad</h3>
+                <p>Ambos proveedores aceptan un endpoint que el balanceador consulta para decidir si el
+                    contenedor está sano. En FastAPI se añade fácilmente:</p>
+
+<pre><code><span class="cm"># app/api/salud.py</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter
+
+router = <span class="fn">APIRouter</span>()
+
+<span class="dec">@router.get(</span><span class="str">"/healthz"</span><span class="dec">)</span>
+<span class="kw">def</span> <span class="fn">salud</span>():
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>}
+</code></pre>
+
+                <p>En Render no es obligatorio definirlo (la simple aceptación de conexiones TCP basta).
+                    En Render se configura en <em>Settings ▸ Health Check Path = /healthz</em>. El nombre
+                    <code>/healthz</code> es una convención de Kubernetes adoptada por la comunidad: la
+                    <code>z</code> al final reduce la probabilidad de colisión con un endpoint de negocio.</p>
+
+                <h3>6.7 Verificación final</h3>
+                <p>Tras el despliegue, una verificación completa contempla:</p>
+
+                <ol>
+                    <li><strong>Documentación viva:</strong> abrir
+                        <code>https://&lt;dominio&gt;/docs</code> y comprobar que Swagger UI carga los tres
+                        endpoints.</li>
+                    <li><strong>Health check:</strong> <code>curl https://&lt;dominio&gt;/healthz</code>
+                        debe devolver <code>{"status":"ok"}</code> en menos de 200 ms.</li>
+                    <li><strong>Logs:</strong> en el panel del PaaS debe verse al menos un evento
+                        <code>INFO</code> de inicialización al arrancar.</li>
+                    <li><strong>Variables:</strong> consultar el endpoint
+                        <code>GET /resumen/media</code> y comprobar que la conexión a la BD productiva
+                        funciona.</li>
+                </ol>
+
+                <div class="box tip">
+                    <span class="label">Una API estadística nunca está "terminada"</span>
+                    El despliegue en producción no cierra el ciclo, lo abre. A partir de ese momento, los
+                    logs y los reportes de los usuarios alimentan el siguiente <em>sprint</em> de mejoras,
+                    que entrará nuevamente al pipeline CI/CD descrito en la sección 4.
+                </div>
+            </section>
+
+            <!-- ===================== AUTOEVALUACIÓN ===================== -->
+            <section id="autoevaluacion" class="unit">
+                <h2>7. Autoevaluación</h2>
+
+                <p>Los siguientes ejercicios consolidan los temas de la unidad. Cada uno incluye una
+                    solución sugerida que se revela al desplegar el bloque <em>Solución</em>; se recomienda
+                    intentarlos antes de mirar la respuesta.</p>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.1 — IaaS, PaaS y SaaS</span>
+                    Clasifíquense los siguientes servicios en IaaS, PaaS o SaaS y justifíquese brevemente:
+                    (a) una máquina virtual de DigitalOcean en la que el usuario instala Ubuntu y Nginx;
+                    (b) Render desplegando un Dockerfile; (c) Google Sheets; (d) un cluster gestionado de
+                    Kubernetes en GCP donde el usuario administra los <em>deployments</em>; (e) Heroku
+                    ejecutando una aplicación Django con un buildpack.
+                </div>
+                <details>
+                    <summary>Solución 7.1</summary>
+                    <ul>
+                        <li>(a) <strong>IaaS</strong>: el proveedor entrega virtualización y red; el usuario
+                            administra SO, runtime, middleware y aplicación.</li>
+                        <li>(b) <strong>PaaS</strong>: Render gestiona SO, runtime y red; el usuario
+                            entrega código (Dockerfile) y datos.</li>
+                        <li>(c) <strong>SaaS</strong>: el usuario sólo consume la aplicación final; ni el
+                            código ni los datos están bajo su control de implementación.</li>
+                        <li>(d) <strong>IaaS / CaaS frontera</strong>: técnicamente Kubernetes administrado
+                            es <em>Container as a Service</em>, una variante cercana a IaaS porque el
+                            usuario sigue gestionando manifiestos, despliegues y capacidad.</li>
+                        <li>(e) <strong>PaaS</strong>: Heroku con buildpack es el caso canónico de PaaS.</li>
+                    </ul>
+                </details>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.2 — Configuración tipada</span>
+                    Extiéndase la clase <code>Configuracion</code> de la sección 3.2 con un campo
+                    <code>cors_origins</code> de tipo <code>list[str]</code> que se lea de la variable
+                    <code>APP_CORS_ORIGINS</code> separada por comas. Escríbase la prueba unitaria que
+                    verifica el parseo a partir de la cadena
+                    <code>"https://a.uni.edu,https://b.uni.edu"</code>.
+                </div>
+                <details>
+                    <summary>Solución 7.2</summary>
+<pre><code><span class="cm"># app/config.py (fragmento)</span>
+<span class="kw">from</span> pydantic <span class="kw">import</span> field_validator
+
+<span class="kw">class</span> <span class="cls">Configuracion</span>(BaseSettings):
+    cors_origins: <span class="builtin">list</span>[<span class="builtin">str</span>] = Field(default_factory=<span class="builtin">list</span>)
+
+    <span class="dec">@field_validator(</span><span class="str">"cors_origins"</span>, mode=<span class="str">"before"</span><span class="dec">)</span>
+    <span class="dec">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">parsear_csv</span>(<span class="builtin">cls</span>, v):
+        <span class="kw">if</span> <span class="builtin">isinstance</span>(v, <span class="builtin">str</span>):
+            <span class="kw">return</span> [s.<span class="fn">strip</span>() <span class="kw">for</span> s <span class="kw">in</span> v.<span class="fn">split</span>(<span class="str">","</span>) <span class="kw">if</span> s.<span class="fn">strip</span>()]
+        <span class="kw">return</span> v
+</code></pre>
+<pre><code><span class="cm"># tests/test_config.py</span>
+<span class="kw">from</span> app.config <span class="kw">import</span> obtener_config
+
+<span class="kw">def</span> <span class="fn">test_cors_origins_se_parsea_de_csv</span>(monkeypatch):
+    monkeypatch.<span class="fn">setenv</span>(<span class="str">"APP_CORS_ORIGINS"</span>, <span class="str">"https://a.uni.edu,https://b.uni.edu"</span>)
+    obtener_config.<span class="fn">cache_clear</span>()  <span class="cm"># Forzar relectura</span>
+    cfg = <span class="fn">obtener_config</span>()
+    <span class="kw">assert</span> cfg.cors_origins == [<span class="str">"https://a.uni.edu"</span>, <span class="str">"https://b.uni.edu"</span>]
+</code></pre>
+                </details>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.3 — Workflow de CI</span>
+                    Modifíquese el workflow <code>.github/workflows/ci.yml</code> para añadir, en paralelo
+                    al trabajo <code>tests</code>, un trabajo <code>lint</code> que ejecute
+                    <code>ruff check</code> sobre <code>app</code> y <code>tests</code>. Exíjase que ambos
+                    trabajos estén en verde para fusionar en <code>main</code>.
+                </div>
+                <details>
+                    <summary>Solución 7.3</summary>
+<pre><code><span class="yml-key">jobs</span>:
+  <span class="yml-key">tests</span>:
+    <span class="yml-key">runs-on</span>: <span class="yml-val">ubuntu-latest</span>
+    <span class="yml-key">steps</span>: <span class="cm"># (igual que antes)</span>
+
+  <span class="yml-key">lint</span>:
+    <span class="yml-key">runs-on</span>: <span class="yml-val">ubuntu-latest</span>
+    <span class="yml-key">steps</span>:
+      - <span class="yml-key">uses</span>: <span class="yml-val">actions/checkout@v4</span>
+      - <span class="yml-key">uses</span>: <span class="yml-val">actions/setup-python@v5</span>
+        <span class="yml-key">with</span>:
+          <span class="yml-key">python-version</span>: <span class="yml-val">"3.11.9"</span>
+      - <span class="yml-key">run</span>: pip install ruff==0.5.0
+      - <span class="yml-key">run</span>: ruff check app tests
+</code></pre>
+                    <p>En <em>Settings ▸ Branches ▸ Branch protection rules</em> de GitHub se marcan
+                        <em>tests</em> y <em>lint</em> como <em>required status checks</em>. Sin ambos en
+                        verde, el botón de <em>merge</em> queda deshabilitado.</p>
+                </details>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.4 — Diagnóstico por logs</span>
+                    Léase el siguiente fragmento de log productivo y dígase: (i) qué endpoint se invocó,
+                    (ii) cuál fue la causa probable del error 500, (iii) qué cambio mitigaría una repetición
+                    del incidente.
+<pre style="background:#0f172a;color:#e2e8f0;font-size:0.78rem"><code>2026-04-30T14:23:09+0000 | INFO    | app.api.regresion | Ajuste solicitado: n=3
+2026-04-30T14:23:09+0000 | ERROR   | app.api.regresion | Fallo inesperado en ajuste
+Traceback (most recent call last):
+  File "/app/app/stats.py", line 47, in ajuste_ols
+    XtX_inv = numpy.linalg.inv(XtX)
+numpy.linalg.LinAlgError: Singular matrix</code></pre>
+                </div>
+                <details>
+                    <summary>Solución 7.4</summary>
+                    <ol>
+                        <li>(i) Se invocó <code>POST /modelos/regresion</code>, según el módulo
+                            <code>app.api.regresion</code> que emite el log.</li>
+                        <li>(ii) La matriz <code>X<sup>T</sup>X</code> resultó singular: con
+                            <code>n=3</code> el rango efectivo de la matriz de diseño suele ser
+                            deficiente — más coeficientes que observaciones útiles, varianza nula en
+                            la covariable o colinealidad perfecta entre columnas. Cualquiera de las tres
+                            condiciones impide que <code>numpy.linalg.inv</code> calcule la inversa.</li>
+                        <li>(iii) Validar <em>antes</em> del ajuste: comprobar que la columna constante y la
+                            covariable no son linealmente dependientes y que la varianza de la covariable es
+                            mayor que cero. Si la condición no se cumple, devolver 422 con un mensaje
+                            estadísticamente informativo, en lugar de dejar que el cálculo falle con 500.</li>
+                    </ol>
+                </details>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.5 — Variables de entorno</span>
+                    Identifíquense los problemas en el siguiente <code>Dockerfile</code> en el contexto de
+                    un despliegue en Render, y propónganse correcciones:
+<pre><code><span class="kw">FROM</span> python:3.11.9-slim-bookworm
+<span class="kw">ENV</span> APP_BD_URL=postgresql://prod_user:s3cret@db:5432/encuestas
+<span class="kw">COPY</span> . /app
+<span class="kw">WORKDIR</span> /app
+<span class="kw">RUN</span> pip install -r requirements.txt
+<span class="kw">CMD</span> uvicorn app.main:app --host 127.0.0.1 --port 8000</code></pre>
+                </div>
+                <details>
+                    <summary>Solución 7.5</summary>
+                    <ul>
+                        <li><strong>Secreto incrustado en la imagen:</strong> la línea
+                            <code>ENV APP_BD_URL=...</code> deja la contraseña dentro del filesystem de la
+                            imagen, accesible para cualquiera que la ejecute. Debe eliminarse y configurarse
+                            en el panel del PaaS como variable de entorno.</li>
+                        <li><strong><code>--host 127.0.0.1</code>:</strong> el contenedor sólo aceptará
+                            tráfico desde sí mismo y el balanceador no podrá alcanzarlo. Debe ser
+                            <code>0.0.0.0</code>.</li>
+                        <li><strong>Puerto fijo:</strong> Render inyecta <code>PORT</code>. La forma
+                            correcta es <code>--port ${PORT:-8000}</code> con
+                            <code>CMD ["sh", "-c", "..."]</code>.</li>
+                        <li><strong><code>COPY . /app</code> sin orden:</strong> impide cachear la capa de
+                            instalación de dependencias. Es preferible copiar primero
+                            <code>requirements.txt</code>, instalar y luego copiar el resto.</li>
+                        <li><strong>Sin usuario no privilegiado:</strong> el proceso corre como
+                            <code>root</code>. Conviene crear un usuario dedicado y usar
+                            <code>USER api</code>.</li>
+                    </ul>
+                </details>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.6 — Health check</span>
+                    Diséñese un endpoint <code>GET /readyz</code> que verifique, además de la
+                    disponibilidad del proceso, que la base de datos responde. Discútase qué código de
+                    estado se devuelve cuando la BD no responde y por qué importa la distinción con
+                    <code>/healthz</code>.
+                </div>
+                <details>
+                    <summary>Solución 7.6</summary>
+<pre><code><span class="kw">from</span> fastapi <span class="kw">import</span> APIRouter, Depends, HTTPException
+<span class="kw">from</span> sqlalchemy <span class="kw">import</span> text
+<span class="kw">from</span> app.db <span class="kw">import</span> obtener_sesion
+
+router = <span class="fn">APIRouter</span>()
+
+<span class="dec">@router.get(</span><span class="str">"/readyz"</span><span class="dec">)</span>
+<span class="kw">def</span> <span class="fn">listo</span>(sesion = <span class="fn">Depends</span>(obtener_sesion)):
+    <span class="kw">try</span>:
+        sesion.<span class="fn">execute</span>(<span class="fn">text</span>(<span class="str">"SELECT 1"</span>))
+    <span class="kw">except</span> <span class="cls">Exception</span>:
+        <span class="kw">raise</span> <span class="fn">HTTPException</span>(status_code=<span class="num">503</span>, detail=<span class="str">"BD no disponible"</span>)
+    <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ready"</span>}
+</code></pre>
+                    <p>Distinción clave: <code>/healthz</code> (<em>liveness</em>) responde mientras el
+                        proceso esté vivo y permite al PaaS decidir si reiniciar el contenedor;
+                        <code>/readyz</code> (<em>readiness</em>) responde sólo si el servicio está en
+                        condiciones de atender tráfico, lo cual incluye dependencias externas. Devolver
+                        <code>503</code> en <code>/readyz</code> permite al balanceador <em>retirar</em> la
+                        instancia del pool sin matarla, esperando a que la BD vuelva.</p>
+                </details>
+
+                <div class="box exercise">
+                    <span class="label">Ejercicio 7.7 — Síntesis</span>
+                    Tómese una rama nueva del repositorio <code>encuestas-api</code>, introdúzcase un cambio
+                    deliberadamente erróneo (por ejemplo, dividir entre <code>n</code> en lugar de
+                    <code>n-1</code> en la varianza muestral) y ábrase un pull request. Documéntese el flujo
+                    completo: qué pruebas detectan el cambio, qué reporta GitHub Actions, y por qué la
+                    protección de rama impide fusionar.
+                </div>
+                <details>
+                    <summary>Solución 7.7</summary>
+                    <p>El flujo esperado es:</p>
+                    <ol>
+                        <li>El PR se abre y dispara el workflow CI; <code>actions/checkout</code>,
+                            <code>setup-python</code> e <code>install</code> se ejecutan correctamente.</li>
+                        <li>El paso <code>pytest</code> falla porque
+                            <code>test_media_y_ee_caso_canonico</code> esperaba un error estándar
+                            calculado con <code>n-1</code> y ahora obtiene un valor distinto. La salida del
+                            log mostrará la diferencia entre el valor esperado y el observado, con la
+                            tolerancia de <code>pytest.approx</code>.</li>
+                        <li>GitHub marca el check <em>tests</em> como rojo y, en virtud de la regla de
+                            protección, el botón de <em>merge</em> queda deshabilitado con el mensaje
+                            <em>required status checks have not passed</em>.</li>
+                        <li>Tras revertir el cambio o ajustar la fórmula, el workflow se vuelve a ejecutar y
+                            recupera el verde, permitiendo el merge.</li>
+                    </ol>
+                    <p>Conclusión: la pirámide de testing diseñada en la Semana IV, integrada con el CI de
+                        esta semana, evita que un sesgo estadístico llegue a producción.</p>
+                </details>
+            </section>
+
+            <!-- ===================== RESUMEN ===================== -->
+            <section id="resumen" class="unit">
+                <h2>8. Resumen y referencias</h2>
+
+                <h3>8.1 Resumen ejecutivo</h3>
+                <ol>
+                    <li>El modelo IaaS / PaaS / SaaS describe qué administra el proveedor y qué administra
+                        el equipo. Para una API estadística académica, PaaS es el punto de equilibrio entre
+                        control y simplicidad operativa.</li>
+                    <li>Las variables de entorno son la frontera entre código y configuración. En desarrollo
+                        viven en <code>.env</code> (cargado por <code>python-dotenv</code>) y en producción
+                        se inyectan desde el panel del proveedor. Pydantic Settings unifica la lectura con
+                        tipos verificables.</li>
+                    <li>CI/CD básico se construye con dos piezas: <em>GitHub Actions</em> ejecutando
+                        <code>pytest</code> en cada push y el PaaS (Render) reconstruyendo y
+                        desplegando al fusionar en <code>main</code>. La protección de rama materializa la
+                        política de calidad.</li>
+                    <li>Los logs en producción se emiten con el módulo <code>logging</code>, escriben a
+                        <code>stdout</code> y los recoge el proveedor. Los niveles
+                        <code>DEBUG</code>/<code>INFO</code>/<code>WARNING</code>/<code>ERROR</code>/<code>CRITICAL</code>
+                        permiten filtrar y diagnosticar; los datos sensibles nunca se registran.</li>
+                    <li>Render detectan automáticamente el <code>Dockerfile</code> en la raíz del
+                        repositorio. Basta con que el <code>CMD</code> use <code>${PORT:-8000}</code> y
+                        escuche en <code>0.0.0.0</code> para que la imagen multi-stage de la semana
+                        anterior funcione sin modificaciones.</li>
+                </ol>
+
+                <h3>8.2 Comandos y rutas útiles</h3>
+<pre><code><span class="cm"># Construir la imagen localmente con la misma base que en producción</span>
+docker build -t encuestas-api:local .
+
+<span class="cm"># Ejecutar el contenedor con variables productivas simuladas</span>
+docker run --rm -p 8000:8000 \
+  -e APP_ENTORNO=production \
+  -e APP_DEBUG=false \
+  -e APP_LOG_LEVEL=INFO \
+  -e APP_BD_URL=sqlite:///./encuestas.db \
+  -e PORT=8000 \
+  encuestas-api:local
+
+<span class="cm"># Probar el health check tras el despliegue</span>
+curl https://&lt;dominio&gt;/healthz
+
+<span class="cm"># Disparar manualmente un workflow de Actions desde la línea de comando (con gh CLI)</span>
+gh workflow run ci.yml --ref main
+
+<span class="cm"># Listar variables configuradas en el repo (Actions secrets)</span>
+gh secret list
+</code></pre>
+
+                <h3>8.3 Referencias oficiales</h3>
+                <ul>
+                    <li>The Twelve-Factor App —
+                        <a href="https://12factor.net/" target="_blank" rel="noopener noreferrer"><code>https://12factor.net/</code></a></li>
+                    <li>FastAPI — <em>Deployments</em>:
+                        <a href="https://fastapi.tiangolo.com/deployment/" target="_blank" rel="noopener noreferrer"><code>https://fastapi.tiangolo.com/deployment/</code></a></li>
+                    <li>Pydantic Settings —
+                        <a href="https://docs.pydantic.dev/latest/concepts/pydantic_settings/" target="_blank" rel="noopener noreferrer"><code>https://docs.pydantic.dev/latest/concepts/pydantic_settings/</code></a></li>
+                    <li>GitHub Actions — Workflow syntax:
+                        <a href="https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions" target="_blank" rel="noopener noreferrer"><code>https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions</code></a></li>
+                    <li><code>actions/setup-python</code>:
+                        <a href="https://github.com/actions/setup-python" target="_blank" rel="noopener noreferrer"><code>https://github.com/actions/setup-python</code></a></li>
+                    <li>Railway — <em>Dockerfile builds</em>:
+                        <a href="https://docs.railway.com/guides/dockerfiles" target="_blank" rel="noopener noreferrer"><code>https://docs.railway.com/guides/dockerfiles</code></a></li>
+                    <li>Render — <em>Deploying with Docker</em>:
+                        <a href="https://render.com/docs/docker" target="_blank" rel="noopener noreferrer"><code>https://render.com/docs/docker</code></a></li>
+                    <li>Python <code>logging</code> HOWTO:
+                        <a href="https://docs.python.org/3.11/howto/logging.html" target="_blank" rel="noopener noreferrer"><code>https://docs.python.org/3.11/howto/logging.html</code></a></li>
+                </ul>
+
+                <h3>8.4 Próximos pasos</h3>
+                <p>Con la API publicada en un PaaS, la siguiente unidad puede orientarse hacia
+                    <em>observabilidad avanzada</em> (métricas Prometheus, trazas OpenTelemetry, dashboards
+                    en Grafana), <em>seguridad</em> (autenticación con OAuth2/JWT, rate limiting) o el
+                    despliegue de <em>modelos de IA</em> con servidores dedicados de inferencia. La base
+                    construida en estas cinco semanas —API tipada, validada, probada, contenida y
+                    desplegada— es el punto de partida para cualquiera de esos caminos.</p>
+            </section>
+
+                <footer>
+                    <p>Material académico — Programa de Estadística · Semana V · Python para APIs.</p>
+                    <p class="small">Documento autocontenido (gráficos servidos por Plotly CDN). Versión
+                        del material: 2026-04 rev. 2 · Compatible con Python 3.11.9, FastAPI ≥ 0.100,
+                        Docker, GitHub Actions, Render.</p>
+                </footer>
+
+            </div><!-- /.content-inner -->
+        </main>
+    </div><!-- /.app-shell -->
+
+    <script>
+        (function () {
+            'use strict';
+
+            const sections = Array.from(document.querySelectorAll('section.unit'));
+            const navButtons = Array.from(document.querySelectorAll('nav.sidebar-nav button[data-target]'));
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebarToggleIcon = document.getElementById('sidebar-toggle-icon');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const contentArea = document.querySelector('main.content-area');
+
+            const PLOTLY_IDS = [
+                'plotly-paas-cuadrante',
+                'plotly-env-dev-prod',
+                'plotly-cicd-fases',
+                'plotly-logs-distribucion',
+                'plotly-railway-render'
+            ];
+
+            function resizeVisiblePlotlyCharts() {
+                if (typeof Plotly === 'undefined' || !Plotly.Plots) return;
+                PLOTLY_IDS.forEach(function (id) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    if (el.offsetParent === null) return;
+                    try { Plotly.Plots.resize(el); } catch (e) { /* noop */ }
+                });
+            }
+
+            function showSection(targetId, opts) {
+                opts = opts || {};
+                let matched = false;
+                let activeSec = null;
+                sections.forEach(function (sec) {
+                    const isMatch = sec.id === targetId;
+                    sec.classList.toggle('is-active', isMatch);
+                    if (isMatch) {
+                        matched = true;
+                        activeSec = sec;
+                    }
+                });
+                if (!matched && sections.length) {
+                    sections[0].classList.add('is-active');
+                    targetId = sections[0].id;
+                    activeSec = sections[0];
+                }
+                // Reapply fade-in animation each time so re-selecting the same section still feels responsive
+                if (activeSec) {
+                    activeSec.style.animation = 'none';
+                    void activeSec.offsetWidth;
+                    activeSec.style.animation = '';
+                }
+                navButtons.forEach(function (btn) {
+                    btn.classList.toggle('active', btn.dataset.target === targetId);
+                    if (btn.dataset.target === targetId) {
+                        btn.setAttribute('aria-current', 'page');
+                    } else {
+                        btn.removeAttribute('aria-current');
+                    }
+                });
+                if (!opts.preserveScroll && contentArea) {
+                    contentArea.scrollTop = 0;
+                }
+                if (!opts.skipHash) {
+                    if (history.replaceState) {
+                        history.replaceState(null, '', '#' + targetId);
+                    } else {
+                        window.location.hash = targetId;
+                    }
+                }
+                window.requestAnimationFrame(function () {
+                    setTimeout(resizeVisiblePlotlyCharts, 30);
+                });
+            }
+
+            function isMobile() {
+                return window.matchMedia('(max-width: 900px)').matches;
+            }
+
+            function setSidebar(open) {
+                if (!sidebar) return;
+                sidebar.classList.toggle('collapsed', !open);
+                if (sidebarOverlay) {
+                    sidebarOverlay.classList.toggle('is-visible', open && isMobile());
+                }
+                if (sidebarToggleIcon) {
+                    sidebarToggleIcon.classList.remove('fa-times', 'fa-bars');
+                    sidebarToggleIcon.classList.add(open ? 'fa-times' : 'fa-bars');
+                }
+                if (sidebarToggle) {
+                    sidebarToggle.setAttribute('aria-expanded', String(open));
+                    sidebarToggle.setAttribute('title', open ? 'Ocultar menú' : 'Mostrar menú');
+                }
+            }
+
+            setSidebar(!isMobile());
+
+            navButtons.forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    showSection(btn.dataset.target);
+                    if (isMobile()) setSidebar(false);
+                });
+            });
+
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function () {
+                    const isOpen = !sidebar.classList.contains('collapsed');
+                    setSidebar(!isOpen);
+                });
+            }
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function () {
+                    setSidebar(false);
+                });
+            }
+
+            let resizeTimer;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function () {
+                    if (!isMobile()) {
+                        setSidebar(true);
+                    }
+                    resizeVisiblePlotlyCharts();
+                }, 120);
+            });
+
+            const initialHash = window.location.hash ? window.location.hash.slice(1) : '';
+            const initialId = sections.some(function (s) { return s.id === initialHash; })
+                ? initialHash
+                : (sections[0] ? sections[0].id : '');
+            if (initialId) {
+                showSection(initialId, { preserveScroll: true, skipHash: true });
+            }
+
+            window.addEventListener('hashchange', function () {
+                const id = window.location.hash.slice(1);
+                if (sections.some(function (s) { return s.id === id; })) {
+                    showSection(id, { skipHash: true });
+                }
+            });
+        })();
+    </script>
+
+</body>
+</html>

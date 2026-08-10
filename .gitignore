@@ -37,9 +37,16 @@ cerebro/
 # Respaldos de la auditoria (Fases 1 y 3): copias locales previas a cada edicion
 *.html.bak
 
-# Migracion a LP-CORE. Nada de esto se versiona porque es DERIVADO: se
-# regenera con scripts/migracion/{graficas,convertir,montar}.py a partir del
-# modulo heredado y de su receta, que si estan en el repositorio.
+# Migracion a LP-CORE.
+#
+# El capitulo montado SI se versiona, y con el nombre de siempre: es lo que
+# GitHub Pages publica desde main, y por eso index.html y el syllabus siguen
+# enlazandolo sin cambiar nada. Su fuente vive en heredado/, con el mismo
+# nombre, y solo la leen los guiones de scripts/migracion/.
+#
+# Lo que queda aqui es lo intermedio, que no lo lee nadie y se rehace en un
+# segundo, mas los nombres provisionales que se usaron mientras la migracion
+# no estaba decidida.
+build/
 _piloto_*.html
 _migrado_*.html
-build/

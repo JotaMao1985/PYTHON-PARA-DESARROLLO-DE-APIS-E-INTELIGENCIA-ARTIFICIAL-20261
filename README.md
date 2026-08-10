@@ -84,7 +84,8 @@ del proyecto: arquitectura en cinco capas, entregables y rúbrica.
 .
 ├── index.html                  # Portada con navegación a los módulos
 ├── 0_Syllabus_P_A_IA.html      # Syllabus
-├── 1_…  …  13_…                # Materiales numerados por sesión
+├── 1_…  …  13_…                # Materiales numerados por sesión — es lo que se publica
+├── heredado/                   # La versión previa de los ya migrados: fuente de scripts/migracion/
 ├── Proyecto_I/                 # Submódulo: solución de referencia del proyecto integrador
 ├── Examples/                   # Demos pedagógicas (FastAPI, Docker, IA) — ver Examples/README.md
 ├── app/                        # Pipeline de clasificación de documentos
@@ -124,12 +125,20 @@ piloto están resueltas: `ChartFrame` acepta la salida de `plotly.io.to_html` co
 mecánica, las tablas no necesitan componente porque `.prose-lp` ya las estiliza, y el `<head>` lo
 pone `montar.py`.
 
-**Al 2026-08-10: cinco módulos migrados.** Se suman el 1 y el 2, con una segunda boca de
-entrada —`convertir_datos.py`— y un verificador de contenido, `auditar.py`. La cadena de
-montaje y el formato de receta no cambiaron.
+**Al 2026-08-10: cinco módulos migrados y en producción.** Se suman el 1 y el 2, con una
+segunda boca de entrada —`convertir_datos.py`— y un verificador de contenido, `auditar.py`.
+La cadena de montaje y el formato de receta no cambiaron.
 
-El HTML migrado (`_migrado_*.html`) **no se versiona**: es salida derivada y se regenera con los
-guiones a partir del módulo heredado y su receta, que sí están en el repositorio.
+**El capítulo migrado sustituye al heredado y conserva su nombre.** El heredado pasa a
+[`heredado/`](heredado/), con el mismo nombre, y a partir de ahí sólo lo leen los guiones de
+migración. Es lo que hace que el trabajo llegue a alguien: `.github/workflows/static.yml`
+publica el repositorio tal cual desde `main`, de modo que mientras el capítulo montado no
+se versionara, ningún estudiante podía verlo. Al conservar el nombre no hubo que tocar ni un
+enlace de `index.html` ni del syllabus.
+
+Se guarda el heredado, en vez de sobrescribirlo y confiar en el historial de git, porque
+LP-CORE está vivo: cada cambio de la librería obliga a volver a montar estos capítulos, y sin
+la fuente a mano habría que editarlos uno a uno.
 
 **Lo siguiente**, por orden de coste creciente:
 

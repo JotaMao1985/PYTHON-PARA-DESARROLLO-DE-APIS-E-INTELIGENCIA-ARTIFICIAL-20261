@@ -1,7 +1,7 @@
 {
   "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
   "piezas": "build/migracion/m10",
-  "salida": "_migrado_10_lpcore.html",
+  "salida": "10_Python_para_APIS_IA_Testing_y_Reproducibilidad.html",
   "titulo_html": "Semana 10 — Testing y reproducibilidad · Python para APIs e IA",
   "descripcion": "Semana 10 del curso Python para Desarrollo de APIs e Inteligencia Artificial: pirámide de testing, pytest, TestClient de FastAPI, fixtures y reproducibilidad. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
   "config": {
