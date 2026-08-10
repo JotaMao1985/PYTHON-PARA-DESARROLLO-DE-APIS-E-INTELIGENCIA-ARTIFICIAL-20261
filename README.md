@@ -124,6 +124,10 @@ piloto están resueltas: `ChartFrame` acepta la salida de `plotly.io.to_html` co
 mecánica, las tablas no necesitan componente porque `.prose-lp` ya las estiliza, y el `<head>` lo
 pone `montar.py`.
 
+**Al 2026-08-10: cinco módulos migrados.** Se suman el 1 y el 2, con una segunda boca de
+entrada —`convertir_datos.py`— y un verificador de contenido, `auditar.py`. La cadena de
+montaje y el formato de receta no cambiaron.
+
 El HTML migrado (`_migrado_*.html`) **no se versiona**: es salida derivada y se regenera con los
 guiones a partir del módulo heredado y su receta, que sí están en el repositorio.
 
@@ -131,12 +135,14 @@ guiones a partir del módulo heredado y su receta, que sí están en el reposito
 
 | Familia | Módulos | Qué falta |
 |---|---|---|
-| HTML plano, pequeños | 1, 2 | que `convertir.py` sepa trocear por `<h2>` cuando no hay `<section id>` |
-| HTML plano con SVG | 5, 7, 8, 9 | lo anterior **más** pasar a camelCase 1 919 atributos con guion repartidos en 231 diagramas |
-| React con navegación propia | 3, 4, 6, 13 | no es conversión: hay que re-alojar sus componentes en el `curriculum` |
+| HTML plano, sin secciones ni gráficas | 5, 7, 8, 9 | trocear por `<h2>` **y** pasar a camelCase 1 919 atributos con guion repartidos en 231 diagramas |
+| ReactDOM con navegación propia | 3, 4, 6, 13 | no es conversión: hay que re-alojar sus componentes en el `curriculum` |
 
-Los módulos 1 y 2 son los más baratos —2 y 3 bloques de código— y ya estaban señalados en
-[`PILOTO_LPCORE.md`](PILOTO_LPCORE.md) §4.2 como incompatibles con `migrar.py`.
+> **Corrección.** Hasta el 10 de agosto esta tabla clasificaba los módulos 1 y 2 como «HTML plano,
+> pequeños —2 y 3 bloques de código—» a los que sólo les faltaba trocear por `<h2>`. Era falso en
+> los tres datos: son aplicaciones de una sola página con el contenido en un objeto `courseData`,
+> traen seis secciones y unos cuarenta bloques cada uno, y sus gráficas son de Chart.js, no de
+> Plotly. Los que necesitan el troceo por `<h2>` son el 5, el 7, el 8 y el 9.
 
 > **Dependencia con el otro curso.** La librería LP-CORE vive en el repositorio de Lógica de
 > Programación Financiera, y este curso la comparte. Si alguien la cambia allí, hay que
