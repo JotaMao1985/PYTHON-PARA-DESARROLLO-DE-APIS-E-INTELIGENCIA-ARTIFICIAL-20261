@@ -51,6 +51,28 @@ def entre(texto, ini, fin):
     return (i, j + len(fin)) if i != -1 and j != -1 else None
 
 
+def iconos_de(texto):
+    """Los nombres que `Icons` conoce de verdad.
+
+    Se declaran en dos sitios y hay que mirar los dos: el literal
+    `const Icons = {…}` de la parte base y el `Object.assign(Icons, {…})` con
+    el que `lp-core-extra.jsx` lo amplía. Leer sólo el primero da siete
+    nombres en vez de diecisiete, y lleva a concluir que las recetas de los
+    módulos 10, 11 y 12 están llenas de iconos inexistentes cuando no lo
+    están. Esa comprobación a ojo ya salió mal una vez; para eso está aquí.
+    """
+    nombres = set()
+    for ancla in ("const Icons = {", "Object.assign(Icons, {"):
+        i = texto.find(ancla)
+        if i == -1:
+            continue
+        # Los dos bloques cierran a la indentación de su apertura: `};` uno
+        # y `});` el otro.
+        j = texto.find("\n        }", i)
+        nombres |= set(re.findall(r"^\s+(\w+):\s*\(\{", texto[i:j], re.M))
+    return nombres
+
+
 def poner(texto, ini, fin, bloque, ancla):
     """Reemplaza entre centinelas, o inserta antes del ancla la primera vez."""
     t = entre(texto, ini, fin)
@@ -140,6 +162,30 @@ def main():
     if faltan:
         print(f"ERROR: la plantilla no carga {', '.join(faltan)}. Los bloques de esos "
               f"lenguajes saldrían sin resaltar y sin avisar.", file=sys.stderr)
+        return 1
+
+    # Mismo defecto que el de las gramáticas, con otro vocabulario:
+    # `renderIcon` devuelve null cuando el nombre no existe, así que un icono
+    # mal escrito deja la sección sin icono, sin error de consola y sin que
+    # nadie se entere hasta que lo mire.
+    iconos = iconos_de(texto)
+    fantasma = sorted({s["icono"] for s in receta["secciones"] if s.get("icono")} - iconos)
+    if fantasma:
+        print(f"ERROR: la receta usa iconos que `Icons` no define: {', '.join(fantasma)}.\n"
+              f"       Saldrían en blanco y en silencio. Los {len(iconos)} que hay son:\n"
+              f"       {', '.join(sorted(iconos))}", file=sys.stderr)
+        return 1
+
+    # Un componente que se llame como algo que la plantilla ya declara sale
+    # declarado dos veces. Y no basta con confiar en `podar`: precisamente
+    # porque la receta lo nombra, `podar` lo da por vivo y no lo retira. Pasó
+    # con `PortadaSection`, que es una de las secciones de muestra de LPF.
+    declarados = set(re.findall(r"\n        const (\w+)\s*=", texto))
+    choque = sorted({s["componente"] for s in receta["secciones"]} & declarados)
+    if choque:
+        print(f"ERROR: la plantilla ya declara {', '.join(choque)}. Dos declaraciones\n"
+              f"       del mismo nombre y Babel no compila la página entera.\n"
+              f"       Renombre la sección en la receta.", file=sys.stderr)
         return 1
 
     # 1 · head propio del curso
