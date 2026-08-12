@@ -1,0 +1,94 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m11",
+  "salida": "11_Python_para_APIS_IA_Contenedores_y_Docker.html",
+  "titulo_html": "Semana 11 — Contenedores y Docker · Python para APIs e IA",
+  "descripcion": "Semana 11 del curso Python para Desarrollo de APIs e Inteligencia Artificial: contenedores, Dockerfile, imagen base slim-bookworm y construcción multietapa. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "11",
+    "titulo": "Contenedores y Docker",
+    "subtitulo": "Empaquetar la aplicación y sus dependencias en una imagen reproducible",
+    "lema": "Si corre en tu portátil y en el servidor, no fue suerte: fue la imagen.",
+    "notaPie": "Material de la Semana 11. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Empaquetar la aplicación y sus dependencias en una imagen reproducible.",
+    "contenidoSyllabus": "Del entorno virtual al contenedor. Contenedores frente a máquinas virtuales. Estructura del Dockerfile. Imagen base python:3.11.9-slim-bookworm. Construcción multietapa.",
+    "temas": [
+      "Docker",
+      "Dockerfile",
+      "Multi-stage",
+      "python:3.11.9-slim-bookworm"
+    ],
+    "storageKey": "usta_2026i_apis_cap11"
+  },
+  "secciones": [
+    {
+      "id": "intro",
+      "componente": "IntroSection",
+      "titulo": "1. Introducción y objetivos",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "repaso",
+      "componente": "RepasoSection",
+      "titulo": "2. Del entorno virtual al contenedor",
+      "icono": "ArrowDownUp"
+    },
+    {
+      "id": "vms",
+      "componente": "VmsSection",
+      "titulo": "3. Contenedores vs máquinas virtuales",
+      "icono": "Layers"
+    },
+    {
+      "id": "porque",
+      "componente": "PorqueSection",
+      "titulo": "4. ¿Por qué Docker ahora?",
+      "icono": "Workflow"
+    },
+    {
+      "id": "dockerfile",
+      "componente": "DockerfileSection",
+      "titulo": "5. Estructura de un Dockerfile",
+      "icono": "FileCode"
+    },
+    {
+      "id": "imagen-base",
+      "componente": "ImagenBaseSection",
+      "titulo": "6. Imagen base slim-bookworm",
+      "icono": "Binary"
+    },
+    {
+      "id": "contexto",
+      "componente": "ContextoSection",
+      "titulo": "7. Contexto de construcción",
+      "icono": "Grid"
+    },
+    {
+      "id": "multistage",
+      "componente": "MultistageSection",
+      "titulo": "8. Multi-stage builds",
+      "icono": "Repeat"
+    },
+    {
+      "id": "integrador",
+      "componente": "IntegradorSection",
+      "titulo": "9. Ejemplo integrador",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "autoeval",
+      "componente": "AutoevalSection",
+      "titulo": "10. Autoevaluación",
+      "icono": "Award"
+    },
+    {
+      "id": "cierre",
+      "componente": "CierreSection",
+      "titulo": "11. Conclusión y buenas prácticas",
+      "icono": "GitBranch"
+    }
+  ]
+}

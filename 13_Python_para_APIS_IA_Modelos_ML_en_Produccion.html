@@ -6,18 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Material de estudio sobre modelos de machine learning en producción para estudiantes de pregrado en Estadística: ciclo de vida del modelo (pickle/joblib), patrón Singleton para FastAPI, e imágenes Docker optimizadas para dependencias de ML.">
-    <title>Semana VI — Modelos de ML en Producción</title>
+    <title>Semana 13 — Modelos de ML en producción · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 13 — Modelos de ML en producción · Python para APIs e IA">
+    <meta property="og:description" content="Material de estudio sobre modelos de machine learning en producción para estudiantes de pregrado en Estadística: ciclo de vida del modelo (pickle/joblib), patrón Singleton para FastAPI, e imágenes Docker optimizadas para dependencias de ML.">
+    <meta property="og:type" content="article">
+    <meta name="author" content="Javier Mauricio Sierra">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
     <!-- Babel para JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -176,6 +184,18 @@
 
 <body>
     <div id="root"></div>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-13"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-13" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 13 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Ciclo de vida del modelo: entrenar, serializar, cargar, predecir</li><li style="margin:0 0 .3rem 0;">El patrón Singleton para no recargar el modelo en cada petición</li><li style="margin:0 0 .3rem 0;">Coste de las dependencias de ML sobre el tamaño de la imagen</li><li style="margin:0 0 .3rem 0;">Consistencia entre entrenamiento y servicio</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Entrenar un modelo y serializarlo con joblib</li><li style="margin:0 0 .3rem 0;">Servirlo desde un endpoint que lo cargue una sola vez al arranque</li><li style="margin:0 0 .3rem 0;">Construir el tablero mínimo que consume ese endpoint</li><li style="margin:0 0 .3rem 0;">Reconstruir la imagen con el modelo dentro</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Comparativa de formatos de serialización</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">El tablero es el criterio 14 de la rúbrica del proyecto: pesa un 3 % y no necesita ser bonito, necesita existir, consumir tu API real y mostrar el resultado. El taller de la semana 15 lo integra con el resto del sistema.</p>
+</section>
+
 
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
@@ -2095,6 +2115,168 @@ docker images iris-api:1.0
         // ============================================================
         // SECCIÓN 6 — Autoevaluación
         // ============================================================
+        // ── Fase 3 · Tablero (criterio 14 de la rubrica, 3 %) ──────────────
+        const tableroCorsCode = `# app/main.py  —  permitir que el tablero consuma la API
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    # En el proyecto, pon aqui el origen real del tablero.
+    # "*" solo es aceptable mientras desarrollas en local.
+    allow_origins=["*"],
+    allow_methods=["POST", "GET"],
+    allow_headers=["*"],
+)`;
+
+        const tableroHtmlCode = `<!-- tablero/index.html  —  un solo archivo, sin build ni dependencias -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablero — Clasificador de Iris</title>
+  <style>
+    body   { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    label  { display: block; margin: .6rem 0 .2rem; font-size: .9rem; }
+    input  { width: 100%; padding: .5rem; }
+    button { margin-top: 1rem; padding: .6rem 1.2rem; cursor: pointer; }
+    #salida{ margin-top: 1.5rem; padding: 1rem; border-radius: 8px; background: #F1F5F9; }
+    .error { background: #FEE2E2; }
+  </style>
+</head>
+<body>
+  <h1>Clasificador de Iris</h1>
+  <p>Introduce las cuatro medidas en centimetros.</p>
+
+  <form id="formulario">
+    <label>Largo del sepalo <input name="sepal_length" type="number" step="0.1" value="5.1" required></label>
+    <label>Ancho del sepalo <input name="sepal_width"  type="number" step="0.1" value="3.5" required></label>
+    <label>Largo del petalo <input name="petal_length" type="number" step="0.1" value="1.4" required></label>
+    <label>Ancho del petalo <input name="petal_width"  type="number" step="0.1" value="0.2" required></label>
+    <button type="submit">Predecir</button>
+  </form>
+
+  <div id="salida" hidden></div>
+
+<script>
+// La URL de tu API desplegada en Render. En local: http://127.0.0.1:8000
+const API = "https://encuestas-api.onrender.com";
+
+const salida = document.getElementById("salida");
+
+document.getElementById("formulario").addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  const datos = Object.fromEntries(
+    [...new FormData(evento.target)].map(([k, v]) => [k, parseFloat(v)])
+  );
+
+  salida.hidden = false;
+  salida.className = "";
+  salida.textContent = "Consultando la API...";
+
+  try {
+    const respuesta = await fetch(API + "/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos),
+    });
+
+    // 422 es el error de validacion de Pydantic que viste en la semana 4:
+    // el tablero tiene que saber leerlo, no solo el camino feliz.
+    if (respuesta.status === 422) {
+      const { detail } = await respuesta.json();
+      salida.className = "error";
+      salida.textContent = "Datos invalidos: " +
+        detail.map(e => e.loc.join(".") + " " + e.msg).join(" | ");
+      return;
+    }
+    if (!respuesta.ok) throw new Error("HTTP " + respuesta.status);
+
+    const { especie, probabilidad } = await respuesta.json();
+    salida.textContent =
+      "Especie: " + especie + "  ·  confianza " + (probabilidad * 100).toFixed(1) + " %";
+  } catch (e) {
+    salida.className = "error";
+    salida.textContent = "No se pudo contactar con la API: " + e.message;
+  }
+});
+<\/script>
+</body>
+</html>`;
+
+        const TableroSection = () => (
+            <div>
+                <p className="mb-4">
+                    La rúbrica del proyecto integrador evalúa un <strong>tablero</strong> con un 3 %
+                    (criterio 14), y hasta esta sección ningún módulo del curso te decía cómo construirlo.
+                    Ésta lo hace, y con una advertencia por delante: <strong>no es una sesión de desarrollo
+                    frontend</strong>. Lo que se evalúa es que exista una interfaz que consuma <em>tu</em> API
+                    real y muestre el resultado. Nada más, y nada menos.
+                </p>
+
+                <div className="p-4 rounded-lg mb-4" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+                    <p className="text-sm">
+                        <strong>Qué cuenta como tablero, para que no lo sobredimensiones:</strong> una página
+                        que recoge las entradas del modelo, llama a tu endpoint <span className="inline-code">/predict</span>,
+                        pinta la predicción y <em>no se rompe</em> cuando la API responde un error. Un solo
+                        archivo HTML es suficiente. No hace falta React, ni npm, ni un servidor aparte.
+                    </p>
+                </div>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">6.1 Primero, dejar que el navegador te llame</h3>
+                <p className="mb-3">
+                    Si abres el tablero como archivo local y tu API está en Render, el navegador va a bloquear la
+                    petición: son orígenes distintos. Es la política del <em>mismo origen</em>, y no es un fallo
+                    tuyo. Se resuelve declarando en la API qué orígenes pueden llamarla:
+                </p>
+                <CodeBlock title="app/main.py — CORS" code={tableroCorsCode} lang="python" />
+                <p className="mb-3 text-sm text-gray-600">
+                    <span className="inline-code">allow_origins=["*"]</span> abre la API a cualquier origen. Sirve
+                    mientras desarrollas; en el proyecto entregado, pon la URL real de tu tablero. Es el mismo
+                    criterio de la semana 8: lo que en desarrollo es cómodo, en producción se declara.
+                </p>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">6.2 El tablero completo</h3>
+                <p className="mb-3">
+                    Un archivo, sin dependencias. Cambia la constante <span className="inline-code">API</span> por la
+                    URL de tu servicio y ábrelo en el navegador:
+                </p>
+                <CodeBlock title="tablero/index.html" code={tableroHtmlCode} lang="text" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">6.3 Lo que hace que este tablero apruebe</h3>
+                <p className="mb-3">
+                    Tres detalles, y son los tres que suelen faltar:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 mb-4 text-sm">
+                    <li>
+                        <strong>Lee el 422.</strong> Cuando Pydantic rechaza la entrada, la respuesta trae la lista
+                        <span className="inline-code"> detail</span> que viste en la semana 4. El tablero la muestra
+                        campo por campo en vez de decir «error». Es la diferencia entre una interfaz usable y una
+                        que obliga a abrir la consola.
+                    </li>
+                    <li>
+                        <strong>Distingue «la API dijo que no» de «la API no contestó».</strong> Un 422 es una
+                        respuesta válida; un fallo de red es otra cosa. El <span className="inline-code">catch</span>
+                        cubre el segundo caso, que es el que vas a encontrar cuando Render suspenda el servicio
+                        gratuito por inactividad y la primera petición tarde en despertar el contenedor.
+                    </li>
+                    <li>
+                        <strong>Consume la API desplegada, no una simulación.</strong> En la sustentación se abre la
+                        URL pública y se hace una predicción en vivo. Un tablero con datos inventados dentro del
+                        HTML se detecta en la primera pregunta.
+                    </li>
+                </ul>
+
+                <div className="p-4 rounded-lg" style={{ background: '#F0F9FF', border: '1px solid #BAE6FD' }}>
+                    <p className="text-sm">
+                        <strong>Dónde encaja en el cronograma:</strong> el taller de la semana 15 integra «modelo, API
+                        y tablero» según el syllabus. Si llegas a esa sesión con este archivo funcionando contra tu
+                        endpoint, el criterio 14 está cerrado y puedes dedicar el taller a lo que de verdad cuesta.
+                    </p>
+                </div>
+            </div>
+        );
+
         const AutoSection = () => (
             <div>
                 <p className="mb-4">
@@ -2207,7 +2389,8 @@ docker images iris-api:1.0
             { id: 'singleton', title: '3. Patrón Singleton',          icon: 'Cpu',         component: SingletonSection },
             { id: 'docker',    title: '4. Docker para ML',            icon: 'Server',      component: DockerSection },
             { id: 'proyecto',  title: '5. Mini-proyecto integrador',  icon: 'Code',        component: ProyectoSection },
-            { id: 'auto',      title: '6. Autoevaluación',            icon: 'CheckSquare', component: AutoSection },
+            { id: 'tablero',   title: '6. El tablero (rúbrica 3 %)',  icon: 'Activity',    component: TableroSection },
+            { id: 'auto',      title: '7. Autoevaluación',            icon: 'CheckSquare', component: AutoSection },
         ];
 
         // ============================================================

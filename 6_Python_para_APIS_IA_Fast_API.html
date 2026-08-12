@@ -6,18 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
         content="Módulo técnico sobre arquitectura de APIs con FastAPI para estadísticos y científicos de datos.">
-    <title>De Script a Servicio: Arquitectura de APIs para el Estadístico Moderno</title>
+    <title>Semana 6 — FastAPI: de script a servicio · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 6 — FastAPI: de script a servicio · Python para APIs e IA">
+    <meta property="og:description" content="Módulo técnico sobre arquitectura de APIs con FastAPI para estadísticos y científicos de datos.">
+    <meta property="og:type" content="article">
+    <meta name="author" content="Javier Mauricio Sierra">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
     <!-- Babel para JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -202,6 +210,18 @@
 
 <body>
     <div id="root"></div>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-6"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-6" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 6 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">El type hinting como contrato ejecutable</li><li style="margin:0 0 .3rem 0;">Routers y organización modular del proyecto</li><li style="margin:0 0 .3rem 0;">OpenAPI, Swagger UI y Redoc: documentación que no se escribe</li><li style="margin:0 0 .3rem 0;">async/await: cuándo aporta y cuándo no</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Reescribir en FastAPI el servicio de la semana 5</li><li style="margin:0 0 .3rem 0;">Recorrer la documentación interactiva generada en /docs</li><li style="margin:0 0 .3rem 0;">Partir la aplicación en routers por responsabilidad</li><li style="margin:0 0 .3rem 0;">Migrar el proyecto con validación estricta en cada endpoint</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Comparativa histórica con Flask y Django</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Es la semana en la que el proyecto deja de ser un script: a partir de aquí todo lo demás —dependencias, base de datos, pruebas, contenedor— se monta encima de esta API. Entorno: Python 3.11.9 con FastAPI y Uvicorn.</p>
+</section>
+
 
     <script type="text/babel">
         const { useState, useEffect } = React;
@@ -761,7 +781,7 @@
                                 Antes de profundizar en la teoría, considere la estructura básica de una API usando la analogía del restaurante:
                             </p>
                             <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
-                                <li><strong>El Cliente (Usted/App):</strong> Realiza una petición ("Quiero una predicción"). No entra a la cocina.</li>
+                                <li><strong>El cliente (tú o tu aplicación):</strong> Realiza una petición ("Quiero una predicción"). No entra a la cocina.</li>
                                 <li><strong>El Camarero (API):</strong> Toma su pedido, lo lleva a la cocina y regresa con el resultado. Intermedia entre el mundo exterior y la lógica interna.</li>
                                 <li><strong>La Cocina (Servidor/Modelo):</strong> Donde ocurre el procesamiento real (cálculo de probabilidades, consulta a BD).</li>
                             </ul>
@@ -1142,7 +1162,7 @@ def mi_app_wsgi(environ, start_response):
                                     </tr>
                                     <tr className="bg-white border-b hover:bg-gray-50">
                                         <td className="px-4 py-3 border border-gray-200 font-bold">Filosofía</td>
-                                        <td className="px-4 py-3 border border-gray-200">Microframework (usted elige cada pieza)</td>
+                                        <td className="px-4 py-3 border border-gray-200">Microframework (eliges cada pieza)</td>
                                         <td className="px-4 py-3 border border-gray-200">Baterías incluidas (ORM, admin, auth)</td>
                                         <td className="px-4 py-3 border border-gray-200">Moderno y enfocado en APIs</td>
                                     </tr>
@@ -1183,7 +1203,7 @@ def mi_app_wsgi(environ, start_response):
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                             <div className="bg-red-50/50 p-4 rounded-xl border border-red-200">
                                 <h5 className="font-bold text-red-700 text-sm mb-2">🧪 Flask — El Veterano Minimalista</h5>
-                                <p className="text-xs text-gray-700 mb-2">Flask es un <strong>microframework</strong>: proporciona lo mínimo (routing + templates) y usted agrega extensiones para todo lo demás. Es como comprar una cocina vacía y equiparla pieza por pieza.</p>
+                                <p className="text-xs text-gray-700 mb-2">Flask es un <strong>microframework</strong>: proporciona lo mínimo (routing + templates) y añades extensiones para todo lo demás. Es como comprar una cocina vacía y equiparla pieza por pieza.</p>
                                 <ul className="list-disc pl-4 text-xs text-gray-600 space-y-1">
                                     <li>✅ Simplicidad extrema, curva de aprendizaje baja</li>
                                     <li>✅ Gran ecosistema de extensiones</li>
@@ -1383,7 +1403,7 @@ async def async_endpoint():
                         </p>
 
                         <div className="tip-box p-4 rounded-lg mb-6">
-                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-chart-line"></i> Datos del Ecosistema (2024-2025)</h4>
+                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-chart-line"></i> Datos del Ecosistema (2026)</h4>
                             <div className="grid md:grid-cols-3 gap-4 mt-3">
                                 <div className="bg-white p-3 rounded-lg border border-gray-200 text-center">
                                     <p className="text-2xl font-bold text-secondary">~80k ⭐</p>
@@ -1479,7 +1499,7 @@ async def async_endpoint():
                                     <tr className="bg-white hover:bg-gray-50">
                                         <td className="px-4 py-3 border border-gray-200">Nuevos proyectos de APIs REST</td>
                                         <td className="px-4 py-3 border border-gray-200"><span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold">⚡ FastAPI</span></td>
-                                        <td className="px-4 py-3 border border-gray-200 text-xs">Casi todos los proyectos nuevos en 2024-2025 lo adoptan</td>
+                                        <td className="px-4 py-3 border border-gray-200 text-xs">Casi todos los proyectos nuevos lo adoptan</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1979,13 +1999,13 @@ FastAPI = (
                     <div>
                         <h3 className="text-xl font-semibold text-secondary mb-4">🔬 Proyecto Personal: Mi API de Análisis de Datos</h3>
                         <p className="mb-4">
-                            En esta actividad usted diseñará y construirá <strong>su propia API REST personalizada</strong> aplicada a un dominio de su elección. La API debe recibir datos, validarlos con Pydantic, procesarlos y retornar resultados como JSON. Esta actividad integra todos los temas cubiertos en las 3 semanas del módulo.
+                            En esta actividad vas a diseñar y construir <strong>su propia API REST personalizada</strong> aplicada a un dominio de su elección. La API debe recibir datos, validarlos con Pydantic, procesarlos y retornar resultados como JSON. Esta actividad integra todos los temas cubiertos en las 3 semanas del módulo.
                         </p>
 
                         <div className="tip-box p-4 rounded-lg mb-6">
                             <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-bullseye"></i> Objetivo de Aprendizaje</h4>
                             <p className="text-sm text-gray-700">
-                                Al completar este proyecto, usted será capaz de diseñar modelos de datos propios con Pydantic, implementar endpoints CRUD en FastAPI, y demostrar comprensión del flujo completo request → validación → procesamiento → respuesta JSON.
+                                Al completar este proyecto vas a ser capaz de diseñar modelos de datos propios con Pydantic, implementar endpoints CRUD en FastAPI, y demostrar comprensión del flujo completo request → validación → procesamiento → respuesta JSON.
                             </p>
                         </div>
 

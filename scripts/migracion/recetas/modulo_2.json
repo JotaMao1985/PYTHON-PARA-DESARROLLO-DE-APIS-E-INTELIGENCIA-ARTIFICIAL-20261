@@ -1,0 +1,70 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m2",
+  "salida": "2_Python_para_APIS_IA_HTTP.html",
+  "titulo_html": "Semana 2 — Serialización y el protocolo HTTP · Python para APIs e IA",
+  "descripcion": "Semana 2 del curso Python para Desarrollo de APIs e Inteligencia Artificial: verbos y códigos de estado HTTP, JSON frente a Pickle, validación con Pydantic y requirements.txt. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "2",
+    "titulo": "Serialización y el protocolo HTTP",
+    "subtitulo": "Interpretar peticiones HTTP y serializar objetos de Python a formatos estándar de intercambio",
+    "lema": "Un objeto que no sabe viajar no sale de tu máquina.",
+    "notaPie": "Material de la Semana 2. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Interpretar peticiones HTTP y serializar objetos de Python a formatos estándar de intercambio.",
+    "contenidoSyllabus": "Verbos, códigos de estado y cabeceras. Formatos de intercambio: JSON frente a Pickle. Gestión de dependencias con requirements.txt.",
+    "temas": [
+      "HTTP",
+      "JSON",
+      "Pydantic",
+      "requirements.txt"
+    ],
+    "storageKey": "usta_2026i_apis_cap02"
+  },
+  "secciones": [
+    {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "m1",
+      "componente": "HttpSection",
+      "titulo": "2. El protocolo HTTP y la autenticación",
+      "icono": "Workflow"
+    },
+    {
+      "id": "m2",
+      "componente": "SerializacionSection",
+      "titulo": "3. JSON frente a Pickle",
+      "icono": "Binary"
+    },
+    {
+      "id": "m3",
+      "componente": "PydanticSection",
+      "titulo": "4. Validación con Pydantic",
+      "icono": "Bug"
+    },
+    {
+      "id": "m4",
+      "componente": "DependenciasSection",
+      "titulo": "5. requirements.txt y la reproducibilidad",
+      "icono": "FileCode"
+    },
+    {
+      "id": "m7",
+      "componente": "FuncionesSection",
+      "titulo": "6. Funciones en Python (bonus)",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "synth",
+      "componente": "SintesisSection",
+      "titulo": "7. Síntesis: de idea a análisis reproducible",
+      "icono": "Award"
+    }
+  ]
+}

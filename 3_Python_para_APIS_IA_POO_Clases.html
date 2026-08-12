@@ -4,18 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Python POO para Estadística — USTA</title>
+    <title>Semana 3 — Programación orientada a objetos y clases · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 3 — Programación orientada a objetos y clases · Python para APIs e IA">
+    <meta property="og:description" content="Modelado de entidades estadísticas con clases en Python 3.11.9: atributos, métodos, composición frente a herencia, dataclasses y por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero.">
+    <meta property="og:type" content="article">
+    <meta name="author" content="Javier Mauricio Sierra">
+    <meta name="description" content="Modelado de entidades estadísticas con clases en Python 3.11.9: atributos, métodos, composición frente a herencia, dataclasses y por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero.">
 
     <!-- Preconnect for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
     <!-- Babel para JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -186,6 +195,18 @@
 </head>
 
 <body>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-3"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-3" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 3 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Clases, constructor y atributos</li><li style="margin:0 0 .3rem 0;">Métodos y métodos especiales</li><li style="margin:0 0 .3rem 0;">Composición frente a herencia, y polimorfismo</li><li style="margin:0 0 .3rem 0;">Por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Convertir el módulo de limpieza de la semana 1 en una clase con estado</li><li style="margin:0 0 .3rem 0;">Separar responsabilidades del pipeline en clases distintas</li><li style="margin:0 0 .3rem 0;">Escribir la dataclass de la observación del proyecto, con sus tipos</li><li style="margin:0 0 .3rem 0;">Comprobar en Python 3.11.9 que @dataclass no valida los tipos que declara</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Constructor IA: generar una clase a partir de un concepto</li><li style="margin:0 0 .3rem 0;">Conexión a una API desde Python</li><li style="margin:0 0 .3rem 0;">Referencia bibliográfica</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">La sección «Por qué esto es el cimiento del curso» es la bisagra de la semana: enseña qué parte de lo que has visto hoy reaparece en las semanas 4, 6 y 9. El entorno es Python 3.11.9, el mismo de la semana 1.</p>
+</section>
+
     <div id="root"></div>
 
     <script type="text/babel">
@@ -370,7 +391,13 @@
 
                 const userPrompt = `Genera una clase Python para el concepto: "${concept.trim()}".\nLa clase debe incluir:\n- Un docstring descriptivo\n- Un constructor __init__ con atributos relevantes (al menos 3)\n- Al menos 2 métodos útiles con docstrings\n- Comentarios explicativos en español\n- Un ejemplo de uso al final (como código, no como comentario)`;
 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey.trim()}`;
+                // La clave NO va en la URL. Una URL se escribe en el historial del
+                // navegador, en los logs de cualquier proxy y en la cabecera Referer;
+                // una cabecera de petición, no. Es la misma regla que este módulo
+                // enseña más abajo («nunca escribas tu API Key en el código») y que
+                // el módulo 2 explica una semana antes. La API de Gemini admite las
+                // dos formas: se usa la buena.
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
                 const payload = {
                     contents: [{ parts: [{ text: userPrompt }] }],
@@ -381,7 +408,10 @@
                     try {
                         const res = await fetch(url, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'x-goog-api-key': apiKey.trim()
+                            },
                             body: JSON.stringify(payload)
                         });
 
@@ -814,6 +844,134 @@ print(f"\\nMedia muestral: {muest.mu:.2f}")
 print(f"Varianza muestral: {muest.varianza():.2f}")
 print(f"Desv. estándar muestral: {muest.varianza()**0.5:.2f}")`,
                 interactiveType: 'inheritance'
+            },
+            {
+                id: 'bridge',
+                title: 'Por qué esto es el cimiento del curso',
+                codeTitle: 'De una clase a mano a dataclass, y de ahí a todo lo demás',
+                icon: 'GitBranch',
+                content: (
+                    <div>
+                        <p className="mb-4">
+                            Hasta aquí la POO puede parecerte una forma más ordenada de escribir lo mismo. Esta sección
+                            existe para enseñarte por qué no lo es: <strong>las tres librerías sobre las que se construye
+                            el resto del curso —Pydantic, SQLAlchemy y FastAPI— no se pueden entender sin lo que acabas
+                            de ver.</strong> No usan clases por gusto de sus autores: las usan porque una clase es la
+                            única forma de decir «esto es una observación, y una observación tiene estos campos con
+                            estos tipos».
+                        </p>
+
+                        <div className="usta-card p-5 mt-6 mb-4">
+                            <h4 className="font-bold text-lg text-primary mb-3 flex items-center gap-2">
+                                <i className="fas fa-box-open"></i> Primer paso: <code>dataclasses</code>
+                            </h4>
+                            <p className="text-sm mb-3">
+                                Fíjate en cuánto de lo que has escrito hoy era ceremonia: <code>__init__</code>,
+                                asignar cada parámetro a su <code>self</code>, y escribir un <code>__repr__</code> para
+                                poder imprimir el objeto sin ver <code>&lt;object at 0x7f...&gt;</code>. La biblioteca
+                                estándar trae desde Python 3.7 un decorador que escribe todo eso por ti.
+                            </p>
+                            <p className="text-sm mb-3">
+                                Y observa lo que <code>@dataclass</code> tiene de nuevo respecto a una clase normal:
+                                <strong> declaras los tipos de los atributos</strong>. Eso es lo que va a permitir que,
+                                dos semanas después, otra librería lea esos mismos tipos y los convierta en
+                                validaciones.
+                            </p>
+                        </div>
+
+                        <div className="usta-card p-5 mb-4">
+                            <h4 className="font-bold text-lg text-secondary mb-3 flex items-center gap-2">
+                                <i className="fas fa-arrow-right-arrow-left"></i> A dónde va cada pieza
+                            </h4>
+                            <ul className="list-disc pl-5 space-y-2 text-sm">
+                                <li>
+                                    <strong>Pydantic (semana 4)</strong> es una <code>dataclass</code> que además
+                                    <strong> comprueba los tipos en tiempo de ejecución</strong>. Escribes
+                                    <code>edad: int</code> y si llega <code>"treinta"</code>, se queja. El atributo con
+                                    tipo que acabas de ver deja de ser documentación y pasa a ser un contrato.
+                                </li>
+                                <li>
+                                    <strong>SQLAlchemy (semana 9)</strong> mapea <strong>una clase a una tabla</strong>:
+                                    la clase es la tabla, cada atributo es una columna y cada objeto es una fila. La
+                                    herencia que acabas de usar para <code>Poblacion</code> y <code>Muestra</code> es
+                                    literalmente la que usarás para heredar de su clase base declarativa.
+                                </li>
+                                <li>
+                                    <strong>FastAPI (semana 6)</strong> lee los tipos de tus clases Pydantic y
+                                    <strong> genera solo</strong> la validación de entrada, la respuesta de error 422 y
+                                    la documentación interactiva. No se lo pides: lo deduce de las clases que escribas.
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div className="p-4 rounded-lg mb-4" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+                            <p className="text-sm">
+                                <strong><i className="fas fa-lightbulb text-amber-600 mr-1"></i> La idea que conviene
+                                que te lleves:</strong> a partir de la semana 4 vas a escribir muchas menos funciones y
+                                muchas más clases, y casi ninguna la vas a instanciar tú — las instancia el framework
+                                cuando llega una petición. Tu trabajo pasa a ser <em>describir la forma de los datos</em>.
+                                Hoy has aprendido el idioma con el que se describe.
+                            </p>
+                        </div>
+                    </div>
+                ),
+                pythonCode: `# ═══════════════════════════════════════════════════════
+# DE UNA CLASE A MANO A UNA dataclass
+# El mismo objeto, escrito de las dos formas.
+# ═══════════════════════════════════════════════════════
+from dataclasses import dataclass, field
+
+# --- 1. Lo que has escrito hoy: todo a mano ---
+class ObservacionManual:
+    """Una observación de la encuesta, escrita a la manera clásica."""
+
+    def __init__(self, id_encuestado: int, edad: int, ingreso: float):
+        self.id_encuestado = id_encuestado
+        self.edad = edad
+        self.ingreso = ingreso
+
+    def __repr__(self):
+        return (f"ObservacionManual(id_encuestado={self.id_encuestado}, "
+                f"edad={self.edad}, ingreso={self.ingreso})")
+
+
+# --- 2. Lo mismo con @dataclass: __init__ y __repr__ salen gratis ---
+@dataclass
+class Observacion:
+    """La misma observación. Fíjate en que los TIPOS ahora están declarados."""
+    id_encuestado: int
+    edad: int
+    ingreso: float
+    etiquetas: list[str] = field(default_factory=list)   # mutable: nunca [] directo
+
+    def es_adulto(self) -> bool:
+        """Los métodos siguen funcionando igual: una dataclass es una clase."""
+        return self.edad >= 18
+
+
+obs = Observacion(id_encuestado=1, edad=34, ingreso=2_500_000)
+print(obs)                    # el __repr__ lo escribio @dataclass
+print("Adulto:", obs.es_adulto())
+
+# ═══════════════════════════════════════════════════════
+# EL PUNTO IMPORTANTE, Y EL LIMITE DE dataclasses
+# ═══════════════════════════════════════════════════════
+# @dataclass NO comprueba los tipos. Esto no falla:
+sospechosa = Observacion(id_encuestado="uno", edad="treinta y cuatro", ingreso=None)
+print(sospechosa)
+print("Tipo de edad:", type(sospechosa.edad).__name__)   # str, y a nadie le importo
+
+# En la semana 4, Pydantic toma esta MISMA sintaxis y le anade la comprobacion:
+#     from pydantic import BaseModel
+#     class Observacion(BaseModel):
+#         id_encuestado: int
+#         edad: int
+#         ingreso: float
+# ...y entonces la linea de arriba lanza un ValidationError en vez de callarse.
+#
+# En la semana 9, SQLAlchemy toma esta misma clase y la convierte en una TABLA.
+# En la semana 6, FastAPI la lee para generar la validacion de entrada y la
+# documentacion de la API sin que tu escribas nada mas.`,
             },
             {
                 id: 'ai_builder',
