@@ -41,6 +41,10 @@ from pathlib import Path
 
 from convertir import atributo, texto_plano
 from convertir_plano import fin_elemento, tipo_de_caja
+# El emisor de cuestionarios de los módulos 1 y 2, tal cual: la forma de
+# `quizQuestions` es la misma que la de `courseData.quizzes` salvo el nombre de
+# un campo, y con él viene gratis el recorte de la felicitación.
+from convertir_datos import bloque_quiz
 
 # Qué componente propio acompaña a cada `interactiveType`.
 #
@@ -62,6 +66,20 @@ ACOMPANANTES = {
 # LP-CORE la sección es una columna, así que el panel no existe y esa
 # indicación deja de señalar nada.
 SIN_PANEL = ("panel derecho", "constructor de abajo")
+
+# Iconos que el contenido usa como componente —`<Icons.Structure size={18} />`—
+# y que LP-CORE no tiene con ese nombre. Traducirlos no es cosmética: escrito
+# así, un icono inexistente es `undefined` en posición de componente, y React
+# no lo ignora como haría `renderIcon`, sino que tira la página entera con un
+# «Minified React error #130». El de la receta falla en silencio; éste, a lo
+# bruto.
+#
+# La firma es la misma —`{ size, className }`—, así que la sustitución es
+# directa. `Structure` son cuatro cuadrados y `Grid` una rejilla con líneas:
+# no son el mismo dibujo, pero sí la misma idea y el mismo tamaño.
+ICONOS = {
+    "Structure": "Grid",
+}
 
 
 def fin_de_linea_con(texto, desde, patron):
@@ -97,6 +115,8 @@ def entradas(cuerpo, avisos):
             v = re.search(r"\b" + campo + r":\s*'((?:[^'\\]|\\.)*)'", trozo)
             if v:
                 d[campo] = v.group(1).replace("\\'", "'")
+        for bandera in ("isQuiz", "isReference"):
+            d[bandera] = bool(re.search(r"\b" + bandera + r":\s*true\b", trozo))
 
         c = re.search(r"^                content: \($", trozo, re.M)
         if c:
@@ -125,15 +145,56 @@ def entradas(cuerpo, avisos):
         yield d
 
 
+def cuestionario(cuerpo, avisos):
+    """El `quizQuestions` del módulo, listo para el `Quiz` de LP-CORE.
+
+    Está fuera del `curriculum` —es un array aparte— y la entrada que lo pinta
+    sólo se marca con `isQuiz: true`. Se lee con `json.loads` después de
+    entrecomillar las claves: son cadenas con comillas dobles, sin comas
+    finales y sin plantillas literales, así que es JSON con las claves
+    desnudas y no hace falta Node.
+
+    Devuelve (jsx, título) o (None, None) si el módulo no trae cuestionario.
+    """
+    m = re.search(r"const quizQuestions\s*=\s*(\[.*?\n        \];)", cuerpo, re.S)
+    if not m:
+        return None, None
+    try:
+        crudo = json.loads(re.sub(r"(\n\s*)(\w+):", lambda x: f'{x.group(1)}"{x.group(2)}":',
+                                  m.group(1).rstrip().rstrip(";")))
+    except json.JSONDecodeError as e:
+        avisos.append(f"`quizQuestions` no se pudo leer como JSON ({e}); el "
+                      f"cuestionario se queda fuera")
+        return None, None
+
+    # El rótulo lo pone el App, no el `curriculum`, así que se saca de ahí.
+    h3 = re.search(r"isQuiz \?[\s\S]{0,800}?<h3[^>]*>([^<]+)</h3>", cuerpo)
+    titulo = " ".join(h3.group(1).split()) if h3 else None
+
+    # `bloque_quiz` espera `feedback` donde este módulo escribe `explanation`.
+    preguntas = [dict(q, feedback=q.get("explanation", "")) for q in crudo]
+    jsx = bloque_quiz({"quizzes": preguntas}, avisos,
+                      **({"titulo": titulo} if titulo else {}))
+    return ("\n\n".join(jsx) if jsx else None), titulo
+
+
 def convertir_cajas(cuerpo):
     """`div.tip-box` → `Box`, con el rótulo en negrita como etiqueta.
 
     Es la misma caja que en la familia de los artículos y se traduce igual,
     sólo que aquí el atributo ya viene escrito `className`, porque el origen
     es JSX y no HTML.
+
+    Sólo los `<div>`: el módulo 4 marca también un `<li>` con esa clase, y
+    sacarlo de su `<ul>` para meterlo en un `Box` rompería la lista. Ése se
+    queda como está, y su CSS lo rescata `estilos.py`.
+
+    La clase no tiene por qué ir primero. En los módulos 3, 4 y 6 siempre va,
+    pero buscar `className="tip-box…` habría fallado en silencio el día que no
+    —y una caja sin convertir no se nota: se ve igual, con el CSS heredado—.
     """
     while True:
-        m = re.search(r'<div className="tip-box[^"]*">', cuerpo)
+        m = re.search(r'<div\s[^>]*className="[^"]*\btip-box\b[^"]*"[^>]*>', cuerpo)
         if not m:
             return cuerpo
         fin = fin_elemento(cuerpo, m.start(), "div")
@@ -152,15 +213,33 @@ def convertir_cajas(cuerpo):
                   + "</Box>" + cuerpo[fin:])
 
 
-def seccion_jsx(entrada, avisos):
+def seccion_jsx(entrada, avisos, quiz=None):
     """Una entrada del `curriculum` heredado → el cuerpo de una sección."""
     partes = []
     viejo, nuevo = SIN_PANEL
     reescritas = 0
 
+    # La entrada del cuestionario no trae ni `content` ni `pythonCode`: sólo
+    # se marca, y el contenido vive en el array de al lado.
+    if entrada.get("isQuiz"):
+        if quiz:
+            return quiz
+        avisos.append("la sección está marcada `isQuiz` y el módulo no trae un "
+                      "`quizQuestions` legible: saldría vacía")
+        return ""
+
     contenido = convertir_cajas(entrada.get("content", ""))
     contenido, n = re.subn(viejo, nuevo, contenido)
     reescritas += n
+
+    def un_icono(m):
+        if m.group(1) in ICONOS:
+            return "<Icons." + ICONOS[m.group(1)]
+        avisos.append(f"el contenido usa `<Icons.{m.group(1)}>`, que no está en la "
+                      f"tabla de equivalencias: si LP-CORE tampoco lo tiene, la "
+                      f"página sale en blanco")
+        return m.group(0)
+    contenido = re.sub(r"<Icons\.(\w+)", un_icono, contenido)
     if contenido.strip():
         partes.append(contenido)
 
@@ -209,13 +288,16 @@ def main():
 
     avisos_globales = []
     lista = list(entradas(m.group(1), avisos_globales))
+    # El cuestionario se lee una vez: vive fuera del `curriculum` y lo comparten
+    # todas las entradas marcadas `isQuiz` (en la práctica, una).
+    quiz, titulo_quiz = cuestionario(m.group(1), avisos_globales)
     if args.salida:
         (args.salida / "jsx").mkdir(parents=True, exist_ok=True)
 
     titulos, total = {}, 0
     for e in lista:
         avisos = []
-        jsx = seccion_jsx(e, avisos)
+        jsx = seccion_jsx(e, avisos, quiz)
         titulos[e["id"]] = e.get("title", "")
         if args.salida:
             (args.salida / "jsx" / f"{e['id']}.jsx").write_text(jsx, encoding="utf-8")
@@ -225,6 +307,7 @@ def main():
         print(f"{'OK  ' if not avisos else 'AVISO'} {e['id']:18s} "
               f"{len(jsx.splitlines()):4d} líneas · {jsx.count('<CodeBlock'):2d} CodeBlock · "
               f"{jsx.count('<Box'):2d} Box"
+              + (f" · {jsx.count('pregunta:')} preguntas" if e.get("isQuiz") else "")
               + (f" · {acomp}" if acomp else ""), file=sys.stderr)
         for a in avisos:
             print(f"        · {a}", file=sys.stderr)

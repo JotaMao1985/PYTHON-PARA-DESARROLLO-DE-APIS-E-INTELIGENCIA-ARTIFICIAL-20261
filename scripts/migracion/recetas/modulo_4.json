@@ -1,0 +1,88 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m4",
+  "salida": "4_Python_para_APIS_IA_Pydantic.html",
+  "titulo_html": "Semana 4 — Pydantic: validación declarativa · Python para APIs e IA",
+  "descripcion": "Semana 4 del curso Python para Desarrollo de APIs e Inteligencia Artificial, de estudio autónomo: modelos Pydantic, Field, validadores de campo, obligatorios frente a nulos y validación de DataFrames. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "4",
+    "titulo": "Pydantic: validación declarativa",
+    "subtitulo": "Declarar contratos de datos verificables en tiempo de ejecución",
+    "lema": "Poner 0 donde faltaba el dato no rellena el hueco: mueve la media.",
+    "notaPie": "Material de la Semana 4, de estudio autónomo. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Declarar contratos de datos verificables en tiempo de ejecución mediante modelos Pydantic.",
+    "contenidoSyllabus": "El tipo como fuente de verdad. Modelos, campos y coerción. Serialización y deserialización. Errores de validación como respuesta HTTP 422.",
+    "temas": [
+      "Pydantic v2",
+      "Field",
+      "field_validator",
+      "HTTP 422"
+    ],
+    "storageKey": "usta_2026i_apis_cap04"
+  },
+  "secciones": [
+    {
+      "id": "intro",
+      "componente": "IntroSection",
+      "titulo": "1. Introducción: el problema de los datos",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "pydantic",
+      "componente": "QueEsPydanticSection",
+      "titulo": "2. ¿Qué es Pydantic?",
+      "icono": "Binary"
+    },
+    {
+      "id": "models",
+      "componente": "ModelosSection",
+      "titulo": "3. Profundizando en los modelos",
+      "icono": "Layers"
+    },
+    {
+      "id": "fields",
+      "componente": "FieldSection",
+      "titulo": "4. El poder de Field",
+      "icono": "Grid"
+    },
+    {
+      "id": "required_optional",
+      "componente": "NulosSection",
+      "titulo": "5. Obligatorios, opcionales y nulos",
+      "icono": "ArrowDownUp"
+    },
+    {
+      "id": "field_validators",
+      "componente": "ValidadoresSection",
+      "titulo": "6. Validadores de campo",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "error_422",
+      "componente": "ErroresSection",
+      "titulo": "7. Del ValidationError al error HTTP 422",
+      "icono": "Bug"
+    },
+    {
+      "id": "dataframe_validation",
+      "componente": "DataFramesSection",
+      "titulo": "8. Validación de DataFrames",
+      "icono": "Table"
+    },
+    {
+      "id": "quiz",
+      "componente": "AutoevalSection",
+      "titulo": "9. Autoevaluación",
+      "icono": "Award"
+    },
+    {
+      "id": "references",
+      "componente": "BibliografiaSection",
+      "titulo": "10. Referencia bibliográfica",
+      "icono": "Workflow"
+    }
+  ]
+}

@@ -185,6 +185,27 @@ def main():
               f"       {', '.join(sorted(iconos))}", file=sys.stderr)
         return 1
 
+    # Y el mismo defecto con otra cara: un `<Icons.X />` escrito dentro del
+    # contenido. Ahí no pasa por `renderIcon`, así que un nombre que no existe
+    # no devuelve `null`: es `undefined` en posición de componente y React tira
+    # la página entera con un «Minified React error #130» que no dice de dónde
+    # viene. Pasó con `Icons.Structure`, del módulo 4.
+    usados = set()
+    for pieza in sorted((piezas / "jsx").glob("*.jsx")):
+        usados |= set(re.findall(r"<Icons\.(\w+)", pieza.read_text(encoding="utf-8")))
+    if receta.get("componentes"):
+        p = ruta("componentes")
+        if p.exists():
+            usados |= set(re.findall(r"<Icons\.(\w+)", p.read_text(encoding="utf-8")))
+    inventados = sorted(usados - iconos)
+    if inventados:
+        print(f"ERROR: el contenido usa <Icons.{', Icons.'.join(inventados)} /> y `Icons`\n"
+              f"       no los define. No es que salgan en blanco ellos: dejan en blanco\n"
+              f"       la página entera, con un error de React que no dice de dónde viene.\n"
+              f"       Los {len(iconos)} que hay son: {', '.join(sorted(iconos))}",
+              file=sys.stderr)
+        return 1
+
     # Un componente que se llame como algo que la plantilla ya declara sale
     # declarado dos veces. Y no basta con confiar en `podar`: precisamente
     # porque la receta lo nombra, `podar` lo da por vivo y no lo retira. Pasó

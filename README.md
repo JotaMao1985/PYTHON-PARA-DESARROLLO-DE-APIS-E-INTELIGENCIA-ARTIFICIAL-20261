@@ -166,6 +166,20 @@ el JSX se copia literal. Dos cosas que decidir, y las dos quedan documentadas:
   La lógica no cambia: la clave sigue viajando en la cabecera y no en la URL, que es la regla
   que el propio módulo enseña. Vive en `scripts/migracion/componentes/modulo_3.jsx`.
 
+**Al 2026-08-13: once módulos migrados.** Se suma el 4, de la misma familia que el 3 y sin
+componentes que portar a mano: su cuestionario —cinco preguntas que viven fuera del
+`curriculum`, en un array `quizQuestions`— se emite con el mismo `bloque_quiz` que ya usaban los
+módulos 1 y 2. Dos hallazgos:
+
+- **Un `<Icons.X />` dentro del contenido puede dejar la página en blanco.** El icono de una
+  sección pasa por `renderIcon` y falla en silencio si no existe; escrito dentro del contenido,
+  no: es `undefined` en posición de componente y React tira la página entera con un error
+  minificado que no dice de dónde viene. Pasó con `Icons.Structure`. Ahora `montar.py` se niega
+  a montar si queda alguno que la plantilla no define.
+- **La felicitación se recorta también aquí.** El cuestionario del 4 sí enseñaba la
+  justificación a todo el mundo, pero con un «Respuesta Incorrecta» encima que le quitaba el
+  filo al «Correcto.» de después. LP-CORE no pone ese contrapeso.
+
 **El capítulo migrado sustituye al heredado y conserva su nombre.** El heredado pasa a
 [`heredado/`](heredado/), con el mismo nombre, y a partir de ahí sólo lo leen los guiones de
 migración. Es lo que hace que el trabajo llegue a alguien: `.github/workflows/static.yml`
@@ -181,7 +195,7 @@ la fuente a mano habría que editarlos uno a uno.
 
 | Familia | Módulos | Qué falta |
 |---|---|---|
-| React con `curriculum` de datos | 4, 6 | la cadena ya existe (`convertir_react.py`); falta portar a mano sus componentes propios: el `Quiz` del 4, el `ComparisonDiagram` y el `Tooltip` del 6 |
+| React con `curriculum` de datos | 6 | la cadena ya existe (`convertir_react.py`); falta portar a mano el `ComparisonDiagram` y el `Tooltip` |
 | React con secciones ya en componentes | 13 | no hay nada que convertir: hay que deduplicar. Trae su propio `Box`, `Pipeline`, `usePlotly` y `ChartFrame`, que es justo lo que LP-CORE pone |
 
 > **Corrección, tres veces la misma.** Esta tabla describió mal tres familias, y siempre por no
@@ -202,7 +216,7 @@ la fuente a mano habría que editarlos uno a uno.
 > rama `lp-core/gramaticas-de-resaltado` se fusionó y se borró.
 >
 > Sigue vivo, eso sí: va por el capítulo 3. **Si alguien cambia la librería allí, hay que volver
-> a montar estos diez capítulos**, y por eso el heredado se conserva en `heredado/`. Son tres o
+> a montar estos once capítulos**, y por eso el heredado se conserva en `heredado/`. Son tres o
 > cuatro comandos por módulo, según la familia, documentados en
 > [`scripts/migracion/README.md`](scripts/migracion/README.md).
 

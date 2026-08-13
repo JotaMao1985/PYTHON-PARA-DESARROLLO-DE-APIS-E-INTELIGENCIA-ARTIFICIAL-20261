@@ -288,11 +288,17 @@ def bloque_bonus(bonus, avisos):
 # justificación a todo el mundo al enviar, así que la felicitación de cabecera
 # se queda sin su condición y le diría «✅ Correcto» a quien acaba de fallar.
 # Se recorta; lo que sigue es la explicación, que es lo que se quería guardar.
-FELICITACION = re.compile(r"^\s*[✅✔]\s*[¡!]*\s*(Correcto|Exacto|Excelente|Crucial|Muy bien)"
+#
+# El pictograma es opcional porque no todos los módulos lo ponen: el 4 abre
+# con «Correcto.» a secas. Su cuestionario sí enseña la justificación a todo
+# el mundo, pero encima le pone «Respuesta Incorrecta» a quien falló, y ese
+# contrapeso es justo lo que LP-CORE no tiene. Relajar el pictograma no cambia
+# la salida de los módulos 1 y 2: sus diecinueve justificaciones lo llevan.
+FELICITACION = re.compile(r"^\s*[✅✔]?\s*[¡!]*\s*(Correcto|Exacto|Excelente|Crucial|Muy bien)"
                           r"[!.]*\s*", re.I)
 
 
-def bloque_quiz(contenido, avisos):
+def bloque_quiz(contenido, avisos, titulo="Comprueba lo que entendiste"):
     """`content.quiz` o `content.quizzes[]` → un `Quiz` de LP-CORE."""
     preguntas = list(contenido.get("quizzes") or [])
     if contenido.get("quiz"):
@@ -317,10 +323,11 @@ def bloque_quiz(contenido, avisos):
                         + " }")
 
     if recortadas:
-        avisos.append(f"{recortadas} justificaciones abrían con «✅ Correcto»: en el "
-                      f"original sólo se veían al acertar, aquí las lee todo el mundo")
+        avisos.append(f"{recortadas} justificaciones abrían felicitando: en el original "
+                      f"eso tenía condición —o sólo se veían al acertar, o llevaban "
+                      f"encima un «Respuesta Incorrecta»— y aquí no la tienen")
 
-    return ['<Quiz titulo="Comprueba lo que entendiste" preguntas={[\n            '
+    return [f'<Quiz titulo="{atributo(titulo)}" preguntas={{[\n            '
             + ",\n            ".join(emitidas) + "\n        ]} />"]
 
 

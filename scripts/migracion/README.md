@@ -38,7 +38,7 @@ mismos.
 | `<section id>` + Plotly | 10, 11, 12 | `graficas.py` + `convertir.py` |
 | `courseData` + Chart.js | 1, 2 | `convertir_datos.py` |
 | Un `<article id>` por `<h2>`, con diagramas SVG | 5, 7, 8, 9 | `convertir_plano.py` |
-| **React con `const curriculum = [...]` de datos** | **3**, 4, 6 | **`convertir_react.py`** |
+| **React con `const curriculum = [...]` de datos** | **3, 4**, 6 | **`convertir_react.py`** |
 | React con secciones ya en componentes | 13 | pendiente: no hay nada que convertir, hay que deduplicar |
 
 > Esta tabla se ha equivocado dos veces, y las dos de la misma manera: dando por
@@ -244,6 +244,27 @@ JavaScript: el `)` que cierra un `content` está siempre a dieciséis espacios.
 Contar paréntesis obligaría a saber si el que se mira va dentro de una cadena,
 y la prosa lleva comillas simples en castellano y en los ejemplos de código.
 
+### El cuestionario, y el icono que tira la página
+
+Dos cosas más que trae esta familia, y que salieron con el módulo 4:
+
+- **El cuestionario vive fuera del `curriculum`.** La entrada sólo se marca
+  con `isQuiz: true`; las preguntas están en un array `quizQuestions` de al
+  lado. Se lee con `json.loads` tras entrecomillar las claves —son cadenas con
+  comillas dobles, sin comas finales y sin plantillas literales, así que es
+  JSON con las claves desnudas— y se emite con el mismo `bloque_quiz` que usan
+  los módulos 1 y 2, que sólo pide renombrar `explanation` a `feedback`. Con
+  él viene gratis el recorte de la felicitación.
+- **`<Icons.X />` dentro del contenido puede dejar la página en blanco.** El
+  icono de una sección pasa por `renderIcon`, que devuelve `null` si no conoce
+  el nombre: falla en silencio, y para eso está la comprobación de la receta.
+  Pero escrito dentro del contenido no pasa por ahí: un nombre que `Icons` no
+  define es `undefined` en posición de componente y React tira la página
+  entera con un «Minified React error #130» que no dice de dónde viene. Pasó
+  con `Icons.Structure`. Ahora `convertir_react.py` traduce los nombres que
+  conoce y **`montar.py` se niega a montar** si queda alguno que la plantilla
+  no define.
+
 ### Los componentes propios no los mueve el guion
 
 Cada módulo de esta familia trae los suyos —el `AIClassBuilder` del 3, el
@@ -365,6 +386,12 @@ En la familia `<article id>` hay una tercera, y por el mismo motivo —la
 traducción le quita el sentido que tenía—: **el cuestionario**. Ver arriba: sus
 radios sólo se sostenían sobre un guion que no se lleva, y sin él la respuesta
 correcta se veía en negrita antes de contestar.
+
+La del cuestionario vale también para el módulo 4, con un matiz: allí la
+justificación **sí** se veía siempre, pero con un «Respuesta Incorrecta» encima
+que le quitaba el filo al «Correcto.» de después. LP-CORE no pone ese
+contrapeso, así que la felicitación se recorta igual. Por eso el pictograma es
+opcional en `FELICITACION`: el módulo 4 abre con «Correcto.» a secas.
 
 Y una cuarta en el módulo 3, otra vez por lo mismo: **«el panel derecho»**. El
 texto manda al estudiante tres veces a un panel lateral que en LP-CORE no
