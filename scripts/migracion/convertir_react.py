@@ -36,6 +36,7 @@ Uso:
 import argparse
 import json
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -43,8 +44,10 @@ from convertir import atributo, texto_plano
 from convertir_plano import fin_elemento, tipo_de_caja
 # El emisor de cuestionarios de los módulos 1 y 2, tal cual: la forma de
 # `quizQuestions` es la misma que la de `courseData.quizzes` salvo el nombre de
-# un campo, y con él viene gratis el recorte de la felicitación.
-from convertir_datos import bloque_quiz
+# un campo, y con él viene gratis el recorte de la felicitación. `evaluar_js`
+# es el lector de Node que ya usaba `courseData`, por el mismo motivo: esto es
+# JavaScript, no JSON.
+from convertir_datos import bloque_quiz, evaluar_js
 
 # Qué componente propio acompaña a cada `interactiveType`.
 #
@@ -59,13 +62,31 @@ ACOMPANANTES = {
     "ai_builder": "<AIClassBuilder />",
 }
 
+# El componente con el que el módulo 6 pinta su cuestionario desde dentro del
+# contenido. No se porta: se sustituye por el `Quiz` de LP-CORE, y con él se va
+# el `<h3>` que lo rotulaba, porque `Quiz` trae su propia cabecera. Ver
+# `cuestionario`.
+QUIZ_PROPIO = "<InteractiveQuiz />"
+
+# La lista de preguntas, se llame como se llame. Ver `cuestionario`.
+PREGUNTAS = re.compile(r"const (?:quizQuestions|questions)\s*=\s*(\[[\s\S]*?\n\s*\];)")
+
 # La única frase que se reescribe, y por lo mismo que se recortaba la
 # felicitación de las justificaciones en los módulos 1 y 2: **la traducción le
-# quita el referente**. El heredado pone el constructor en un panel lateral de
-# 384 px y el texto manda al estudiante «al panel derecho» tres veces. En
-# LP-CORE la sección es una columna, así que el panel no existe y esa
-# indicación deja de señalar nada.
-SIN_PANEL = ("panel derecho", "constructor de abajo")
+# quita el referente**. El texto manda al estudiante «al panel derecho», y en
+# LP-CORE la sección es una columna: no hay panel, así que esa indicación deja
+# de señalar nada.
+SIN_PANEL = "panel derecho"
+
+# A dónde pasa a señalar depende de qué había en ese panel, y no es lo mismo
+# en los dos módulos que lo dicen. En el 3 el panel llevaba el Constructor IA
+# —«ingresa tu API Key en el panel derecho»—, así que la frase apunta al
+# componente propio. En el 6 no hay panel ninguno: su App pinta el bloque de
+# código debajo del contenido, y «copie el código del panel derecho» es un
+# resto de una maqueta anterior; lo que señala es ese bloque, que en LP-CORE
+# también queda debajo. Se elige por lo que la sección lleva al lado.
+CON_COMPONENTE = "constructor de abajo"
+SIN_COMPONENTE = "bloque de abajo"
 
 # Iconos que el contenido usa como componente —`<Icons.Structure size={18} />`—
 # y que LP-CORE no tiene con ese nombre. Traducirlos no es cosmética: escrito
@@ -146,33 +167,53 @@ def entradas(cuerpo, avisos):
 
 
 def cuestionario(cuerpo, avisos):
-    """El `quizQuestions` del módulo, listo para el `Quiz` de LP-CORE.
+    """Las preguntas del módulo, ya emitidas como un `Quiz` de LP-CORE.
 
-    Está fuera del `curriculum` —es un array aparte— y la entrada que lo pinta
-    sólo se marca con `isQuiz: true`. Se lee con `json.loads` después de
-    entrecomillar las claves: son cadenas con comillas dobles, sin comas
-    finales y sin plantillas literales, así que es JSON con las claves
-    desnudas y no hace falta Node.
+    Se guardan de dos maneras, y hay que conocer las dos porque es la misma
+    lista con distinto dueño:
+
+    · **Fuera del `curriculum`** (módulo 4): un `const quizQuestions = [...]`
+      de al lado, y la entrada que lo pinta marcada sólo con `isQuiz: true`.
+      El rótulo lo pone el App.
+    · **Dentro de un componente propio** (módulo 6): el `const questions` de
+      su `InteractiveQuiz`, al que el contenido llama con `<InteractiveQuiz />`.
+      El rótulo es el `<h3>` que ese contenido pone justo encima.
+
+    En los dos casos va al `Quiz` de LP-CORE, y en el segundo eso significa no
+    portar el componente propio, que es lo que se hace con todos los demás.
+    Portarlo sería publicar un segundo cuestionario al lado del que la
+    plantilla ya trae —lo que hay que deshacer en el módulo 13—, y el de
+    LP-CORE hace lo mismo: califica, enseña la justificación, da el porcentaje
+    y deja reintentar.
+
+    Lo lee Node y no `json.loads`: el del módulo 6 escribe sus cadenas con
+    comillas simples y trae comillas dobles dentro, así que no es JSON ni
+    entrecomillando las claves.
 
     Devuelve (jsx, título) o (None, None) si el módulo no trae cuestionario.
     """
-    m = re.search(r"const quizQuestions\s*=\s*(\[.*?\n        \];)", cuerpo, re.S)
+    m = PREGUNTAS.search(cuerpo)
     if not m:
         return None, None
-    try:
-        crudo = json.loads(re.sub(r"(\n\s*)(\w+):", lambda x: f'{x.group(1)}"{x.group(2)}":',
-                                  m.group(1).rstrip().rstrip(";")))
-    except json.JSONDecodeError as e:
-        avisos.append(f"`quizQuestions` no se pudo leer como JSON ({e}); el "
-                      f"cuestionario se queda fuera")
+    crudo = evaluar_js(m.group(1).rstrip().rstrip(";"))
+    if not isinstance(crudo, list) or not crudo:
+        avisos.append("el cuestionario no se pudo evaluar como un array de "
+                      "preguntas; se queda fuera")
         return None, None
 
-    # El rótulo lo pone el App, no el `curriculum`, así que se saca de ahí.
-    h3 = re.search(r"isQuiz \?[\s\S]{0,800}?<h3[^>]*>([^<]+)</h3>", cuerpo)
-    titulo = " ".join(h3.group(1).split()) if h3 else None
+    # El rótulo, de donde lo ponga cada uno: el App si la entrada se marca
+    # `isQuiz`, y si no el `<h3>` que precede a la llamada del componente.
+    h3 = (re.search(r"isQuiz \?[\s\S]{0,800}?<h3[^>]*>([^<]+)</h3>", cuerpo)
+          or re.search(r"<h3[^>]*>([^<]+)</h3>[\s\S]{0,400}?" + re.escape(QUIZ_PROPIO), cuerpo))
+    # El pictograma de cabecera se descarta por lo mismo que el de las cajas:
+    # `Quiz` dibuja el suyo, y dos iconos seguidos es uno de más.
+    titulo = " ".join(h3.group(1).split()).lstrip("📝✅❓ ").strip() if h3 else None
 
-    # `bloque_quiz` espera `feedback` donde este módulo escribe `explanation`.
-    preguntas = [dict(q, feedback=q.get("explanation", "")) for q in crudo]
+    # `bloque_quiz` espera `feedback` donde estos módulos escriben
+    # `explanation`, y `rotulo` donde el 6 dice de qué lección sale la
+    # pregunta —el 4 no lo dice, y entonces no hay insignia—.
+    preguntas = [dict(q, feedback=q.get("explanation", ""), rotulo=q.get("topic", ""))
+                 for q in crudo]
     jsx = bloque_quiz({"quizzes": preguntas}, avisos,
                       **({"titulo": titulo} if titulo else {}))
     return ("\n\n".join(jsx) if jsx else None), titulo
@@ -216,8 +257,9 @@ def convertir_cajas(cuerpo):
 def seccion_jsx(entrada, avisos, quiz=None):
     """Una entrada del `curriculum` heredado → el cuerpo de una sección."""
     partes = []
-    viejo, nuevo = SIN_PANEL
     reescritas = 0
+    acompanante = ACOMPANANTES.get(entrada.get("interactiveType"))
+    nuevo = CON_COMPONENTE if acompanante else SIN_COMPONENTE
 
     # La entrada del cuestionario no trae ni `content` ni `pythonCode`: sólo
     # se marca, y el contenido vive en el array de al lado.
@@ -229,8 +271,20 @@ def seccion_jsx(entrada, avisos, quiz=None):
         return ""
 
     contenido = convertir_cajas(entrada.get("content", ""))
-    contenido, n = re.subn(viejo, nuevo, contenido)
+    contenido, n = re.subn(SIN_PANEL, nuevo, contenido)
     reescritas += n
+
+    # El cuestionario invocado desde dentro del contenido: en su sitio va el
+    # `Quiz`, y el `<h3>` que lo anunciaba se va con él —su texto es ahora el
+    # título del propio `Quiz`—.
+    if QUIZ_PROPIO in contenido:
+        if quiz:
+            contenido = re.sub(r"[ \t]*<h3[^>]*>[^<]*</h3>\n(?=(?:[\s\S]{0,400}?)"
+                               + re.escape(QUIZ_PROPIO) + ")", "", contenido, count=1)
+            contenido = contenido.replace(QUIZ_PROPIO, quiz)
+        else:
+            avisos.append(f"el contenido llama a `{QUIZ_PROPIO}` y sus preguntas no "
+                          f"se pudieron leer: la sección saldría sin cuestionario")
 
     def un_icono(m):
         if m.group(1) in ICONOS:
@@ -243,16 +297,15 @@ def seccion_jsx(entrada, avisos, quiz=None):
     if contenido.strip():
         partes.append(contenido)
 
-    acompanante = ACOMPANANTES.get(entrada.get("interactiveType"))
     if acompanante:
         partes.append(acompanante)
 
     codigo = entrada.get("pythonCode", "")
-    codigo, n = re.subn(viejo, nuevo, codigo)
+    codigo, n = re.subn(SIN_PANEL, nuevo, codigo)
     reescritas += n
     if reescritas:
-        avisos.append(f"{reescritas} veces «{viejo}» → «{nuevo}»: el panel lateral "
-                      f"del heredado no existe en LP-CORE")
+        avisos.append(f"{reescritas} veces «{SIN_PANEL}» → «{nuevo}»: el panel "
+                      f"lateral del heredado no existe en LP-CORE")
     if codigo.strip():
         titulo = entrada.get("codeTitle")
         attr = f'title="{atributo(titulo)}" ' if titulo else ""
@@ -286,10 +339,17 @@ def main():
               file=sys.stderr)
         return 1
 
+    # Las preguntas las lee Node —son JavaScript, no JSON—, así que sin Node el
+    # módulo saldría entero menos su evaluación, y eso es peor que no salir.
+    if PREGUNTAS.search(m.group(1)) and not shutil.which("node"):
+        print("ERROR: el módulo trae cuestionario y hace falta Node para leerlo.\n"
+              "       Instálelo (brew install node) y repita.", file=sys.stderr)
+        return 1
+
     avisos_globales = []
     lista = list(entradas(m.group(1), avisos_globales))
-    # El cuestionario se lee una vez: vive fuera del `curriculum` y lo comparten
-    # todas las entradas marcadas `isQuiz` (en la práctica, una).
+    # El cuestionario se lee una vez: sale de un array de al lado o de un
+    # componente propio, y lo pinta una sola sección.
     quiz, titulo_quiz = cuestionario(m.group(1), avisos_globales)
     if args.salida:
         (args.salida / "jsx").mkdir(parents=True, exist_ok=True)
@@ -307,7 +367,7 @@ def main():
         print(f"{'OK  ' if not avisos else 'AVISO'} {e['id']:18s} "
               f"{len(jsx.splitlines()):4d} líneas · {jsx.count('<CodeBlock'):2d} CodeBlock · "
               f"{jsx.count('<Box'):2d} Box"
-              + (f" · {jsx.count('pregunta:')} preguntas" if e.get("isQuiz") else "")
+              + (f" · {jsx.count('pregunta:')} preguntas" if "pregunta:" in jsx else "")
               + (f" · {acomp}" if acomp else ""), file=sys.stderr)
         for a in avisos:
             print(f"        · {a}", file=sys.stderr)

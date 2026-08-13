@@ -1,0 +1,77 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m6",
+  "componentes": "scripts/migracion/componentes/modulo_6.jsx",
+  "salida": "6_Python_para_APIS_IA_Fast_API.html",
+  "titulo_html": "Semana 6 — FastAPI: de script a servicio · Python para APIs e IA",
+  "descripcion": "Semana 6 del curso Python para Desarrollo de APIs e Inteligencia Artificial: WSGI frente a ASGI, routing y CRUD, async/await, y la documentación OpenAPI que FastAPI genera a partir de los tipos. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "6",
+    "titulo": "FastAPI: de script a servicio",
+    "subtitulo": "Arquitectura de APIs para el estadístico moderno",
+    "lema": "La anotación de tipo deja de ser un comentario: valida la petición y escribe la documentación.",
+    "notaPie": "Material de la Semana 6. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Implementar una API con FastAPI aprovechando la documentación automática que genera a partir de los tipos.",
+    "contenidoSyllabus": "Routers y organización modular. El type hinting como contrato ejecutable. OpenAPI, Swagger UI y Redoc. async/await.",
+    "temas": [
+      "FastAPI",
+      "Uvicorn",
+      "async/await",
+      "OpenAPI"
+    ],
+    "storageKey": "usta_2026i_apis_cap06"
+  },
+  "secciones": [
+    {
+      "id": "fundamentals",
+      "componente": "FundamentosSection",
+      "titulo": "1. Fundamentos",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "architecture",
+      "componente": "ArquitecturaSection",
+      "titulo": "2. Arquitectura",
+      "icono": "Layers"
+    },
+    {
+      "id": "flask-debate",
+      "componente": "FlaskFastapiSection",
+      "titulo": "3. Flask vs FastAPI: ¿perspectiva?",
+      "icono": "Repeat"
+    },
+    {
+      "id": "crud",
+      "componente": "RoutingCrudSection",
+      "titulo": "4. Routing y CRUD",
+      "icono": "ArrowDownUp"
+    },
+    {
+      "id": "concurrency",
+      "componente": "ConcurrenciaSection",
+      "titulo": "5. Concurrencia",
+      "icono": "Cpu"
+    },
+    {
+      "id": "evaluation",
+      "componente": "CierreSection",
+      "titulo": "6. Evaluación y cierre",
+      "icono": "Award"
+    },
+    {
+      "id": "lab-activity",
+      "componente": "ActividadSection",
+      "titulo": "7. Actividad aplicada",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "references",
+      "componente": "BibliografiaSection",
+      "titulo": "8. Referencia bibliográfica",
+      "icono": "Table"
+    }
+  ]
+}

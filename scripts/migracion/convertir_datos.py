@@ -298,8 +298,27 @@ FELICITACION = re.compile(r"^\s*[✅✔]?\s*[¡!]*\s*(Correcto|Exacto|Excelente|
                           r"[!.]*\s*", re.I)
 
 
+def insignia(texto):
+    """El rótulo que va delante de un enunciado, como marca pequeña.
+
+    `Quiz` no tiene campo para él y perderlo sería perder lo único que sitúa
+    la pregunta: en la familia de los artículos es la dificultad —«Nivel
+    Medio»— y en la del `curriculum`, la lección de la que sale —«Lección 2 —
+    Arquitectura»—. Va dentro del enunciado, que es donde `Quiz` mira.
+    """
+    return ('<span className="inline-block mr-2 px-2 py-0.5 rounded '
+            'text-[0.65rem] uppercase tracking-wider font-bold '
+            'bg-primary/10 text-primary">' + " ".join(texto.split()) + "</span>")
+
+
 def bloque_quiz(contenido, avisos, titulo="Comprueba lo que entendiste"):
-    """`content.quiz` o `content.quizzes[]` → un `Quiz` de LP-CORE."""
+    """`content.quiz` o `content.quizzes[]` → un `Quiz` de LP-CORE.
+
+    Una pregunta con `rotulo` sale con su insignia delante, y por eso el
+    enunciado pasa entonces a ser un fragmento de JSX: el texto viaja como
+    cadena entre llaves —`{"…"}`— en vez de escaparse, que es lo mismo que
+    ve el lector y no obliga a acertar con las reglas de escape de JSX.
+    """
     preguntas = list(contenido.get("quizzes") or [])
     if contenido.get("quiz"):
         preguntas.append(contenido["quiz"])
@@ -317,7 +336,10 @@ def bloque_quiz(contenido, avisos, titulo="Comprueba lo que entendiste"):
             "{ texto: " + json.dumps(o, ensure_ascii=False)
             + ", correcta: " + ("true" if i == q.get("correct") else "false") + " }"
             for i, o in enumerate(q.get("options") or []))
-        emitidas.append("{ pregunta: " + json.dumps(q.get("question", ""), ensure_ascii=False)
+        enunciado = json.dumps(q.get("question", ""), ensure_ascii=False)
+        if q.get("rotulo"):
+            enunciado = "(<>" + insignia(q["rotulo"]) + "{" + enunciado + "}</>)"
+        emitidas.append("{ pregunta: " + enunciado
                         + ", opciones: [" + opciones + "]"
                         + ", justificacion: " + json.dumps(justificacion.strip(), ensure_ascii=False)
                         + " }")

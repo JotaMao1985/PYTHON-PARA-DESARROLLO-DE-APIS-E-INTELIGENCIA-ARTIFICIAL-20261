@@ -41,8 +41,10 @@ from pathlib import Path
 # reservada— es del destino, no del origen, así que es el mismo aquí.
 from convertir import atributo, detectar_lang, escapar_jsx, limpiar_jsx, texto_plano
 # La apertura y el reparto de la sesión son el mismo bloque `data-fase3` que
-# en los módulos 1 y 2, con el mismo marcado. Se reutiliza tal cual.
-from convertir_datos import bloque_portada
+# en los módulos 1 y 2, con el mismo marcado. Se reutiliza tal cual. Y la
+# insignia del enunciado es la misma marca que lleva la lección de la que sale
+# una pregunta del módulo 6: un solo sitio donde está escrita.
+from convertir_datos import bloque_portada, insignia
 
 # Nombres de atributo que el analizador de HTML corrige al entrar en contenido
 # SVG y que JSX deja pasar tal como se escriban. Los que llevan guion salen de
@@ -480,14 +482,9 @@ def convertir_cuestionarios(cuerpo, marcas, avisos, prosa):
             # campo para ella, y perderla sería perder lo único que le dice
             # al estudiante cuánto debería costarle la pregunta, así que
             # entra en el enunciado con su etiqueta.
-            insignia = re.search(r'<span\b[^>]*class="[^"]*\binline-block\b[^"]*"[^>]*>'
-                                 r'\s*(Nivel[^<]*)</span>', trozo, re.S)
-            rotulo = ""
-            if insignia:
-                rotulo = ('<span className="inline-block mr-2 px-2 py-0.5 rounded '
-                          'text-[0.65rem] uppercase tracking-wider font-bold '
-                          'bg-primary/10 text-primary">'
-                          + " ".join(insignia.group(1).split()) + "</span>")
+            marca = re.search(r'<span\b[^>]*class="[^"]*\binline-block\b[^"]*"[^>]*>'
+                              r'\s*(Nivel[^<]*)</span>', trozo, re.S)
+            rotulo = insignia(marca.group(1)) if marca else ""
 
             campos = ["pregunta: (<>" + rotulo
                       + prosa(enunciado.group(1)).strip() + "</>)"]

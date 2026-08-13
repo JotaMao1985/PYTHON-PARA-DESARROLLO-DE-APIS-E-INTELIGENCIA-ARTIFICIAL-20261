@@ -248,13 +248,29 @@ y la prosa lleva comillas simples en castellano y en los ejemplos de código.
 
 Dos cosas más que trae esta familia, y que salieron con el módulo 4:
 
-- **El cuestionario vive fuera del `curriculum`.** La entrada sólo se marca
-  con `isQuiz: true`; las preguntas están en un array `quizQuestions` de al
-  lado. Se lee con `json.loads` tras entrecomillar las claves —son cadenas con
-  comillas dobles, sin comas finales y sin plantillas literales, así que es
-  JSON con las claves desnudas— y se emite con el mismo `bloque_quiz` que usan
-  los módulos 1 y 2, que sólo pide renombrar `explanation` a `feedback`. Con
-  él viene gratis el recorte de la felicitación.
+- **El cuestionario no vive donde se pinta**, y en cada módulo está en un
+  sitio distinto. En el 4, fuera del `curriculum`: la entrada sólo se marca
+  con `isQuiz: true` y las preguntas están en un array `quizQuestions` de al
+  lado, con el rótulo en el App. En el 6, dentro de su propio componente
+  —`InteractiveQuiz`, con su `const questions`—, al que el contenido llama con
+  `<InteractiveQuiz />` y rotula con el `<h3>` de encima. Los dos salen por el
+  mismo sitio: el `bloque_quiz` que usan los módulos 1 y 2, que sólo pide
+  renombrar `explanation` a `feedback`, y con el que viene gratis el recorte
+  de la felicitación. Las preguntas las lee Node y no `json.loads`: las del
+  módulo 6 van en comillas simples y traen comillas dobles dentro, así que no
+  son JSON ni entrecomillando las claves.
+
+  Del módulo 6 sale además una insignia por pregunta con la lección de la que
+  viene —«Lección 2 — Arquitectura»—, que es la misma marca que lleva la
+  dificultad en la familia de los artículos y por el mismo motivo: `Quiz` no
+  tiene campo para ella y perderla deja la pregunta sin situar. Un enunciado
+  con insignia deja de ser una cadena y pasa a ser un fragmento de JSX, con el
+  texto entre llaves —`{"…"}`— en vez de escapado.
+
+  Y el `<h3>` que anunciaba el cuestionario **se va con él**: `Quiz` dibuja su
+  propia cabecera con ese texto, así que dejarlo sería el mismo rótulo dos
+  veces seguidas. Es lo mismo que pasa en la familia de los artículos con el
+  «Ver Respuesta y Retroalimentación».
 - **`<Icons.X />` dentro del contenido puede dejar la página en blanco.** El
   icono de una sección pasa por `renderIcon`, que devuelve `null` si no conoce
   el nombre: falla en silencio, y para eso está la comprobación de la receta.
@@ -268,15 +284,30 @@ Dos cosas más que trae esta familia, y que salieron con el módulo 4:
 ### Los componentes propios no los mueve el guion
 
 Cada módulo de esta familia trae los suyos —el `AIClassBuilder` del 3, el
-`Quiz` del 4, el `ComparisonDiagram` y el `Tooltip` del 6—. **Se portan a
-mano**, a `componentes/modulo_N.jsx`, y la receta los nombra; `montar.py` los
-estampa entre sus centinelas. No es pereza: adaptar un componente a un sitio
-distinto del que se escribió es un juicio, no una transformación. El del
-módulo 3 vivía en un panel lateral de 384 px con `h-full` y su propio scroll;
-en LP-CORE la sección es una columna, así que `h-full` lo dejaría de altura
-cero. Cambian el marco, `Icons.Sparkles` —que LP-CORE no tiene, y `renderIcon`
-devuelve `null` en silencio para un nombre que no conoce— y el `lang` del
-`CodeBlock`, que sin declarar cae en `pseudo`. La lógica, ni una línea.
+`ComparisonDiagram` y el `Tooltip` del 6—. **Se portan a mano**, a
+`componentes/modulo_N.jsx`, y la receta los nombra; `montar.py` los estampa
+entre sus centinelas. No es pereza: adaptar un componente a un sitio distinto
+del que se escribió es un juicio, no una transformación. El del módulo 3 vivía
+en un panel lateral de 384 px con `h-full` y su propio scroll; en LP-CORE la
+sección es una columna, así que `h-full` lo dejaría de altura cero. Cambian el
+marco, `Icons.Sparkles` —que LP-CORE no tiene, y `renderIcon` devuelve `null`
+en silencio para un nombre que no conoce— y el `lang` del `CodeBlock`, que sin
+declarar cae en `pseudo`. La lógica, ni una línea.
+
+Los dos del módulo 6 son el caso contrario, y por eso se copian **literales**:
+ya se dibujaban dentro de la columna de contenido, que es exactamente donde
+LP-CORE los pone. Lo que hubo que comprobar antes de copiarlos es que la
+plantilla les da lo que usan: `useState` está destructurado en el ámbito,
+`.animate-fade-in` existe con la misma animación, `primary` y `secondary` son
+los mismos colores en las dos configuraciones de Tailwind, y `.prose-lp` —que
+sólo estiliza `p`, `h3`, `h4`, listas, `strong` y tablas— no los toca, así que
+tampoco hace falta `not-prose`.
+
+**El `InteractiveQuiz` del 6 es la excepción: no se porta.** Sus ocho
+preguntas van al `Quiz` de LP-CORE, que hace lo mismo —califica, enseña la
+justificación, da el porcentaje y deja reintentar—. Portarlo sería publicar un
+segundo cuestionario al lado del que la plantilla ya trae, que es justo lo que
+hay que deshacer en el módulo 13.
 
 ### El laboratorio que no se migró, porque no se veía
 
@@ -287,6 +318,12 @@ detrás de `interactiveType === 'ai_builder'` y dentro vuelve a preguntar lo
 mismo, así que la rama del laboratorio es inalcanzable; de los seis valores,
 cinco no pintan nada. Se comprobó en el DOM de la página publicada, sección por
 sección, antes de decidir.
+
+En el módulo 6 el mismo campo tampoco pinta nada, y ahí se ve aún más claro:
+sus ocho entradas dicen `interactiveType: 'concept'` y su App no tiene segundo
+panel —el `<main>` es una sola columna con el contenido y el bloque de código—,
+así que el campo no lo lee nadie. El guion lo avisa igual, porque el aviso no
+sabe cuál de los dos casos tiene delante.
 
 No se migra, porque migrarlo sería **publicar algo que nunca se publicó**: la
 regla de esta cadena es conservar lo que el material hacía, no lo que su código
@@ -393,11 +430,16 @@ que le quitaba el filo al «Correcto.» de después. LP-CORE no pone ese
 contrapeso, así que la felicitación se recorta igual. Por eso el pictograma es
 opcional en `FELICITACION`: el módulo 4 abre con «Correcto.» a secas.
 
-Y una cuarta en el módulo 3, otra vez por lo mismo: **«el panel derecho»**. El
-texto manda al estudiante tres veces a un panel lateral que en LP-CORE no
-existe, porque la sección es una columna. Pasa a decir «el constructor de
-abajo», que es donde está ahora. Es la frase entera lo que cambia de referente,
-no el sentido de lo que enseña.
+Y una cuarta en los módulos 3 y 6, otra vez por lo mismo: **«el panel
+derecho»**. El texto manda al estudiante a un panel lateral que en LP-CORE no
+existe, porque la sección es una columna. A dónde pasa a señalar depende de qué
+había en ese panel, y no es lo mismo en los dos: en el 3 llevaba el Constructor
+IA —«ingresa tu API Key en el panel derecho»—, así que dice «el constructor de
+abajo»; en el 6 **no había panel ninguno** —su App pinta el bloque de código
+debajo del contenido, y «copie el código del panel derecho» es un resto de una
+maqueta anterior—, así que dice «el bloque de abajo», que es donde el código
+sigue estando. Es la frase entera lo que cambia de referente, no el sentido de
+lo que enseña.
 
 El cambio de delimitador de las fórmulas y el escape del `<` suelto no son
 excepciones: son del mismo orden que `class` → `className`. El problema es del
