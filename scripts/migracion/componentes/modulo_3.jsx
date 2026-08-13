@@ -22,25 +22,84 @@
    URL, que es la regla que este mismo módulo enseña más abajo. Y no se guarda
    en `localStorage`: sólo el modelo elegido.
 ============================================================ */
+
+/* Los modelos caducan. `gemini-2.0-flash` se apagó el 1 de junio de 2026 y los
+   `gemini-1.5-*` ya no existen para una clave nueva: pedirlos devuelve 404, así
+   que tres de las cuatro opciones que ofrecía esta lista estaban muertas.
+   Se revisa contra ai.google.dev/gemini-api/docs/deprecations cada semestre.
+
+   `pensamiento` es lo que hay que mandar en `generationConfig.thinkingConfig`
+   para que el modelo no gaste medio minuto razonando antes de escribir una
+   clase de veinte líneas. La forma NO es la misma en las dos familias —los 3.x
+   usan `thinkingLevel`, los 2.5 el `thinkingBudget` en tokens— y mandarle a un
+   modelo la llave de la otra familia es un 400. Por eso viaja junto al `id`,
+   y no como una constante suelta: es una propiedad del modelo, no de la app.
+   `gemini-2.5-pro` no puede apagar el pensamiento; se queda sin la clave. */
+const MODELOS_GEMINI = [
+    { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (recomendado)', pensamiento: { thinkingLevel: 'low' } },
+    { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite (el más rápido)', pensamiento: { thinkingLevel: 'low' } },
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (estable)', pensamiento: { thinkingBudget: 0 } },
+    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (avanzado)' }
+];
+const MODELO_POR_DEFECTO = MODELOS_GEMINI[0].id;
+
+/* Un error de la API dice mucho en su código de estado, y el mensaje que Google
+   manda está en inglés y habla de `projects` y `credentials`. Se traduce a lo
+   que el estudiante puede hacer al respecto, que es el único dato que le sirve.
+   El texto original se conserva al final: sin él no hay forma de depurar. */
+const mensajeDeError = (status, detalle, modelo) => {
+    if (status === 400 && /api.?key/i.test(detalle)) {
+        return `La API Key no es válida. Revisa que la copiaste completa desde aistudio.google.com/apikey, sin espacios al principio ni al final.`;
+    }
+    if (status === 403) {
+        return `La API Key existe pero no tiene permiso para usar la API de Gemini. Genera una nueva en aistudio.google.com/apikey. (${detalle})`;
+    }
+    if (status === 404) {
+        return `El modelo «${modelo}» ya no está disponible. Elige otro en la lista de arriba. (${detalle})`;
+    }
+    if (status === 429) {
+        return `⏳ Cuota excedida para ${modelo}. Espera ~30 s y reintenta, o selecciona otro modelo.`;
+    }
+    if (status >= 500) {
+        return `El servidor de Gemini falló (HTTP ${status}). No es culpa tuya: reintenta en un minuto.`;
+    }
+    return `Error al consultar Gemini (HTTP ${status}): ${detalle}`;
+};
+
+/* Un 200 sin texto no es un éxito. Las tres causas, en orden de frecuencia:
+   el filtro de seguridad bloqueó la petición antes de generar nada
+   (`promptFeedback.blockReason`), la bloqueó después de generarla
+   (`finishReason: SAFETY`), o el modelo se quedó sin tokens (`MAX_TOKENS`). */
+const mensajeDeRespuestaVacia = (data, candidato) => {
+    const bloqueoPrevio = data?.promptFeedback?.blockReason;
+    if (bloqueoPrevio) {
+        return `Gemini rechazó el concepto por su filtro de contenido (${bloqueoPrevio}). Prueba con otro concepto.`;
+    }
+    const razon = candidato?.finishReason;
+    if (razon === 'SAFETY' || razon === 'PROHIBITED_CONTENT') {
+        return `Gemini bloqueó la respuesta por su filtro de contenido (${razon}). Prueba con otro concepto.`;
+    }
+    if (razon === 'MAX_TOKENS') {
+        return `La respuesta se cortó por longitud antes de escribir el código. Reintenta, o elige un concepto más concreto.`;
+    }
+    return `Gemini respondió sin código${razon ? ` (${razon})` : ''}. Reintenta en unos segundos.`;
+};
+
 const AIClassBuilder = () => {
     const [concept, setConcept] = useState('');
     const [apiKey, setApiKey] = useState('');
-    const [model, setModel] = useState(() => localStorage.getItem('gemini_model') || 'gemini-2.5-flash');
+    // El modelo elegido se recuerda, y por eso hay que validarlo al leerlo:
+    // quien probara «Gemini 2.0 Flash» el semestre pasado se quedó con ese id
+    // grabado, y desde que Google lo apagó el constructor le contestaba 404 en
+    // cada intento —para siempre, porque el valor muerto seguía en el disco—.
+    const [model, setModel] = useState(() => {
+        const guardado = localStorage.getItem('gemini_model');
+        return MODELOS_GEMINI.some(m => m.id === guardado) ? guardado : MODELO_POR_DEFECTO;
+    });
     const [showKey, setShowKey] = useState(false);
     const [generatedCode, setGeneratedCode] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
-    const models = [
-        { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (más reciente)' },
-        { id: 'gemini-2.0-flash', name: 'Gemini 2.0 Flash (rápido)' },
-        { id: 'gemini-1.5-flash', name: 'Gemini 1.5 Flash (estable)' },
-        { id: 'gemini-1.5-pro', name: 'Gemini 1.5 Pro (avanzado)' }
-    ];
-
-    const saveApiKey = (key) => {
-        setApiKey(key);
-    };
 
     const saveModel = (m) => {
         setModel(m);
@@ -64,12 +123,21 @@ const AIClassBuilder = () => {
         // dos formas: se usa la buena.
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
+        const elegido = MODELOS_GEMINI.find(m => m.id === model);
         const payload = {
             contents: [{ parts: [{ text: userPrompt }] }],
-            systemInstruction: { parts: [{ text: systemInstruction }] }
+            systemInstruction: { parts: [{ text: systemInstruction }] },
+            generationConfig: elegido?.pensamiento ? { thinkingConfig: elegido.pensamiento } : {}
         };
 
-        for (let attempt = 0; attempt < 3; attempt++) {
+        // Sólo se reintenta lo que puede salir distinto la segunda vez: la
+        // cuota (429) y una caída del servidor (5xx). Una clave inválida o un
+        // modelo que no existe van a fallar igual tres veces; reintentarlos
+        // sólo hacía que el estudiante mirara girar la ruedita tres segundos
+        // antes de leer el error.
+        const esReintentable = (status) => status === 429 || status >= 500;
+
+        for (let intento = 0; intento < 3; intento++) {
             try {
                 const res = await fetch(url, {
                     method: 'POST',
@@ -82,26 +150,53 @@ const AIClassBuilder = () => {
 
                 if (!res.ok) {
                     const errData = await res.json().catch(() => ({}));
-                    throw new Error(errData?.error?.message || `Error HTTP ${res.status}`);
+                    const detalle = errData?.error?.message || `Error HTTP ${res.status}`;
+                    if (esReintentable(res.status) && intento < 2) {
+                        await new Promise(r => setTimeout(r, 1000 * Math.pow(2, intento)));
+                        continue;
+                    }
+                    setError(mensajeDeError(res.status, detalle, model));
+                    setLoading(false);
+                    return;
                 }
 
                 const data = await res.json();
-                let code = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-                code = code.replace(/^```python\n?/i, '').replace(/^```\n?/i, '').replace(/\n?```$/i, '').trim();
-                setGeneratedCode(code);
+                const candidato = data?.candidates?.[0];
+
+                // `parts[0].text` no basta. La respuesta puede traer varias
+                // partes, y con los modelos que piensan la primera puede ser el
+                // resumen del razonamiento (`thought: true`) y no el código.
+                const partes = candidato?.content?.parts || [];
+                let code = partes.filter(p => p.text && !p.thought).map(p => p.text).join('');
+
+                // Y puede no traer texto ninguno: si el filtro de seguridad
+                // bloqueó la petición, la respuesta es un 200 con `parts`
+                // vacío. El código anterior lo guardaba como cadena vacía, que
+                // es falsa, así que la tarjeta volvía al estado inicial —el
+                // botón parecía no hacer nada—. Ahora se dice qué pasó.
+                if (!code.trim()) {
+                    setError(mensajeDeRespuestaVacia(data, candidato));
+                    setLoading(false);
+                    return;
+                }
+
+                // Se pidió código puro, pero el modelo a veces lo envuelve en
+                // un bloque markdown igual. Si hay valla, se toma lo de dentro;
+                // el regex anterior sólo servía si empezaba exactamente por
+                // ```python en el primer carácter.
+                const cercado = code.match(/```[a-zA-Z]*\s*\n([\s\S]*?)```/);
+                if (cercado) code = cercado[1];
+
+                setGeneratedCode(code.trim());
                 setLoading(false);
                 return;
             } catch (e) {
-                console.error(`Intento ${attempt + 1}:`, e);
-                if (attempt === 2) {
-                    const msg = e.message || '';
-                    if (msg.toLowerCase().includes('quota')) {
-                        setError(`⏳ Cuota excedida para ${model}. Espera ~30s y reintenta, o selecciona otro modelo.`);
-                    } else {
-                        setError(`Error al consultar Gemini: ${msg}. Verifica tu API Key.`);
-                    }
+                // Aquí sólo caen los fallos de red: sin conexión, DNS, CORS.
+                console.error(`Intento ${intento + 1}:`, e);
+                if (intento === 2) {
+                    setError(`No se pudo conectar con la API de Gemini (${e.message}). Revisa tu conexión a internet.`);
                 } else {
-                    await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt)));
+                    await new Promise(r => setTimeout(r, 1000 * Math.pow(2, intento)));
                 }
             }
         }
@@ -122,7 +217,7 @@ const AIClassBuilder = () => {
                         <input
                             type={showKey ? 'text' : 'password'}
                             value={apiKey}
-                            onChange={(e) => saveApiKey(e.target.value)}
+                            onChange={(e) => setApiKey(e.target.value)}
                             className="flex-1 font-mono text-xs p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
                             placeholder="Ingresa tu API Key de Gemini..."
                         />
@@ -144,7 +239,7 @@ const AIClassBuilder = () => {
                         onChange={(e) => saveModel(e.target.value)}
                         className="w-full text-sm p-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none bg-white transition-all"
                     >
-                        {models.map(m => (
+                        {MODELOS_GEMINI.map(m => (
                             <option key={m.id} value={m.id}>{m.name}</option>
                         ))}
                     </select>
