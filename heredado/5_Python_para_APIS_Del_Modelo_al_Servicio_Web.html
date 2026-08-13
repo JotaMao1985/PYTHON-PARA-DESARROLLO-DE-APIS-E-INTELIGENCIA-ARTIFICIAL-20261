@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Material de estudio autónomo: Del Modelo Estadístico al Servicio Web — APIs con Python"
+        name="description" />
+    <meta content="Material basado en fuentes académicas reconocidas" name="author" />
+    <title>Semana 5 — Del modelo estadístico al servicio web · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 5 — Del modelo estadístico al servicio web · Python para APIs e IA">
+    <meta property="og:description" content="width=device-width, initial-scale=1.0&quot; name=&quot;viewport&quot; /&gt; &lt;meta content=&quot;Material de estudio autónomo: Del Modelo Estadístico al Servicio Web — APIs con Python">
+    <meta property="og:type" content="article">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3D008D',
+                        secondary: '#ED1E79',
+                        navy: '#001A4D',
+                        gold: '#FDB913',
+                        bg: '#F8FAFC',
+                        surface: '#FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            scroll-behavior: smooth;
+        }
+
+        code,
+        pre {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .usta-gradient {
+            background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%);
+        }
+
+        .usta-header {
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+        }
+
+        .usta-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .usta-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.08) 0%, rgba(237, 30, 121, 0.08) 100%);
+            border: 1px solid rgba(61, 0, 141, 0.2);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(61, 0, 141, 0.15) 0%, transparent 100%);
+            border-left: 4px solid #ED1E79;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4A00A8, #FF2D8A);
+        }
+
+        .code-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .code-scroll::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button:focus-visible {
+            outline: 2px solid #ED1E79;
+            outline-offset: 2px;
+        }
+
+        .syntax-kwd {
+            color: #c678dd;
+            font-weight: bold;
+        }
+
+        .syntax-cls {
+            color: #e5c07b;
+        }
+
+        .syntax-str {
+            color: #98c379;
+        }
+
+        .syntax-com {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .syntax-func {
+            color: #61afef;
+        }
+
+        .syntax-self {
+            color: #e06c75;
+            font-style: italic;
+        }
+
+        .syntax-num {
+            color: #d19a66;
+        }
+
+        .diagram {
+            font-family: 'Fira Code', monospace;
+            white-space: pre;
+            background: #fff;
+            border: 1px dashed #999;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            color: #333;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body class="m-0 p-0 overflow-hidden">
+    <div class="flex h-screen overflow-hidden bg-slate-50 font-sans" id="app-layout">
+        <button
+            class="fixed top-4 left-4 z-50 p-2.5 w-10 h-10 flex items-center justify-center rounded-full shadow-lg text-white transition-all hover:scale-110"
+            id="sidebar-toggle" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)"
+            title="Mostrar/Ocultar Menú">
+            <span class="font-bold" id="sidebar-icon">✕</span>
+        </button>
+        <aside
+            class="flex-shrink-0 overflow-y-auto z-40 flex flex-col md:flex usta-header text-white hidden-scrollbar font-sans shadow-2xl"
+            id="main-sidebar"
+            style="transition: width 0.3s ease, min-width 0.3s ease, opacity 0.25s ease; width: 16rem; min-width: 16rem; overflow-y: auto; overflow-x: hidden;">
+            <div
+                class="p-6 pt-10 border-b border-white border-opacity-20 bg-black bg-opacity-10 backdrop-blur-sm sticky top-0 z-50">
+                <h1 class="font-extrabold text-xl tracking-tight flex items-center gap-2">
+                    <span class="text-white">Python</span>
+                    <span class="text-secondary">APIs e IA</span>
+                </h1>
+                <p class="text-xs text-blue-200 mt-2 font-medium opacity-80">Del Modelo al Servicio Web • USTA</p>
+            </div>
+            <nav class="p-4 space-y-1">
+                <!-- Nav: Introducción -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-0">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Introducción: ¿Por qué necesitas saber esto?</span>
+                </a>
+                <!-- Nav: Módulo 1 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-1">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <rect height="8" rx="2" ry="2" width="20" x="2" y="2"></rect>
+                            <rect height="8" rx="2" ry="2" width="20" x="2" y="14"></rect>
+                            <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                            <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 1: Servidor Web y WSGI</span>
+                </a>
+                <!-- Nav: Módulo 2 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-2">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 2: Routing Básico y Avanzado</span>
+                </a>
+                <!-- Nav: Módulo 3 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-3">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 3: Flask vs FastAPI</span>
+                </a>
+                <!-- Nav: Módulo 4 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-4">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 4: Síncrono vs Asíncrono</span>
+                </a>
+                <!-- Nav: Ejercicios -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-5">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Ejercicios de Autoevaluación</span>
+                </a>
+                <!-- Nav: Mejores Prácticas -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-6">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Resumen y Mejores Prácticas</span>
+                </a>
+                <!-- Nav: Preguntas -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#preguntas-sustentacion">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Preguntas de Sustentación</span>
+                </a>
+                <!-- Nav: Bibliografía -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-7">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Bibliografía Consultada</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="flex-1 overflow-y-auto p-6 md:p-10 lg:p-14 scroll-smooth bg-slate-50">
+            <div class="max-w-5xl mx-auto space-y-10">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-5"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-5" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 5 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">El ciclo petición-respuesta, de principio a fin</li><li style="margin:0 0 .3rem 0;">Servidor web, WSGI y ASGI: qué cambió y por qué</li><li style="margin:0 0 .3rem 0;">Routing con FastAPI, y cómo se leía en Flask</li><li style="margin:0 0 .3rem 0;">Síncrono frente a asíncrono</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Levantar un servidor mínimo con uvicorn --reload</li><li style="margin:0 0 .3rem 0;">Exponer la limpieza de datos de la semana 1 como endpoint</li><li style="margin:0 0 .3rem 0;">Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li style="margin:0 0 .3rem 0;">Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Flask frente a los frameworks modernos (sección 3)</li><li style="margin:0 0 .3rem 0;">El detalle de Starlette, Werkzeug y Jinja2</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Flask aparece en este módulo como <strong>término de comparación</strong>, no como herramienta de trabajo: es lo que el syllabus pide para esta semana («Flask frente a los frameworks modernos») y lo que vas a encontrar en el código Python que ya está en producción. Lo que tú escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.</p>
+</section>
+
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 0: INTRODUCCIÓN MOTIVACIONAL        -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-0">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0"
+                                    style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                        <polyline points="13 2 13 9 20 9"></polyline>
+                                    </svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Introducción: ¿Por qué necesitas saber esto?</h2>
+                            </div>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Imagina que has entrenado un modelo de <strong>regresión logística</strong> para predecir riesgo crediticio. El modelo funciona perfectamente en tu notebook de Jupyter: le pasas las variables de un solicitante y devuelve una probabilidad de impago. Ahora llega la pregunta real: <strong>¿cómo lo usan los demás?</strong></p>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">El equipo de desarrollo del banco necesita llamar a tu modelo desde su aplicación web. El equipo de fraude quiere consultarlo en tiempo real. Y la gerencia quiere un dashboard que muestre predicciones actualizadas. Ninguno de ellos va a abrir tu notebook. La respuesta es <strong>exponer tu modelo como una API</strong>: un servicio web al que cualquier sistema puede enviarle datos y recibir predicciones.</p>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Pero esto abre nuevas preguntas fundamentales:</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+                                    <div class="text-3xl mb-3">🏗️</div>
+                                    <p class="text-gray-800 font-medium text-sm">¿Qué infraestructura necesitas para que tu modelo reciba peticiones HTTP?</p>
+                                </div>
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+                                    <div class="text-3xl mb-3">📍</div>
+                                    <p class="text-gray-800 font-medium text-sm">¿Cómo defines las rutas (<code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/predict</code>, <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/health</code>, <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/stats</code>) de forma clara?</p>
+                                </div>
+                                <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+                                    <div class="text-3xl mb-3">⚡</div>
+                                    <p class="text-gray-800 font-medium text-sm">¿Qué pasa si 500 usuarios consultan el modelo al mismo tiempo? ¿Cómo garantizas que no colapse?</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>Objetivo del módulo:</strong> Llevarte desde los fundamentos de cómo funciona un servidor web hasta la construcción de APIs asíncronas con FastAPI, siempre con ejemplos orientados a estadística y ciencia de datos. Al finalizar, tendrás la capacidad de exponer cualquier modelo estadístico como un servicio web robusto y escalable.
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">Prerrequisitos e Instalación</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Para ejecutar todos los ejemplos de este módulo, necesitas instalar las siguientes dependencias en tu entorno virtual:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex items-center gap-1">
+                                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        </span>
+                                    </div>
+                                    <span><i class="fas fa-terminal text-green-400 mr-2"></i>Terminal</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group"
+                                        onclick="copyCode('code-block-install', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono"
+                                    data-language="bash" id="code-block-install"><code class="text-sm text-sky-100 font-mono">pip install flask fastapi uvicorn pandas numpy scikit-learn aiofiles</code></pre>
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">1 / 8</div>
+                            <div>
+                                <a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2"
+                                    href="#modulo-1" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 1: SERVIDOR WEB Y WSGI              -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-1">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <rect height="8" rx="2" ry="2" width="20" x="2" y="2"></rect>
+                                    <rect height="8" rx="2" ry="2" width="20" x="2" y="14"></rect>
+                                    <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                                    <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                                </svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 1: El Servidor Web y WSGI</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">1.1 ¿Qué es un servidor web?</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Piensa en un <strong>restaurante</strong>. Cuando un cliente (el navegador o una aplicación) hace un pedido (una petición HTTP), alguien tiene que recibirlo, llevarlo a la cocina y traer el plato de vuelta. Ese "alguien" es el <strong>servidor web</strong>.</p>
+                            <p class="text-gray-700 leading-relaxed mb-5">En términos técnicos, un servidor web es un programa que: escucha conexiones entrantes en un puerto (típicamente el 80 o 443), recibe peticiones HTTP (GET, POST, PUT, DELETE…), las delega a tu aplicación Python, y devuelve la respuesta al cliente. Ejemplos de servidores web que encontrarás en producción: <strong>Nginx</strong>, <strong>Apache</strong>, <strong>Gunicorn</strong>, <strong>Uvicorn</strong>.</p>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.2 WSGI: El protocolo entre el servidor y tu aplicación</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">¿Cómo se comunican el servidor web y tu código Python? Necesitan un "idioma común". Ese idioma es <strong>WSGI</strong> (<em>Web Server Gateway Interface</em>), definido en la PEP 3333.</p>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>Analogía:</strong> Si el servidor web es el <em>maître</em> que recibe al cliente en el restaurante, <strong>WSGI es el protocolo de comunicación entre el maître y la cocina</strong>. Define exactamente cómo se pasa el pedido (la petición) y cómo se devuelve el plato (la respuesta).
+                            </div>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">WSGI tiene una limitación de origen, y conviene verla ahora porque explica todo lo que viene después: <strong>es síncrono por diseño</strong>. La PEP 3333 se escribió en 2010, cuando el problema era estandarizar, no concurrir. Una aplicación WSGI atiende una petición, la termina, y sólo entonces empieza la siguiente. Por eso apareció <strong>ASGI</strong> (<em>Asynchronous Server Gateway Interface</em>): el mismo papel de idioma común entre servidor y aplicación, pero con <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">async</code> desde la base. <strong>Es el que vas a usar en este curso</strong>, y el módulo 4 explica qué se gana con él.</p>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Cuando usas <strong>FastAPI</strong>, en realidad trabajas sobre dos piezas: <strong>Starlette</strong>, el toolkit ASGI que se encarga de toda la comunicación HTTP —parsear peticiones, construir respuestas, manejar cabeceras y rutas—, y <strong>Pydantic</strong>, que valida y serializa los datos, y que ya conoces de la semana 4. FastAPI envuelve las dos y añade la generación automática de la documentación a partir de tus tipos. Es el mismo reparto que en la generación anterior —Flask envolvía <strong>Werkzeug</strong> (HTTP) y <strong>Jinja2</strong> (plantillas HTML)—, con una diferencia que importa: la segunda pieza ya no sirve para pintar páginas, sino para <em>validar datos</em>, porque lo que devuelve una API estadística no es HTML, es JSON.</p>
+
+                            <details class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 cursor-pointer group shadow-sm transition-all duration-300 hover:shadow-md">
+                                <summary class="font-semibold text-blue-800 list-none flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                        ¿Qué son Starlette y Werkzeug exactamente?
+                                    </div>
+                                    <span class="transition group-open:rotate-180"><svg fill="none" class="w-5 h-5 text-blue-600" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                                </summary>
+                                <div class="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
+                                    <p><strong>Starlette</strong> es el framework ASGI ligero sobre el que está construido FastAPI. Cuando llega una petición, es Starlette quien parsea la URL, las cabeceras, el cuerpo y los parámetros de consulta, y quien construye el objeto <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Request</code>. También es suyo el sistema de rutas, el middleware y el manejo de WebSockets. FastAPI le añade encima la capa que te interesa como estadístico: leer tus type hints, validar con Pydantic y generar la documentación en <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">/docs</code>.</p>
+                                    <p class="mt-2"><strong>Werkzeug</strong> (del alemán: "herramienta") es su equivalente en el mundo WSGI, y es lo que hay debajo de Flask. Hace el mismo trabajo —parsear la petición, construir la respuesta— pero de forma síncrona. El servidor de desarrollo de Flask (<code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">flask run</code>) lo provee Werkzeug, igual que el de FastAPI lo provee <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">uvicorn</code>. Merece la pena conocerlo porque vas a encontrar muchísimo código Python en producción escrito sobre él.</p>
+                                    <p class="mt-2"><strong>Jinja2</strong> es la otra mitad de Flask: el motor de plantillas que genera HTML dinámico. No lo usamos aquí porque nuestras APIs devuelven JSON, no páginas. En FastAPI ese hueco lo ocupa Pydantic, que no pinta nada: valida. Es un buen resumen de en qué cambió el oficio entre 2010 y hoy.</p>
+                                    <table class="w-full mt-3 text-xs border-collapse">
+                                        <tr class="border-b border-blue-200"><th class="text-left py-1 font-bold">Papel</th><th class="text-left py-1 font-bold">Generación WSGI</th><th class="text-left py-1 font-bold">Generación ASGI</th></tr>
+                                        <tr class="border-b border-blue-100"><td class="py-1">Framework</td><td class="py-1">Flask</td><td class="py-1"><strong>FastAPI</strong></td></tr>
+                                        <tr class="border-b border-blue-100"><td class="py-1">Capa HTTP</td><td class="py-1">Werkzeug</td><td class="py-1"><strong>Starlette</strong></td></tr>
+                                        <tr class="border-b border-blue-100"><td class="py-1">Segunda pieza</td><td class="py-1">Jinja2 (plantillas)</td><td class="py-1"><strong>Pydantic</strong> (validación)</td></tr>
+                                        <tr><td class="py-1">Servidor</td><td class="py-1">Gunicorn</td><td class="py-1"><strong>Uvicorn</strong></td></tr>
+                                    </table>
+                                </div>
+                            </details>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Una aplicación WSGI, en su forma más pura, es simplemente una función <em>callable</em>:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex items-center gap-1">
+                                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        </span>
+                                    </div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Python</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group"
+                                        onclick="copyCode('code-block-wsgi', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono"
+                                    data-language="python" id="code-block-wsgi"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># La aplicación WSGI más simple del mundo</span>
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">app</span>(environ, start_response):
+    <span class="text-green-500 italic">"""
+    environ: diccionario con toda la info de la petición HTTP
+    start_response: función para enviar los headers de respuesta
+    """</span>
+    status = <span class="text-yellow-300">"200 OK"</span>
+    headers = [(<span class="text-yellow-300">"Content-Type"</span>, <span class="text-yellow-300">"text/plain"</span>)]
+    start_response(status, headers)
+    <span class="text-pink-500 font-bold">return</span> [<span class="text-yellow-300">b"Hola desde una app WSGI pura"</span>]</code></pre>
+                            </div>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Nadie escribe aplicaciones así en la práctica. Para eso existen los frameworks —FastAPI hoy, Flask en la generación anterior—, que encapsulan esta complejidad. Lo que acabas de ver es lo que <em>no</em> vas a tener que escribir nunca.</p>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.3 De desarrollo a producción: Uvicorn y Gunicorn</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Todo framework trae un servidor de desarrollo —<code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">uvicorn --reload</code> en FastAPI, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">flask run</code> en Flask— y <strong>ninguno de los dos es apto para producción</strong>: recargan el código en caliente, no gestionan varios procesos y no están endurecidos frente a un cliente hostil. En producción se lanza el mismo servidor con otra configuración, o se le pone un gestor de procesos delante:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span>
+                                    </div>
+                                    <span><i class="fas fa-terminal text-green-400 mr-2"></i>Terminal</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group"
+                                        onclick="copyCode('code-block-gunicorn', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono"
+                                    data-language="bash" id="code-block-gunicorn"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># ── ASGI: lo que usa este curso ──────────────────────────</span>
+<span class="text-green-500 italic"># Desarrollo: recarga al guardar. NO usar en produccion.</span>
+uvicorn app.main:app --reload
+
+<span class="text-green-500 italic"># Produccion: varios procesos, sin recarga.</span>
+<span class="text-green-500 italic"># Es la linea que ira en el Dockerfile de la semana 11.</span>
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+<span class="text-green-500 italic"># ── WSGI: la generacion anterior, para que la reconozcas ─</span>
+<span class="text-green-500 italic"># Gunicorn con una app Flask</span>
+gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
+
+<span class="text-green-500 italic"># Waitress (multiplataforma, incluye Windows)</span>
+waitress-serve --port=8000 app:app</code></pre>
+                            </div>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">El parámetro <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">--workers 4</code> le dice a Gunicorn que lance 4 procesos independientes de tu aplicación. Cada worker puede atender una petición simultáneamente. Es como tener <strong>4 cocinas paralelas</strong> en el restaurante.</p>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.4 El flujo completo en producción</h3>
+
+                            <!-- SVG Diagram -->
+                            <div class="my-8">
+                                <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" class="w-full">
+                                    <defs>
+                                        <style>
+                                            .d-box { fill: #ffffff; stroke: #3D008D; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
+                                            .d-box-pink { fill: #ffffff; stroke: #ED1E79; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
+                                            .d-box-green { fill: #ffffff; stroke: #2ecc71; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
+                                            .d-label { font-family: 'Montserrat', sans-serif; font-size: 14px; fill: #1E293B; font-weight: 700; text-anchor: middle; }
+                                            .d-desc { font-family: 'Montserrat', sans-serif; font-size: 11px; fill: #64748B; text-anchor: middle; }
+                                            .d-step { font-family: 'Fira Code', monospace; font-size: 22px; fill: #3D008D; font-weight: 800; text-anchor: middle; opacity: 0.2; }
+                                            .d-arrow { stroke: #CBD5E1; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
+                                        </style>
+                                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                            <polygon points="0 0, 10 3.5, 0 7" fill="#CBD5E1" />
+                                        </marker>
+                                    </defs>
+
+                                    <!-- Cliente -->
+                                    <g transform="translate(50, 30)">
+                                        <rect width="160" height="130" class="d-box" />
+                                        <text x="80" y="35" class="d-step">01</text>
+                                        <text x="80" y="65" class="d-label">Cliente</text>
+                                        <text x="80" y="88" class="d-desc">Navegador, App,</text>
+                                        <text x="80" y="105" class="d-desc">curl, otro servicio</text>
+                                    </g>
+                                    <path d="M210 95 L260 95" class="d-arrow" />
+
+                                    <!-- Nginx -->
+                                    <g transform="translate(260, 30)">
+                                        <rect width="160" height="130" class="d-box-pink" />
+                                        <text x="80" y="35" class="d-step">02</text>
+                                        <text x="80" y="65" class="d-label" style="fill:#ED1E79">Nginx (proxy)</text>
+                                        <text x="80" y="88" class="d-desc">SSL, balanceo,</text>
+                                        <text x="80" y="105" class="d-desc">archivos estáticos</text>
+                                    </g>
+                                    <path d="M420 95 L470 95" class="d-arrow" />
+
+                                    <!-- Gunicorn -->
+                                    <g transform="translate(470, 30)">
+                                        <rect width="160" height="130" class="d-box" />
+                                        <text x="80" y="35" class="d-step">03</text>
+                                        <text x="80" y="65" class="d-label">Gunicorn / Uvicorn</text>
+                                        <text x="80" y="88" class="d-desc">Servidor WSGI/ASGI</text>
+                                        <text x="80" y="105" class="d-desc">Gestiona workers</text>
+                                    </g>
+                                    <path d="M630 95 L680 95" class="d-arrow" />
+
+                                    <!-- App -->
+                                    <g transform="translate(680, 30)">
+                                        <rect width="160" height="130" class="d-box-green" />
+                                        <text x="80" y="35" class="d-step">04</text>
+                                        <text x="80" y="65" class="d-label" style="fill:#27ae60">Tu App Python</text>
+                                        <text x="80" y="88" class="d-desc">Rutas, lógica,</text>
+                                        <text x="80" y="105" class="d-desc">modelos ML</text>
+                                    </g>
+
+                                    <!-- Workers -->
+                                    <g transform="translate(490, 200)">
+                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" stroke-width="1.5" />
+                                        <text x="60" y="30" class="d-desc" style="font-weight:600; fill:#3D008D">Worker 1</text>
+                                    </g>
+                                    <g transform="translate(490, 265)">
+                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" stroke-width="1.5" />
+                                        <text x="60" y="30" class="d-desc" style="font-weight:600; fill:#3D008D">Worker 2</text>
+                                    </g>
+                                    <g transform="translate(490, 330)">
+                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" stroke-width="1.5" />
+                                        <text x="60" y="30" class="d-desc" style="font-weight:600; fill:#3D008D">Worker N</text>
+                                    </g>
+                                    <path d="M550 160 L550 200" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4,4" />
+                                    <path d="M550 250 L550 265" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4,4" />
+                                    <path d="M550 315 L550 330" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4,4" />
+
+                                    <text x="450" y="400" style="font-family: 'Montserrat', sans-serif; font-size: 11px; fill: #94a3b8; text-anchor: middle; font-style: italic;">
+                                        Cada worker es un proceso independiente que atiende peticiones concurrentemente.
+                                    </text>
+                                </svg>
+                            </div>
+                        </section>
+
+                        <!-- Verificación de Comprensión -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 md:p-8 mb-8 mt-10 shadow-sm">
+                            <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Verificación de Comprensión
+                            </h3>
+                            <div class="space-y-6">
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded mb-3">Nivel Medio</span>
+                                    <p class="text-gray-800 font-medium mb-4">¿Por qué <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">uvicorn --reload</code> no es adecuado para producción?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) Porque Uvicorn no soporta el protocolo HTTP y necesita un adaptador externo para recibir peticiones.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Porque <code class="font-mono text-xs">--reload</code> vigila el sistema de archivos y reinicia el proceso ante cualquier cambio, arranca un solo worker y desactiva optimizaciones: gasta recursos y deja el servicio caído durante cada reinicio.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) Porque Uvicorn en modo desarrollo solo acepta peticiones POST y no GET.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full">
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                Ver Respuesta y Retroalimentación
+                                            </span>
+                                            <span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span>
+                                        </summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            El modo <code class="font-mono text-xs">--reload</code> está diseñado para depuración local: vigila el sistema de archivos y reinicia el proceso cada vez que guardas, lo que en producción significa consumo constante de recursos y un corte del servicio en cada reinicio. Además arranca con un solo worker. El binario es el mismo —en producción se lanza <code class="font-mono text-xs">uvicorn app.main:app --workers 4</code> sin <code class="font-mono text-xs">--reload</code>—, y es esa línea la que acabará en el Dockerfile de la semana 11. Ojo con la trampa de la opción A: Uvicorn <em>sí</em> habla HTTP; eso es justamente lo que hace.
+                                        </div>
+                                    </details>
+                                </div>
+
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 border-l-4 border-l-secondary shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-secondary text-white text-xs font-bold rounded mb-3">Nivel Avanzado</span>
+                                    <p class="text-gray-800 font-medium mb-4">Si Gunicorn es un servidor WSGI (síncrono por diseño), ¿cómo es posible que FastAPI, que es asíncrono, funcione correctamente en producción?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q2" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) FastAPI internamente convierte todas las funciones <code>async</code> a funciones síncronas antes de ejecutarlas.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q2" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Porque FastAPI no usa Gunicorn directamente, sino <strong>Uvicorn</strong>, un servidor ASGI que soporta el event loop asíncrono. En producción se puede usar Gunicorn como gestor de procesos con workers de clase Uvicorn.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q2" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) No es posible; FastAPI requiere Apache como servidor exclusivo.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full">
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                Ver Respuesta y Retroalimentación
+                                            </span>
+                                            <span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span>
+                                        </summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            WSGI es síncrono; ASGI es su evolución asíncrona. FastAPI se ejecuta sobre Uvicorn (servidor ASGI) que gestiona un event loop. En despliegues de producción, una configuración común es: <code>gunicorn -k uvicorn.workers.UvicornWorker app:app</code>, donde Gunicorn actúa como gestor de procesos y cada worker es una instancia de Uvicorn con su propio event loop asíncrono.
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-0"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">2 / 8</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-2" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 2: ROUTING                          -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-2">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 2: Routing Básico y Avanzado</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">2.1 ¿Qué es el routing?</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">El <em>routing</em> es el mecanismo que conecta una URL con una función de Python. Cuando alguien visita <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">/predict</code>, el framework necesita saber qué función ejecutar. Es el equivalente a un directorio telefónico: dado un "número" (la URL), te conecta con la "persona" (la función) correcta.</p>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 Routing en FastAPI</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Éste es el que vas a usar en el proyecto, así que empezamos por él. FastAPI declara una ruta por cada método HTTP —<code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.get</code>, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.post</code>— y aprovecha el <em>type hinting</em> que ya usas desde la semana 1: al escribir <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">min_age: int</code> no estás documentando, estás <strong>declarando una validación</strong>. Si llega otra cosa, FastAPI responde 422 —el error que viste en la semana 4— sin que tú escribas una línea:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>FastAPI — routing.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-fastapi-route', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-fastapi-route"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI, Query
+
+app = FastAPI()
+
+<span class="text-green-500 italic"># Ruta estática — decorador específico por método HTTP</span>
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/health"</span>)
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">health_check</span>():
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"status"</span>: <span class="text-yellow-300">"ok"</span>}
+
+<span class="text-green-500 italic"># Variable de ruta — el tipo se infiere del type hint</span>
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/dataset/{dataset_name}/summary"</span>)
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">dataset_summary</span>(dataset_name: str):
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"dataset"</span>: dataset_name, <span class="text-yellow-300">"rows"</span>: <span class="text-orange-300">1500</span>}
+
+<span class="text-green-500 italic"># Query parameters — se definen como argumentos de la función</span>
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/filter"</span>)
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">filter_data</span>(
+    min_age: int = Query(default=<span class="text-orange-300">0</span>, ge=<span class="text-orange-300">0</span>, description=<span class="text-yellow-300">"Edad mínima"</span>),
+    max_age: int = Query(default=<span class="text-orange-300">120</span>, le=<span class="text-orange-300">150</span>, description=<span class="text-yellow-300">"Edad máxima"</span>),
+):
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age}</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 El mismo routing en Flask, para que lo reconozcas</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Esto es lo que vas a encontrar en la mayor parte del codigo Python que ya esta en produccion, asi que conviene que lo leas sin esfuerzo. Flask usa el mismo decorador <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.route()</code> para todos los metodos HTTP, y los parametros hay que sacarlos y convertirlos a mano: fijate en <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">request.args.get(..., type=int)</code>, que es la linea que en FastAPI no existe porque la escribe el type hint.</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Flask — routing.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-flask-route', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-route"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
+
+app = Flask(__name__)
+
+<span class="text-green-500 italic"># Ruta estática simple</span>
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/health"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">health_check</span>():
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"status"</span>: <span class="text-yellow-300">"ok"</span>})
+
+<span class="text-green-500 italic"># Variable de ruta: captura un valor dinámico de la URL</span>
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/dataset/&lt;string:dataset_name&gt;/summary"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">dataset_summary</span>(dataset_name: str):
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"dataset"</span>: dataset_name, <span class="text-yellow-300">"rows"</span>: <span class="text-orange-300">1500</span>})
+
+<span class="text-green-500 italic"># Query parameters: valores opcionales después del '?'</span>
+<span class="text-green-500 italic"># Ejemplo: GET /filter?min_age=25&amp;max_age=60</span>
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/filter"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">filter_data</span>():
+    min_age = request.args.get(<span class="text-yellow-300">"min_age"</span>, default=<span class="text-orange-300">0</span>, type=int)
+    max_age = request.args.get(<span class="text-yellow-300">"max_age"</span>, default=<span class="text-orange-300">120</span>, type=int)
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age})</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Tabla Comparativa de Routing</h3>
+                            <table class="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Aspecto</th>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Flask</th>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">FastAPI</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>Métodos HTTP</strong></td><td class="px-6 py-4 text-sm text-gray-800"><code>methods=["POST"]</code> en el decorador</td><td class="px-6 py-4 text-sm text-gray-800">Decoradores separados: <code>@app.get()</code>, <code>@app.post()</code></td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>Variables de ruta</strong></td><td class="px-6 py-4 text-sm text-gray-800"><code>&lt;string:name&gt;</code> en la URL</td><td class="px-6 py-4 text-sm text-gray-800"><code>{name}</code> + type hint en la función</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>Query params</strong></td><td class="px-6 py-4 text-sm text-gray-800"><code>request.args.get()</code> manual</td><td class="px-6 py-4 text-sm text-gray-800">Argumentos de función con valores por defecto</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>Validación</strong></td><td class="px-6 py-4 text-sm text-gray-800">Manual o con extensiones</td><td class="px-6 py-4 text-sm text-gray-800">Integrada vía Pydantic y <code>Query()</code></td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>Documentación</strong></td><td class="px-6 py-4 text-sm text-gray-800">Requiere Flask-Swagger</td><td class="px-6 py-4 text-sm text-gray-800">Automática en <code>/docs</code> y <code>/redoc</code></td></tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-1"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">3 / 8</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-3" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 3: FLASK VS FASTAPI                 -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-3">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 3: Flask vs Frameworks Modernos (FastAPI)</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">3.1 El endpoint <code>/predict</code> en Flask</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Veamos cómo se implementa un endpoint de predicción con Flask, el framework veterano (2010). Observa la validación manual y la falta de documentación automática:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>app_flask.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-flask-predict', this)">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-predict"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
+<span class="text-pink-500 font-bold">import</span> numpy <span class="text-pink-500 font-bold">as</span> np
+<span class="text-pink-500 font-bold">import</span> pickle
+
+app = Flask(__name__)
+
+<span class="text-green-500 italic"># Cargar modelo pre-entrenado</span>
+<span class="text-pink-500 font-bold">with</span> <span class="text-blue-400">open</span>(<span class="text-yellow-300">"modelo_credito.pkl"</span>, <span class="text-yellow-300">"rb"</span>) <span class="text-pink-500 font-bold">as</span> f:
+    modelo = pickle.load(f)
+
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/predict"</span>, methods=[<span class="text-yellow-300">"POST"</span>])
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">predict</span>():
+    data = request.get_json()
+
+    <span class="text-green-500 italic"># ⚠️ Validación completamente manual</span>
+    required = [<span class="text-yellow-300">"income"</span>, <span class="text-yellow-300">"debt_ratio"</span>, <span class="text-yellow-300">"years_employed"</span>]
+    <span class="text-pink-500 font-bold">for</span> field <span class="text-pink-500 font-bold">in</span> required:
+        <span class="text-pink-500 font-bold">if</span> field <span class="text-pink-500 font-bold">not in</span> data:
+            <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"error"</span>: f<span class="text-yellow-300">"Falta el campo: {field}"</span>}), <span class="text-orange-300">400</span>
+
+    features = np.array([[data[<span class="text-yellow-300">"income"</span>], data[<span class="text-yellow-300">"debt_ratio"</span>], data[<span class="text-yellow-300">"years_employed"</span>]]])
+    probability = modelo.predict_proba(features)[<span class="text-orange-300">0</span>][<span class="text-orange-300">1</span>]
+
+    <span class="text-pink-500 font-bold">return</span> jsonify({
+        <span class="text-yellow-300">"probability"</span>: <span class="text-blue-400">round</span>(<span class="text-blue-400">float</span>(probability), <span class="text-orange-300">4</span>),
+        <span class="text-yellow-300">"risk_level"</span>: <span class="text-yellow-300">"alto"</span> <span class="text-pink-500 font-bold">if</span> probability &gt; <span class="text-orange-300">0.5</span> <span class="text-pink-500 font-bold">else</span> <span class="text-yellow-300">"bajo"</span>
+    })</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 El mismo endpoint en FastAPI</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Ahora veamos cómo el mismo endpoint se reimagina con FastAPI. Observa cómo Pydantic maneja la validación y la documentación se genera automáticamente:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>app_fastapi.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-fastapi-predict', this)">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-fastapi-predict"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI
+<span class="text-pink-500 font-bold">from</span> pydantic <span class="text-pink-500 font-bold">import</span> BaseModel, Field
+<span class="text-pink-500 font-bold">import</span> numpy <span class="text-pink-500 font-bold">as</span> np
+<span class="text-pink-500 font-bold">import</span> pickle
+
+app = FastAPI(
+    title=<span class="text-yellow-300">"API de Riesgo Crediticio"</span>,
+    description=<span class="text-yellow-300">"Modelo de regresión logística para scoring crediticio"</span>,
+    version=<span class="text-yellow-300">"1.0.0"</span>,
+)
+
+<span class="text-pink-500 font-bold">with</span> <span class="text-blue-400">open</span>(<span class="text-yellow-300">"modelo_credito.pkl"</span>, <span class="text-yellow-300">"rb"</span>) <span class="text-pink-500 font-bold">as</span> f:
+    modelo = pickle.load(f)
+
+<span class="text-green-500 italic"># ✅ Validación automática vía Pydantic</span>
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">CreditRequest</span>(BaseModel):
+    income: float = Field(..., gt=<span class="text-orange-300">0</span>, description=<span class="text-yellow-300">"Ingreso mensual en USD"</span>)
+    debt_ratio: float = Field(..., ge=<span class="text-orange-300">0</span>, le=<span class="text-orange-300">1</span>, description=<span class="text-yellow-300">"Ratio deuda/ingreso"</span>)
+    years_employed: int = Field(..., ge=<span class="text-orange-300">0</span>, description=<span class="text-yellow-300">"Años de empleo"</span>)
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">CreditResponse</span>(BaseModel):
+    probability: float
+    risk_level: str
+
+<span class="text-yellow-300">@app.post</span>(<span class="text-yellow-300">"/predict"</span>, response_model=CreditResponse)
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">predict</span>(data: CreditRequest):
+    features = np.array([[data.income, data.debt_ratio, data.years_employed]])
+    probability = <span class="text-blue-400">float</span>(modelo.predict_proba(features)[<span class="text-orange-300">0</span>][<span class="text-orange-300">1</span>])
+
+    <span class="text-pink-500 font-bold">return</span> CreditResponse(
+        probability=<span class="text-blue-400">round</span>(probability, <span class="text-orange-300">4</span>),
+        risk_level=<span class="text-yellow-300">"alto"</span> <span class="text-pink-500 font-bold">if</span> probability &gt; <span class="text-orange-300">0.5</span> <span class="text-pink-500 font-bold">else</span> <span class="text-yellow-300">"bajo"</span>,
+    )</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 ¿Por qué migró el ecosistema?</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">No fue una moda. Hay razones técnicas concretas:</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
+                                <div class="bg-green-50 border border-green-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-green-800 mb-2">🚀 Productividad</h4>
+                                    <p class="text-sm text-gray-700">FastAPI reduce el código boilerplate. La validación con Pydantic es más robusta en menos líneas.</p>
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-blue-800 mb-2">⚡ Rendimiento</h4>
+                                    <p class="text-sm text-gray-700">FastAPI con Uvicorn maneja 2x-3x más peticiones/segundo que Flask con Gunicorn para tareas I/O-bound.</p>
+                                </div>
+                                <div class="bg-purple-50 border border-purple-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-purple-800 mb-2">📖 Documentación automática</h4>
+                                    <p class="text-sm text-gray-700">Swagger UI y ReDoc se generan automáticamente. Elimina fricción entre equipos de data science y desarrollo.</p>
+                                </div>
+                                <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-amber-800 mb-2">🛡️ Type safety</h4>
+                                    <p class="text-sm text-gray-700">Types hints + Pydantic permiten detectar errores antes de ejecutar el código, directamente en el editor.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>¿Y Starlette?</strong> Starlette es el framework ASGI sobre el que FastAPI está construido. Es como la relación entre un motor y un coche: Starlette provee el routing, la gestión de peticiones y el soporte WebSocket; FastAPI agrega la capa de validación con Pydantic y la documentación automática. Rara vez usarías Starlette directamente, pero es importante saber que existe.
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-2"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">4 / 8</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-4" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 4: SÍNCRONO VS ASÍNCRONO            -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-4">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 4: Síncrono vs Asíncrono (Profundización)</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">4.1 I/O-bound vs CPU-bound</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Antes de entender <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code>, necesitas distinguir dos tipos de tareas:</p>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                                <div class="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm">
+                                    <h4 class="font-bold text-red-800 mb-2 text-lg">CPU-bound 🧮</h4>
+                                    <p class="text-sm text-gray-700 mb-3">Tareas que mantienen al procesador <strong>ocupado calculando</strong>.</p>
+                                    <p class="text-xs text-gray-500">Ej: entrenar un random forest, multiplicar matrices grandes, bootstrap con 10,000 iteraciones.</p>
+                                </div>
+                                <div class="bg-blue-50 border border-blue-200 rounded-xl p-6 shadow-sm">
+                                    <h4 class="font-bold text-blue-800 mb-2 text-lg">I/O-bound ⏳</h4>
+                                    <p class="text-sm text-gray-700 mb-3">Tareas donde el procesador <strong>espera</strong> a que algo externo termine.</p>
+                                    <p class="text-xs text-gray-500">Ej: leer un CSV de disco, consultar una base de datos, llamar a otra API, enviar un email.</p>
+                                </div>
+                            </div>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>Punto clave:</strong> En una API de predicción, la mayor parte del tiempo se gasta en operaciones <strong>I/O</strong>, no en cómputo. Cargar datos, leer el modelo del disco, consultar la base de datos para obtener features del usuario… todo eso es <em>espera</em>.
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.2 Modelo síncrono: una fila con un solo cajero</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">En Flask (síncrono), cada petición <strong>bloquea</strong> al worker mientras se procesa. El Worker 1 no puede atender la Petición 2 hasta que termine con la 1, aunque el 97% del tiempo esté simplemente esperando a la base de datos:</p>
+
+                            <div class="diagram">Petición 1 ──[leer BD: 200ms]──[predecir: 5ms]──[responder]──▶
+                                                                Petición 2 ──[leer BD: 200ms]──...</div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.3 Modelo asíncrono: un cajero muy eficiente</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Con <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code>, un solo proceso puede manejar muchas peticiones <strong>concurrentemente</strong>. Mientras la Petición 1 espera la BD, el event loop atiende la 2 y la 3:</p>
+
+                            <div class="diagram">Petición 1 ──[leer BD ⏸️ ]─────────────────────[predecir]──[responder]──▶
+Petición 2 ────────────────[leer BD ⏸️ ]───────[predecir]──[responder]──▶
+Petición 3 ──────────────────────────[leer BD ⏸️ ][predecir][responder]──▶</div>
+
+                            <details class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 cursor-pointer group shadow-sm transition-all duration-300 hover:shadow-md">
+                                <summary class="font-semibold text-blue-800 list-none flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                        Analogía: El chef y la olla
+                                    </div>
+                                    <span class="transition group-open:rotate-180"><svg fill="none" class="w-5 h-5 text-blue-600" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                                </summary>
+                                <div class="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
+                                    <p>Imagina un chef que pone la pasta a hervir (operación I/O: esperar) y mientras hierve, prepara la salsa (otra tarea). No se queda mirando la olla. Eso es <code>async</code>: el event loop "cocina" múltiples platos aprovechando los tiempos de espera.</p>
+                                </div>
+                            </details>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.4 Ejemplo comparativo completo</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Un endpoint que consulta dos fuentes de datos antes de hacer una predicción. Primero síncrono (Flask), luego asíncrono (FastAPI):</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Flask — síncrono (0.3 + 0.2 = 0.5s)</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-sync-compare', this)">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-sync-compare"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">import</span> time
+<span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, jsonify
+
+app = Flask(__name__)
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">obtener_historial_credito</span>(user_id: str) -&gt; dict:
+    time.sleep(<span class="text-orange-300">0.3</span>)  <span class="text-green-500 italic"># Simula consulta a BD externa</span>
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"score"</span>: <span class="text-orange-300">720</span>, <span class="text-yellow-300">"defaults"</span>: <span class="text-orange-300">0</span>}
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">obtener_datos_empleo</span>(user_id: str) -&gt; dict:
+    time.sleep(<span class="text-orange-300">0.2</span>)  <span class="text-green-500 italic"># Simula consulta a otro servicio</span>
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"years"</span>: <span class="text-orange-300">5</span>, <span class="text-yellow-300">"income"</span>: <span class="text-orange-300">55000</span>}
+
+<span class="text-yellow-300">@app.route</span>(<span class="text-yellow-300">"/evaluate/&lt;user_id&gt;"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">evaluate</span>(user_id: str):
+    <span class="text-green-500 italic"># ⚠️ Secuencial: 0.3 + 0.2 = 0.5 segundos mínimo</span>
+    credito = obtener_historial_credito(user_id)
+    empleo = obtener_datos_empleo(user_id)
+    risk_score = credito[<span class="text-yellow-300">"score"</span>] * <span class="text-orange-300">0.6</span> + empleo[<span class="text-yellow-300">"years"</span>] * <span class="text-orange-300">10</span>
+    <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"user"</span>: user_id, <span class="text-yellow-300">"risk_score"</span>: risk_score})</code></pre>
+                            </div>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>FastAPI — asíncrono (max(0.3, 0.2) = 0.3s)</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-async-compare', this)">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-async-compare"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">import</span> asyncio
+<span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI
+
+app = FastAPI()
+
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">obtener_historial_credito</span>(user_id: str) -&gt; dict:
+    <span class="text-pink-500 font-bold">await</span> asyncio.sleep(<span class="text-orange-300">0.3</span>)  <span class="text-green-500 italic"># NO bloquea, cede control</span>
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"score"</span>: <span class="text-orange-300">720</span>, <span class="text-yellow-300">"defaults"</span>: <span class="text-orange-300">0</span>}
+
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">obtener_datos_empleo</span>(user_id: str) -&gt; dict:
+    <span class="text-pink-500 font-bold">await</span> asyncio.sleep(<span class="text-orange-300">0.2</span>)  <span class="text-green-500 italic"># NO bloquea, cede control</span>
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"years"</span>: <span class="text-orange-300">5</span>, <span class="text-yellow-300">"income"</span>: <span class="text-orange-300">55000</span>}
+
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/evaluate/{user_id}"</span>)
+<span class="text-pink-500 font-bold">async def</span> <span class="text-blue-400">evaluate</span>(user_id: str):
+    <span class="text-green-500 italic"># ✅ Concurrente: ambas consultas en paralelo</span>
+    credito, empleo = <span class="text-pink-500 font-bold">await</span> asyncio.gather(
+        obtener_historial_credito(user_id),
+        obtener_datos_empleo(user_id),
+    )
+    risk_score = credito[<span class="text-yellow-300">"score"</span>] * <span class="text-orange-300">0.6</span> + empleo[<span class="text-yellow-300">"years"</span>] * <span class="text-orange-300">10</span>
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"user"</span>: user_id, <span class="text-yellow-300">"risk_score"</span>: risk_score}</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.5 Advertencia: async no es magia para todo</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5"><code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code> brilla en tareas <strong>I/O-bound</strong>. Para tareas <strong>CPU-bound</strong> (como entrenar un modelo o calcular bootstrapping), <code>async</code> no ayuda porque el procesador está realmente ocupado. La estrategia correcta es delegar el cómputo a un proceso separado con <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">run_in_executor</code> + <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">ProcessPoolExecutor</code>.</p>
+                        </section>
+
+                        <!-- Verificación -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 md:p-8 mb-8 mt-10 shadow-sm">
+                            <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Verificación de Comprensión
+                            </h3>
+                            <div class="space-y-6">
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded mb-3">Nivel Medio</span>
+                                    <p class="text-gray-800 font-medium mb-4">En el ejemplo comparativo, la versión Flask tarda 0.5s y la FastAPI 0.3s por petición individual. ¿Por qué la ventaja real del modelo asíncrono se amplifica bajo alta concurrencia (ej. 1,000 usuarios simultáneos)?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m4_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) Porque FastAPI comprime las respuestas HTTP en un formato binario más eficiente que Flask.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m4_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Porque mientras cada petición espera la respuesta de la base de datos (I/O-bound), el event loop atiende otras peticiones. Un solo proceso asíncrono puede servir cientos de peticiones concurrentes durante los tiempos de espera, mientras Flask necesita un worker bloqueado por cada petición activa.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m4_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) Porque FastAPI utiliza múltiples cores de la CPU automáticamente para paralelizar todas las operaciones.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full">
+                                            <span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ver Respuesta y Retroalimentación</span>
+                                            <span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span>
+                                        </summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            La clave es la concurrencia cooperativa. Con Flask y 4 workers de Gunicorn, la petición #5 debe esperar a que un worker se libere. Con FastAPI, un solo proceso con event loop puede "suspender" cientos de peticiones I/O-bound simultáneamente, atendiendo cada una cuando su operación I/O completa. Con 1,000 usuarios concurrentes, la versión asíncrona puede ser 10x-50x más eficiente en throughput.
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-3"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">5 / 8</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-5" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 5: EJERCICIOS                       -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-5">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Ejercicios de Autoevaluación</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <!-- Ejercicio 1 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+                                <span class="inline-block px-3 py-1 bg-primary text-white text-xs font-bold rounded-full mb-3">Ejercicio 1 — Diagnóstico</span>
+                                <h4 class="text-lg font-bold text-navy mb-3">Diagnóstico de escalabilidad</h4>
+                                <p class="text-gray-700 leading-relaxed mb-4">Dado un endpoint <strong>síncrono</strong> que: (1) lee un CSV grande (~2s), (2) consulta una API externa (~0.5s), y (3) calcula estadísticas descriptivas.</p>
+                                <p class="text-gray-700 leading-relaxed mb-2"><strong>a)</strong> Si recibe 20 peticiones simultáneas con 4 workers de Gunicorn, ¿cuántas quedan en espera?</p>
+                                <p class="text-gray-700 leading-relaxed mb-2"><strong>b)</strong> Identifica cuáles pasos son I/O-bound y cuáles CPU-bound.</p>
+                                <p class="text-gray-700 leading-relaxed"><strong>c)</strong> Reescribe el endpoint con FastAPI + <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">async/await</code>. ¿Qué pasos puedes paralelizar con <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">asyncio.gather()</code>?</p>
+                            </div>
+
+                            <!-- Ejercicio 2 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+                                <span class="inline-block px-3 py-1 bg-secondary text-white text-xs font-bold rounded-full mb-3">Ejercicio 2 — Migración</span>
+                                <h4 class="text-lg font-bold text-navy mb-3">Endpoint de estadísticas descriptivas, y qué cuesta hacerlo sin FastAPI</h4>
+                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Parte A (FastAPI):</strong> Crea un endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /stats/{dataset_id}</code> que genere un DataFrame simulado con <code>numpy.random</code>, calcule media, mediana, desviación estándar, mínimo, máximo y cuartiles, y lo devuelva como JSON. Añade un parámetro de consulta opcional <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">columns: int = 5</code>, define el modelo Pydantic <code>StatsResponse</code> de la respuesta y comprueba que <code>/docs</code> lo documenta solo.</p>
+                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Parte B (el contraste):</strong> Escribe a mano lo que la Parte A no te obligó a escribir: valida que <code>columns</code> sea un entero positivo, devuelve un 422 con la lista de errores cuando no lo sea, y redacta la documentación del endpoint. Es el mismo endpoint sin la capa que FastAPI te regala. Compara las dos versiones en líneas de código — ése es el resultado del ejercicio.</p>
+                            </div>
+
+                            <!-- Ejercicio 3 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+                                <span class="inline-block px-3 py-1 bg-gold text-navy text-xs font-bold rounded-full mb-3">Ejercicio 3 — Benchmark</span>
+                                <h4 class="text-lg font-bold text-navy mb-3">Simulando I/O-bound con lectura asíncrona</h4>
+                                <p class="text-gray-700 leading-relaxed mb-3">Crea un endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">POST /analyze</code> en FastAPI que lea un CSV con <code>aiofiles</code>, calcule estadísticas y mida el tiempo de ejecución. Implementa también la versión síncrona.</p>
+                                <p class="text-gray-700 leading-relaxed mb-3"><strong>Experimento:</strong> Usa Apache Bench para enviar 100 peticiones concurrentes a ambas versiones:</p>
+                                <div class="diagram">ab -n 100 -c 20 -p payload.json -T application/json http://localhost:8000/analyze</div>
+                                <p class="text-gray-700 leading-relaxed"><strong>Reflexión:</strong> ¿En qué escenario la versión <code>async</code> muestra mejora más dramática: archivos pequeños o archivos grandes? ¿Por qué?</p>
+                            </div>
+
+                            <!-- Ejercicio 4 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                                <span class="inline-block px-3 py-1 bg-navy text-white text-xs font-bold rounded-full mb-3">Ejercicio 4 — Diseño</span>
+                                <h4 class="text-lg font-bold text-navy mb-3">Diseño de API para pipeline estadístico</h4>
+                                <p class="text-gray-700 leading-relaxed mb-3">Diseña la estructura de rutas y modelos Pydantic (sin implementar la lógica completa) para un servicio de análisis de encuestas:</p>
+                                <ol class="list-decimal pl-6 space-y-2 text-gray-700 text-sm">
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">POST /surveys</code> — Subir datos de una encuesta (CSV)</li>
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /surveys/{survey_id}/summary</code> — Resumen estadístico</li>
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /surveys/{survey_id}/crosstab</code> — Tabla de contingencia</li>
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">POST /surveys/{survey_id}/test</code> — Test de hipótesis (chi², t-test)</li>
+                                </ol>
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-4"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">6 / 8</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-6" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 6: MEJORES PRÁCTICAS                -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-6">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Resumen y Mejores Prácticas</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">Conceptos Clave</h3>
+
+                            <div class="space-y-4 mb-8">
+                                <div class="bg-gradient-to-r from-purple-50 to-white border border-purple-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-primary mb-2">Servidor Web y WSGI</h4>
+                                    <p class="text-sm text-gray-700">Tu aplicación Flask no recibe peticiones directamente. Un servidor WSGI como Gunicorn gestiona los procesos. WSGI es síncrono por diseño; ASGI es su evolución asíncrona.</p>
+                                </div>
+                                <div class="bg-gradient-to-r from-pink-50 to-white border border-pink-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-secondary mb-2">Routing</h4>
+                                    <p class="text-sm text-gray-700">Flask usa <code>@app.route()</code> con extracción manual de parámetros. FastAPI usa decoradores por método HTTP y aprovecha type hints para inferir y validar parámetros automáticamente.</p>
+                                </div>
+                                <div class="bg-gradient-to-r from-blue-50 to-white border border-blue-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-navy mb-2">Flask vs FastAPI</h4>
+                                    <p class="text-sm text-gray-700">Flask sigue siendo válido para proyectos simples o legacy. FastAPI es la elección preferida para APIs nuevas en ciencia de datos por su validación integrada, documentación automática y soporte nativo asíncrono.</p>
+                                </div>
+                                <div class="bg-gradient-to-r from-green-50 to-white border border-green-200 rounded-xl p-5 shadow-sm">
+                                    <h4 class="font-bold text-green-800 mb-2">Síncrono vs Asíncrono</h4>
+                                    <p class="text-sm text-gray-700">El código síncrono bloquea el worker durante I/O. <code>async/await</code> permite concurrencia durante las esperas. Para CPU-bound, usa <code>run_in_executor</code> con <code>ProcessPoolExecutor</code>.</p>
+                                </div>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">Do's and Don'ts</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+                                    <h4 class="font-bold text-green-800 mb-4 flex items-center gap-2">✅ Buenas Prácticas</h4>
+                                    <ul class="space-y-3 text-sm text-gray-700">
+                                        <li>Definir modelos Pydantic para todas las entradas y salidas</li>
+                                        <li>Separar la carga del modelo del endpoint (cargar al iniciar)</li>
+                                        <li>Incluir un endpoint <code>/health</code> para monitoreo</li>
+                                        <li>Usar <code>async def</code> para consultas a BD, lectura de archivos o llamadas a otros servicios</li>
+                                        <li>Versionar tu API (<code>/v1/predict</code>, <code>/v2/predict</code>)</li>
+                                        <li>Registrar las predicciones (logging) para auditoría</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-red-50 border border-red-200 rounded-xl p-6">
+                                    <h4 class="font-bold text-red-800 mb-4 flex items-center gap-2">❌ Errores Comunes</h4>
+                                    <ul class="space-y-3 text-sm text-gray-700">
+                                        <li>Usar <code>flask run</code> en producción</li>
+                                        <li>Cargar el modelo <code>.pkl</code> dentro de la función del endpoint</li>
+                                        <li>Usar <code>async def</code> para tareas CPU-bound sin executor</li>
+                                        <li>Ignorar la validación de entrada (un <code>NaN</code> corrompe predicciones)</li>
+                                        <li>Devolver errores genéricos en vez de códigos HTTP apropiados</li>
+                                        <li>Exponer info sensible del modelo sin autenticación</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-5"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">7 / 8</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#preguntas-sustentacion" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- PREGUNTAS DE SUSTENTACIÓN                  -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="preguntas-sustentacion">
+                        <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                            <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                            </div>
+                            <h2 class="text-2xl md:text-3xl font-bold text-primary">Preguntas de Sustentación</h2>
+                        </div>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <p class="text-gray-700 leading-relaxed mb-6">Las siguientes preguntas abiertas están diseñadas para evaluar la comprensión profunda de los conceptos del módulo. Pueden ser utilizadas en una sustentación oral o escrita.</p>
+
+                            <!-- Eje 1 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-6 shadow-sm">
+                                <h3 class="text-lg md:text-xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect height="8" rx="2" ry="2" width="20" x="2" y="2" stroke-width="2"></rect><rect height="8" rx="2" ry="2" width="20" x="2" y="14" stroke-width="2"></rect></svg>
+                                    Eje 1 — Arquitectura y Servidores Web
+                                </h3>
+                                <div class="space-y-5">
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 1</span>
+                                        <p class="text-gray-800 leading-relaxed">Explique con sus propias palabras qué rol cumple WSGI en la arquitectura de una aplicación web Python. ¿Por qué no basta con ejecutar <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">flask run</code> en un servidor de producción?</p>
+                                    </div>
+                                    <div class="border-l-4 border-secondary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">Pregunta 2</span>
+                                        <p class="text-gray-800 leading-relaxed">¿Cuál es la diferencia fundamental entre WSGI y ASGI? ¿Por qué la aparición de ASGI fue necesaria para el ecosistema Python moderno?</p>
+                                    </div>
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 3</span>
+                                        <p class="text-gray-800 leading-relaxed">En el diagrama de flujo de producción (Nginx → Gunicorn → App), ¿qué responsabilidades tiene cada componente? ¿Podría eliminarse Nginx? ¿Con qué consecuencias?</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Eje 2 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-6 shadow-sm">
+                                <h3 class="text-lg md:text-xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6" stroke-width="2"></polyline><polyline points="8 6 2 12 8 18" stroke-width="2"></polyline></svg>
+                                    Eje 2 — Flask vs FastAPI y Routing
+                                </h3>
+                                <div class="space-y-5">
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 4</span>
+                                        <p class="text-gray-800 leading-relaxed">Compare cómo Flask y FastAPI manejan la validación de datos de entrada en un endpoint POST. ¿Por qué la aproximación de FastAPI es más robusta para un equipo de ciencia de datos?</p>
+                                    </div>
+                                    <div class="border-l-4 border-secondary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">Pregunta 5</span>
+                                        <p class="text-gray-800 leading-relaxed">¿Qué relación tiene FastAPI con Starlette? Si un colega le pregunta "¿FastAPI es un framework o un wrapper?", ¿cómo respondería técnicamente?</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Eje 3 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 shadow-sm">
+                                <h3 class="text-lg md:text-xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke-width="2"></polyline></svg>
+                                    Eje 3 — Concurrencia y Asincronía
+                                </h3>
+                                <div class="space-y-5">
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 6</span>
+                                        <p class="text-gray-800 leading-relaxed">Explique la diferencia entre <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">time.sleep(0.2)</code> y <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">await asyncio.sleep(0.2)</code> desde el punto de vista del event loop. ¿Por qué uno bloquea y el otro no?</p>
+                                    </div>
+                                    <div class="border-l-4 border-secondary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">Pregunta 7</span>
+                                        <p class="text-gray-800 leading-relaxed">Si un endpoint de su API necesita ejecutar un cálculo de bootstrap con 10,000 iteraciones (CPU-bound), ¿debería usar <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">async def</code>? ¿Qué estrategia implementaría para no bloquear el event loop?</p>
+                                    </div>
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 8</span>
+                                        <p class="text-gray-800 leading-relaxed">¿Por qué <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">asyncio.gather()</code> permite reducir el tiempo de respuesta de 0.5s a 0.3s en el ejemplo del endpoint <code>/evaluate</code>? Dibuje un diagrama de tiempo que lo ilustre.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-6"><span class="text-lg">←</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">8 / 9</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-7" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">→</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════ -->
+                    <!-- MÓDULO 7: BIBLIOGRAFÍA                     -->
+                    <!-- ═══════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-7" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Bibliografía y Fuentes Consultadas</h2>
+                            </div>
+
+                            <p class="text-lg leading-relaxed text-gray-700 mb-6">El presente material de estudio autónomo fue elaborado consultando las siguientes fuentes técnicas y académicas de referencia:</p>
+
+                            <div class="space-y-4">
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #ED1E79;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">FastAPI Documentation</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Sebastián Ramírez</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Documentación oficial del framework. Referencia principal para routing, validación con Pydantic, y manejo de concurrencia asíncrona.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">FastAPI</span>
+                                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">ASGI</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #3D008D;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">PEP 3333 — Python Web Server Gateway Interface v1.0.1</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Phillip J. Eby / Python Software Foundation</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Especificación original del protocolo WSGI que define la interfaz estándar entre servidores web y aplicaciones Python.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">WSGI</span>
+                                            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">PEP</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #FDB913;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">Flask Documentation</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Pallets Projects</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Documentación oficial de Flask. Referencia para routing, manejo de peticiones y el patrón WSGI aplicado a micro-frameworks.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Flask</span>
+                                            <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">WSGI</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #ED1E79;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">Uvicorn — An ASGI web server</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Encode OSS</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Documentación del servidor ASGI de referencia. Información sobre configuración de producción, workers y event loops.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">Uvicorn</span>
+                                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Producción</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #3D008D;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">Real Python — Async IO in Python</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Brad Solomon / Real Python</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Tutorial exhaustivo sobre el módulo asyncio de Python, corrutinas, event loops y patrones de concurrencia.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">asyncio</span>
+                                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Concurrencia</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                            </div>
+
+                            <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                                <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#preguntas-sustentacion"><span class="text-lg">←</span> Anterior</a></div>
+                                <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">9 / 9</div>
+                                <div></div>
+                            </div>
+                        </section>
+                    </article>
+
+                    <!-- FOOTER -->
+                    <footer class="mt-20 pt-8 border-t border-gray-200 mb-8 mx-auto w-full max-w-5xl">
+                        <div class="usta-header rounded-xl p-6 text-center shadow-lg" style="background: linear-gradient(180deg, #001A4D 0%, #002868 100%)">
+                            <p class="text-white font-medium text-sm">Diseñado por <span class="font-bold">Javier Mauricio Sierra</span></p>
+                            <p class="text-xs mt-1 text-white/80">Python para APIs e IA • USTA</p>
+                            <p class="text-[10px] mt-2 text-white/50">Módulo: Del Modelo Estadístico al Servicio Web — Documentación interactiva.</p>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sidebar Toggle Script -->
+    <script id="sidebar-toggle-script">
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('main-sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const icon = document.getElementById('sidebar-icon');
+            let isOpen = window.innerWidth > 768;
+            function applyState() {
+                if (isOpen) {
+                    sidebar.style.width = '16rem';
+                    sidebar.style.minWidth = '16rem';
+                    sidebar.style.opacity = '1';
+                    icon.innerHTML = '✕';
+                } else {
+                    sidebar.style.width = '0';
+                    sidebar.style.minWidth = '0';
+                    sidebar.style.opacity = '0';
+                    icon.innerHTML = '☰';
+                }
+            }
+            if (toggleBtn && sidebar) {
+                applyState();
+                toggleBtn.addEventListener('click', () => {
+                    isOpen = !isOpen;
+                    applyState();
+                });
+            }
+        });
+    </script>
+
+    <!-- SPA Router Script -->
+    <script id="navigation-script">
+        document.addEventListener('DOMContentLoaded', () => {
+            const modules = document.querySelectorAll('[id^="modulo-"], #preguntas-sustentacion');
+            const navLinks = document.querySelectorAll('nav a');
+
+            function setActiveModule(targetId) {
+                modules.forEach(mod => {
+                    mod.style.display = 'none';
+                    mod.classList.remove('animate-fade-in');
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('text-white', 'bg-white/10', 'shadow-md', 'translate-x-1');
+                    link.classList.add('text-white/70');
+                });
+                const targetMod = document.getElementById(targetId);
+                if (targetMod) {
+                    targetMod.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    void targetMod.offsetWidth;
+                    targetMod.classList.add('animate-fade-in');
+                }
+                const cleanTarget = '#' + targetId;
+                const activeLink = Array.from(navLinks).find(l => l.getAttribute('href') === cleanTarget);
+                if (activeLink) {
+                    activeLink.classList.remove('text-white/70');
+                    activeLink.classList.add('text-white', 'bg-white/10', 'shadow-md', 'translate-x-1');
+                }
+                const sidebar = document.querySelector('aside');
+                if (window.innerWidth < 768 && sidebar && sidebar.style.width !== '0px') {
+                    const toggle = document.getElementById('sidebar-toggle');
+                    if (toggle) toggle.click();
+                }
+            }
+
+            document.body.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href^="#modulo-"], a[href="#preguntas-sustentacion"]');
+                if (link) {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    setActiveModule(targetId);
+                    history.pushState(null, null, link.getAttribute('href'));
+                }
+            });
+
+            if (modules.length > 0) {
+                let startModId = modules[0].id;
+                if (window.location.hash) {
+                    const hashId = window.location.hash.substring(1);
+                    if (document.getElementById(hashId)) startModId = hashId;
+                }
+                setActiveModule(startModId);
+            }
+        });
+    </script>
+
+    <!-- Copy to Clipboard Script -->
+    <script id="copy-clipboard-script">
+        async function copyCode(blockId, btnElement) {
+            const preObj = document.getElementById(blockId);
+            if (!preObj) return;
+            const textToCopy = preObj.innerText || preObj.textContent;
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                const originalHTML = btnElement.innerHTML;
+                btnElement.classList.add('text-green-400');
+                btnElement.innerHTML = `<span class="text-[10px] uppercase font-bold tracking-wider">¡Copiado!</span> <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>`;
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.remove('text-green-400');
+                }, 2000);
+            } catch (err) {
+                console.error('Fallo al copiar!', err);
+            }
+        }
+    </script>
+
+    <!-- Question Randomizer Script -->
+    <script id="randomize-questions-script">
+        document.addEventListener("DOMContentLoaded", function () {
+            const questionContainers = document.querySelectorAll('.space-y-2.mb-4');
+            questionContainers.forEach(container => {
+                const block = container.closest('.bg-white');
+                if (!block) return;
+                const details = block.querySelector('details');
+                if (!details) return;
+                const labels = Array.from(container.querySelectorAll('label'));
+                if (labels.length === 0) return;
+                const optionsData = labels.map(label => {
+                    const span = label.querySelector('span');
+                    const isCorrect = span.classList.contains('font-medium');
+                    if (isCorrect) span.classList.remove('font-medium');
+                    let htmlContent = span.innerHTML.trim();
+                    htmlContent = htmlContent.replace(/^(?:<strong>)?[A-C]\)(?:<\/strong>)?\s*/i, '');
+                    return { label, span, isCorrect, htmlContent };
+                });
+                for (let i = optionsData.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [optionsData[i], optionsData[j]] = [optionsData[j], optionsData[i]];
+                }
+                container.innerHTML = '';
+                let correctLetter = '';
+                optionsData.forEach((data, index) => {
+                    const letter = String.fromCharCode(65 + index);
+                    if (data.isCorrect) correctLetter = letter;
+                    data.span.innerHTML = `<strong>${letter})</strong> ${data.htmlContent}`;
+                    container.appendChild(data.label);
+                });
+                const feedbackContainer = details.querySelector('div');
+                if (feedbackContainer) {
+                    feedbackContainer.innerHTML = feedbackContainer.innerHTML.replace(
+                        /<strong>Respuesta Correcta: <\/strong>([A-C])|<strong>Respuesta Correcta: ([A-C])<\/strong>/gi,
+                        `<strong>Respuesta Correcta: ${correctLetter}</strong>`
+                    );
+                }
+            });
+        });
+    </script>
+</body>
+</html>

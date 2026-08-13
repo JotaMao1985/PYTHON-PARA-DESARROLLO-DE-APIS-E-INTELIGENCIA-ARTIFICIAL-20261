@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Material de estudio autónomo sobre Inyección de Dependencias, Variables de Entorno y Arquitectura Modular en FastAPI"
+        name="description" />
+    <meta content="Material basado en fuentes académicas reconocidas" name="author" />
+    <title>Semana 8 — Inyección de dependencias y configuración · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 8 — Inyección de dependencias y configuración · Python para APIs e IA">
+    <meta property="og:description" content="width=device-width, initial-scale=1.0&quot; name=&quot;viewport&quot; /&gt; &lt;meta content=&quot;Material de estudio autónomo sobre Inyección de Dependencias, Variables de Entorno y Arquitectura Modular en FastAPI">
+    <meta property="og:type" content="article">
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&amp;display=swap" rel="stylesheet" />
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3D008D',
+                        secondary: '#ED1E79',
+                        navy: '#001A4D',
+                        gold: '#FDB913',
+                        bg: '#F8FAFC',
+                        surface: '#FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            scroll-behavior: smooth;
+        }
+
+        code,
+        pre {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .usta-gradient {
+            background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%);
+        }
+
+        .usta-header {
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+        }
+
+        .usta-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .usta-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.08) 0%, rgba(237, 30, 121, 0.08) 100%);
+            border: 1px solid rgba(61, 0, 141, 0.2);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(61, 0, 141, 0.15) 0%, transparent 100%);
+            border-left: 4px solid #ED1E79;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4A00A8, #FF2D8A);
+        }
+
+        .code-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .code-scroll::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button:focus-visible {
+            outline: 2px solid #ED1E79;
+            outline-offset: 2px;
+        }
+
+        .syntax-kwd {
+            color: #c678dd;
+            font-weight: bold;
+        }
+
+        .syntax-cls {
+            color: #e5c07b;
+        }
+
+        .syntax-str {
+            color: #98c379;
+        }
+
+        .syntax-com {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .syntax-func {
+            color: #61afef;
+        }
+
+        .syntax-self {
+            color: #e06c75;
+            font-style: italic;
+        }
+
+        .syntax-num {
+            color: #d19a66;
+        }
+
+        .diagram {
+            font-family: 'Fira Code', monospace;
+            white-space: pre;
+            background: #fff;
+            border: 1px dashed #999;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            color: #333;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body class="m-0 p-0 overflow-hidden">
+    <div class="flex h-screen overflow-hidden bg-slate-50 font-sans" id="app-layout">
+        <button
+            class="fixed top-4 left-4 z-50 p-2.5 w-10 h-10 flex items-center justify-center rounded-full shadow-lg text-white transition-all hover:scale-110"
+            id="sidebar-toggle" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)"
+            title="Mostrar/Ocultar Menú">
+            <span class="font-bold" id="sidebar-icon">✕</span>
+        </button>
+        <aside
+            class="flex-shrink-0 overflow-y-auto z-40 flex flex-col md:flex usta-header text-white hidden-scrollbar font-sans shadow-2xl"
+            id="main-sidebar"
+            style="transition: width 0.3s ease, min-width 0.3s ease, opacity 0.25s ease; width: 16rem; min-width: 16rem; overflow-y: auto; overflow-x: hidden;">
+            <div
+                class="p-6 pt-10 border-b border-white border-opacity-20 bg-black bg-opacity-10 backdrop-blur-sm sticky top-0 z-50">
+                <h1 class="font-extrabold text-xl tracking-tight flex items-center gap-2">
+                    <span class="text-white">Python</span>
+                    <span class="text-secondary">APIs e IA</span>
+                </h1>
+                <p class="text-xs text-blue-200 mt-2 font-medium opacity-80">DI y Configuración en FastAPI • USTA</p>
+            </div>
+            <nav class="p-4 space-y-1">
+                <!-- Nav: Introducción -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-0">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <rect height="8" rx="2" ry="2" width="20" x="2" y="2"></rect>
+                            <rect height="8" rx="2" ry="2" width="20" x="2" y="14"></rect>
+                            <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                            <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Introducción: De Notebook a Producción</span>
+                </a>
+                <!-- Nav: Módulo 1 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-1">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 1: Variables de Entorno y Configuración...</span>
+                </a>
+                <!-- Nav: Módulo 2 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-2">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="16 18 22 12 16 6"></polyline>
+                            <polyline points="8 6 2 12 8 18"></polyline>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 2: Inyección de Dependencias (Depends)...</span>
+                </a>
+                <!-- Nav: Módulo 3 -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-3">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <rect height="16" rx="2" ry="2" width="16" x="4" y="4"></rect>
+                            <rect height="6" width="6" x="9" y="9"></rect>
+                            <line x1="9" x2="9" y1="1" y2="4"></line>
+                            <line x1="15" x2="15" y1="1" y2="4"></line>
+                            <line x1="9" x2="9" y1="20" y2="23"></line>
+                            <line x1="15" x2="15" y1="20" y2="23"></line>
+                            <line x1="20" x2="23" y1="9" y2="9"></line>
+                            <line x1="20" x2="23" y1="14" y2="14"></line>
+                            <line x1="1" x2="4" y1="9" y2="9"></line>
+                            <line x1="1" x2="4" y1="14" y2="14"></line>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Módulo 3: Integración Final (API Modular)...</span>
+                </a>
+                <!-- Nav: Actividad -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-4">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Actividad Evaluativa</span>
+                </a>
+                <!-- Nav: Preguntas -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#preguntas-sustentacion">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Preguntas de Sustentación</span>
+                </a>
+                <!-- Nav: Bibliografía -->
+                <a class="w-full flex items-start gap-3 px-4 py-3 text-sm rounded-xl transition-all duration-300 text-left text-white/70 hover:text-white hover:bg-white/10 hover:shadow-md hover:translate-x-1 group"
+                    href="#modulo-5">
+                    <div class="mt-0.5 w-[18px] h-[18px] shrink-0 transition-transform group-hover:scale-110 opacity-80 group-hover:opacity-100">
+                        <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </div>
+                    <span class="font-medium leading-tight">Bibliografía Consultada</span>
+                </a>
+            </nav>
+        </aside>
+        <main class="flex-1 overflow-y-auto p-6 md:p-10 lg:p-14 scroll-smooth bg-slate-50">
+            <div class="max-w-5xl mx-auto space-y-10">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-8"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-8" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 8 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">De lo duro a lo flexible: variables de entorno</li><li style="margin:0 0 .3rem 0;">El patrón de inyección de dependencias</li><li style="margin:0 0 .3rem 0;">Reutilización: conexión a base de datos y carga de configuración</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Escribir una dependencia de parámetros comunes y aplicarla a varias rutas</li><li style="margin:0 0 .3rem 0;">Configurar el entorno local con un archivo .env</li><li style="margin:0 0 .3rem 0;">Cargar los settings del proyecto desde variables de entorno</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Antipatrones de configuración embebida</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">El ejemplo de la cadena de conexión con la credencial embebida está ahí para enseñar por qué NO se hace: es el antipatrón, no el patrón. Entorno: Python 3.11.9 con FastAPI Depends y python-dotenv.</p>
+</section>
+
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- MÓDULO 0: INTRODUCCIÓN MOTIVACIONAL                            -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-0">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0"
+                                    style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <rect height="8" rx="2" ry="2" width="20" x="2" y="2"></rect>
+                                        <rect height="8" rx="2" ry="2" width="20" x="2" y="14"></rect>
+                                        <line x1="6" x2="6.01" y1="6" y2="6"></line>
+                                        <line x1="6" x2="6.01" y1="18" y2="18"></line>
+                                    </svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Introducción: De Notebook a Producción</h2>
+                            </div>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Imagina este escenario: terminaste tu modelo de series temporales en un Jupyter Notebook. Funciona. Los gráficos se ven bien, los residuos pasan las pruebas de normalidad y tu profesor está satisfecho. Ahora llega la pregunta inevitable: <em>"¿Y cómo lo ponemos en producción para que el equipo de analítica lo consuma?"</em></p>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Tu primer instinto es razonable: tomas el notebook, extraes la lógica en un <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code> con FastAPI, hardcodeas la cadena de conexión a PostgreSQL, metes todo en un solo archivo de 400 líneas, y funciona. Hasta que tu compañero clona el repo y no puede correr la app porque <strong>tu contraseña de base de datos está en el código</strong>. O necesitas cambiar de la BD de desarrollo a la de producción, y eso implica <strong>editar código fuente</strong>. O quieres agregar un segundo endpoint que también consulta la BD, y <strong>copias y pegas</strong> la lógica de conexión. Tres meses después, el archivo tiene 1200 líneas y <strong>nadie entiende qué depende de qué</strong>.</p>
+
+                            <p class="text-gray-700 leading-relaxed mb-5">Esto es lo que en ingeniería de software se llama <strong>código espagueti</strong>: todo está entrelazado, nada es reutilizable, y cualquier cambio rompe algo inesperado. En términos estadísticos, es como mezclar la recolección, limpieza, análisis y presentación de datos en un solo script sin secciones claras: eventualmente nadie puede auditar el proceso completo.</p>
+
+                            <!-- Diagrama SVG: Monolítico vs Modular -->
+                            <div class="my-8 rounded-xl overflow-hidden shadow-lg">
+                                <svg viewBox="0 0 1100 420" xmlns="http://www.w3.org/2000/svg" class="w-full">
+                                    <defs>
+                                        <linearGradient id="badGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.15"/>
+                                            <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.05"/>
+                                        </linearGradient>
+                                        <linearGradient id="goodGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#22c55e;stop-opacity:0.15"/>
+                                            <stop offset="100%" style="stop-color:#22c55e;stop-opacity:0.05"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Left: Monolítico -->
+                                    <rect x="30" y="20" width="480" height="380" rx="16" fill="url(#badGrad)" stroke="#ef4444" stroke-width="2" stroke-dasharray="8,4"/>
+                                    <text x="270" y="55" text-anchor="middle" font-family="Montserrat" font-weight="800" font-size="16" fill="#dc2626">❌ ANTES: main.py Monolítico</text>
+                                    <rect x="70" y="80" width="400" height="45" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+                                    <text x="270" y="108" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#991b1b">db_url = "postgresql://admin:Pass123@..."</text>
+                                    <rect x="70" y="140" width="400" height="45" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+                                    <text x="270" y="168" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#991b1b">Conexión a BD (repetida 5 veces)</text>
+                                    <rect x="70" y="200" width="400" height="45" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+                                    <text x="270" y="228" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#991b1b">Lógica de negocio + Validación</text>
+                                    <rect x="70" y="260" width="400" height="45" rx="8" fill="#fee2e2" stroke="#fca5a5" stroke-width="1.5"/>
+                                    <text x="270" y="288" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#991b1b">Endpoints (todo acoplado)</text>
+                                    <text x="270" y="345" text-anchor="middle" font-family="Montserrat" font-size="12" fill="#991b1b" font-weight="600">Todo mezclado, nada reutilizable</text>
+                                    <text x="270" y="365" text-anchor="middle" font-family="Montserrat" font-size="11" fill="#b91c1c">Credenciales expuestas en Git</text>
+
+                                    <!-- Right: Modular -->
+                                    <rect x="580" y="20" width="490" height="380" rx="16" fill="url(#goodGrad)" stroke="#22c55e" stroke-width="2" stroke-dasharray="8,4"/>
+                                    <text x="825" y="55" text-anchor="middle" font-family="Montserrat" font-weight="800" font-size="16" fill="#16a34a">✅ DESPUÉS: Arquitectura Modular</text>
+
+                                    <rect x="610" y="80" width="140" height="55" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+                                    <text x="680" y="102" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#166534">.env</text>
+                                    <text x="680" y="122" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#15803d">Secretos seguros</text>
+
+                                    <rect x="770" y="80" width="140" height="55" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+                                    <text x="840" y="102" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#166534">config.py</text>
+                                    <text x="840" y="122" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#15803d">Settings validados</text>
+
+                                    <rect x="930" y="80" width="120" height="55" rx="10" fill="#dcfce7" stroke="#86efac" stroke-width="1.5"/>
+                                    <text x="990" y="102" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#166534">database.py</text>
+                                    <text x="990" y="122" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#15803d">Motor + Sesión</text>
+
+                                    <rect x="660" y="165" width="200" height="55" rx="10" fill="#bbf7d0" stroke="#4ade80" stroke-width="1.5"/>
+                                    <text x="760" y="187" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#166534">dependencies.py</text>
+                                    <text x="760" y="207" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#15803d">get_settings / get_db</text>
+
+                                    <rect x="880" y="165" width="140" height="55" rx="10" fill="#bbf7d0" stroke="#4ade80" stroke-width="1.5"/>
+                                    <text x="950" y="187" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#166534">schemas.py</text>
+                                    <text x="950" y="207" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#15803d">Contratos Pydantic</text>
+
+                                    <rect x="700" y="255" width="250" height="60" rx="12" fill="#166534" stroke="#15803d" stroke-width="2"/>
+                                    <text x="825" y="280" text-anchor="middle" font-family="Fira Code" font-size="13" fill="#ffffff" font-weight="bold">main.py</text>
+                                    <text x="825" y="300" text-anchor="middle" font-family="Montserrat" font-size="10" fill="#bbf7d0">Solo endpoints, limpio y legible</text>
+
+                                    <!-- Flechas -->
+                                    <line x1="680" y1="135" x2="730" y2="165" stroke="#4ade80" stroke-width="2" marker-end="url(#arrowG)"/>
+                                    <line x1="840" y1="135" x2="790" y2="165" stroke="#4ade80" stroke-width="2" marker-end="url(#arrowG)"/>
+                                    <line x1="990" y1="135" x2="950" y2="165" stroke="#4ade80" stroke-width="2" marker-end="url(#arrowG)"/>
+                                    <line x1="760" y1="220" x2="800" y2="255" stroke="#4ade80" stroke-width="2" marker-end="url(#arrowG)"/>
+                                    <line x1="950" y1="220" x2="870" y2="255" stroke="#4ade80" stroke-width="2" marker-end="url(#arrowG)"/>
+
+                                    <text x="825" y="350" text-anchor="middle" font-family="Montserrat" font-size="12" fill="#166534" font-weight="600">Cada archivo, una sola responsabilidad</text>
+                                    <text x="825" y="370" text-anchor="middle" font-family="Montserrat" font-size="11" fill="#15803d">Secretos fuera del código, dependencias inyectadas</text>
+
+                                    <defs>
+                                        <marker id="arrowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#4ade80"/>
+                                        </marker>
+                                    </defs>
+                                </svg>
+                            </div>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>Objetivo de esta guía:</strong> Aprender tres patrones que resuelven estos problemas de raíz: <strong>(1)</strong> Variables de entorno para sacar la configuración sensible fuera del código, <strong>(2)</strong> Inyección de dependencias para que cada pieza declare explícitamente qué necesita, y <strong>(3)</strong> Integración modular para que <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code> se lea casi como pseudocódigo.
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">¿Por qué un estadístico necesita estos patrones?</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Como estadísticos, están acostumbrados a garantizar la <em>reproducibilidad</em> de sus análisis: semillas aleatorias fijas, datos versionados, supuestos documentados. Estos tres patrones son el equivalente en ingeniería de software a esa disciplina: garantizan que su aplicación es reproducible en cualquier entorno (desarrollo, staging, producción), mantenible por otros miembros del equipo, y auditable en cada uno de sus componentes.</p>
+
+                            <table class="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Principio Estadístico</th>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Equivalente en Ingeniería</th>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Patrón en esta Guía</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-800">Reproducibilidad del análisis</td>
+                                        <td class="px-6 py-4 text-sm text-gray-800">Configuración externa e idempotente</td>
+                                        <td class="px-6 py-4 text-sm text-gray-800"><strong>Variables de entorno</strong> (<code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code> + <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">pydantic-settings</code>)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-800">Separación de concerns (EDA ≠ inferencia ≠ reporte)</td>
+                                        <td class="px-6 py-4 text-sm text-gray-800">Principio de Responsabilidad Única</td>
+                                        <td class="px-6 py-4 text-sm text-gray-800"><strong>Inyección de Dependencias</strong> (<code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends</code>)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-sm text-gray-800">Documentación del pipeline</td>
+                                        <td class="px-6 py-4 text-sm text-gray-800">Árbol de dependencias explícito</td>
+                                        <td class="px-6 py-4 text-sm text-gray-800"><strong>Arquitectura modular</strong> (archivos con responsabilidad única)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- Verificación de comprensión Módulo 0 -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 md:p-8 mb-8 mt-10 shadow-sm">
+                            <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                Verificación de Comprensión
+                            </h3>
+                            <div class="space-y-6">
+                                <!-- Pregunta 1 -->
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs font-bold rounded mb-3">Nivel Básico</span>
+                                    <p class="text-gray-800 font-medium mb-4">¿Cuál es el principal riesgo de escribir la cadena de conexión a la base de datos directamente en el código fuente (<em>hardcodear</em>)?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m0_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) Que el programa sea más lento porque Python interpreta cadenas estáticas de forma menos eficiente.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m0_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Que las credenciales queden expuestas en el historial de Git, que cambiar de entorno requiera editar código, y que cualquier persona con acceso al repositorio obtenga acceso al sistema.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m0_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) Que FastAPI no pueda generar automáticamente la documentación Swagger del endpoint.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full">
+                                            <span class="flex items-center gap-2">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                                Ver Respuesta y Retroalimentación
+                                            </span>
+                                            <span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span>
+                                        </summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            Hardcodear credenciales es un problema de seguridad, mantenibilidad y portabilidad. Aunque elimines la contraseña en un commit posterior, Git conserva el historial completo. Además, cada cambio de entorno (desarrollo → producción) requeriría editar el archivo fuente en lugar de simplemente cambiar una variable de entorno.
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Controles de navegación -->
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">1 / 7</div>
+                            <div>
+                                <a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-1" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">&rarr;</span></a>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- MÓDULO 1: VARIABLES DE ENTORNO                                 -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-1" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 1: De lo Duro a lo Flexible — Variables de Entorno</h2>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.1 El Antipatrón: Credenciales en el Código</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Observa este fragmento. Es <strong>exactamente lo que no debes hacer</strong>:</p>
+
+                            <!-- Código: Antipatrón -->
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2">
+                                        <span class="flex items-center gap-1">
+                                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                        </span>
+                                    </div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>main.py — ❌ ANTIPATRÓN</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-1', this)" title="Copiar al portapapeles">
+                                        <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                    </button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-1"><code><span class="text-green-500 italic"># main.py — ❌ ANTIPATRÓN</span>
+<span class="text-pink-500 font-bold">from</span> sqlalchemy <span class="text-pink-500 font-bold">import</span> create_engine
+
+DATABASE_URL = <span class="text-yellow-300">"postgresql://admin:SuperSecreto123@192.168.1.50:5432/encuestas_db"</span>
+API_KEY_REDCAP = <span class="text-yellow-300">"abc123xyz789"</span>
+
+engine = create_engine(DATABASE_URL)</code></pre>
+                            </div>
+
+                            <table class="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Problema</th>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Consecuencia</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>Contraseña en texto plano</strong></td><td class="px-6 py-4 text-sm text-gray-800">Si se sube a GitHub, queda en el historial de Git <em>para siempre</em></td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>IP del servidor fija</strong></td><td class="px-6 py-4 text-sm text-gray-800">Cambiar de entorno requiere editar código fuente</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><strong>API key mezclada con lógica</strong></td><td class="px-6 py-4 text-sm text-gray-800">Cualquier lector del código tiene acceso al sistema de captura de datos</td></tr>
+                                </tbody>
+                            </table>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.2 La Solución: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code> + Tipado con <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">pydantic-settings</code></h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">La idea es simple: las credenciales y parámetros viven en un archivo <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code> que <strong>nunca se sube al repositorio</strong>. Tu código lee ese archivo y valida que todo esté correcto antes de arrancar.</p>
+
+                            <h4 class="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Paso 1.1: Instalar dependencias</h4>
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span>Terminal</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-2', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-2"><code>pip install pydantic-settings python-dotenv</code></pre>
+                            </div>
+
+                            <h4 class="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Paso 1.2: Crear el archivo <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code></h4>
+                            <p class="text-gray-700 leading-relaxed mb-5">En la <strong>raíz</strong> de tu proyecto (al mismo nivel que <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code>), crea un archivo llamado <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code>:</p>
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span>.env</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-3', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-3"><code><span class="text-green-500 italic"># .env — Este archivo NO se sube a Git</span>
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=encuestas_db
+DB_USER=admin
+DB_PASSWORD=SuperSecreto123
+DEBUG_MODE=true
+SAMPLE_SIZE=1000</code></pre>
+                            </div>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>⚠️ Importante:</strong> Agrega <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code> a tu archivo <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.gitignore</code> inmediatamente. Esto evita que se suba al repositorio por accidente. Tu <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.gitignore</code> debe incluir al menos: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code>, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">__pycache__/</code>, y <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">*.pyc</code>.
+                            </div>
+
+                            <h4 class="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Paso 1.3: Crear <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">config.py</code> con Validación de Tipos</h4>
+                            <p class="text-gray-700 leading-relaxed mb-5">Aquí es donde <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">pydantic-settings</code> brilla. En lugar de leer las variables como strings crudos, defines una clase que <strong>valida y convierte los tipos automáticamente</strong>:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>config.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-4', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-4"><code><span class="text-green-500 italic"># config.py</span>
+<span class="text-pink-500 font-bold">from</span> pydantic_settings <span class="text-pink-500 font-bold">import</span> BaseSettings, SettingsConfigDict
+
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">Settings</span>(BaseSettings):
+    <span class="text-yellow-300">"""
+    Configuración de la aplicación.
+    Cada atributo se mapea a una variable de entorno
+    del mismo nombre (case-insensitive por defecto).
+    """</span>
+
+    <span class="text-green-500 italic"># --- Conexión a Base de Datos ---</span>
+    db_host: <span class="text-blue-400">str</span>
+    db_port: <span class="text-blue-400">int</span>                    <span class="text-green-500 italic"># Convierte "5432" (str) → 5432 (int)</span>
+    db_name: <span class="text-blue-400">str</span>
+    db_user: <span class="text-blue-400">str</span>
+    db_password: <span class="text-blue-400">str</span>
+
+    <span class="text-green-500 italic"># --- Parámetros de la aplicación ---</span>
+    debug_mode: <span class="text-blue-400">bool</span> = <span class="text-orange-400">False</span>        <span class="text-green-500 italic"># Valor por defecto si no está en .env</span>
+    sample_size: <span class="text-blue-400">int</span> = <span class="text-orange-400">500</span>          <span class="text-green-500 italic"># Tamaño de muestra por defecto</span>
+
+    model_config = SettingsConfigDict(
+        env_file=<span class="text-yellow-300">".env"</span>,            <span class="text-green-500 italic"># Archivo de donde leer las variables</span>
+        env_file_encoding=<span class="text-yellow-300">"utf-8"</span>,
+    )
+
+    <span class="text-pink-500 font-bold">@property</span>
+    <span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">database_url</span>(<span class="text-red-400 italic">self</span>) -&gt; <span class="text-blue-400">str</span>:
+        <span class="text-yellow-300">"""Construye la URL de conexión a partir de las partes."""</span>
+        <span class="text-pink-500 font-bold">return</span> (
+            <span class="text-yellow-300">f"postgresql://{</span><span class="text-red-400 italic">self</span>.db_user<span class="text-yellow-300">}:{</span><span class="text-red-400 italic">self</span>.db_password<span class="text-yellow-300">}"</span>
+            <span class="text-yellow-300">f"@{</span><span class="text-red-400 italic">self</span>.db_host<span class="text-yellow-300">}:{</span><span class="text-red-400 italic">self</span>.db_port<span class="text-yellow-300">}/{</span><span class="text-red-400 italic">self</span>.db_name<span class="text-yellow-300">}"</span>
+        )</code></pre>
+                            </div>
+
+                            <details class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 cursor-pointer group shadow-sm transition-all duration-300 hover:shadow-md">
+                                <summary class="font-semibold text-blue-800 list-none flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                        ¿Qué hace Pydantic con los tipos?
+                                    </div>
+                                    <span class="transition group-open:rotate-180"><svg fill="none" class="w-5 h-5 text-blue-600" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                                </summary>
+                                <div class="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
+                                    <p><code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">db_port: int</code> → Pydantic lee <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"5432"</code> del <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">.env</code> y lo convierte a <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">int</code>. Si pones <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"abc"</code>, la app <strong>no arranca</strong> y te dice exactamente qué falló.</p>
+                                    <p class="mt-2"><code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">debug_mode: bool = False</code> → Pydantic entiende que <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"true"</code>, <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"1"</code>, <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"yes"</code> son <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">True</code>. Tiene un valor por defecto por si no defines la variable.</p>
+                                    <p class="mt-2"><code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">database_url</code> es una <em>propiedad derivada</em>, no una variable de entorno. Se calcula a partir de las demás.</p>
+                                </div>
+                            </details>
+                        </section>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-4">1.3 Ejercicio Práctico</h3>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 md:p-8 mb-6">
+                                <p class="text-gray-700 leading-relaxed mb-4">Modifica <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">config.py</code> para agregar estas variables y verifica con un script de prueba:</p>
+                                <ol class="list-decimal pl-6 space-y-2 text-gray-700 text-sm">
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">CONFIDENCE_LEVEL: float</code> → con valor por defecto <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">0.95</code>.</li>
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">MAX_ITERATIONS: int</code> → sin valor por defecto (<strong>obligatoria</strong> en <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code>).</li>
+                                    <li><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">APP_NAME: str</code> → con valor por defecto <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">"API Encuestas"</code>.</li>
+                                </ol>
+                                <p class="text-gray-700 leading-relaxed mt-4">Agrega las variables correspondientes en <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code>. Si omites <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">MAX_ITERATIONS</code>, deberías ver un error de validación claro.</p>
+                            </div>
+                        </section>
+
+                        <!-- Verificación Módulo 1 -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 md:p-8 mb-8 mt-10 shadow-sm">
+                            <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Verificación de Comprensión
+                            </h3>
+                            <div class="space-y-6">
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded mb-3">Nivel Medio</span>
+                                    <p class="text-gray-800 font-medium mb-4">Si defines <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">db_port: int</code> en tu clase <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Settings</code> y en tu archivo <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code> escribes <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">DB_PORT=abc</code>, ¿qué sucede al instanciar <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Settings()</code>?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) Pydantic convierte silenciosamente <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">"abc"</code> a <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">0</code> como valor por defecto.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Pydantic lanza un <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">ValidationError</code> indicando que <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">"abc"</code> no es convertible a <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">int</code>, y la aplicación no arranca.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m1_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) Python ignora la anotación de tipo y asigna el string <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">"abc"</code> directamente al atributo.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full"><span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Ver Respuesta y Retroalimentación</span><span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span></summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">BaseSettings</code> hereda todo el poder de validación de Pydantic. Si un campo está declarado como <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">int</code> y el valor provisto no es convertible a entero, Pydantic lanza un <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">ValidationError</code> al momento de la instanciación. Esto es lo que se llama <em>fail fast</em>: la app falla inmediatamente con un mensaje claro en lugar de fallar más tarde de forma impredecible.
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-0"><span class="text-lg">&larr;</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">2 / 7</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-2" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">&rarr;</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- MÓDULO 2: INYECCIÓN DE DEPENDENCIAS                            -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-2" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 2: Inyección de Dependencias con <code class="text-secondary">Depends</code></h2>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.1 ¿Qué es una "Dependencia"?</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">En el contexto más práctico posible: <strong>una dependencia es algo que tu función necesita para hacer su trabajo, pero que ella no debería crear por sí misma</strong>.</p>
+                            <p class="text-gray-700 leading-relaxed mb-5">Piensa en esta analogía estadística: cuando haces un análisis, necesitas datos. Pero tu función de análisis no debería ser la que se conecta a la base de datos, descarga los datos, los limpia, y luego los analiza. Idealmente, tu función <em>recibe</em> los datos ya listos y se concentra en lo suyo.</p>
+
+                            <!-- Diagrama SVG: Sin DI vs Con DI -->
+                            <div class="my-8 rounded-xl overflow-hidden shadow-lg">
+                                <svg viewBox="0 0 1050 340" xmlns="http://www.w3.org/2000/svg" class="w-full">
+                                    <rect x="20" y="10" width="480" height="320" rx="14" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="6,3"/>
+                                    <text x="260" y="42" text-anchor="middle" font-family="Montserrat" font-weight="700" font-size="14" fill="#92400e">Sin Inyección de Dependencias</text>
+                                    <rect x="80" y="65" width="360" height="230" rx="10" fill="#ffffff" stroke="#d97706" stroke-width="1.5"/>
+                                    <text x="260" y="90" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#92400e" font-weight="600">endpoint_analisis()</text>
+                                    <text x="100" y="120" font-family="Fira Code" font-size="11" fill="#78716c">1. Leer .env</text>
+                                    <text x="100" y="145" font-family="Fira Code" font-size="11" fill="#78716c">2. Conectar a BD</text>
+                                    <text x="100" y="170" font-family="Fira Code" font-size="11" fill="#78716c">3. Abrir sesión</text>
+                                    <text x="100" y="195" font-family="Fira Code" font-size="11" fill="#78716c">4. Consultar datos</text>
+                                    <text x="100" y="220" font-family="Fira Code" font-size="11" fill="#78716c">5. Cerrar sesión</text>
+                                    <text x="100" y="245" font-family="Fira Code" font-size="11" fill="#78716c">6. Retornar resultado</text>
+                                    <text x="260" y="280" text-anchor="middle" font-family="Montserrat" font-size="10" fill="#b45309" font-weight="600">El endpoint hace TODO</text>
+
+                                    <rect x="550" y="10" width="480" height="320" rx="14" fill="#ecfdf5" stroke="#10b981" stroke-width="1.5" stroke-dasharray="6,3"/>
+                                    <text x="790" y="42" text-anchor="middle" font-family="Montserrat" font-weight="700" font-size="14" fill="#065f46">Con Inyección de Dependencias</text>
+                                    <rect x="650" y="65" width="240" height="100" rx="10" fill="#ffffff" stroke="#059669" stroke-width="1.5"/>
+                                    <text x="770" y="92" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#065f46" font-weight="600">endpoint_analisis()</text>
+                                    <text x="770" y="115" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#6b7280">Recibe: db, settings</text>
+                                    <text x="670" y="145" font-family="Fira Code" font-size="11" fill="#6b7280">1. Consultar datos</text>
+                                    <text x="670" y="155" font-family="Fira Code" font-size="11" fill="#6b7280">2. Retornar resultado</text>
+
+                                    <rect x="590" y="210" width="150" height="50" rx="8" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                                    <text x="665" y="240" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#065f46">get_db()</text>
+
+                                    <rect x="790" y="210" width="150" height="50" rx="8" fill="#d1fae5" stroke="#34d399" stroke-width="1.5"/>
+                                    <text x="865" y="240" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#065f46">get_settings()</text>
+
+                                    <line x1="720" y1="165" x2="665" y2="210" stroke="#34d399" stroke-width="2"/>
+                                    <line x1="820" y1="165" x2="865" y2="210" stroke="#34d399" stroke-width="2"/>
+                                    <text x="790" y="295" text-anchor="middle" font-family="Montserrat" font-size="10" fill="#065f46" font-weight="600">Cada pieza hace UNA cosa</text>
+                                    <text x="790" y="315" text-anchor="middle" font-family="Montserrat" font-size="10" fill="#047857">El endpoint solo analiza</text>
+                                </svg>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends</code> en FastAPI: La Mecánica</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5"><code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends</code> es la forma que tiene FastAPI de decir: <em>"Antes de ejecutar este endpoint, ejecuta esta otra función y pásale el resultado como parámetro."</em></p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Ejemplo mínimo de Depends</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-5', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-5"><code><span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI, Depends
+
+app = FastAPI()
+
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">get_sample_size</span>() -&gt; <span class="text-blue-400">int</span>:
+    <span class="text-yellow-300">"""Dependencia simple: retorna un valor de configuración."""</span>
+    <span class="text-pink-500 font-bold">return</span> <span class="text-orange-400">1000</span>
+
+
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/experimento"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">crear_experimento</span>(n: <span class="text-blue-400">int</span> = Depends(get_sample_size)):
+    <span class="text-yellow-300">"""
+    FastAPI ejecuta get_sample_size() automáticamente
+    y pasa el resultado como 'n'.
+    """</span>
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"mensaje"</span>: <span class="text-yellow-300">f"Experimento creado con n={n}"</span>}</code></pre>
+                            </div>
+
+                            <div class="tip-box p-6 md:p-8 rounded-xl my-8 border-l-4 border-secondary shadow-sm">
+                                <strong>¿Por qué no simplemente llamar <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">get_sample_size()</code> dentro del endpoint?</strong> Porque <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends</code> te da tres ventajas: <strong>(1) Reutilización</strong> — usas la misma dependencia en 20 endpoints sin repetir código. <strong>(2) Testeo</strong> — en pruebas puedes reemplazar la dependencia por un mock sin tocar el endpoint. <strong>(3) Composición</strong> — las dependencias pueden depender de otras, formando un árbol que FastAPI resuelve automáticamente.
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 Dependencia con Ciclo de Vida: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">yield</code></h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Para recursos que necesitan limpieza (como una conexión a base de datos que debe cerrarse), usas <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">yield</code> en lugar de <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">return</code>:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Dependencia con yield</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-6', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-6"><code><span class="text-pink-500 font-bold">from</span> typing <span class="text-pink-500 font-bold">import</span> Generator
+
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">get_db_session</span>() -&gt; Generator:
+    <span class="text-yellow-300">"""
+    Dependencia con ciclo de vida:
+    - Antes del yield: se crea el recurso (abrir sesión).
+    - yield: el endpoint usa el recurso.
+    - Después del yield: se limpia (cerrar sesión).
+    """</span>
+    <span class="text-blue-400">print</span>(<span class="text-yellow-300">"→ Abriendo sesión de BD"</span>)
+    session = {<span class="text-yellow-300">"fake"</span>: <span class="text-yellow-300">"session"</span>}  <span class="text-green-500 italic"># Simulación</span>
+    <span class="text-pink-500 font-bold">try</span>:
+        <span class="text-pink-500 font-bold">yield</span> session
+    <span class="text-pink-500 font-bold">finally</span>:
+        <span class="text-blue-400">print</span>(<span class="text-yellow-300">"→ Cerrando sesión de BD"</span>)
+        <span class="text-green-500 italic"># Aquí: session.close() en una app real</span></code></pre>
+                            </div>
+
+                            <!-- Diagrama flujo yield -->
+                            <div class="my-8 rounded-xl overflow-hidden shadow-lg">
+                                <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" class="w-full">
+                                    <rect width="700" height="340" fill="#f8fafc" rx="12"/>
+                                    <text x="350" y="30" text-anchor="middle" font-family="Montserrat" font-weight="700" font-size="14" fill="#3D008D">Flujo temporal de una dependencia con yield</text>
+                                    <rect x="50" y="50" width="200" height="55" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="1.5"/>
+                                    <text x="150" y="73" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#5b21b6">Código ANTES del yield</text>
+                                    <text x="150" y="93" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#7c3aed">(abrir conexión, crear sesión)</text>
+                                    <line x1="150" y1="105" x2="150" y2="130" stroke="#8b5cf6" stroke-width="2" marker-end="url(#arrowP)"/>
+
+                                    <rect x="50" y="130" width="200" height="55" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+                                    <text x="150" y="153" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#1e40af" font-weight="600">yield session</text>
+                                    <text x="150" y="173" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#2563eb">El endpoint recibe 'session'</text>
+                                    <line x1="150" y1="185" x2="150" y2="210" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowP)"/>
+
+                                    <rect x="50" y="210" width="200" height="70" rx="10" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+                                    <text x="150" y="235" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#9d174d">Código DESPUÉS del yield</text>
+                                    <text x="150" y="255" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#be185d">(finally: cerrar conexión)</text>
+                                    <text x="150" y="270" text-anchor="middle" font-family="Montserrat" font-size="8" fill="#db2777" font-style="italic">Se ejecuta SIEMPRE, incluso si hubo error</text>
+
+                                    <!-- Anotaciones -->
+                                    <text x="320" y="85" font-family="Montserrat" font-size="11" fill="#6b7280">← Setup: se ejecuta antes del endpoint</text>
+                                    <text x="320" y="160" font-family="Montserrat" font-size="11" fill="#6b7280">← El endpoint trabaja con el recurso</text>
+                                    <text x="320" y="245" font-family="Montserrat" font-size="11" fill="#6b7280">← Cleanup: garantizado por finally</text>
+
+                                    <defs><marker id="arrowP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1"/></marker></defs>
+                                </svg>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Dependencia que Carga la Configuración</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Ahora conectamos con el Módulo 1. Creamos una dependencia que instancie <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Settings</code>:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>dependencies.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-7', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-7"><code><span class="text-green-500 italic"># dependencies.py</span>
+<span class="text-pink-500 font-bold">from</span> functools <span class="text-pink-500 font-bold">import</span> lru_cache
+<span class="text-pink-500 font-bold">from</span> config <span class="text-pink-500 font-bold">import</span> Settings
+
+
+<span class="text-yellow-300">@lru_cache</span>
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">get_settings</span>() -&gt; Settings:
+    <span class="text-yellow-300">"""
+    Carga la configuración desde .env.
+    
+    @lru_cache asegura que Settings() se instancie UNA sola vez
+    y se reutilice en todas las peticiones. Evita leer
+    el archivo .env en cada request.
+    """</span>
+    <span class="text-pink-500 font-bold">return</span> Settings()</code></pre>
+                            </div>
+
+                            <details class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-5 cursor-pointer group shadow-sm transition-all duration-300 hover:shadow-md">
+                                <summary class="font-semibold text-blue-800 list-none flex items-center justify-between">
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                                        ¿Qué hace @lru_cache aquí?
+                                    </div>
+                                    <span class="transition group-open:rotate-180"><svg fill="none" class="w-5 h-5 text-blue-600" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                                </summary>
+                                <div class="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
+                                    <p><code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">@lru_cache</code> es un decorador de la biblioteca estándar de Python. <strong>Memoriza</strong> el resultado de la función: la primera vez ejecuta <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Settings()</code> (que lee el disco), las siguientes retorna el mismo objeto sin volver a leer el <code class="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">.env</code>. Es como cachear el resultado de un cálculo estadístico costoso para no repetirlo innecesariamente.</p>
+                                </div>
+                            </details>
+                        </section>
+
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-4">2.5 Ejercicio Práctico</h3>
+                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 md:p-8 mb-6">
+                                <p class="text-gray-700 leading-relaxed mb-4">Crea un archivo <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">dependencies.py</code> con dos dependencias y un <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code> que las use:</p>
+                                <ul class="list-disc pl-6 space-y-2 text-gray-700 text-sm">
+                                    <li><strong>Dependencia 1: <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_settings</code></strong> — carga la configuración con <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">@lru_cache</code> (ya la tienes arriba).</li>
+                                    <li><strong>Dependencia 2: <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_db</code></strong> — simula una sesión de BD usando un diccionario. Debe imprimir <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">"Abriendo conexión"</code> al inicio, hacer <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">yield</code> de <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">{"connected": True}</code>, e imprimir <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">"Cerrando conexión"</code> en el <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">finally</code>.</li>
+                                </ul>
+                                <p class="text-gray-700 leading-relaxed mt-4">Crea un endpoint <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">GET /health</code> que use <strong>ambas</strong> dependencias. Levanta la app con <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">uvicorn main:app --reload</code> y observa en la terminal los mensajes de apertura y cierre de conexión.</p>
+                            </div>
+                        </section>
+
+                        <!-- Verificación Módulo 2 -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 md:p-8 mb-8 mt-10 shadow-sm">
+                            <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Verificación de Comprensión
+                            </h3>
+                            <div class="space-y-6">
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded mb-3">Nivel Medio</span>
+                                    <p class="text-gray-800 font-medium mb-4">En una dependencia que usa <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">yield</code>, ¿qué pasa si el endpoint lanza una excepción antes de terminar?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m2_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) El código después del <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">yield</code> nunca se ejecuta y la sesión de BD queda abierta indefinidamente.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m2_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Gracias al bloque <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">finally</code>, el código de limpieza se ejecuta <em>siempre</em>, incluso si hubo una excepción. La sesión se cierra correctamente.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m2_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) FastAPI reinicia automáticamente el servidor para liberar la conexión.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full"><span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Ver Respuesta y Retroalimentación</span><span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span></summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            Este es precisamente el valor del patrón <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">try/yield/finally</code>. El bloque <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">finally</code> se ejecuta <strong>siempre</strong>, sin importar si el endpoint completó exitosamente o lanzó una excepción. Esto garantiza que recursos como conexiones de BD, archivos abiertos o locks siempre se liberen correctamente, evitando <em>resource leaks</em>.
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-1"><span class="text-lg">&larr;</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">3 / 7</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-3" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">&rarr;</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- MÓDULO 3: INTEGRACIÓN FINAL                                    -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-3" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><rect height="16" rx="2" ry="2" width="16" x="4" y="4"></rect><rect height="6" width="6" x="9" y="9"></rect><line x1="9" x2="9" y1="1" y2="4"></line><line x1="15" x2="15" y1="1" y2="4"></line></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Módulo 3: Integración Final — API Modular</h2>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.1 Árbol de Dependencias</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">La verdadera potencia de <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends</code> aparece cuando <strong>las dependencias dependen entre sí</strong>. FastAPI resuelve este árbol automáticamente de las hojas hacia la raíz:</p>
+
+                            <!-- Diagrama: Árbol de dependencias -->
+                            <div class="my-8 rounded-xl overflow-hidden shadow-lg">
+                                <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg" class="w-full">
+                                    <rect width="800" height="350" fill="#faf5ff" rx="12"/>
+                                    <text x="400" y="30" text-anchor="middle" font-family="Montserrat" font-weight="700" font-size="14" fill="#3D008D">Árbol de Dependencias — Orden de Resolución</text>
+
+                                    <!-- Nivel 1: get_settings -->
+                                    <rect x="280" y="50" width="240" height="50" rx="10" fill="#ede9fe" stroke="#8b5cf6" stroke-width="2"/>
+                                    <text x="400" y="72" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#5b21b6">① get_settings()</text>
+                                    <text x="400" y="90" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#7c3aed">Carga .env (cacheado con @lru_cache)</text>
+
+                                    <!-- Nivel 2: get_db -->
+                                    <rect x="100" y="140" width="260" height="50" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+                                    <text x="230" y="162" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#1e40af">② get_db(settings)</text>
+                                    <text x="230" y="180" text-anchor="middle" font-family="Montserrat" font-size="9" fill="#2563eb">Abre sesión con settings.database_url</text>
+
+                                    <!-- Nivel 3: Endpoint -->
+                                    <rect x="180" y="235" width="440" height="55" rx="12" fill="#3D008D" stroke="#5b21b6" stroke-width="2"/>
+                                    <text x="400" y="258" text-anchor="middle" font-family="Fira Code" font-size="13" fill="#ffffff" font-weight="600">③ endpoint(db, settings)</text>
+                                    <text x="400" y="278" text-anchor="middle" font-family="Montserrat" font-size="10" fill="#c4b5fd">Usa ambos para consultar datos y retornar</text>
+
+                                    <!-- Nivel 4: Cleanup -->
+                                    <rect x="100" y="310" width="260" height="30" rx="8" fill="#fce7f3" stroke="#ec4899" stroke-width="1.5"/>
+                                    <text x="230" y="330" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#9d174d">④ get_db cierra la sesión (finally)</text>
+
+                                    <!-- Flechas -->
+                                    <line x1="350" y1="100" x2="260" y2="140" stroke="#6366f1" stroke-width="2" marker-end="url(#arrowP)"/>
+                                    <line x1="450" y1="100" x2="500" y2="235" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="5,3"/>
+                                    <line x1="230" y1="190" x2="320" y2="235" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowP)"/>
+                                    <line x1="230" y1="290" x2="230" y2="310" stroke="#ec4899" stroke-width="1.5" marker-end="url(#arrowP)"/>
+
+                                    <text x="560" y="155" font-family="Montserrat" font-size="10" fill="#6b7280" font-style="italic">settings se reutiliza</text>
+                                    <text x="560" y="170" font-family="Montserrat" font-size="10" fill="#6b7280" font-style="italic">sin re-ejecutar (cache)</text>
+
+                                    <defs><marker id="arrowP" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#6366f1"/></marker></defs>
+                                </svg>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 Estructura Final del Proyecto</h3>
+                            <div class="bg-gray-900 text-gray-100 rounded-xl p-5 font-mono text-sm leading-relaxed mt-4 shadow-lg">
+<pre>proyecto_encuestas/
+├── .env                 ← Configuración sensible (NO en Git)
+├── .gitignore
+├── requirements.txt
+├── config.py            ← Definición tipada de Settings
+├── database.py          ← Motor y sesión de SQLAlchemy
+├── dependencies.py      ← Funciones de dependencia
+├── models.py            ← Modelos de SQLAlchemy (tablas)
+├── schemas.py           ← Esquemas Pydantic (entrada/salida)
+└── main.py              ← Solo endpoints, limpio y legible</pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 Código Final: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">database.py</code></h3>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>database.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-db', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-db"><code><span class="text-green-500 italic"># database.py</span>
+<span class="text-pink-500 font-bold">from</span> sqlalchemy <span class="text-pink-500 font-bold">import</span> create_engine
+<span class="text-pink-500 font-bold">from</span> sqlalchemy.orm <span class="text-pink-500 font-bold">import</span> sessionmaker, DeclarativeBase
+
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">Base</span>(DeclarativeBase):
+    <span class="text-yellow-300">"""Clase base para todos los modelos de SQLAlchemy."""</span>
+    <span class="text-pink-500 font-bold">pass</span>
+
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">build_engine</span>(database_url: <span class="text-blue-400">str</span>):
+    <span class="text-yellow-300">"""Crea el motor de conexión a la BD."""</span>
+    <span class="text-pink-500 font-bold">return</span> create_engine(database_url, echo=<span class="text-orange-400">False</span>)
+
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">build_session_factory</span>(database_url: <span class="text-blue-400">str</span>):
+    <span class="text-yellow-300">"""
+    Crea una fábrica de sesiones.
+    Una 'sesión' es el objeto a través del cual haces
+    queries, inserts, updates, etc.
+    """</span>
+    engine = build_engine(database_url)
+    <span class="text-pink-500 font-bold">return</span> sessionmaker(
+        autocommit=<span class="text-orange-400">False</span>,
+        autoflush=<span class="text-orange-400">False</span>,
+        bind=engine,
+    )</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.4 Código Final: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">models.py</code></h3>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>models.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-models', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-models"><code><span class="text-green-500 italic"># models.py</span>
+<span class="text-pink-500 font-bold">from</span> sqlalchemy <span class="text-pink-500 font-bold">import</span> Column, Integer, String, Float, DateTime
+<span class="text-pink-500 font-bold">from</span> sqlalchemy.sql <span class="text-pink-500 font-bold">import</span> func
+<span class="text-pink-500 font-bold">from</span> database <span class="text-pink-500 font-bold">import</span> Base
+
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">Encuesta</span>(Base):
+    <span class="text-yellow-300">"""
+    Modelo que representa una tabla de resultados de encuestas.
+    Cada fila es una respuesta individual de un participante.
+    """</span>
+    __tablename__ = <span class="text-yellow-300">"encuestas"</span>
+
+    id = Column(Integer, primary_key=<span class="text-orange-400">True</span>, index=<span class="text-orange-400">True</span>)
+    participante_id = Column(String(<span class="text-orange-400">50</span>), nullable=<span class="text-orange-400">False</span>)
+    pregunta = Column(String(<span class="text-orange-400">200</span>), nullable=<span class="text-orange-400">False</span>)
+    respuesta_likert = Column(Integer, nullable=<span class="text-orange-400">False</span>)  <span class="text-green-500 italic"># Escala 1-5</span>
+    tiempo_respuesta_seg = Column(Float)                <span class="text-green-500 italic"># Segundos</span>
+    fecha_registro = Column(
+        DateTime(timezone=<span class="text-orange-400">True</span>),
+        server_default=func.now(),
+    )</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.5 Código Final: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">schemas.py</code></h3>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>schemas.py</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-schemas', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-schemas"><code><span class="text-green-500 italic"># schemas.py</span>
+<span class="text-pink-500 font-bold">from</span> pydantic <span class="text-pink-500 font-bold">import</span> BaseModel, Field
+<span class="text-pink-500 font-bold">from</span> datetime <span class="text-pink-500 font-bold">import</span> datetime
+
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">EncuestaCreate</span>(BaseModel):
+    <span class="text-yellow-300">"""Esquema para recibir datos de una nueva respuesta."""</span>
+    participante_id: <span class="text-blue-400">str</span> = Field(
+        ..., min_length=<span class="text-orange-400">1</span>, max_length=<span class="text-orange-400">50</span>,
+        examples=[<span class="text-yellow-300">"P-0042"</span>],
+    )
+    pregunta: <span class="text-blue-400">str</span> = Field(
+        ..., min_length=<span class="text-orange-400">1</span>, max_length=<span class="text-orange-400">200</span>,
+        examples=[<span class="text-yellow-300">"¿Qué tan satisfecho está con el servicio?"</span>],
+    )
+    respuesta_likert: <span class="text-blue-400">int</span> = Field(..., ge=<span class="text-orange-400">1</span>, le=<span class="text-orange-400">5</span>)
+    tiempo_respuesta_seg: <span class="text-blue-400">float</span> | <span class="text-orange-400">None</span> = Field(
+        default=<span class="text-orange-400">None</span>, ge=<span class="text-orange-400">0</span>, examples=[<span class="text-orange-400">12.5</span>],
+    )
+
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">EncuestaRead</span>(BaseModel):
+    <span class="text-yellow-300">"""Esquema para retornar datos de una respuesta."""</span>
+    id: <span class="text-blue-400">int</span>
+    participante_id: <span class="text-blue-400">str</span>
+    pregunta: <span class="text-blue-400">str</span>
+    respuesta_likert: <span class="text-blue-400">int</span>
+    tiempo_respuesta_seg: <span class="text-blue-400">float</span> | <span class="text-orange-400">None</span>
+    fecha_registro: datetime
+
+    model_config = {<span class="text-yellow-300">"from_attributes"</span>: <span class="text-orange-400">True</span>}
+
+
+<span class="text-pink-500 font-bold">class</span> <span class="text-yellow-300">ResumenEstadistico</span>(BaseModel):
+    <span class="text-yellow-300">"""Esquema para retornar un resumen de las respuestas."""</span>
+    total_respuestas: <span class="text-blue-400">int</span>
+    media_likert: <span class="text-blue-400">float</span>
+    desviacion_estandar_likert: <span class="text-blue-400">float</span></code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.6 Código Final: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">dependencies.py</code> Completo</h3>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>dependencies.py — versión completa</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-8', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-8"><code><span class="text-green-500 italic"># dependencies.py — versión completa</span>
+<span class="text-pink-500 font-bold">from</span> typing <span class="text-pink-500 font-bold">import</span> Generator
+<span class="text-pink-500 font-bold">from</span> functools <span class="text-pink-500 font-bold">import</span> lru_cache
+
+<span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> Depends
+<span class="text-pink-500 font-bold">from</span> sqlalchemy.orm <span class="text-pink-500 font-bold">import</span> Session
+
+<span class="text-pink-500 font-bold">from</span> config <span class="text-pink-500 font-bold">import</span> Settings
+<span class="text-pink-500 font-bold">from</span> database <span class="text-pink-500 font-bold">import</span> build_session_factory
+
+
+<span class="text-yellow-300">@lru_cache</span>
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">get_settings</span>() -&gt; Settings:
+    <span class="text-pink-500 font-bold">return</span> Settings()
+
+
+<span class="text-yellow-300">@lru_cache</span>
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">_get_session_factory</span>(db_url: <span class="text-blue-400">str</span>):
+    <span class="text-yellow-300">"""Cachea la fábrica para no recrear el Engine en cada request."""</span>
+    <span class="text-pink-500 font-bold">return</span> build_session_factory(db_url)
+
+
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">get_db</span>(
+    settings: Settings = Depends(get_settings),
+) -&gt; Generator[Session, <span class="text-orange-400">None</span>, <span class="text-orange-400">None</span>]:
+    <span class="text-yellow-300">"""
+    Dependencia que provee una sesión de base de datos.
+    
+    Nota cómo esta dependencia DEPENDE de get_settings.
+    FastAPI resuelve el árbol automáticamente:
+      get_settings() → settings → get_db(settings) → session
+    """</span>
+    SessionFactory = _get_session_factory(settings.database_url)
+    session = SessionFactory()
+    <span class="text-pink-500 font-bold">try</span>:
+        <span class="text-pink-500 font-bold">yield</span> session
+    <span class="text-pink-500 font-bold">finally</span>:
+        session.close()</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.7 Código Final: <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code> Limpio</h3>
+                            <p class="text-gray-700 leading-relaxed mb-5">Observa lo <strong>limpio</strong> que queda cuando toda la infraestructura está delegada. El archivo solo contiene endpoints y orquestación:</p>
+
+                            <div class="my-4 rounded-xl overflow-hidden shadow-lg">
+                                <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                                    <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>main.py — API limpia</span>
+                                    <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-block-9', this)" title="Copiar"><span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span><svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg></button>
+                                </div>
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 overflow-x-auto code-scroll font-mono" id="code-block-9"><code><span class="text-green-500 italic"># main.py</span>
+<span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI, Depends, HTTPException
+<span class="text-pink-500 font-bold">from</span> sqlalchemy.orm <span class="text-pink-500 font-bold">import</span> Session
+<span class="text-pink-500 font-bold">from</span> sqlalchemy <span class="text-pink-500 font-bold">import</span> func <span class="text-pink-500 font-bold">as</span> sql_func
+
+<span class="text-pink-500 font-bold">from</span> config <span class="text-pink-500 font-bold">import</span> Settings
+<span class="text-pink-500 font-bold">from</span> dependencies <span class="text-pink-500 font-bold">import</span> get_db, get_settings
+<span class="text-pink-500 font-bold">from</span> models <span class="text-pink-500 font-bold">import</span> Encuesta
+<span class="text-pink-500 font-bold">from</span> schemas <span class="text-pink-500 font-bold">import</span> EncuestaCreate, EncuestaRead, ResumenEstadistico
+
+app = FastAPI(
+    title=<span class="text-yellow-300">"API de Encuestas Estadísticas"</span>,
+    version=<span class="text-yellow-300">"1.0.0"</span>,
+)
+
+
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/health"</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">health_check</span>(settings: Settings = Depends(get_settings)):
+    <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"status"</span>: <span class="text-yellow-300">"ok"</span>, <span class="text-yellow-300">"debug"</span>: settings.debug_mode}
+
+
+<span class="text-yellow-300">@app.post</span>(<span class="text-yellow-300">"/encuestas"</span>, response_model=EncuestaRead, status_code=<span class="text-orange-400">201</span>)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">registrar_respuesta</span>(
+    datos: EncuestaCreate,
+    db: Session = Depends(get_db),
+):
+    <span class="text-yellow-300">"""Registra una nueva respuesta de encuesta."""</span>
+    nueva = Encuesta(**datos.model_dump())
+    db.add(nueva)
+    db.commit()
+    db.refresh(nueva)
+    <span class="text-pink-500 font-bold">return</span> nueva
+
+
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/encuestas"</span>, response_model=<span class="text-blue-400">list</span>[EncuestaRead])
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">listar_respuestas</span>(
+    skip: <span class="text-blue-400">int</span> = <span class="text-orange-400">0</span>,
+    limit: <span class="text-blue-400">int</span> = <span class="text-orange-400">100</span>,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+):
+    <span class="text-yellow-300">"""Lista las respuestas con paginación."""</span>
+    limit = <span class="text-blue-400">min</span>(limit, settings.sample_size)
+    <span class="text-pink-500 font-bold">return</span> db.query(Encuesta).offset(skip).limit(limit).all()
+
+
+<span class="text-yellow-300">@app.get</span>(<span class="text-yellow-300">"/encuestas/resumen"</span>, response_model=ResumenEstadistico)
+<span class="text-pink-500 font-bold">def</span> <span class="text-blue-400">resumen_estadistico</span>(db: Session = Depends(get_db)):
+    <span class="text-yellow-300">"""Calcula estadísticas descriptivas de las respuestas."""</span>
+    resultado = db.query(
+        sql_func.count(Encuesta.id).label(<span class="text-yellow-300">"total"</span>),
+        sql_func.avg(Encuesta.respuesta_likert).label(<span class="text-yellow-300">"media"</span>),
+        sql_func.stddev(Encuesta.respuesta_likert).label(<span class="text-yellow-300">"stddev"</span>),
+    ).first()
+
+    <span class="text-pink-500 font-bold">if</span> resultado.total == <span class="text-orange-400">0</span>:
+        <span class="text-pink-500 font-bold">raise</span> HTTPException(status_code=<span class="text-orange-400">404</span>, detail=<span class="text-yellow-300">"Sin datos"</span>)
+
+    <span class="text-pink-500 font-bold">return</span> ResumenEstadistico(
+        total_respuestas=resultado.total,
+        media_likert=<span class="text-blue-400">round</span>(<span class="text-blue-400">float</span>(resultado.media), <span class="text-orange-400">4</span>),
+        desviacion_estandar_likert=<span class="text-blue-400">round</span>(<span class="text-blue-400">float</span>(resultado.stddev <span class="text-pink-500 font-bold">or</span> <span class="text-orange-400">0</span>), <span class="text-orange-400">4</span>),
+    )</code></pre>
+                            </div>
+
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.8 Responsabilidad de Cada Archivo</h3>
+                            <table class="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Archivo</th>
+                                        <th class="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Responsabilidad Única</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code></td><td class="px-6 py-4 text-sm text-gray-800">Almacenar valores sensibles y específicos del entorno</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">config.py</code></td><td class="px-6 py-4 text-sm text-gray-800">Definir <em>qué</em> configuración existe y validar sus tipos</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">database.py</code></td><td class="px-6 py-4 text-sm text-gray-800">Saber <em>cómo</em> conectarse a una BD (motor, sesiones)</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">dependencies.py</code></td><td class="px-6 py-4 text-sm text-gray-800">Proveer recursos listos para usar a los endpoints</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">models.py</code></td><td class="px-6 py-4 text-sm text-gray-800">Definir la estructura de las tablas (ORM de SQLAlchemy)</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">schemas.py</code></td><td class="px-6 py-4 text-sm text-gray-800">Definir qué datos entran y salen de la API</td></tr>
+                                    <tr><td class="px-6 py-4 text-sm text-gray-800"><code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">main.py</code></td><td class="px-6 py-4 text-sm text-gray-800">Definir los endpoints y orquestar la lógica de negocio</td></tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <!-- Verificación Módulo 3 -->
+                        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-6 md:p-8 mb-8 mt-10 shadow-sm">
+                            <h3 class="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Verificación de Comprensión
+                            </h3>
+                            <div class="space-y-6">
+                                <div class="bg-white p-5 rounded-xl border border-indigo-100 border-l-4 border-l-secondary shadow-sm transition-all hover:shadow-md">
+                                    <span class="inline-block px-2 py-1 bg-secondary text-white text-xs font-bold rounded mb-3">Nivel Avanzado</span>
+                                    <p class="text-gray-800 font-medium mb-4">Si el endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">/encuestas</code> recibe <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends(get_db)</code> y <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends(get_settings)</code>, y a su vez <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_db</code> internamente usa <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends(get_settings)</code>, ¿cuántas veces se ejecuta <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_settings()</code> en una sola petición?</p>
+                                    <div class="space-y-2 mb-4">
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m3_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">A) Dos veces: una para el endpoint y otra para <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_db</code>.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m3_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700 font-medium">B) Una sola vez, gracias a <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">@lru_cache</code>, que devuelve el mismo objeto <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Settings</code> cacheado sin releer el disco.</span>
+                                        </label>
+                                        <label class="flex items-start gap-3 p-3 border border-gray-100 rounded-lg cursor-pointer hover:bg-indigo-50 transition-colors">
+                                            <input type="radio" name="m3_q1" class="mt-1 text-indigo-600 focus:ring-indigo-500">
+                                            <span class="text-sm text-gray-700">C) Cero veces, porque FastAPI inyecta la configuración directamente desde el archivo <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code> sin pasar por la función.</span>
+                                        </label>
+                                    </div>
+                                    <details class="group bg-indigo-50 border border-indigo-200 rounded-lg p-3 cursor-pointer">
+                                        <summary class="font-semibold text-indigo-800 text-sm list-none flex justify-between items-center w-full"><span class="flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Ver Respuesta y Retroalimentación</span><span class="transition-transform duration-300 group-open:rotate-180 text-indigo-600">▼</span></summary>
+                                        <div class="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                            <strong>Respuesta Correcta: B</strong><br><br>
+                                            <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">@lru_cache</code> memoriza el resultado de <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">get_settings()</code> la primera vez que se ejecuta. En todas las invocaciones posteriores —ya sea desde el endpoint directamente, desde <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">get_db</code>, o desde cualquier otra dependencia— retorna el mismo objeto sin releer el archivo <code class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded font-mono text-xs">.env</code>. Este patrón es especialmente importante cuando la carga de configuración es costosa.
+                                        </div>
+                                    </details>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-2"><span class="text-lg">&larr;</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">4 / 7</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-4" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">&rarr;</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- MÓDULO 4: ACTIVIDAD EVALUATIVA                                 -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-4" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Actividad Evaluativa: Ejercicio Integrador</h2>
+                            </div>
+
+                            <div class="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6 md:p-8 mb-8">
+                                <p class="text-gray-700 leading-relaxed">Extiende el proyecto final con un nuevo endpoint <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">GET /encuestas/por-pregunta</code>. Este ejercicio verifica que puedes agregar funcionalidad <strong>sin tocar</strong> <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">config.py</code>, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">database.py</code> ni <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">dependencies.py</code>.</p>
+                            </div>
+                        </section>
+
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-8 shadow-sm">
+                            <h3 class="text-xl md:text-2xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                Requerimientos Funcionales
+                            </h3>
+
+                            <div class="mb-6 border-l-4 border-primary pl-4">
+                                <h4 class="font-bold text-gray-800 mb-2">RF1. Nuevo Endpoint</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed mb-2">Implementar <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /encuestas/por-pregunta</code> que:</p>
+                                <ul class="list-disc pl-6 space-y-1 text-sm text-gray-700">
+                                    <li>Reciba un parámetro de query <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">pregunta: str</code>.</li>
+                                    <li>Use <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends(get_db)</code> para obtener la sesión.</li>
+                                    <li>Use <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends(get_settings)</code> para limitar los resultados a <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">settings.sample_size</code>.</li>
+                                    <li>Retorne la media y desviación estándar de <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">respuesta_likert</code> filtrada por esa pregunta.</li>
+                                </ul>
+                            </div>
+
+                            <div class="mb-6 border-l-4 border-secondary pl-4">
+                                <h4 class="font-bold text-gray-800 mb-2">RF2. Nuevo Esquema Pydantic</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">Definir un nuevo esquema en <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">schemas.py</code> para la respuesta del endpoint (por ejemplo, <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">ResumenPorPregunta</code>).</p>
+                            </div>
+
+                            <div class="mb-6 border-l-4 border-primary pl-4">
+                                <h4 class="font-bold text-gray-800 mb-2">RF3. Verificación de Arquitectura</h4>
+                                <p class="text-gray-700 text-sm leading-relaxed">Los únicos archivos que deberían modificarse son <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">main.py</code> y <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">schemas.py</code>. Si necesitas tocar <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">dependencies.py</code> o <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">config.py</code>, revisa si tu diseño modular es correcto.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-3"><span class="text-lg">&larr;</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">5 / 7</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#preguntas-sustentacion" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">&rarr;</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- PREGUNTAS DE SUSTENTACIÓN                                      -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="preguntas-sustentacion" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Preguntas de Sustentación</h2>
+                            </div>
+
+                            <div class="bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20 rounded-xl p-6 md:p-8 mb-8">
+                                <p class="text-gray-700 leading-relaxed">Las siguientes preguntas verifican la <strong>comprensión real</strong> de los conceptos. No evalúan memorización, sino la capacidad de <strong>razonar, argumentar y aplicar</strong> los conocimientos a escenarios concretos.</p>
+                            </div>
+
+                            <!-- Eje 1 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-8 shadow-sm">
+                                <h3 class="text-lg md:text-xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                    Eje 1 — Variables de Entorno y Configuración
+                                </h3>
+                                <div class="space-y-5">
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 1</span>
+                                        <p class="text-gray-800 leading-relaxed">¿Qué ventaja tiene usar <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">pydantic-settings</code> frente a leer manualmente las variables con <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">os.getenv()</code>? ¿Qué pasa si una variable obligatoria no está definida en el <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code>?</p>
+                                    </div>
+                                    <div class="border-l-4 border-secondary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">Pregunta 2</span>
+                                        <p class="text-gray-800 leading-relaxed">Si un compañero clona el repositorio y no tiene archivo <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">.env</code>, ¿qué error verá al ejecutar la app? ¿Cómo resolverlo sin enviarle tus credenciales?</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Eje 2 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-8 shadow-sm">
+                                <h3 class="text-lg md:text-xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                    Eje 2 — Inyección de Dependencias
+                                </h3>
+                                <div class="space-y-5">
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 3</span>
+                                        <p class="text-gray-800 leading-relaxed">Explique con sus palabras qué significa que <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_db</code> use <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Depends(get_settings)</code> internamente. ¿Qué relación se establece entre estas dos funciones? Haga una analogía con un concepto estadístico.</p>
+                                    </div>
+                                    <div class="border-l-4 border-secondary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">Pregunta 4</span>
+                                        <p class="text-gray-800 leading-relaxed">Si elimina el <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">@lru_cache</code> del <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">get_settings()</code>, ¿qué impacto tiene en el rendimiento de la aplicación bajo carga?</p>
+                                    </div>
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 5</span>
+                                        <p class="text-gray-800 leading-relaxed">¿Cómo haría para testear el endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">/encuestas</code> sin necesitar una base de datos PostgreSQL real? Mencione el mecanismo de FastAPI que lo permite.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Eje 3 -->
+                            <div class="bg-white border border-gray-200 rounded-xl p-6 md:p-8 mb-8 shadow-sm">
+                                <h3 class="text-lg md:text-xl font-semibold mb-6 text-secondary flex items-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect height="16" rx="2" ry="2" width="16" x="4" y="4"></rect><rect height="6" width="6" x="9" y="9"></rect></svg>
+                                    Eje 3 — Arquitectura Modular
+                                </h3>
+                                <div class="space-y-5">
+                                    <div class="border-l-4 border-primary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-primary/10 text-primary text-xs font-bold rounded-full mb-2">Pregunta 6</span>
+                                        <p class="text-gray-800 leading-relaxed">Si necesita agregar un nuevo endpoint <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">GET /experimentos</code> que consulte una tabla diferente, ¿qué archivos del proyecto debe modificar y cuáles permanecen intactos?</p>
+                                    </div>
+                                    <div class="border-l-4 border-secondary pl-5 py-2">
+                                        <span class="inline-block px-2.5 py-0.5 bg-secondary/10 text-secondary text-xs font-bold rounded-full mb-2">Pregunta 7</span>
+                                        <p class="text-gray-800 leading-relaxed">Compare la estructura monolítica (todo en <code class="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">main.py</code>) con la modular presentada en esta guía. Desde la perspectiva de un equipo de 4 estadísticos trabajando simultáneamente en la misma API, ¿cuál genera menos conflictos en Git? ¿Por qué?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#modulo-4"><span class="text-lg">&larr;</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">6 / 7</div>
+                            <div><a class="px-5 py-2.5 text-sm md:text-base font-bold text-white shadow-lg rounded-xl hover:scale-105 transition-transform flex items-center gap-2" href="#modulo-5" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">Siguiente <span class="text-lg">&rarr;</span></a></div>
+                        </div>
+                    </article>
+
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <!-- MÓDULO 5: BIBLIOGRAFÍA                                         -->
+                    <!-- ═══════════════════════════════════════════════════════════════ -->
+                    <article class="mb-16" id="modulo-5" style="display: none;">
+                        <section class="usta-card p-6 md:p-8 mb-8">
+                            <div class="flex items-center gap-4 mb-8 border-b border-gray-200 pb-4">
+                                <div class="usta-gradient p-3 rounded-xl shadow-md text-white shrink-0" style="background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)">
+                                    <div class="w-6 h-6"><svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+                                </div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-primary">Bibliografía Consultada</h2>
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #ED1E79;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">FastAPI Documentation — Dependencies</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Sebastián Ramírez (tiangolo)</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Documentación oficial sobre el sistema de inyección de dependencias de FastAPI, incluyendo sub-dependencias, yield y testing.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">FastAPI</span>
+                                            <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Depends</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #3D008D;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">Pydantic Settings Management</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Samuel Colvin / Pydantic Team</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Documentación de <code class="text-xs">pydantic-settings</code> para el manejo tipado de variables de entorno con validación automática.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Pydantic V2</span>
+                                            <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">BaseSettings</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #FDB913;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">SQLAlchemy 2.0 Documentation</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Mike Bayer / SQLAlchemy Team</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Referencia oficial sobre el patrón Session, Engine y la arquitectura Unit of Work para gestión de conexiones a bases de datos.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">ORM</span>
+                                            <span class="text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full">Session Management</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                                <div class="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                                    <blockquote class="border-l-4 pl-4" style="border-left-color: #001A4D;">
+                                        <p class="text-gray-800 font-medium text-lg mb-2">The Twelve-Factor App</p>
+                                        <p class="text-gray-600 mb-1"><strong>Autor:</strong> Adam Wiggins / Heroku</p>
+                                        <p class="text-gray-600 mb-3 text-sm">Metodología de referencia para construir aplicaciones SaaS modernas. El Factor III (Config) fundamenta el uso de variables de entorno.</p>
+                                        <div class="flex flex-wrap gap-2 mb-3">
+                                            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">Arquitectura</span>
+                                            <span class="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">12-Factor</span>
+                                        </div>
+                                    </blockquote>
+                                </div>
+                            </div>
+                        </section>
+
+                        <div class="mt-12 flex items-center justify-between border-t border-gray-200 pt-6 px-2 module-controls">
+                            <div><a class="px-4 py-2 text-sm md:text-base font-semibold text-gray-600 hover:text-primary transition-colors flex items-center gap-2" href="#preguntas-sustentacion"><span class="text-lg">&larr;</span> Anterior</a></div>
+                            <div class="text-xs text-gray-400 font-bold uppercase tracking-widest hidden md:block">7 / 7</div>
+                            <div></div>
+                        </div>
+                    </article>
+
+                    <!-- FOOTER -->
+                    <footer class="mt-20 pt-8 border-t border-gray-200 mb-8 mx-auto w-full max-w-5xl">
+                        <div class="usta-header rounded-xl p-6 text-center shadow-lg" style="background: linear-gradient(180deg, #001A4D 0%, #002868 100%)">
+                            <p class="text-white font-medium text-sm">Diseñado por <span class="font-bold">Javier Mauricio Sierra</span></p>
+                            <p class="text-xs mt-1 text-white/80">Python para APIs e IA • USTA</p>
+                            <p class="text-[10px] mt-2 text-white/50">Material interactivo: Inyección de Dependencias, Variables de Entorno y Arquitectura Modular en FastAPI.</p>
+                        </div>
+                    </footer>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Sidebar Toggle Script -->
+    <script id="sidebar-toggle-script">
+        document.addEventListener('DOMContentLoaded', () => {
+            const sidebar = document.getElementById('main-sidebar');
+            const toggleBtn = document.getElementById('sidebar-toggle');
+            const icon = document.getElementById('sidebar-icon');
+            let isOpen = window.innerWidth > 768;
+            function applyState() {
+                if (isOpen) {
+                    sidebar.style.width = '16rem';
+                    sidebar.style.minWidth = '16rem';
+                    sidebar.style.opacity = '1';
+                    icon.innerHTML = '✕';
+                } else {
+                    sidebar.style.width = '0';
+                    sidebar.style.minWidth = '0';
+                    sidebar.style.opacity = '0';
+                    icon.innerHTML = '☰';
+                }
+            }
+            if (toggleBtn && sidebar) {
+                applyState();
+                toggleBtn.addEventListener('click', () => {
+                    isOpen = !isOpen;
+                    applyState();
+                });
+            }
+        });
+    </script>
+
+    <!-- SPA Navigation Script -->
+    <script id="navigation-script">
+        document.addEventListener('DOMContentLoaded', () => {
+            const modules = document.querySelectorAll('[id^="modulo-"], #preguntas-sustentacion');
+            const navLinks = document.querySelectorAll('nav a');
+
+            function setActiveModule(targetId) {
+                modules.forEach(mod => {
+                    mod.style.display = 'none';
+                    mod.classList.remove('animate-fade-in');
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('text-white', 'bg-white/10', 'shadow-md', 'translate-x-1');
+                    link.classList.add('text-white/70');
+                    let dot = link.querySelector('div');
+                    if (dot) {
+                        dot.classList.remove('bg-secondary', 'border-secondary');
+                        dot.classList.add('border-white/20');
+                    }
+                });
+                const targetMod = document.getElementById(targetId);
+                if (targetMod) {
+                    targetMod.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    void targetMod.offsetWidth;
+                    targetMod.classList.add('animate-fade-in');
+                }
+                const cleanTarget = '#' + targetId;
+                const activeLink = Array.from(navLinks).find(l => l.getAttribute('href') === cleanTarget);
+                if (activeLink) {
+                    activeLink.classList.remove('text-white/70');
+                    activeLink.classList.add('text-white', 'bg-white/10', 'shadow-md', 'translate-x-1');
+                    let dot = activeLink.querySelector('div');
+                    if (dot) {
+                        dot.classList.remove('border-white/20');
+                        dot.classList.add('bg-secondary', 'border-secondary');
+                    }
+                }
+                const sidebar = document.querySelector('aside');
+                if (window.innerWidth < 768 && sidebar && sidebar.style.width !== '0px') {
+                    const toggle = document.getElementById('sidebar-toggle');
+                    if (toggle) toggle.click();
+                }
+            }
+
+            document.body.addEventListener('click', (e) => {
+                const link = e.target.closest('a[href^="#modulo-"], a[href="#preguntas-sustentacion"]');
+                if (link) {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href').substring(1);
+                    setActiveModule(targetId);
+                    history.pushState(null, null, link.getAttribute('href'));
+                }
+            });
+
+            if (modules.length > 0) {
+                let startModId = modules[0].id;
+                if (window.location.hash) {
+                    const hashId = window.location.hash.substring(1);
+                    if (document.getElementById(hashId)) startModId = hashId;
+                }
+                setActiveModule(startModId);
+            }
+        });
+    </script>
+
+    <!-- Copy to Clipboard Script -->
+    <script id="copy-clipboard-script">
+        async function copyCode(blockId, btnElement) {
+            const preObj = document.getElementById(blockId);
+            if (!preObj) return;
+            const textToCopy = preObj.innerText || preObj.textContent;
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                const originalHTML = btnElement.innerHTML;
+                btnElement.classList.add('text-green-400');
+                btnElement.innerHTML = `<span class="text-[10px] uppercase font-bold tracking-wider">¡Copiado!</span> <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>`;
+                setTimeout(() => {
+                    btnElement.innerHTML = originalHTML;
+                    btnElement.classList.remove('text-green-400');
+                }, 2000);
+            } catch (err) {
+                console.error('Fallo al copiar!', err);
+                btnElement.classList.add('text-red-400');
+                btnElement.innerHTML = `<span class="text-[10px] uppercase font-bold tracking-wider">Error</span>`;
+            }
+        }
+    </script>
+
+    <!-- Randomize Questions Script -->
+    <script id="randomize-questions-script">
+        document.addEventListener("DOMContentLoaded", function () {
+            const questionContainers = document.querySelectorAll('.space-y-2.mb-4');
+            questionContainers.forEach(container => {
+                const block = container.closest('.bg-white');
+                if (!block) return;
+                const details = block.querySelector('details');
+                if (!details) return;
+                const labels = Array.from(container.querySelectorAll('label'));
+                if (labels.length === 0) return;
+                const optionsData = labels.map(label => {
+                    const span = label.querySelector('span');
+                    const isCorrect = span.classList.contains('font-medium');
+                    if (isCorrect) span.classList.remove('font-medium');
+                    let htmlContent = span.innerHTML.trim();
+                    htmlContent = htmlContent.replace(/^(?:<strong>)?[A-C]\)(?:<\/strong>)?\s*/i, '');
+                    return { label, span, isCorrect, htmlContent };
+                });
+                for (let i = optionsData.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [optionsData[i], optionsData[j]] = [optionsData[j], optionsData[i]];
+                }
+                container.innerHTML = '';
+                let correctLetter = '';
+                optionsData.forEach((data, index) => {
+                    const letter = String.fromCharCode(65 + index);
+                    if (data.isCorrect) correctLetter = letter;
+                    data.span.innerHTML = `<strong>${letter})</strong> ${data.htmlContent}`;
+                    container.appendChild(data.label);
+                });
+                const feedbackContainer = details.querySelector('div');
+                if (feedbackContainer) {
+                    feedbackContainer.innerHTML = feedbackContainer.innerHTML.replace(
+                        /<strong>Respuesta Correcta: <\/strong

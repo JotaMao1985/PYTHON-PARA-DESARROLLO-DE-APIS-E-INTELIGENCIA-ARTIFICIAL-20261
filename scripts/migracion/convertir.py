@@ -254,7 +254,11 @@ def limpiar_jsx(cuerpo):
                 continue
             k, v = decl.split(":", 1)
             k = re.sub(r"-(\w)", lambda x: x.group(1).upper(), k.strip())
-            pares.append(f"{k}: '{v.strip()}'")
+            # La comilla simple del valor cierra la cadena antes de tiempo y
+            # Babel deja de compilar la página entera. Pasa con las pilas de
+            # fuentes: `font-family: 'Montserrat', sans-serif`.
+            v = v.strip().replace("\\", "\\\\").replace("'", "\\'")
+            pares.append(f"{k}: '{v}'")
         return "style={{ " + ", ".join(pares) + " }}" if pares else ""
     cuerpo = re.sub(r'style="([^"]*)"', estilo, cuerpo)
     return cuerpo
