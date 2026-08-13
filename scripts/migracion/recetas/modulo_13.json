@@ -1,0 +1,71 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m13",
+  "componentes": "scripts/migracion/componentes/modulo_13.jsx",
+  "salida": "13_Python_para_APIS_IA_Modelos_ML_en_Produccion.html",
+  "titulo_html": "Semana 13 — Modelos de ML en producción · Python para APIs e IA",
+  "descripcion": "Semana 13 del curso Python para Desarrollo de APIs e Inteligencia Artificial: ciclo de vida del modelo (pickle y joblib), patrón Singleton para no recargarlo en cada petición e imágenes Docker optimizadas para dependencias de ML. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "13",
+    "titulo": "Modelos de ML en producción",
+    "subtitulo": "Ciclo de vida del modelo, Singleton para FastAPI e imágenes Docker para ML",
+    "lema": "Cargar el modelo en cada petición es pagar el arranque mil veces.",
+    "notaPie": "Material de la Semana 13. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Exponer un modelo entrenado mediante un endpoint eficiente y con resultados consistentes con el entrenamiento.",
+    "contenidoSyllabus": "Ciclo de vida del modelo: entrenar, serializar, cargar, predecir. El patrón Singleton para no recargar el modelo en cada petición. Coste de las dependencias de ML sobre el tamaño de la imagen.",
+    "temas": [
+      "scikit-learn",
+      "joblib",
+      "Singleton",
+      "Docker"
+    ],
+    "storageKey": "usta_2026i_apis_cap13"
+  },
+  "secciones": [
+    {
+      "id": "intro",
+      "componente": "IntroSection",
+      "titulo": "1. Introducción y objetivos",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "ciclo",
+      "componente": "CicloVidaSection",
+      "titulo": "2. Ciclo de vida del modelo",
+      "icono": "Repeat"
+    },
+    {
+      "id": "singleton",
+      "componente": "SingletonSection",
+      "titulo": "3. Patrón Singleton",
+      "icono": "Cpu"
+    },
+    {
+      "id": "docker",
+      "componente": "DockerSection",
+      "titulo": "4. Docker para ML",
+      "icono": "Layers"
+    },
+    {
+      "id": "proyecto",
+      "componente": "ProyectoSection",
+      "titulo": "5. Mini-proyecto integrador",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "tablero",
+      "componente": "TableroSection",
+      "titulo": "6. El tablero (rúbrica 3 %)",
+      "icono": "Grid"
+    },
+    {
+      "id": "auto",
+      "componente": "AutoevaluacionSection",
+      "titulo": "7. Autoevaluación",
+      "icono": "Award"
+    }
+  ]
+}

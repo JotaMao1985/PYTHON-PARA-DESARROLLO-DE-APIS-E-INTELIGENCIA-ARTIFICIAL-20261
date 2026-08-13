@@ -1,0 +1,88 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m7",
+  "salida": "7_Python_para_APIS_IA_Data_Validation.html",
+  "titulo_html": "Semana 7 — Validación avanzada de datos · Python para APIs e IA",
+  "descripcion": "Semana 7 del curso Python para Desarrollo de APIs e Inteligencia Artificial: tipos complejos, validadores de campo, modelos anidados y manejo integral del error 422 con Pydantic v2. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "7",
+    "titulo": "Validación avanzada de datos",
+    "subtitulo": "Asegurar la integridad de las entradas de un modelo estadístico",
+    "lema": "Un modelo no sabe que le mentiste: con una edad de −5 calcula igual, y con la misma cara de seguridad.",
+    "notaPie": "Material de la Semana 7. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Asegurar la integridad de las entradas de un modelo estadístico mediante validadores y modelos anidados.",
+    "contenidoSyllabus": "Validadores de campo. Tipos complejos y anotaciones para datos estadísticos. Modelos anidados. Manejo integral del error 422.",
+    "temas": [
+      "Pydantic v2",
+      "field_validator",
+      "Modelos anidados",
+      "HTTP 422"
+    ],
+    "storageKey": "usta_2026i_apis_cap07"
+  },
+  "secciones": [
+    {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "modulo-0",
+      "componente": "IntroSection",
+      "titulo": "2. Introducción: arquitectura de validación de datos",
+      "icono": "Workflow"
+    },
+    {
+      "id": "modulo-1",
+      "componente": "TiposSection",
+      "titulo": "3. Tipos complejos y anotaciones",
+      "icono": "Binary"
+    },
+    {
+      "id": "modulo-2",
+      "componente": "ValidadoresSection",
+      "titulo": "4. Validadores de campo",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "modulo-3",
+      "componente": "AnidadosSection",
+      "titulo": "5. Modelos anidados y topología jerárquica",
+      "icono": "Layers"
+    },
+    {
+      "id": "modulo-4",
+      "componente": "ErroresSection",
+      "titulo": "6. Manejo integral del error 422",
+      "icono": "Bug"
+    },
+    {
+      "id": "modulo-5",
+      "componente": "SintesisSection",
+      "titulo": "7. Síntesis: pipeline de ingesta seguro",
+      "icono": "Grid"
+    },
+    {
+      "id": "modulo-6",
+      "componente": "ActividadSection",
+      "titulo": "8. Actividad evaluativa: proyecto aplicado",
+      "icono": "Award"
+    },
+    {
+      "id": "preguntas-sustentacion",
+      "componente": "SustentacionSection",
+      "titulo": "9. Preguntas de sustentación",
+      "icono": "Calculator"
+    },
+    {
+      "id": "modulo-7",
+      "componente": "BibliografiaSection",
+      "titulo": "10. Bibliografía y fuentes consultadas",
+      "icono": "Table"
+    }
+  ]
+}

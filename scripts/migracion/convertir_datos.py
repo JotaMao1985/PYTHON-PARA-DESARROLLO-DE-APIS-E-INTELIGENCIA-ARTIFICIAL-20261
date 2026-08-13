@@ -288,12 +288,37 @@ def bloque_bonus(bonus, avisos):
 # justificación a todo el mundo al enviar, así que la felicitación de cabecera
 # se queda sin su condición y le diría «✅ Correcto» a quien acaba de fallar.
 # Se recorta; lo que sigue es la explicación, que es lo que se quería guardar.
-FELICITACION = re.compile(r"^\s*[✅✔]\s*[¡!]*\s*(Correcto|Exacto|Excelente|Crucial|Muy bien)"
+#
+# El pictograma es opcional porque no todos los módulos lo ponen: el 4 abre
+# con «Correcto.» a secas. Su cuestionario sí enseña la justificación a todo
+# el mundo, pero encima le pone «Respuesta Incorrecta» a quien falló, y ese
+# contrapeso es justo lo que LP-CORE no tiene. Relajar el pictograma no cambia
+# la salida de los módulos 1 y 2: sus diecinueve justificaciones lo llevan.
+FELICITACION = re.compile(r"^\s*[✅✔]?\s*[¡!]*\s*(Correcto|Exacto|Excelente|Crucial|Muy bien)"
                           r"[!.]*\s*", re.I)
 
 
-def bloque_quiz(contenido, avisos):
-    """`content.quiz` o `content.quizzes[]` → un `Quiz` de LP-CORE."""
+def insignia(texto):
+    """El rótulo que va delante de un enunciado, como marca pequeña.
+
+    `Quiz` no tiene campo para él y perderlo sería perder lo único que sitúa
+    la pregunta: en la familia de los artículos es la dificultad —«Nivel
+    Medio»— y en la del `curriculum`, la lección de la que sale —«Lección 2 —
+    Arquitectura»—. Va dentro del enunciado, que es donde `Quiz` mira.
+    """
+    return ('<span className="inline-block mr-2 px-2 py-0.5 rounded '
+            'text-[0.65rem] uppercase tracking-wider font-bold '
+            'bg-primary/10 text-primary">' + " ".join(texto.split()) + "</span>")
+
+
+def bloque_quiz(contenido, avisos, titulo="Comprueba lo que entendiste"):
+    """`content.quiz` o `content.quizzes[]` → un `Quiz` de LP-CORE.
+
+    Una pregunta con `rotulo` sale con su insignia delante, y por eso el
+    enunciado pasa entonces a ser un fragmento de JSX: el texto viaja como
+    cadena entre llaves —`{"…"}`— en vez de escaparse, que es lo mismo que
+    ve el lector y no obliga a acertar con las reglas de escape de JSX.
+    """
     preguntas = list(contenido.get("quizzes") or [])
     if contenido.get("quiz"):
         preguntas.append(contenido["quiz"])
@@ -311,16 +336,20 @@ def bloque_quiz(contenido, avisos):
             "{ texto: " + json.dumps(o, ensure_ascii=False)
             + ", correcta: " + ("true" if i == q.get("correct") else "false") + " }"
             for i, o in enumerate(q.get("options") or []))
-        emitidas.append("{ pregunta: " + json.dumps(q.get("question", ""), ensure_ascii=False)
+        enunciado = json.dumps(q.get("question", ""), ensure_ascii=False)
+        if q.get("rotulo"):
+            enunciado = "(<>" + insignia(q["rotulo"]) + "{" + enunciado + "}</>)"
+        emitidas.append("{ pregunta: " + enunciado
                         + ", opciones: [" + opciones + "]"
                         + ", justificacion: " + json.dumps(justificacion.strip(), ensure_ascii=False)
                         + " }")
 
     if recortadas:
-        avisos.append(f"{recortadas} justificaciones abrían con «✅ Correcto»: en el "
-                      f"original sólo se veían al acertar, aquí las lee todo el mundo")
+        avisos.append(f"{recortadas} justificaciones abrían felicitando: en el original "
+                      f"eso tenía condición —o sólo se veían al acertar, o llevaban "
+                      f"encima un «Respuesta Incorrecta»— y aquí no la tienen")
 
-    return ['<Quiz titulo="Comprueba lo que entendiste" preguntas={[\n            '
+    return [f'<Quiz titulo="{atributo(titulo)}" preguntas={{[\n            '
             + ",\n            ".join(emitidas) + "\n        ]} />"]
 
 

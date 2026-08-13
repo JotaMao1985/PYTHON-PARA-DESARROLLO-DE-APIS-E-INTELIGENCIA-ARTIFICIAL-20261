@@ -47,10 +47,19 @@ def main():
         print(f"ERROR: no hay JSX en {jsx}. Ejecute antes convertir.py.", file=sys.stderr)
         return 1
 
+    # Las secciones y, al lado, `graficas.jsx`: una clase puede vivir solo en
+    # las gráficas —le pasa al módulo 13, cuyos `chart-h-340` y `chart-h-380`
+    # se fueron con ellas—, y mirar solo las secciones la daba por muerta.
     usadas = set()
-    for f in sorted(jsx.glob("*.jsx")):
-        for m in re.finditer(r'className="([^"]+)"', f.read_text(encoding="utf-8")):
+    for f in sorted(jsx.glob("*.jsx")) + sorted(args.piezas.glob("*.jsx")):
+        pieza = f.read_text(encoding="utf-8")
+        for m in re.finditer(r'className="([^"]+)"', pieza):
             usadas |= set(m.group(1).split())
+        # El `height` de `ChartFrame` es un nombre de clase aunque no se
+        # escriba dentro de un `className`: el componente lo pone tal cual en
+        # el `div` de la gráfica. Sin la regla, el marco mide cero y la
+        # gráfica no se ve —y Plotly no se queja—.
+        usadas |= set(re.findall(r'\bheight="([\w-]+)"', pieza))
 
     texto = args.archivo.read_text(encoding="utf-8")
     if "</style>" not in texto:

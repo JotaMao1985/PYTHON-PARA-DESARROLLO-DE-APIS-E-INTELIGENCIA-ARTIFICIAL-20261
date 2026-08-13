@@ -26,7 +26,7 @@ editarlos a mano, que es justo lo que la cadena evita.
 Lo intermedio (`build/`) no se versiona: no lo lee nadie y se rehace en un
 segundo.
 
-Hay **dos bocas de entrada**, porque el material heredado no es homogéneo, y
+Hay **cinco bocas de entrada**, porque el material heredado no es homogéneo, y
 una sola cadena de salida. Lo que cambia es de dónde se saca el contenido; el
 contrato de piezas —`jsx/<id>.jsx` y `graficas.jsx`— y el montaje son los
 mismos.
@@ -36,16 +36,34 @@ mismos.
 | Familia | Módulos | Cómo se migra |
 |---|---|---|
 | `<section id>` + Plotly | 10, 11, 12 | `graficas.py` + `convertir.py` |
-| **`courseData` + Chart.js** | **1, 2** | **`convertir_datos.py`** |
-| ReactDOM con navegación propia | 3, 4, 6, 13 | pendiente: no es conversión, es re-alojar sus componentes |
-| HTML plano, sin secciones ni gráficas | 5, 7, 8, 9 | pendiente: trocear por `<h2>` y pasar a camelCase 1 919 atributos con guion (`stroke-width`, `text-anchor`…) repartidos en 231 diagramas |
+| `courseData` + Chart.js | 1, 2 | `convertir_datos.py` |
+| Un `<article id>` por `<h2>`, con diagramas SVG | 5, 7, 8, 9 | `convertir_plano.py` |
+| **React con `const curriculum = [...]` de datos** | **3, 4**, 6 | **`convertir_react.py`** |
+| React con secciones ya en componentes | 13 | `deduplicar.py` |
 
-> Hasta agosto de 2026 esta tabla decía que los módulos 1 y 2 eran «HTML plano,
-> pequeños» a los que sólo les faltaba trocear por `<h2>`. Era falso, y la
-> herramienta que describía no habría servido: son aplicaciones de una sola
-> página con todo el contenido en un objeto `courseData`, y sus gráficas son de
-> Chart.js, no de Plotly. Los que necesitan el troceo por `<h2>` son el 5, el 7,
-> el 8 y el 9.
+> Esta tabla se ha equivocado dos veces, y las dos de la misma manera: dando por
+> «HTML plano» un módulo que no lo era.
+>
+> Hasta agosto de 2026 decía que los módulos 1 y 2 eran «HTML plano, pequeños» a
+> los que sólo les faltaba trocear por `<h2>`. Era falso: son aplicaciones de una
+> sola página con todo el contenido en un objeto `courseData`, y sus gráficas son
+> de Chart.js, no de Plotly.
+>
+> Y decía que el 5, el 7, el 8 y el 9 eran «HTML plano, **sin secciones**». Lo
+> segundo también era falso, y en la dirección contraria: sí traen secciones
+> —un `<article id="modulo-N">` por cada `<h2>` del temario, que la navegación
+> propia enseña y esconde con `style.display`—, así que el troceo sale casi
+> gratis. El trabajo estaba donde la tabla no miraba: en los 231 diagramas SVG.
+>
+> Y la última fila decía «ReactDOM con navegación propia: 3, 4, 6, 13», como si
+> fueran una. No lo son: el 3, el 4 y el 6 guardan el contenido en un
+> `const curriculum = [...]` **de datos**, y el 13 ya lo tiene repartido en
+> componentes de sección. Al 13 no hay que convertirlo, hay que deduplicarlo:
+> trae su propio `Box`, su `Pipeline`, su `usePlotly` y su `ChartFrame`, que es
+> justo lo que LP-CORE ya pone.
+>
+> La lección, las tres veces, es la misma: **contar el material antes de escribir
+> la herramienta.** Cuesta un `grep` y ahorra un guion entero.
 
 ## Cómo se migra un módulo
 
@@ -73,6 +91,45 @@ python3 scripts/migracion/montar.py          scripts/migracion/recetas/modulo_$N
 python3 scripts/migracion/auditar.py $N
 ```
 
+**Familia `<article id>`** (5, 7, 8 y 9). Tampoco hay paso de gráficas: estos
+módulos no traen ninguna. Los diagramas son SVG escritos a mano y viajan dentro
+del JSX.
+
+```bash
+N=7; F=heredado/$(ls heredado | grep "^${N}_Python")
+
+PYTHONPATH=scripts/migracion \
+python3 scripts/migracion/convertir_plano.py "$F" --salida build/migracion/m$N
+python3 scripts/migracion/estilos.py         "$F" --piezas build/migracion/m$N
+python3 scripts/migracion/montar.py          scripts/migracion/recetas/modulo_$N.json
+```
+
+`PYTHONPATH` hace falta porque el guion importa de `convertir.py` y de
+`convertir_datos.py`, que están a su lado. Escribe además `titulos.json` con el
+`<h2>` de cada artículo: es lo que hay que copiar —y numerar— en la receta.
+
+**Familia `curriculum`** (3, 4 y 6). La misma forma, con `convertir_react.py`:
+
+```bash
+N=3; F=heredado/$(ls heredado | grep "^${N}_Python")
+
+PYTHONPATH=scripts/migracion \
+python3 scripts/migracion/convertir_react.py "$F" --salida build/migracion/m$N
+python3 scripts/migracion/estilos.py         "$F" --piezas build/migracion/m$N
+python3 scripts/migracion/montar.py          scripts/migracion/recetas/modulo_$N.json
+```
+
+**Familia de los componentes** (13). La misma forma otra vez, con
+`deduplicar.py`, que no necesita `PYTHONPATH` porque no importa de al lado:
+
+```bash
+N=13; F=heredado/$(ls heredado | grep "^${N}_Python")
+
+python3 scripts/migracion/deduplicar.py "$F" --salida build/migracion/m$N
+python3 scripts/migracion/estilos.py    "$F" --piezas build/migracion/m$N
+python3 scripts/migracion/montar.py     scripts/migracion/recetas/modulo_$N.json
+```
+
 El orden importa: `estilos.py` mira el JSX ya convertido para saber qué clases
 siguen vivas, y `montar.py` necesita las piezas.
 
@@ -81,7 +138,10 @@ siguen vivas, y `montar.py` necesita las piezas.
 | `graficas.py` | `Plotly.newPlot` de `plotly.io.to_html` → `usePlotly` + `ChartFrame`. Descarta el `template` por defecto y la altura, que la fija la clase del marco. |
 | `convertir.py` | Una `<section>` → un componente de sección. `div.box` → `Box`, `<pre>` con resaltado a mano → `CodeBlock`, `box solution` → `Accordion`. |
 | `convertir_datos.py` | El objeto `courseData` → secciones y gráficas. Ver abajo. |
-| `estilos.py` | Rescata del `<style>` original sólo las reglas de los diagramas propios que LP-CORE no cubre, con las variables resueltas. |
+| `convertir_plano.py` | Un `<article id>` → un componente de sección. `.tip-box` → `Box`, `<details>` → `Accordion`, los radios de «Verificación de Comprensión» → `Quiz`, y los atributos de los SVG a camelCase. Ver abajo. |
+| `convertir_react.py` | Una entrada del `curriculum` heredado → un componente de sección. El `content` se copia literal, porque ya es JSX; sólo `.tip-box` → `Box`. Ver abajo. |
+| `deduplicar.py` | Un componente de sección del heredado → un componente de sección de LP-CORE, quitándole lo que la plantilla ya pone. Saca los `usePlotly` a `graficas.jsx` y pega las constantes de código en su `CodeBlock`. Ver abajo. |
+| `estilos.py` | Rescata del `<style>` original sólo las reglas de los diagramas propios que LP-CORE no cubre, con las variables resueltas. Mira las secciones **y** `graficas.jsx`, y cuenta como clase el `height` de un `ChartFrame`: es lo que el componente pone en el `div` de la gráfica, y sin su regla el marco mide cero sin que Plotly se queje. |
 | `montar.py` | Arma el archivo sobre `lp-base.html`: `<head>`, `CONFIG`, CSS, gráficas, secciones y `curriculum`. Poda lo que quede de la demo de LPF. |
 | `auditar.py` | Comprueba que no se perdió contenido: cada palabra del origen, con su frecuencia, tiene que estar en el JSX. |
 
@@ -126,6 +186,229 @@ en la columna cero. En el módulo 2, el primer cierre plausible aparece 43 000
 caracteres antes del verdadero. Así que se proponen los cierres candidatos y se
 acepta el primero que Node consiga parsear como objeto con `modules`.
 
+## La familia `<article id>`
+
+El troceo es lo barato: cada `<h2>` del temario vive dentro de su
+`<article id="modulo-N">`, así que la sección ya viene delimitada y el `<h2>`
+da el título. Lo que hay que quitar de cada artículo es lo que LP-CORE ya
+dibuja: la banda de título con su icono, y el «Anterior · 1 de 8 · Siguiente»
+del pie, cuyos `href="#modulo-1"` además ya no llevan a ninguna parte.
+
+Lo caro son los **231 diagramas**, con 1 822 atributos con guion. En una página
+normal esto no se nota porque el analizador de HTML corrige los nombres al
+entrar en contenido SVG; JSX no analiza HTML, así que ahí `stroke-width` es una
+propiedad desconocida y el trazo no se dibuja. Lo mismo con `viewBox`, que el
+módulo 7 escribe 27 veces en minúscula: en SVG el nombre distingue mayúsculas y
+sin él el dibujo no escala. Se cambia **sólo el nombre del atributo, y sólo
+dentro de un `<svg>`**: fuera, el guion es correcto —`data-language` se escribe
+igual en JSX— y hay prosa que habla de `font-size` sin que eso sea un atributo.
+
+Cuatro cosas de este material que costaron su rato:
+
+- **Los cuestionarios hay que convertirlos, no copiarlos.** Los radios del
+  heredado sólo funcionan con su guion de barajado, que es el que quita la
+  clase `font-medium` de la opción correcta al cargar la página. Ese guion no
+  se lleva —LP-CORE no tiene dónde ponerlo—, así que copiar el marcado tal cual
+  dejaría **la respuesta correcta en negrita desde el principio**. Van a `Quiz`,
+  que hace lo mismo y además califica. La insignia de dificultad («Nivel
+  Medio») entra en el enunciado, porque `Quiz` no tiene campo para ella y es lo
+  único que le dice al estudiante cuánto debería costarle.
+- **Un `<pre>` con un `<svg>` dentro es un diagrama, no código.** El módulo 7
+  mete tres diagramas grandes en la tarjeta oscura de los bloques de código,
+  para reutilizar el estilo. Tratarlos como código los aplana: `texto_plano` se
+  queda con los rótulos y tira el dibujo. Eran los tres avisos de «lang sin
+  determinar» que soltaba el guion, y por eso ese aviso existe.
+- **Las fórmulas cambian de delimitador.** El heredado carga KaTeX y escribe
+  `$x$`; LP-CORE compone con MathJax, cuya configuración sólo reconoce `\(x\)`
+  en línea. En bloque no hay problema: `$$…$$` lo entienden los dos. Sin
+  traducir, las fórmulas no fallan —salen como texto con dólares, que es
+  peor—. La pareja no puede cruzar una etiqueta ni pasar de 200 caracteres:
+  es lo que impide que el `$` suelto de un precio (`"$1,500.00"`) se enganche
+  con el siguiente de verdad y se trague el párrafo de en medio.
+- **El `<` que no abre etiqueta.** Uno solo en los cuatro módulos, dentro de
+  una fórmula (`$p < 0.05$`), y bastaba para que Babel no compilara la página
+  entera. Se escapa cuando le sigue un espacio o una cifra, que es cuando no
+  hay ambigüedad posible. Pegado a una letra no se toca: el analizador de HTML
+  también lo leería como etiqueta, así que traducirlo sería cambiar el
+  significado en vez de conservarlo.
+
+## La familia `curriculum`
+
+Es la más barata de las tres, y por un motivo que conviene decir claro: **el
+JSX ya está escrito.** Los módulos 3, 4 y 6 son aplicaciones de React con Babel
+en el navegador —el mismo montaje que LP-CORE— y su contenido vive en un
+`const curriculum = [...]` cuya forma es casi la que LP-CORE espera:
+
+```js
+{ id, title, codeTitle, icon, content: (<div>…</div>), pythonCode: `…` }
+```
+
+De ahí sale una sección: el `content` **tal cual** más un `CodeBlock` con
+`codeTitle` y `pythonCode`. Lo único que se traduce es `div.tip-box` → `Box`.
+
+El `content` no pasa por `escapar_jsx` ni por `limpiar_jsx`, y eso es lo
+importante: es JSX escrito a mano, con sus expresiones y sus comentarios
+`{/* … */}`. Escaparle las llaves —que es lo correcto con el HTML de las otras
+dos familias— lo rompería.
+
+Para leer el `curriculum` se usa la **indentación**, no un analizador de
+JavaScript: el `)` que cierra un `content` está siempre a dieciséis espacios.
+Contar paréntesis obligaría a saber si el que se mira va dentro de una cadena,
+y la prosa lleva comillas simples en castellano y en los ejemplos de código.
+
+### El cuestionario, y el icono que tira la página
+
+Dos cosas más que trae esta familia, y que salieron con el módulo 4:
+
+- **El cuestionario no vive donde se pinta**, y en cada módulo está en un
+  sitio distinto. En el 4, fuera del `curriculum`: la entrada sólo se marca
+  con `isQuiz: true` y las preguntas están en un array `quizQuestions` de al
+  lado, con el rótulo en el App. En el 6, dentro de su propio componente
+  —`InteractiveQuiz`, con su `const questions`—, al que el contenido llama con
+  `<InteractiveQuiz />` y rotula con el `<h3>` de encima. Los dos salen por el
+  mismo sitio: el `bloque_quiz` que usan los módulos 1 y 2, que sólo pide
+  renombrar `explanation` a `feedback`, y con el que viene gratis el recorte
+  de la felicitación. Las preguntas las lee Node y no `json.loads`: las del
+  módulo 6 van en comillas simples y traen comillas dobles dentro, así que no
+  son JSON ni entrecomillando las claves.
+
+  Del módulo 6 sale además una insignia por pregunta con la lección de la que
+  viene —«Lección 2 — Arquitectura»—, que es la misma marca que lleva la
+  dificultad en la familia de los artículos y por el mismo motivo: `Quiz` no
+  tiene campo para ella y perderla deja la pregunta sin situar. Un enunciado
+  con insignia deja de ser una cadena y pasa a ser un fragmento de JSX, con el
+  texto entre llaves —`{"…"}`— en vez de escapado.
+
+  Y el `<h3>` que anunciaba el cuestionario **se va con él**: `Quiz` dibuja su
+  propia cabecera con ese texto, así que dejarlo sería el mismo rótulo dos
+  veces seguidas. Es lo mismo que pasa en la familia de los artículos con el
+  «Ver Respuesta y Retroalimentación».
+- **`<Icons.X />` dentro del contenido puede dejar la página en blanco.** El
+  icono de una sección pasa por `renderIcon`, que devuelve `null` si no conoce
+  el nombre: falla en silencio, y para eso está la comprobación de la receta.
+  Pero escrito dentro del contenido no pasa por ahí: un nombre que `Icons` no
+  define es `undefined` en posición de componente y React tira la página
+  entera con un «Minified React error #130» que no dice de dónde viene. Pasó
+  con `Icons.Structure`. Ahora `convertir_react.py` traduce los nombres que
+  conoce y **`montar.py` se niega a montar** si queda alguno que la plantilla
+  no define.
+
+### Los componentes propios no los mueve el guion
+
+Cada módulo de esta familia trae los suyos —el `AIClassBuilder` del 3, el
+`ComparisonDiagram` y el `Tooltip` del 6—. **Se portan a mano**, a
+`componentes/modulo_N.jsx`, y la receta los nombra; `montar.py` los estampa
+entre sus centinelas. No es pereza: adaptar un componente a un sitio distinto
+del que se escribió es un juicio, no una transformación. El del módulo 3 vivía
+en un panel lateral de 384 px con `h-full` y su propio scroll; en LP-CORE la
+sección es una columna, así que `h-full` lo dejaría de altura cero. Cambian el
+marco, `Icons.Sparkles` —que LP-CORE no tiene, y `renderIcon` devuelve `null`
+en silencio para un nombre que no conoce— y el `lang` del `CodeBlock`, que sin
+declarar cae en `pseudo`. La lógica, ni una línea.
+
+Los dos del módulo 6 son el caso contrario, y por eso se copian **literales**:
+ya se dibujaban dentro de la columna de contenido, que es exactamente donde
+LP-CORE los pone. Lo que hubo que comprobar antes de copiarlos es que la
+plantilla les da lo que usan: `useState` está destructurado en el ámbito,
+`.animate-fade-in` existe con la misma animación, `primary` y `secondary` son
+los mismos colores en las dos configuraciones de Tailwind, y `.prose-lp` —que
+sólo estiliza `p`, `h3`, `h4`, listas, `strong` y tablas— no los toca, así que
+tampoco hace falta `not-prose`.
+
+**El `InteractiveQuiz` del 6 es la excepción: no se porta.** Sus ocho
+preguntas van al `Quiz` de LP-CORE, que hace lo mismo —califica, enseña la
+justificación, da el porcentaje y deja reintentar—. Portarlo sería publicar un
+segundo cuestionario al lado del que la plantilla ya trae, que es justo lo que
+hay que deshacer en el módulo 13.
+
+### El laboratorio que no se migró, porque no se veía
+
+El módulo 3 trae un «Laboratorio de Datos» entero —entrada de datos, media,
+mediana, varianza poblacional y muestral, polimorfismo en vivo— gobernado por
+seis valores de `interactiveType`. **No se ve nunca.** El panel derecho está
+detrás de `interactiveType === 'ai_builder'` y dentro vuelve a preguntar lo
+mismo, así que la rama del laboratorio es inalcanzable; de los seis valores,
+cinco no pintan nada. Se comprobó en el DOM de la página publicada, sección por
+sección, antes de decidir.
+
+En el módulo 6 el mismo campo tampoco pinta nada, y ahí se ve aún más claro:
+sus ocho entradas dicen `interactiveType: 'concept'` y su App no tiene segundo
+panel —el `<main>` es una sola columna con el contenido y el bloque de código—,
+así que el campo no lo lee nadie. El guion lo avisa igual, porque el aviso no
+sabe cuál de los dos casos tiene delante.
+
+No se migra, porque migrarlo sería **publicar algo que nunca se publicó**: la
+regla de esta cadena es conservar lo que el material hacía, no lo que su código
+pretendía hacer. `convertir_react.py` lo dice en voz alta al terminar, para que
+quien lea el heredado no crea que se quedó a medias. Si el laboratorio se
+quiere de verdad, es una decisión pedagógica y va como componente propio, igual
+que el `AIClassBuilder`.
+
+## La familia de los componentes
+
+El módulo 13 es el único, y con él la palabra «convertir» no vale: **no hay
+nada que convertir, hay que quitar**. Su contenido no está en datos sino en
+siete componentes de sección que el `curriculum` sólo nombra:
+
+```js
+{ id: 'ciclo', title: '2. Ciclo de vida del modelo', icon: 'Activity',
+  component: CicloVidaSection }
+```
+
+Y trae su propio `Box`, su `Pipeline`, su `usePlotly` y su `ChartFrame`, que
+son **los mismos** que los de LP-CORE —mismas props, mismos tipos, mismo
+marcado—, así que las secciones siguen funcionando con los de la plantilla sin
+tocar una línea. Se comprobó uno a uno antes de darlo por hecho: es la clase de
+suposición que, si falla, falla en silencio.
+
+Tres cosas sí cambian de sitio, y ninguna es cosmética:
+
+- **Los `usePlotly` salen de la sección.** `montar.py` emite cada sección como
+  una flecha de cuerpo-expresión —`const X = () => (<div …>…</div>)`— y ahí no
+  cabe un hook. Cada uno se va con su `<ChartFrame>` a un componente de
+  `graficas.jsx`, que es donde los módulos 10, 11 y 12 ya los tienen, y la
+  sección se queda con `<GraficaXxx caption="…" />`. Los dos tienen que viajar
+  juntos: el hook pinta sobre el `id` que el marco crea en el DOM.
+- **Las constantes de código se pegan en su `CodeBlock`.** El heredado declara
+  veintisiete al lado de la sección que las usa —cada una en un solo sitio— y
+  fuera del componente no hay dónde ponerlas. Se copian literales dentro de
+  `code={` … `}`, que es como las emiten las otras cuatro bocas. La forma que
+  se sustituye es la llave y no el atributo, porque una de ellas —el árbol de
+  directorios del mini-proyecto— no va en un `CodeBlock` sino suelta dentro de
+  un `<div>` con `whitespace-pre`.
+- **`chart-h-340` y `chart-h-380` no existen en LP-CORE.** No se traducen a la
+  altura más cercana, que cambiaría el dibujo: son reglas del `<style>` y las
+  rescata `estilos.py`. Esto obligó a arreglar el guion —ver su fila en la
+  tabla—, porque miraba sólo las secciones y esas dos clases se habían ido con
+  las gráficas.
+
+El `QA` de la autoevaluación —quince preguntas con su respuesta a la vista— se
+porta a mano, como todo componente propio: LP-CORE no tiene nada equivalente y
+no se convierte en `Accordion` porque plegar la respuesta cambia el trato, y el
+material ya dice cuándo conviene mirarla. El `Filename` no se porta: se declara
+y no lo invoca nadie, igual que el laboratorio del módulo 3.
+
+### El resaltador roto, que es lo que hace que esto sea un arreglo
+
+El heredado trae además su propio `CodeBlock`, con cien líneas de resaltado
+escrito a mano, y **está roto en la página publicada**. Su mecanismo de
+`protect`/`restore` guarda cada token bajo un centinela `\x00` y luego escapa
+el HTML, así que lo que el estudiante ve en los veintiséis bloques de código no
+es Python resaltado sino esto:
+
+```text
+♦0♦
+400">from __future__ 400">import annotations
+400">import json
+```
+
+Los `♦` son los `\x00` literales —cuatro en el archivo, que además hacen que
+`grep` lo trate como binario— y los `400">` son los restos de los `<span
+class="text-pink-400">` que el escape partió por la mitad. Quitar ese
+resaltador y dejar el de LP-CORE, que usa Prism, no es una mejora que se cuele
+por la puerta de atrás: es la deduplicación, y arreglar el bloque de código es
+su consecuencia.
+
 ## La receta
 
 Un JSON por módulo en `recetas/`. Rutas relativas a la raíz del repositorio,
@@ -136,12 +419,16 @@ para que el resultado no dependa de desde dónde se invoque:
   "base":    "../../Usta 2026II/…/lp-base.html",  // la plantilla vive en el otro curso
   "piezas":  "build/migracion/m11",               // lo intermedio, no se versiona
   "salida":  "11_Python_para_APIS_IA_Contenedores_y_Docker.html",  // el nombre de siempre
+  "componentes": "scripts/migracion/componentes/modulo_3.jsx",  // opcional: los propios
   "config":  { /* lo que el App lee: titulo, ra, horas, asignatura, lema… */ },
   "secciones": [ { "id": "vms", "componente": "VmsSection",
                    "titulo": "3. Contenedores vs máquinas virtuales",
                    "icono": "Layers" } ]
 }
 ```
+
+`componentes` sólo lo usa la familia `curriculum`, y es una ruta a un archivo
+del repositorio, no de `build/`: lo que se escribe a mano tiene que versionarse.
 
 `montar.py` comprueba dos cosas de la receta antes de montar, y las dos por el
 mismo motivo: fallaban sin avisar.
@@ -157,6 +444,15 @@ mismo motivo: fallaban sin avisar.
   con confiar en la poda: precisamente porque la receta lo nombra, `podar` lo
   da por vivo y no lo retira. Pasó con `PortadaSection`, que es una de las
   secciones de muestra de LPF.
+
+La poda tenía además un defecto silencioso, corregido en agosto de 2026: cada
+declaración muerta llegaba «hasta donde empieza la siguiente», y eso incluía el
+comentario que abre el bloque generado. La última constante de la plantilla se
+llevaba por delante el `=== GRÁFICAS INICIO ===` —los módulos 1, 2, 10, 11 y 12
+estaban publicados sin él— y, en los módulos sin gráficas, el
+`=== SECCIONES INICIO ===`. No rompía nada porque `montar.py` siempre parte de
+`lp-base.html`, pero dejaba el archivo con un centinela de cierre y ninguno de
+apertura. Ahora los centinelas cortan también.
 
 ## Lo que no se automatiza, y por qué
 
@@ -200,7 +496,42 @@ sentido que tenían**:
 `auditar.py` conoce estas dos excepciones y no las cuenta como pérdida. Todo lo
 demás que falte lo señala.
 
+En la familia `<article id>` hay una tercera, y por el mismo motivo —la
+traducción le quita el sentido que tenía—: **el cuestionario**. Ver arriba: sus
+radios sólo se sostenían sobre un guion que no se lleva, y sin él la respuesta
+correcta se veía en negrita antes de contestar.
+
+La del cuestionario vale también para el módulo 4, con un matiz: allí la
+justificación **sí** se veía siempre, pero con un «Respuesta Incorrecta» encima
+que le quitaba el filo al «Correcto.» de después. LP-CORE no pone ese
+contrapeso, así que la felicitación se recorta igual. Por eso el pictograma es
+opcional en `FELICITACION`: el módulo 4 abre con «Correcto.» a secas.
+
+Y una cuarta en los módulos 3 y 6, otra vez por lo mismo: **«el panel
+derecho»**. El texto manda al estudiante a un panel lateral que en LP-CORE no
+existe, porque la sección es una columna. A dónde pasa a señalar depende de qué
+había en ese panel, y no es lo mismo en los dos: en el 3 llevaba el Constructor
+IA —«ingresa tu API Key en el panel derecho»—, así que dice «el constructor de
+abajo»; en el 6 **no había panel ninguno** —su App pinta el bloque de código
+debajo del contenido, y «copie el código del panel derecho» es un resto de una
+maqueta anterior—, así que dice «el bloque de abajo», que es donde el código
+sigue estando. Es la frase entera lo que cambia de referente, no el sentido de
+lo que enseña.
+
+El cambio de delimitador de las fórmulas y el escape del `<` suelto no son
+excepciones: son del mismo orden que `class` → `className`. El problema es del
+destino, no del origen.
+
 ## Sobre `auditar.py`
+
+**Sólo cubre la familia `courseData`**, que es la que tiene el origen ya
+estructurado en `datos.json`. Para la familia `<article id>` la comprobación de
+agosto de 2026 se hizo aparte, contando el texto del artículo de origen —con
+los `<pre>` apartados, porque dentro hay `<` de código— contra el JSX crudo. Lo
+que faltaba era, palabra por palabra, lo que la migración quita a propósito: el
+«Copiar» de la barra, el «Anterior / Siguiente» del pie, las letras `A) B) C)`
+que el heredado también borra al cargar, el «Ver Respuesta y Retroalimentación»
+que absorbe el `Quiz`, y los `<h2>` que ahora pinta el App.
 
 Compara el `courseData` extraído con el JSX emitido: cada palabra del origen
 tiene que aparecer, con su frecuencia, en la sección o en las gráficas. Cazó

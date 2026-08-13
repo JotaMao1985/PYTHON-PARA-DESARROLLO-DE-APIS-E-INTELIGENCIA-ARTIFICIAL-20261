@@ -38,6 +38,8 @@ INI_CSS = "        /* === ESTILOS DEL MÓDULO INICIO — del <style> del archivo
 FIN_CSS = "        /* === ESTILOS DEL MÓDULO FIN === */"
 INI_GRAF = "        /* === GRÁFICAS INICIO — generadas por scripts/migracion/graficas.py === */"
 FIN_GRAF = "        /* === GRÁFICAS FIN === */"
+INI_COMP = "        /* === COMPONENTES DEL MÓDULO INICIO — escritos a mano, ver la receta === */"
+FIN_COMP = "        /* === COMPONENTES DEL MÓDULO FIN === */"
 
 # Gramáticas que el material de este curso necesita y la plantilla de LPF
 # ya carga. Se comprueban, no se añaden: si faltan, el bloque sale sin
@@ -108,16 +110,23 @@ def podar(texto, vivos):
         # Todo lo de primer nivel es una declaración, así que cada una llega
         # hasta donde empieza la siguiente. Es más fiable que buscar su
         # cierre: `};`, `);` y `` `; `` conviven aquí.
-        inicios = [m.start() for m in re.finditer(r"\n        const \w+\s*=", texto[i:j])]
-        inicios = [i + k for k in inicios] + [j]
+        decls = [i + m.start() for m in re.finditer(r"\n        const \w+\s*=", texto[i:j])]
 
-        for k, ini in enumerate(inicios[:-1]):
+        # Los centinelas cortan también. Si no, la última constante muerta de
+        # la plantilla llega hasta la primera declaración del bloque generado
+        # y se lleva por delante el comentario que lo abre. Pasaba siempre, y
+        # no se notaba porque el `=== FIN ===` sí sobrevive: los módulos 10,
+        # 11 y 12 se quedaron sin su `=== GRÁFICAS INICIO ===`.
+        cortes = sorted(decls + [j] + [i + m.start() for m in
+                                       re.finditer(r"\n        /\* === ", texto[i:j])])
+
+        for ini in decls:
             nombre = re.match(r"\n        const (\w+)", texto[ini:]).group(1)
             if nombre in vivos or nombre == "CONFIG":
                 continue
             if len(re.findall(r"\b" + nombre + r"\b", texto)) > 1:
                 continue
-            texto = texto[:ini] + texto[inicios[k + 1]:]
+            texto = texto[:ini] + texto[next(c for c in cortes if c > ini):]
             print(f"  podada «{nombre}», que ya no la referencia nadie", file=sys.stderr)
             break
         else:
@@ -176,6 +185,27 @@ def main():
               f"       {', '.join(sorted(iconos))}", file=sys.stderr)
         return 1
 
+    # Y el mismo defecto con otra cara: un `<Icons.X />` escrito dentro del
+    # contenido. Ahí no pasa por `renderIcon`, así que un nombre que no existe
+    # no devuelve `null`: es `undefined` en posición de componente y React tira
+    # la página entera con un «Minified React error #130» que no dice de dónde
+    # viene. Pasó con `Icons.Structure`, del módulo 4.
+    usados = set()
+    for pieza in sorted((piezas / "jsx").glob("*.jsx")):
+        usados |= set(re.findall(r"<Icons\.(\w+)", pieza.read_text(encoding="utf-8")))
+    if receta.get("componentes"):
+        p = ruta("componentes")
+        if p.exists():
+            usados |= set(re.findall(r"<Icons\.(\w+)", p.read_text(encoding="utf-8")))
+    inventados = sorted(usados - iconos)
+    if inventados:
+        print(f"ERROR: el contenido usa <Icons.{', Icons.'.join(inventados)} /> y `Icons`\n"
+              f"       no los define. No es que salgan en blanco ellos: dejan en blanco\n"
+              f"       la página entera, con un error de React que no dice de dónde viene.\n"
+              f"       Los {len(iconos)} que hay son: {', '.join(sorted(iconos))}",
+              file=sys.stderr)
+        return 1
+
     # Un componente que se llame como algo que la plantilla ya declara sale
     # declarado dos veces. Y no basta con confiar en `podar`: precisamente
     # porque la receta lo nombra, `podar` lo da por vivo y no lo retira. Pasó
@@ -211,7 +241,23 @@ def main():
         texto = poner(texto, INI_GRAF, FIN_GRAF, graf.read_text(encoding="utf-8"),
                       "        const curriculum = [")
 
-    # 5 · secciones
+    # 5 · componentes propios del módulo
+    #
+    # No salen de ningún conversor: adaptar un componente a un sitio distinto
+    # del que se escribió es un juicio, no una transformación mecánica. Por eso
+    # viven en `componentes/modulo_N.jsx`, que sí se versiona, y por eso los
+    # nombra la receta en vez de buscarlos el guion.
+    if receta.get("componentes"):
+        propio = ruta("componentes")
+        if not propio.exists():
+            print(f"ERROR: la receta declara componentes en {propio} y no está.",
+                  file=sys.stderr)
+            return 1
+        cuerpo = textwrap.indent(textwrap.dedent(propio.read_text(encoding="utf-8")),
+                                 " " * 8).rstrip()
+        texto = poner(texto, INI_COMP, FIN_COMP, cuerpo, "        const curriculum = [")
+
+    # 6 · secciones
     comps, filas = [], []
     for s in receta["secciones"]:
         cuerpo = (piezas / "jsx" / f"{s['id']}.jsx").read_text(encoding="utf-8").rstrip()
@@ -222,7 +268,7 @@ def main():
                      f"icon: {s['icono']!r}, component: {s['componente']} }},")
     texto = poner(texto, INI_SEC, FIN_SEC, "\n\n".join(comps), "        const curriculum = [")
 
-    # 6 · curriculum
+    # 7 · curriculum
     cur = ("        const curriculum = [\n" + "\n".join(filas) + "\n        ];")
     texto = re.sub(r"        const curriculum = \[.*?\n        \];", lambda _: cur,
                    texto, count=1, flags=re.S)
