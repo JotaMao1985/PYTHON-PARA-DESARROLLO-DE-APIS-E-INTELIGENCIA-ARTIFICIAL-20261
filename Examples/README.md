@@ -20,7 +20,7 @@ Esta carpeta contiene scripts cortos que se usan como **demos en vivo** durante 
 Algunos archivos **no son portables tal cual** y requieren ajustes antes de ejecutarse:
 
 - `convert_math.py` tiene una ruta absoluta a la máquina del docente. Cámbiala antes de usar.
-- `Dockerfile` hace `COPY requirements.txt .` pero esta carpeta no tiene `requirements.txt`. Para construir desde aquí necesitas crear uno (sugerencia: `fastapi`, `uvicorn`, `pydantic`, `numpy`, `google-generativeai`, `python-dotenv`).
+- `Dockerfile` hace `COPY requirements.txt .` pero esta carpeta no tiene `requirements.txt`. Para construir desde aquí necesitas crear uno (sugerencia: `fastapi`, `uvicorn`, `pydantic`, `numpy`, `google-genai`, `python-dotenv`).
 - `docker-compose.yml` monta `./app:/app` y `./data:/data`. Estas carpetas están en la **raíz del repo del curso**, no en `Examples/`. Si quieres usarlo, ejecútalo desde la raíz: `docker compose -f Examples/docker-compose.yml up`, o copia el compose a la raíz, o ajusta las rutas a `../app` y `../data`.
 
 ## Cómo correr una demo rápida
@@ -41,9 +41,14 @@ Necesita `GEMINI_API_KEY` exportada:
 
 ```bash
 export GEMINI_API_KEY='tu_clave'
-pip install google-generativeai python-dotenv
+pip install google-genai python-dotenv
 python Examples/Constructor_Clases_IA.py
 ```
+
+> El SDK es `google-genai` (`from google import genai`). El antiguo
+> `google-generativeai` quedó obsoleto el 30 de noviembre de 2025 y Google ya no
+> lo mantiene; si un tutorial usa `genai.configure(...)` o `genai.GenerativeModel(...)`,
+> está escrito para la librería vieja.
 
 ## ¿Qué cambió en mayo 2026?
 
