@@ -82,23 +82,26 @@ const SH = ({title,iconKey}) => {const Ic=iconMap[iconKey]; return (
 );};
 
 /* ---- Grader Tool Component ---- */
+/* R\u00FAbrica de ENTREGABLES (20% del corte III), decisi\u00F3n del docente 2026-08-06:
+   la sustentaci\u00F3n oral se eval\u00FAa aparte (80% del corte) y sus 15 puntos se
+   reescalaron entre los 15 criterios restantes (\u00D7100/85). Debe coincidir con
+   la constante RUBRICA de 0_Syllabus_P_A_IA.html. */
 const CRITERIA = [
-    {name:'1. An\u00E1lisis t\u00E9cnico, indicadores y se\u00F1ales',weight:0.07},
-    {name:'2. Rendimientos y propiedades emp\u00EDricas',weight:0.04},
-    {name:'3. \u2605 Volatilidad: EWMA + ARCH/GARCH',weight:0.06},
-    {name:'4. CAPM, riesgo sistem\u00E1tico y benchmark',weight:0.06},
-    {name:'5. VaR, CVaR y backtesting Kupiec',weight:0.07},
-    {name:'6. Markowitz: QP + no negatividad',weight:0.07},
-    {name:'7. \u2605 Renta fija: curvas, NS, duraci\u00F3n y convexidad',weight:0.06},
-    {name:'8. \u2605 Opciones: Black-Scholes y Greeks',weight:0.05},
-    {name:'9. \u2605 Stress testing y escenarios',weight:0.03},
-    {name:'10. \u2605 Backend FastAPI + Pydantic + SQLAlchemy',weight:0.10},
-    {name:'11. \u2605\u2605 ML: pipeline + Singleton + /predict',weight:0.07},
-    {name:'12. \u2605 Tests pytest + TestClient',weight:0.03},
-    {name:'13. \u2605\u2605 Docker + deploy PaaS + CI',weight:0.06},
+    {name:'1. An\u00E1lisis t\u00E9cnico, indicadores y se\u00F1ales',weight:0.08},
+    {name:'2. Rendimientos y propiedades emp\u00EDricas',weight:0.05},
+    {name:'3. \u2605 Volatilidad: EWMA + ARCH/GARCH',weight:0.07},
+    {name:'4. CAPM, riesgo sistem\u00E1tico y benchmark',weight:0.07},
+    {name:'5. VaR, CVaR y backtesting Kupiec',weight:0.08},
+    {name:'6. Markowitz: QP + no negatividad',weight:0.08},
+    {name:'7. \u2605 Renta fija: curvas, NS, duraci\u00F3n y convexidad',weight:0.07},
+    {name:'8. \u2605 Opciones: Black-Scholes y Greeks',weight:0.06},
+    {name:'9. \u2605 Stress testing y escenarios',weight:0.04},
+    {name:'10. \u2605 Backend FastAPI + Pydantic + SQLAlchemy',weight:0.12},
+    {name:'11. \u2605\u2605 ML: pipeline + Singleton + /predict',weight:0.08},
+    {name:'12. \u2605 Tests pytest + TestClient',weight:0.04},
+    {name:'13. \u2605\u2605 Docker + deploy PaaS + CI',weight:0.07},
     {name:'14. Tablero (frontend)',weight:0.03},
-    {name:'15. Buenas pr\u00E1cticas (Git, venv, README, .env)',weight:0.05},
-    {name:'16. Sustentaci\u00F3n oral',weight:0.15},
+    {name:'15. Buenas pr\u00E1cticas (Git, venv, README, .env)',weight:0.06},
 ];
 
 const GraderTool = () => {
@@ -255,7 +258,7 @@ const GraderTool = () => {
 '<div class="wrap">'+
 '<div class="hdr">'+
 '<h1>Acta individual de calificaci&#243;n</h1>'+
-'<div class="sub">Proyecto Integrador &#8212; Teor&#237;a del Riesgo (Python, APIs e IA)</div>'+
+'<div class="sub">Proyecto Integrador &#8212; Teor&#237;a del Riesgo (Python, APIs e IA) &#8226; Entregables: 20% del corte III (la sustentaci&#243;n se eval&#250;a aparte, 80%)</div>'+
 '<div class="meta">Profesor: Javier Mauricio Sierra &#8226; Generado: '+esc(fechaDoc)+'</div>'+
 '</div>'+
 '<div class="body">'+
@@ -392,7 +395,7 @@ obsBlock+
 '<div class="wrap">'+
 '<div class="hdr">'+
 '<h1>Acta de calificaciones</h1>'+
-'<div class="sub">Proyecto Integrador &#8212; Teor&#237;a del Riesgo (Python, APIs e IA)</div>'+
+'<div class="sub">Proyecto Integrador &#8212; Teor&#237;a del Riesgo (Python, APIs e IA) &#8226; Entregables: 20% del corte III (la sustentaci&#243;n se eval&#250;a aparte, 80%)</div>'+
 '<div class="meta">Profesor: Javier Mauricio Sierra &#8226; Generado: '+esc(fechaDoc)+'</div>'+
 '</div>'+
 '<div class="body">'+
@@ -449,7 +452,7 @@ obsRow+
     return (<div>
         <div className="usta-card p-6 mb-6">
             <h3 className="font-bold text-lg text-primary mb-1"><i className="fas fa-calculator mr-2"></i>Calificador autom&#225;tico</h3>
-            <p className="text-xs text-gray-500 mb-4">Selecciona la nota de cada criterio y el sistema calcula la nota ponderada en tiempo real.</p>
+            <p className="text-xs text-gray-500 mb-4">Selecciona la nota de cada criterio y el sistema calcula la nota ponderada en tiempo real. La nota corresponde a los <strong>entregables</strong> (20% del corte III); la sustentaci&#243;n oral se eval&#250;a aparte (80% del corte).</p>
 
             <div className="mb-4">
                 <label className="block text-xs font-bold text-gray-500 uppercase mb-1">Nombre del grupo</label>
@@ -1537,69 +1540,71 @@ jobs:
 
 {id:'rub',title:'R\u00FAbrica de evaluaci\u00F3n',icon:'Award',body:()=>(
 <div>
-<p className="mb-4 text-sm">Calificaci&#243;n total sobre <strong>5.0</strong>. Cada uno de los <strong>16 criterios</strong> se eval&#250;a en cinco niveles. La nota final es el promedio ponderado. La sustentaci&#243;n oral pesa 15%. Los criterios marcados con <span className="text-green-700 font-bold">&#9733;</span> son contenidos nuevos respecto a la versi&#243;n anterior del proyecto.</p>
+<p className="mb-4 text-sm">Calificaci&#243;n total sobre <strong>5.0</strong>. Cada uno de los <strong>15 criterios</strong> se eval&#250;a en cinco niveles y los pesos suman <strong>100%</strong>. La nota final es el promedio ponderado. Los criterios marcados con <span className="text-green-700 font-bold">&#9733;</span> son contenidos nuevos respecto a la versi&#243;n anterior del proyecto.</p>
 
-<p className="mb-2 mt-6 font-bold text-primary text-sm">1. An&#225;lisis t&#233;cnico, indicadores y se&#241;ales (7%)</p>
+<div className="tip-box p-4 text-sm mb-6"><strong className="text-primary"><i className="fas fa-microphone mr-1"></i> Sustentaci&#243;n oral &#8212; se eval&#250;a aparte:</strong> por decisi&#243;n del docente (2026-08-06), esta r&#250;brica califica &#250;nicamente los <strong>entregables</strong> del proyecto, que valen el <strong>20%</strong> del corte III. La sustentaci&#243;n oral se eval&#250;a <strong>fuera de esta r&#250;brica</strong> y corresponde al <strong>80%</strong> restante del corte III.</div>
+
+<p className="mb-2 mt-6 font-bold text-primary text-sm">1. An&#225;lisis t&#233;cnico, indicadores y se&#241;ales (8%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0 Excelente</th><th>4.5&#8211;4.9 Muy bueno</th><th>4.0&#8211;4.4 Bueno</th><th>3.5&#8211;3.9 Aceptable</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Los 6 indicadores (SMA, EMA, RSI, MACD, Bollinger, Estoc&#225;stico) implementados v&#237;a <code>/indicadores</code>, interactivos. Se&#241;ales automatizadas para 4+ reglas con panel sem&#225;foro/cards, umbrales configurables, persistencia en <code>signals_log</code>. Texto interpretativo en lenguaje simple.</td><td>6 indicadores + se&#241;ales para 3+ reglas con panel y umbrales configurables. Falta persistencia o detalle interpretativo.</td><td>4&#8211;5 indicadores + se&#241;ales para 2 reglas. Umbrales no configurables o sin texto interpretativo.</td><td>3 indicadores + se&#241;ales para 1 regla. Sin panel visual dedicado.</td><td>Menos de 3 indicadores o se&#241;ales con errores l&#243;gicos. Sin conexi&#243;n al backend.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-primary text-sm">2. Rendimientos y propiedades emp&#237;ricas (4%)</p>
+<p className="mb-2 font-bold text-primary text-sm">2. Rendimientos y propiedades emp&#237;ricas (5%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Rendimientos simples y log via <code>/rendimientos</code> con response Pydantic. Descriptivos completos. Histograma + Q-Q + boxplot. Jarque-Bera y Shapiro-Wilk con interpretaci&#243;n. Discusi&#243;n profunda de hechos estilizados. Justificaci&#243;n de log-rendimientos en informe.</td><td>Todo lo anterior con discusi&#243;n breve de hechos estilizados.</td><td>Rendimientos y pruebas correctos. Faltan 1&#8211;2 visualizaciones o interpretaci&#243;n mec&#225;nica.</td><td>Rendimientos correctos pero sin pruebas de normalidad o sin discusi&#243;n.</td><td>Rendimientos mal calculados o ausentes.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">3. &#9733; Volatilidad: EWMA + ARCH/GARCH (6%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">3. &#9733; Volatilidad: EWMA + ARCH/GARCH (7%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>EWMA con &#955; configurable v&#237;a <code>/volatilidad</code>. 3 modelos GARCH incluyendo asim&#233;trico (EGARCH/GJR). Tabla AIC/BIC. Diagn&#243;stico (Jarque-Bera + ARCH-LM). Pron&#243;stico rodante. Tabla comparativa EWMA vs GARCH(1,1) con interpretaci&#243;n s&#243;lida.</td><td>EWMA + 3 GARCH + diagn&#243;stico. Sin pron&#243;stico rodante o sin tabla comparativa EWMA vs GARCH.</td><td>EWMA + 2 modelos GARCH. Diagn&#243;stico parcial.</td><td>Solo GARCH(1,1) o solo EWMA. Sin selecci&#243;n por AIC/BIC.</td><td>Modelos ausentes o errores fundamentales.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-primary text-sm">4. CAPM, riesgo sistem&#225;tico y benchmark (6%)</p>
+<p className="mb-2 font-bold text-primary text-sm">4. CAPM, riesgo sistem&#225;tico y benchmark (7%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Beta de todos los activos via <code>/capm</code>. Rf desde FRED via <code>/macro</code> (no hardcodeada). Alpha de Jensen, Tracking Error, Information Ratio. Tabla de desempe&#241;o completa (acumulado, anualizado, vol, Sharpe, max drawdown). Discusi&#243;n s&#243;lida sistem&#225;tico vs no sistem&#225;tico.</td><td>Beta + CAPM + benchmark + 2 m&#233;tricas relativas con interpretaci&#243;n.</td><td>Beta + CAPM correcto + 1 m&#233;trica comparativa. Rf via API.</td><td>Beta para algunos activos. CAPM b&#225;sico, benchmark sin m&#233;tricas formales.</td><td>Errores conceptuales en CAPM o m&#243;dulo ausente.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-primary text-sm">5. VaR, CVaR y backtesting Kupiec (7%)</p>
+<p className="mb-2 font-bold text-primary text-sm">5. VaR, CVaR y backtesting Kupiec (8%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>3 m&#233;todos (param&#233;trico, hist&#243;rico, Montecarlo) + CVaR + tabla comparativa + visualizaci&#243;n con l&#237;neas VaR/CVaR. <strong>Kupiec aplicado a los 3 m&#233;todos</strong> con LR<sub>POF</sub>, p-valor, conclusi&#243;n sobre cu&#225;l pasa el test.</td><td>3 m&#233;todos + CVaR + Kupiec en al menos 1 m&#233;todo con interpretaci&#243;n.</td><td>3 m&#233;todos + CVaR. Kupiec presente pero sin interpretaci&#243;n profunda.</td><td>2 m&#233;todos + CVaR. Sin Kupiec o Kupiec mal aplicado.</td><td>1 m&#233;todo o errores conceptuales (percentiles, f&#243;rmula).</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-primary text-sm">6. Markowitz: programaci&#243;n cuadr&#225;tica + no negatividad (7%)</p>
+<p className="mb-2 font-bold text-primary text-sm">6. Markowitz: programaci&#243;n cuadr&#225;tica + no negatividad (8%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>QP formulado expl&#237;citamente. Resuelto con cvxpy o scipy.optimize. Heatmap. 10,000+ portafolios simulados. Frontera eficiente. M&#237;n varianza + m&#225;x Sharpe por QP. <strong>Dos versiones (con y sin no negatividad)</strong> con comparaci&#243;n de fronteras y discusi&#243;n del costo de la restricci&#243;n.</td><td>QP en ambas versiones. Comparaci&#243;n breve.</td><td>QP en una versi&#243;n. La otra solo simulaci&#243;n.</td><td>Frontera s&#243;lo por simulaci&#243;n, sin QP expl&#237;cito.</td><td>Sin frontera o errores fundamentales.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">7. &#9733; Renta fija: curvas, Nelson-Siegel, duraci&#243;n y convexidad (6%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">7. &#9733; Renta fija: curvas, Nelson-Siegel, duraci&#243;n y convexidad (7%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Curva FRED (6+ vencimientos) + ajuste Nelson-Siegel con RMSE. Bono sint&#233;tico con duraci&#243;n Macaulay y modificada + convexidad. Sensibilidad ante shocks &#177;50/&#177;100/&#177;200 pb comparando 3 aproximaciones (lineal con D, D+C, reprice exacto). Endpoints <code>/curva-rendimiento</code> y <code>/bono/duracion</code> funcionales.</td><td>NS ajustado, duraci&#243;n + convexidad correctas. Falta una visualizaci&#243;n de sensibilidad.</td><td>Curva spot + NS + duraci&#243;n modificada (sin convexidad).</td><td>Curva spot mostrada sin ajuste NS. Duraci&#243;n calculada manualmente.</td><td>M&#243;dulo ausente o errores en duraci&#243;n/convexidad.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">8. &#9733; Opciones: Black-Scholes y Greeks (5%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">8. &#9733; Opciones: Black-Scholes y Greeks (6%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>BS para call y put con verificaci&#243;n num&#233;rica de paridad. Las 5 Greeks (&#916;, &#915;, &#957;, &#920;, &#961;). Volatilidad impl&#237;cita por Newton-Raphson comparada con &#963; hist&#243;rica. 3 visualizaciones (payoff, precio vs spot, delta vs spot por T). Endpoint <code>/opcion/precio</code> con response anidado <code>Greeks</code>.</td><td>BS + 5 Greeks + paridad. Sin volatilidad impl&#237;cita o sin comparaci&#243;n.</td><td>BS + 3&#8211;4 Greeks. Visualizaciones b&#225;sicas.</td><td>Solo BS para call y put, con 1&#8211;2 Greeks.</td><td>BS mal aplicado o m&#243;dulo ausente.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">9. &#9733; Stress testing y escenarios (3%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">9. &#9733; Stress testing y escenarios (4%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>3 escenarios obligatorios (tasa, mercado, volatilidad) + escenario combinado. Aplicado al portafolio &#243;ptimo. VaR base vs VaR estresado. 3 visualizaciones (bar de p&#233;rdidas, comparaci&#243;n VaR, heatmap activo&#215;escenario). Endpoint <code>/stress</code> funcional.</td><td>3 escenarios + comparaci&#243;n VaR. Falta heatmap o escenario combinado.</td><td>2 escenarios + visualizaci&#243;n b&#225;sica.</td><td>1 escenario o stress aplicado fuera del portafolio &#243;ptimo.</td><td>M&#243;dulo ausente.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">10. &#9733; Backend FastAPI + Pydantic + SQLAlchemy (10%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">10. &#9733; Backend FastAPI + Pydantic + SQLAlchemy (12%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>API funcional con 12+ endpoints. Pydantic v2 (request y response) con <code>Field()</code> y 2+ <code>@field_validator</code>. Modelos anidados. <strong>SQLAlchemy ORM con 4 modelos</strong> (Asset, Price, Portfolio, PredictionLog). Sesi&#243;n inyectada via <code>get_db</code> + <code>Depends</code>. Cache transparente. BaseSettings + .env. Rutas async donde aplica. Status codes correctos (400, 404, 422, 503). <code>/docs</code> y <code>/redoc</code> completos.</td><td>10+ endpoints + Pydantic + SQLAlchemy con 3 modelos + Depends + .env. Detalle menor faltante.</td><td>7&#8211;9 endpoints + Pydantic b&#225;sico + SQLAlchemy con 2 modelos. Sin <code>@field_validator</code> personalizado.</td><td>4&#8211;6 endpoints. SQLAlchemy presente pero sin Depends para sesi&#243;n.</td><td>Menos de 4 endpoints, sin SQLAlchemy o sin Pydantic estructurado.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">11. &#9733;&#9733; Componente ML: pipeline + Singleton + /predict (7%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">11. &#9733;&#9733; Componente ML: pipeline + Singleton + /predict (8%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Pipeline completo train &#8594; joblib.dump &#8594; load &#8594; predict. <strong>Singleton verificable</strong> (carga una sola vez, log al inicio). Endpoint <code>/predict</code> con request/response Pydantic. <strong>Logging en <code>PredictionLog</code></strong> de SQLite. Justificaci&#243;n del prop&#243;sito anal&#237;tico (qu&#233; problema, features, m&#233;trica). Decorador propio para latencia.</td><td>Pipeline + Singleton + <code>/predict</code> + logging. Justificaci&#243;n presente.</td><td>Pipeline + Singleton + <code>/predict</code>. Sin logging en BD o sin decorador.</td><td>Modelo entrenado y servido pero sin Singleton (recarga por request) o sin endpoint formal.</td><td>Sin componente ML o pipeline incompleto.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">12. &#9733; Tests pytest + TestClient (3%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">12. &#9733; Tests pytest + TestClient (4%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>5+ tests obligatorios cubriendo unit (indicadores, VaR, BS) e integraci&#243;n (endpoints con TestClient). Fixtures con BD en memoria via override de <code>Depends(get_db)</code>. Pasan en local y en CI.</td><td>5 tests presentes y pasando. Detalle menor en fixtures.</td><td>3&#8211;4 tests funcionales. Cobertura limitada.</td><td>1&#8211;2 tests de muestra.</td><td>Sin tests automatizados.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-green-700 text-sm">13. &#9733;&#9733; Docker + deploy PaaS + CI (6%)</p>
+<p className="mb-2 font-bold text-green-700 text-sm">13. &#9733;&#9733; Docker + deploy PaaS + CI (7%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Dockerfile <strong>multi-stage</strong> con <code>python:3.11.9-slim-bookworm</code>. Imagen final &lt; 200 MB. <code>docker-compose.yml</code> para dev. <strong>Backend deployado en Render</strong> con URL p&#250;blica funcional en README (incluye <code>/docs</code>). GitHub Actions ejecuta <code>pytest</code> en cada push y pasa.</td><td>Multi-stage + deploy + CI. Detalle menor.</td><td>Dockerfile simple (no multi-stage) + deploy + CI b&#225;sico. Imagen pesa de m&#225;s.</td><td>Dockerfile presente y corre localmente. Sin deploy o sin CI.</td><td>Sin Docker o no funciona en otro entorno.</td></tr>
 </tbody></table>
@@ -1609,12 +1614,14 @@ jobs:
 <tr><td>Dise&#241;o profesional con sidebar/tabs por las 5 capas. Datos din&#225;micos desde el backend deployado. Manejo de errores con mensajes claros. Sin fallos de ejecuci&#243;n. Textos interpretativos en cada secci&#243;n.</td><td>Dise&#241;o limpio, datos del backend, alg&#250;n detalle de UX menor.</td><td>Funcional pero con alguna llamada directa a APIs externas (no via backend).</td><td>Tablero monol&#237;tico (l&#243;gica en el frontend). Problemas de carga.</td><td>No ejecutable o errores cr&#237;ticos.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-primary text-sm">15. Buenas pr&#225;cticas (Git, venv, README, .env) (5%)</p>
+<p className="mb-2 font-bold text-primary text-sm">15. Buenas pr&#225;cticas (Git, venv, README, .env) (6%)</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Git con historial de commits significativos. Estructura clara backend/frontend/tests. <code>requirements.txt</code> con versiones fijas. <code>.gitignore</code> excluye <code>.env</code>, <code>.db</code>, <code>__pycache__</code>. <code>.env.example</code> documentado. README completo: instalaci&#243;n, ejecuci&#243;n backend+frontend, deploy, env vars con d&#243;nde obtenerlas, prop&#243;sito del modelo ML, secci&#243;n de uso de IA. Type hints en todo el c&#243;digo. 1+ decorador personalizado.</td><td>Todo presente, README razonable, faltan 1&#8211;2 detalles menores.</td><td>Git con commits razonables. README parcial. Type hints parciales.</td><td>Pocos commits. README m&#237;nimo. Sin <code>.env.example</code>.</td><td>Sin Git o un solo commit. C&#243;digo en un archivo. Sin documentaci&#243;n.</td></tr>
 </tbody></table>
 
-<p className="mb-2 font-bold text-primary text-sm">16. Sustentaci&#243;n oral (15%)</p>
+<hr className="my-6 border-gray-300"/>
+<p className="mb-2 font-bold text-secondary text-sm"><i className="fas fa-microphone mr-1"></i> Sustentaci&#243;n oral &#8212; fuera de la r&#250;brica (80% del corte III)</p>
+<p className="mb-2 text-xs text-gray-500">No hace parte de los 15 criterios de entregables: se eval&#250;a aparte, en la sesi&#243;n de sustentaci&#243;n. Niveles de referencia:</p>
 <table className="rtable mb-6"><thead><tr><th>5.0</th><th>4.5&#8211;4.9</th><th>4.0&#8211;4.4</th><th>3.5&#8211;3.9</th><th>Menos de 3.5</th></tr></thead><tbody>
 <tr><td>Ambos integrantes demuestran dominio total. Demo en vivo fluida del tablero deployado. Muestran <code>/docs</code> y <code>/redoc</code>. Responden preguntas t&#233;cnicas (Pydantic, Depends, async, Singleton, ORM, Docker) y conceptuales (EWMA, GARCH, VaR, Kupiec, QP, NS, Black-Scholes, stress, ML) con solidez.</td><td>Ambos participan con buen dominio. Vacilaci&#243;n puntual pero resuelven.</td><td>Ambos participan. Un integrante no domina alguna secci&#243;n (arquitectura, ML, o m&#243;dulo estad&#237;stico).</td><td>Un integrante domina; el otro solo su parte. No defienden decisiones de arquitectura.</td><td>Demo fallida o solo un integrante participa.</td></tr>
 </tbody></table>
@@ -1748,7 +1755,7 @@ jobs:
 <div className="usta-gradient p-2 rounded-lg text-white flex-shrink-0"><i className="fas fa-users text-sm"></i></div>
 <div>
 <h4 className="font-bold text-primary">6. Sustentaci&#243;n oral</h4>
-<span className="text-xs text-gray-400">Presencial &#8212; 20 a 25 minutos</span>
+<span className="text-xs text-gray-400">Presencial &#8212; 20 a 25 minutos &#8226; se eval&#250;a fuera de la r&#250;brica (80% del corte III)</span>
 </div>
 </div>
 <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600">
