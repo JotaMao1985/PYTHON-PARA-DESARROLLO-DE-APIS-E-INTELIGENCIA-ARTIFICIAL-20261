@@ -154,10 +154,16 @@ la fuente a mano habría que editarlos uno a uno.
 > Plotly. Los que necesitan el troceo por `<h2>` son el 5, el 7, el 8 y el 9.
 
 > **Dependencia con el otro curso.** La librería LP-CORE vive en el repositorio de Lógica de
-> Programación Financiera, y este curso la comparte. Si alguien la cambia allí, hay que
-> re-ensamblar y volver a montar estos módulos. Los cambios que necesitó este curso —las
-> gramáticas de Prism y sacar el nombre de la asignatura del `App` a `CONFIG`— están en la rama
-> `lp-core/gramaticas-de-resaltado` de aquel repositorio, todavía sin fusionar a `main`.
+> Programación Financiera, y este curso la comparte, así que las dos carpetas de curso tienen
+> que seguir colgando del mismo directorio padre: `montar.py` busca `lp-base.html` ahí.
+>
+> Los cambios que necesitó este curso —las gramáticas de Prism y sacar el nombre de la
+> asignatura del `App` a `CONFIG`— **ya están en `main` de aquel repositorio** (su PR #1); la
+> rama `lp-core/gramaticas-de-resaltado` se fusionó y se borró.
+>
+> Sigue vivo, eso sí: va por el capítulo 3. **Si alguien cambia la librería allí, hay que volver
+> a montar estos cinco capítulos**, y por eso el heredado se conserva en `heredado/`. Son cuatro
+> comandos por módulo, documentados en [`scripts/migracion/README.md`](scripts/migracion/README.md).
 
 ## Auditoría del material
 
