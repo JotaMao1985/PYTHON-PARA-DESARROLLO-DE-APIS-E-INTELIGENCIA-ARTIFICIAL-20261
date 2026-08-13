@@ -1,0 +1,83 @@
+{
+  "base": "../../Usta 2026II/Logica de programacion/Material html/_plantilla/lp-base.html",
+  "piezas": "build/migracion/m3",
+  "componentes": "scripts/migracion/componentes/modulo_3.jsx",
+  "salida": "3_Python_para_APIS_IA_POO_Clases.html",
+  "titulo_html": "Semana 3 — Programación orientada a objetos y clases · Python para APIs e IA",
+  "descripcion": "Modelado de entidades estadísticas con clases en Python 3.11.9: atributos, métodos, composición frente a herencia, dataclasses y por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero. Universidad Santo Tomás, Pregrado en Estadística, 2026-II.",
+  "config": {
+    "asignatura": "Python para Desarrollo de APIs e IA",
+    "docente": "Javier Mauricio Sierra",
+    "numero": "3",
+    "titulo": "Programación orientada a objetos y clases",
+    "subtitulo": "Modelar entidades estadísticas con clases",
+    "lema": "Una clase no es un archivo de funciones: es un dato que sabe lo que puede hacer consigo mismo.",
+    "notaPie": "Material de la Semana 3. Pregrado en Estadística · 2026-II.",
+    "horas": 4,
+    "ra": "Modelar entidades estadísticas con clases para sostener la validación y la persistencia posteriores.",
+    "contenidoSyllabus": "Clases, atributos y métodos aplicados al modelado estadístico. Composición frente a herencia. Métodos especiales. Por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero.",
+    "temas": [
+      "Clases",
+      "Herencia",
+      "Polimorfismo",
+      "dataclasses"
+    ],
+    "storageKey": "usta_2026i_apis_cap03"
+  },
+  "secciones": [
+    {
+      "id": "intro",
+      "componente": "IntroSection",
+      "titulo": "1. Introducción: el concepto",
+      "icono": "BookOpen"
+    },
+    {
+      "id": "class_obj",
+      "componente": "ClaseObjetoSection",
+      "titulo": "2. Clases y el constructor",
+      "icono": "Layers"
+    },
+    {
+      "id": "class_components",
+      "componente": "ComponentesSection",
+      "titulo": "3. Componentes: atributos de clase",
+      "icono": "Grid"
+    },
+    {
+      "id": "methods",
+      "componente": "MetodosSection",
+      "titulo": "4. Métodos: dando vida al objeto",
+      "icono": "FunctionSquare"
+    },
+    {
+      "id": "inheritance",
+      "componente": "HerenciaSection",
+      "titulo": "5. Herencia y polimorfismo",
+      "icono": "GitBranch"
+    },
+    {
+      "id": "bridge",
+      "componente": "CimientoSection",
+      "titulo": "6. Por qué esto es el cimiento del curso",
+      "icono": "ArrowDownUp"
+    },
+    {
+      "id": "ai_builder",
+      "componente": "ConstructorIaSection",
+      "titulo": "7. Constructor IA: genera tu clase",
+      "icono": "Cpu"
+    },
+    {
+      "id": "api_python",
+      "componente": "ApiPythonSection",
+      "titulo": "8. Conexión API con Python",
+      "icono": "Workflow"
+    },
+    {
+      "id": "references",
+      "componente": "BibliografiaSection",
+      "titulo": "9. Referencia bibliográfica",
+      "icono": "Table"
+    }
+  ]
+}
