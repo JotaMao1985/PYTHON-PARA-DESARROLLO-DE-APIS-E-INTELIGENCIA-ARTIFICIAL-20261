@@ -2916,11 +2916,14 @@
                                                 Primero necesitas instalar la biblioteca oficial de Google para interactuar con Gemini. Ejecuta en tu terminal:
                                             </p>
                                             <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-sm mb-3">
-                                                pip install google-generativeai
+                                                pip install google-genai
                                             </div>
                                             <p className="text-xs text-gray-500 italic">
                                                 Recuerda activar tu entorno virtual antes de instalar paquetes (<code>python -m venv .venv</code>).
                                             </p>
+                                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800 mt-3">
+                                                <strong><i className="fas fa-exclamation-triangle mr-1"></i> Ojo con los tutoriales viejos:</strong> muchos todavía enseñan <code>google-generativeai</code> (con <code>import google.generativeai as genai</code>). Ese paquete quedó <strong>obsoleto el 30 de noviembre de 2025</strong> y Google ya no lo mantiene. El SDK vigente es <code>google-genai</code>, y se importa <code>from google import genai</code>. Si copias código de un blog y te falla, revisa primero cuál de los dos está usando.
+                                            </div>
                                         </div>
 
                                         <div className="usta-card p-5 mb-4">
@@ -2956,7 +2959,7 @@
                                                 El script completo sigue estas buenas prácticas de POO y programación:
                                             </p>
                                             <ul className="list-disc pl-5 space-y-2 text-sm mb-3">
-                                                <li><strong>Separar instrucciones del sistema del prompt del usuario</strong> — El <code>system_instruction</code> define el rol de la IA, y el <code>prompt</code> contiene la solicitud específica.</li>
+                                                <li><strong>Separar instrucciones del sistema del prompt del usuario</strong> — El <code>system_instruction</code> define el rol de la IA y viaja en la configuración (<code>types.GenerateContentConfig</code>); el <code>prompt</code> contiene la solicitud específica y viaja en <code>contents</code>.</li>
                                                 <li><strong>Manejo de errores con try/except</strong> — Siempre captura excepciones para que tu programa no se detenga inesperadamente.</li>
                                                 <li><strong>Reintentos con backoff exponencial</strong> — Si la API falla temporalmente (cuota, red), reintenta automáticamente con esperas crecientes.</li>
                                                 <li><strong>Encapsulamiento en una clase</strong> — Agrupamos toda la lógica de la API en una clase <code>GeneradorClases</code> para que sea reutilizable.</li>
@@ -2971,8 +2974,8 @@
                                                 La comunicación con Gemini sigue este flujo:
                                             </p>
                                             <ol className="list-decimal pl-5 space-y-2 text-sm mb-3">
-                                                <li><strong>Configurar</strong> — Le damos la API Key y elegimos el modelo (<code>gemini-2.5-flash</code>).</li>
-                                                <li><strong>Prompt</strong> — Enviamos una instrucción de sistema + un prompt del usuario.</li>
+                                                <li><strong>Crear el cliente</strong> — Le damos la API Key a <code>genai.Client(...)</code>. El cliente es el objeto que habla con Google; se crea <em>una sola vez</em>.</li>
+                                                <li><strong>Prompt</strong> — En cada petición elegimos el modelo (<code>gemini-2.5-flash</code>) y enviamos una instrucción de sistema + un prompt del usuario.</li>
                                                 <li><strong>Respuesta</strong> — La API devuelve texto con el código Python generado.</li>
                                                 <li><strong>Limpiar</strong> — Removemos posibles bloques de markdown de la respuesta.</li>
                                             </ol>
@@ -2994,7 +2997,8 @@
                                         </Box>
                                     </div>
 
-                <CodeBlock title="Script Completo: Generador de Clases con Gemini" lang="python" code={`import google.generativeai as genai
+                <CodeBlock title="Script Completo: Generador de Clases con Gemini" lang="python" code={`from google import genai
+                from google.genai import types
                 import os
                 import re
                 import time
@@ -3018,12 +3022,16 @@
                                 "Configúrala con: export GEMINI_API_KEY='tu_clave'"
                             )
 
-                        # Configurar la librería con la clave
-                        genai.configure(api_key=api_key)
+                        # El cliente es el objeto que habla con Google. Se crea una sola vez
+                        # y queda guardado como atributo para reutilizarlo en cada llamada.
+                        self.client = genai.Client(api_key=api_key)
 
-                        # Crear el modelo con instrucción de sistema
-                        self.model = genai.GenerativeModel(
-                            model_name=modelo,
+                        # A diferencia de la librería antigua, el modelo NO se fija al
+                        # construir: se elige en cada petición. Lo guardamos como atributo.
+                        self.modelo = modelo
+
+                        # La instrucción de sistema viaja en la configuración de la petición.
+                        self.config = types.GenerateContentConfig(
                             system_instruction=(
                                 "Eres un profesor de Python para estudiantes "
                                 "de estadística en la Universidad Santo Tomás. "
@@ -3045,7 +3053,11 @@
                         # Reintentos con backoff exponencial
                         for intento in range(self.intentos_max):
                             try:
-                                respuesta = self.model.generate_content(prompt)
+                                respuesta = self.client.models.generate_content(
+                                    model=self.modelo,
+                                    contents=prompt,
+                                    config=self.config,
+                                )
                                 codigo = respuesta.text
 
                                 # Limpiar posibles bloques markdown
