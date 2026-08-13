@@ -26,7 +26,7 @@ editarlos a mano, que es justo lo que la cadena evita.
 Lo intermedio (`build/`) no se versiona: no lo lee nadie y se rehace en un
 segundo.
 
-Hay **dos bocas de entrada**, porque el material heredado no es homogéneo, y
+Hay **cinco bocas de entrada**, porque el material heredado no es homogéneo, y
 una sola cadena de salida. Lo que cambia es de dónde se saca el contenido; el
 contrato de piezas —`jsx/<id>.jsx` y `graficas.jsx`— y el montaje son los
 mismos.
@@ -39,7 +39,7 @@ mismos.
 | `courseData` + Chart.js | 1, 2 | `convertir_datos.py` |
 | Un `<article id>` por `<h2>`, con diagramas SVG | 5, 7, 8, 9 | `convertir_plano.py` |
 | **React con `const curriculum = [...]` de datos** | **3, 4**, 6 | **`convertir_react.py`** |
-| React con secciones ya en componentes | 13 | pendiente: no hay nada que convertir, hay que deduplicar |
+| React con secciones ya en componentes | 13 | `deduplicar.py` |
 
 > Esta tabla se ha equivocado dos veces, y las dos de la misma manera: dando por
 > «HTML plano» un módulo que no lo era.
@@ -119,6 +119,17 @@ python3 scripts/migracion/estilos.py         "$F" --piezas build/migracion/m$N
 python3 scripts/migracion/montar.py          scripts/migracion/recetas/modulo_$N.json
 ```
 
+**Familia de los componentes** (13). La misma forma otra vez, con
+`deduplicar.py`, que no necesita `PYTHONPATH` porque no importa de al lado:
+
+```bash
+N=13; F=heredado/$(ls heredado | grep "^${N}_Python")
+
+python3 scripts/migracion/deduplicar.py "$F" --salida build/migracion/m$N
+python3 scripts/migracion/estilos.py    "$F" --piezas build/migracion/m$N
+python3 scripts/migracion/montar.py     scripts/migracion/recetas/modulo_$N.json
+```
+
 El orden importa: `estilos.py` mira el JSX ya convertido para saber qué clases
 siguen vivas, y `montar.py` necesita las piezas.
 
@@ -129,7 +140,8 @@ siguen vivas, y `montar.py` necesita las piezas.
 | `convertir_datos.py` | El objeto `courseData` → secciones y gráficas. Ver abajo. |
 | `convertir_plano.py` | Un `<article id>` → un componente de sección. `.tip-box` → `Box`, `<details>` → `Accordion`, los radios de «Verificación de Comprensión» → `Quiz`, y los atributos de los SVG a camelCase. Ver abajo. |
 | `convertir_react.py` | Una entrada del `curriculum` heredado → un componente de sección. El `content` se copia literal, porque ya es JSX; sólo `.tip-box` → `Box`. Ver abajo. |
-| `estilos.py` | Rescata del `<style>` original sólo las reglas de los diagramas propios que LP-CORE no cubre, con las variables resueltas. |
+| `deduplicar.py` | Un componente de sección del heredado → un componente de sección de LP-CORE, quitándole lo que la plantilla ya pone. Saca los `usePlotly` a `graficas.jsx` y pega las constantes de código en su `CodeBlock`. Ver abajo. |
+| `estilos.py` | Rescata del `<style>` original sólo las reglas de los diagramas propios que LP-CORE no cubre, con las variables resueltas. Mira las secciones **y** `graficas.jsx`, y cuenta como clase el `height` de un `ChartFrame`: es lo que el componente pone en el `div` de la gráfica, y sin su regla el marco mide cero sin que Plotly se queje. |
 | `montar.py` | Arma el archivo sobre `lp-base.html`: `<head>`, `CONFIG`, CSS, gráficas, secciones y `curriculum`. Poda lo que quede de la demo de LPF. |
 | `auditar.py` | Comprueba que no se perdió contenido: cada palabra del origen, con su frecuencia, tiene que estar en el JSX. |
 
@@ -331,6 +343,71 @@ pretendía hacer. `convertir_react.py` lo dice en voz alta al terminar, para que
 quien lea el heredado no crea que se quedó a medias. Si el laboratorio se
 quiere de verdad, es una decisión pedagógica y va como componente propio, igual
 que el `AIClassBuilder`.
+
+## La familia de los componentes
+
+El módulo 13 es el único, y con él la palabra «convertir» no vale: **no hay
+nada que convertir, hay que quitar**. Su contenido no está en datos sino en
+siete componentes de sección que el `curriculum` sólo nombra:
+
+```js
+{ id: 'ciclo', title: '2. Ciclo de vida del modelo', icon: 'Activity',
+  component: CicloVidaSection }
+```
+
+Y trae su propio `Box`, su `Pipeline`, su `usePlotly` y su `ChartFrame`, que
+son **los mismos** que los de LP-CORE —mismas props, mismos tipos, mismo
+marcado—, así que las secciones siguen funcionando con los de la plantilla sin
+tocar una línea. Se comprobó uno a uno antes de darlo por hecho: es la clase de
+suposición que, si falla, falla en silencio.
+
+Tres cosas sí cambian de sitio, y ninguna es cosmética:
+
+- **Los `usePlotly` salen de la sección.** `montar.py` emite cada sección como
+  una flecha de cuerpo-expresión —`const X = () => (<div …>…</div>)`— y ahí no
+  cabe un hook. Cada uno se va con su `<ChartFrame>` a un componente de
+  `graficas.jsx`, que es donde los módulos 10, 11 y 12 ya los tienen, y la
+  sección se queda con `<GraficaXxx caption="…" />`. Los dos tienen que viajar
+  juntos: el hook pinta sobre el `id` que el marco crea en el DOM.
+- **Las constantes de código se pegan en su `CodeBlock`.** El heredado declara
+  veintisiete al lado de la sección que las usa —cada una en un solo sitio— y
+  fuera del componente no hay dónde ponerlas. Se copian literales dentro de
+  `code={` … `}`, que es como las emiten las otras cuatro bocas. La forma que
+  se sustituye es la llave y no el atributo, porque una de ellas —el árbol de
+  directorios del mini-proyecto— no va en un `CodeBlock` sino suelta dentro de
+  un `<div>` con `whitespace-pre`.
+- **`chart-h-340` y `chart-h-380` no existen en LP-CORE.** No se traducen a la
+  altura más cercana, que cambiaría el dibujo: son reglas del `<style>` y las
+  rescata `estilos.py`. Esto obligó a arreglar el guion —ver su fila en la
+  tabla—, porque miraba sólo las secciones y esas dos clases se habían ido con
+  las gráficas.
+
+El `QA` de la autoevaluación —quince preguntas con su respuesta a la vista— se
+porta a mano, como todo componente propio: LP-CORE no tiene nada equivalente y
+no se convierte en `Accordion` porque plegar la respuesta cambia el trato, y el
+material ya dice cuándo conviene mirarla. El `Filename` no se porta: se declara
+y no lo invoca nadie, igual que el laboratorio del módulo 3.
+
+### El resaltador roto, que es lo que hace que esto sea un arreglo
+
+El heredado trae además su propio `CodeBlock`, con cien líneas de resaltado
+escrito a mano, y **está roto en la página publicada**. Su mecanismo de
+`protect`/`restore` guarda cada token bajo un centinela `\x00` y luego escapa
+el HTML, así que lo que el estudiante ve en los veintiséis bloques de código no
+es Python resaltado sino esto:
+
+```text
+♦0♦
+400">from __future__ 400">import annotations
+400">import json
+```
+
+Los `♦` son los `\x00` literales —cuatro en el archivo, que además hacen que
+`grep` lo trate como binario— y los `400">` son los restos de los `<span
+class="text-pink-400">` que el escape partió por la mitad. Quitar ese
+resaltador y dejar el de LP-CORE, que usa Prism, no es una mejora que se cuele
+por la puerta de atrás: es la deduplicación, y arreglar el bloque de código es
+su consecuencia.
 
 ## La receta
 

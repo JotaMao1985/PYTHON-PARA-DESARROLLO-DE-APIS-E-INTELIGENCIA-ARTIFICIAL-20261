@@ -1,0 +1,2564 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Material de estudio sobre modelos de machine learning en producción para estudiantes de pregrado en Estadística: ciclo de vida del modelo (pickle/joblib), patrón Singleton para FastAPI, e imágenes Docker optimizadas para dependencias de ML.">
+    <title>Semana 13 — Modelos de ML en producción · Python para APIs e IA</title>
+    <meta name="dc.date" content="2026-II">
+    <meta name="course.period" content="2026-II">
+    <meta name="course.subject" content="Python para Desarrollo de APIs e Inteligencia Artificial">
+    <meta name="course.institution" content="Universidad Santo Tomás · Estadística">
+    <meta property="og:title" content="Semana 13 — Modelos de ML en producción · Python para APIs e IA">
+    <meta property="og:description" content="Material de estudio sobre modelos de machine learning en producción para estudiantes de pregrado en Estadística: ciclo de vida del modelo (pickle/joblib), patrón Singleton para FastAPI, e imágenes Docker optimizadas para dependencias de ML.">
+    <meta property="og:type" content="article">
+    <meta name="author" content="Javier Mauricio Sierra">
+
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- Babel para JSX -->
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-3.5.0.min.js" charset="utf-8"></script>
+
+    <!-- Google Fonts: Montserrat y Fira Code -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3D008D',
+                        secondary: '#ED1E79',
+                        navy: '#001A4D',
+                        gold: '#FDB913',
+                        bg: '#F8FAFC',
+                        surface: '#FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            scroll-behavior: smooth;
+        }
+
+        code,
+        pre {
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* USTA Gradient Background */
+        .usta-gradient {
+            background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%);
+        }
+
+        /* USTA Navy Header */
+        .usta-header {
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+        }
+
+        /* USTA Card Style */
+        .usta-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .usta-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        /* Tip box USTA style */
+        .tip-box {
+            background: linear-gradient(135deg, rgba(61, 0, 141, 0.08) 0%, rgba(237, 30, 121, 0.08) 100%);
+            border: 1px solid rgba(61, 0, 141, 0.2);
+        }
+
+        /* Sidebar active state */
+        .nav-item.active {
+            background: linear-gradient(90deg, rgba(61, 0, 141, 0.15) 0%, transparent 100%);
+            border-left: 4px solid #ED1E79;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4A00A8, #FF2D8A);
+        }
+
+        /* Code scrollbar */
+        .code-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .code-scroll::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        /* Fade-in animation */
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Focus styles for accessibility */
+        button:focus-visible {
+            outline: 2px solid #ED1E79;
+            outline-offset: 2px;
+        }
+
+        /* Inline code chip */
+        .inline-code {
+            background: #F1F5F9;
+            color: #0F172A;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Plotly chart container helper */
+        .chart-h-340 { height: 340px; }
+        .chart-h-380 { height: 380px; }
+        .chart-h-420 { height: 420px; }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+<!-- Fase 3 · reparto declarado de la sesión (60/180, CONFIG del syllabus) -->
+<section data-fase3="reparto" aria-labelledby="reparto-titulo-13"
+    style="max-width:1100px;margin:1.5rem auto;padding:1.15rem 1.35rem;background:#FFFFFF;border:1px solid #E2E8F0;border-left:5px solid #3D008D;border-radius:10px;font-family:Montserrat,'Helvetica Neue',Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.06);">
+  <h2 id="reparto-titulo-13" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
+  <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 13 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Ciclo de vida del modelo: entrenar, serializar, cargar, predecir</li><li style="margin:0 0 .3rem 0;">El patrón Singleton para no recargar el modelo en cada petición</li><li style="margin:0 0 .3rem 0;">Coste de las dependencias de ML sobre el tamaño de la imagen</li><li style="margin:0 0 .3rem 0;">Consistencia entre entrenamiento y servicio</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Entrenar un modelo y serializarlo con joblib</li><li style="margin:0 0 .3rem 0;">Servirlo desde un endpoint que lo cargue una sola vez al arranque</li><li style="margin:0 0 .3rem 0;">Construir el tablero mínimo que consume ese endpoint</li><li style="margin:0 0 .3rem 0;">Reconstruir la imagen con el modelo dentro</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Comparativa de formatos de serialización</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">El tablero es el criterio 14 de la rúbrica del proyecto: pesa un 3 % y no necesita ser bonito, necesita existir, consumir tu API real y mostrar el resultado. El taller de la semana 15 lo integra con el resto del sistema.</p>
+</section>
+
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Iconos (SVG inline) ---
+        const Icons = {
+            BookOpen: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+            ),
+            Server: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+            ),
+            Activity: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+            ),
+            Cpu: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+                    <rect x="9" y="9" width="6" height="6"></rect>
+                    <line x1="9" y1="1" x2="9" y2="4"></line>
+                    <line x1="15" y1="1" x2="15" y2="4"></line>
+                    <line x1="9" y1="20" x2="9" y2="23"></line>
+                    <line x1="15" y1="20" x2="15" y2="23"></line>
+                    <line x1="20" y1="9" x2="23" y2="9"></line>
+                    <line x1="20" y1="14" x2="23" y2="14"></line>
+                    <line x1="1" y1="9" x2="4" y2="9"></line>
+                    <line x1="1" y1="14" x2="4" y2="14"></line>
+                </svg>
+            ),
+            CheckSquare: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+            ),
+            ChevronLeft: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            ),
+            ChevronRight: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            ),
+            Code: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+            ),
+        };
+
+        const renderIcon = (iconName, size = 20) => {
+            const Icon = Icons[iconName];
+            return Icon ? <Icon size={size} /> : null;
+        };
+
+        // --- Componente CodeBlock con highlight para Python ---
+        const CodeBlock = ({ title, code, lang = 'python' }) => {
+            const [copied, setCopied] = useState(false);
+            const handleCopy = () => {
+                navigator.clipboard.writeText(code).then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                });
+            };
+
+            const meta = {
+                python:     { icon: 'fab fa-python text-yellow-400',  label: title || 'Código Python' },
+                dockerfile: { icon: 'fab fa-docker text-sky-400',     label: title || 'Dockerfile' },
+                shell:      { icon: 'fas fa-terminal text-green-400', label: title || 'Terminal' },
+                text:       { icon: 'fas fa-file-alt text-gray-300',  label: title || 'Archivo' },
+            }[lang] || { icon: 'fas fa-code text-gray-300', label: title || 'Código' };
+
+            const escapeHtml = (s) => s
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            // Estrategia: extrae strings/comentarios a placeholders ANTES de
+            // marcar palabras clave, para que el contenido textual no se
+            // confunda con los atributos class="..." que generamos después.
+            const protect = (src, patterns) => {
+                const tokens = [];
+                let out = src;
+                patterns.forEach(({ re, cls }) => {
+                    out = out.replace(re, (m) => {
+                        const idx = tokens.length;
+                        tokens.push({ text: m, cls });
+                        return ` ${idx} `;
+                    });
+                });
+                return { out, tokens };
+            };
+            const restore = (src, tokens) =>
+                src.replace(/ (\d+) /g, (_, i) => {
+                    const t = tokens[parseInt(i, 10)];
+                    return `<span class="${t.cls}">${t.text}</span>`;
+                });
+
+            const highlightPython = (raw) => {
+                const escaped = escapeHtml(raw);
+                const { out, tokens } = protect(escaped, [
+                    { re: /"""[\s\S]*?"""|'''[\s\S]*?'''/g,                 cls: 'text-green-500 italic' },
+                    { re: /(#[^\n]*)/g,                                     cls: 'text-green-500 italic' },
+                    { re: /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'/g,       cls: 'text-emerald-300' },
+                ]);
+                const highlighted = out
+                    .replace(/\b(class|def|from|import|return|if|else|elif|for|while|async|await|try|except|finally|raise|del|as|in|not|and|or|is|with|yield|lambda|pass|break|continue|None|True|False|global|nonlocal|assert)\b/g,
+                        '<span class="text-pink-400">$1</span>')
+                    .replace(/\b(self|cls)\b/g, '<span class="text-orange-300 italic">$1</span>')
+                    .replace(/\b(int|str|float|bool|list|dict|tuple|set|bytes|object|type|Path|Pipeline|RandomForestClassifier|StandardScaler|FastAPI|Request|Depends|HTTPException|BaseModel|Field|ConfigDict|Annotated|AsyncIterator|ClassVar|Lock|TestClient)\b/g,
+                        '<span class="text-yellow-300">$1</span>')
+                    .replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="text-amber-300">$1</span>');
+                return restore(highlighted, tokens);
+            };
+
+            const highlightDockerfile = (raw) => {
+                const escaped = escapeHtml(raw);
+                const { out, tokens } = protect(escaped, [
+                    { re: /(#[^\n]*)/g,                               cls: 'text-green-500 italic' },
+                    { re: /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'/g, cls: 'text-emerald-300' },
+                ]);
+                const highlighted = out
+                    .replace(/^(FROM|RUN|COPY|WORKDIR|ENV|EXPOSE|CMD|USER|ENTRYPOINT|ARG|LABEL|VOLUME|HEALTHCHECK|STOPSIGNAL|ONBUILD|SHELL|MAINTAINER)\b/gm,
+                        '<span class="text-pink-400 font-semibold">$1</span>')
+                    .replace(/(--[\w-]+)/g, '<span class="text-cyan-300">$1</span>');
+                return restore(highlighted, tokens);
+            };
+
+            const highlightShell = (raw) => {
+                const escaped = escapeHtml(raw);
+                const { out, tokens } = protect(escaped, [
+                    { re: /(#[^\n]*)/g,                               cls: 'text-green-500 italic' },
+                    { re: /"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'/g, cls: 'text-emerald-300' },
+                ]);
+                const highlighted = out
+                    .replace(/^(\s*)(python3?(?:\.\d+)?|pip|uvicorn|pytest|docker|source|cd|ls|cat|export|mkdir|rm|cp|mv|find|grep)\b/gm,
+                        '$1<span class="text-pink-400">$2</span>')
+                    .replace(/(--?[\w-]+)/g, '<span class="text-cyan-300">$1</span>');
+                return restore(highlighted, tokens);
+            };
+
+            const highlightText = (raw) => {
+                const escaped = escapeHtml(raw);
+                const { out, tokens } = protect(escaped, [
+                    { re: /(#[^\n]*)/g, cls: 'text-green-500 italic' },
+                ]);
+                return restore(out, tokens);
+            };
+
+            const html = lang === 'python'    ? highlightPython(code)
+                      : lang === 'dockerfile' ? highlightDockerfile(code)
+                      : lang === 'shell'      ? highlightShell(code)
+                      :                         highlightText(code);
+
+            return (
+                <div className="my-4 rounded-xl overflow-hidden border border-gray-700 bg-gray-900 text-gray-100 shadow-lg">
+                    <div className="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
+                        <span><i className={`${meta.icon} mr-2`}></i>{meta.label}</span>
+                        <span className="flex items-center gap-3">
+                            <button
+                                onClick={handleCopy}
+                                className="flex items-center gap-1 hover:text-white transition-colors"
+                                title="Copiar código"
+                            >
+                                {copied
+                                    ? <><i className="fas fa-check text-green-400"></i><span className="text-green-400">¡Copiado!</span></>
+                                    : <><i className="far fa-clipboard"></i><span>Copiar</span></>
+                                }
+                            </button>
+                            <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                                <span className="w-2 h-2 rounded-full bg-yellow-500"></span>
+                                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                            </span>
+                        </span>
+                    </div>
+                    <div className="p-4 overflow-x-auto code-scroll">
+                        <pre className="text-sm leading-relaxed"><code dangerouslySetInnerHTML={{ __html: html }} /></pre>
+                    </div>
+                </div>
+            );
+        };
+
+        // --- Box (info / tip / warn / danger) ---
+        const Box = ({ type = 'info', label, children }) => {
+            const styles = {
+                info:   { border: '#3D008D', bg: '#F5F0FA', label: '#3D008D' },
+                tip:    { border: '#15803D', bg: '#F0FDF4', label: '#15803D' },
+                warn:   { border: '#B45309', bg: '#FFFBEB', label: '#B45309' },
+                danger: { border: '#B91C1C', bg: '#FEF2F2', label: '#B91C1C' },
+            }[type] || { border: '#3D008D', bg: '#F5F0FA', label: '#3D008D' };
+            return (
+                <div className="rounded-xl px-5 py-4 my-4 border-l-4"
+                     style={{ borderColor: styles.border, background: styles.bg }}>
+                    {label && (
+                        <span className="inline-block text-[0.7rem] uppercase tracking-wider font-bold rounded mb-2 px-2 py-0.5 text-white"
+                              style={{ background: styles.label }}>
+                            {label}
+                        </span>
+                    )}
+                    <div className="text-gray-700 leading-relaxed">{children}</div>
+                </div>
+            );
+        };
+
+        // --- Filename (etiqueta de archivo) — versión "ligera" para algún caso suelto ---
+        const Filename = ({ name }) => (
+            <div className="inline-block bg-navy text-white px-3 py-1 rounded-t-md font-mono text-xs font-medium relative z-10 -mb-2"
+                 style={{ background: '#001A4D' }}>
+                {name}
+            </div>
+        );
+
+        // --- QA item (para autoevaluación) ---
+        const QA = ({ q, a }) => (
+            <div className="border border-gray-200 rounded-xl bg-white px-5 py-4 mb-4 shadow-sm">
+                <div className="font-semibold text-navy mb-2" style={{ color: '#001A4D' }}>{q}</div>
+                <div className="bg-bg px-4 py-3 rounded-md border-l-4 text-[0.95rem]"
+                     style={{ background: '#F8FAFC', borderColor: '#FDB913' }}>
+                    {a}
+                </div>
+            </div>
+        );
+
+        // --- Section header (igual al origen) ---
+        const SectionHeader = ({ title, icon: Icon }) => (
+            <div className="flex items-center gap-3 mb-4 border-b border-gray-200 pb-3">
+                <div className="usta-gradient p-2.5 rounded-xl shadow-md text-white">
+                    {Icon && <Icon size={24} />}
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+            </div>
+        );
+
+        // --- Pipeline diagram (4 pasos) ---
+        const Pipeline = ({ steps }) => (
+            <div className="flex items-stretch flex-wrap gap-2 my-6 justify-between">
+                {steps.map((s, i) => (
+                    <React.Fragment key={i}>
+                        <div className="flex-1 min-w-[140px] bg-white border border-gray-200 rounded-xl px-3 py-3 text-center text-sm shadow-sm"
+                             style={{ borderTop: '4px solid #3D008D' }}>
+                            <span className="inline-block w-6 h-6 leading-6 rounded-full text-white font-bold text-xs mb-1"
+                                  style={{ background: '#3D008D' }}>{s.num}</span>
+                            <span className="block font-semibold text-navy mb-1" style={{ color: '#001A4D' }}>{s.title}</span>
+                            <span>{s.desc}</span>
+                        </div>
+                        {i < steps.length - 1 && (
+                            <div className="self-center text-secondary font-bold text-xl hidden md:block">→</div>
+                        )}
+                    </React.Fragment>
+                ))}
+            </div>
+        );
+
+        // --- Hook para renderizar Plotly cuando un componente entra al DOM ---
+        const usePlotly = (id, dataFn, layoutFn, deps = []) => {
+            useEffect(() => {
+                const el = document.getElementById(id);
+                if (el && window.Plotly) {
+                    Plotly.newPlot(id, dataFn(), layoutFn(), { responsive: true, displayModeBar: false });
+                }
+                return () => {
+                    if (window.Plotly) {
+                        try { Plotly.purge(id); } catch (e) { /* noop */ }
+                    }
+                };
+                // eslint-disable-next-line react-hooks/exhaustive-deps
+            }, deps);
+        };
+
+        const ChartFrame = ({ id, height = 'chart-h-340', caption }) => (
+            <>
+                <div className="bg-white border border-gray-200 rounded-xl p-2 shadow-sm my-3">
+                    <div id={id} className={height} style={{ width: '100%' }}></div>
+                </div>
+                {caption && <p className="text-xs text-gray-500 italic text-center mb-4">{caption}</p>}
+            </>
+        );
+
+        // ============================================================
+        // SECCIÓN 1 — Introducción y objetivos
+        // ============================================================
+        const IntroSection = () => (
+            <div>
+                <p className="mb-4">
+                    En las semanas previas se construyó una API en FastAPI capaz de validar entradas con Pydantic,
+                    consultar una base de datos mediante SQLAlchemy y empaquetarse en una imagen Docker para
+                    desplegarse en una plataforma como servicio (PaaS). Resta el paso decisivo: incorporar a esa
+                    API un <strong>modelo de machine learning entrenado</strong> y servirlo de forma eficiente.
+                </p>
+
+                <p className="mb-4">
+                    Esta semana se aborda esa frontera entre la fase exploratoria —donde un modelo se entrena en
+                    un cuaderno Jupyter o un script— y la fase operativa —donde el modelo debe responder
+                    peticiones HTTP en milisegundos, dentro de un contenedor liviano y reproducible. Tres piezas
+                    articulan ese tránsito:
+                </p>
+
+                <ol className="list-decimal pl-6 space-y-1 mb-6">
+                    <li>Un <strong>ciclo de vida</strong> claro que separa entrenamiento, serialización, carga y predicción.</li>
+                    <li>Un <strong>patrón Singleton</strong> que garantiza que el modelo se cargue una sola vez por instancia del servidor, no en cada petición.</li>
+                    <li>Un <strong>Dockerfile multi-etapa</strong> que evita arrastrar herramientas de compilación, cachés de pip y variantes GPU innecesarias hasta la imagen final.</li>
+                </ol>
+
+                <Box type="warn" label="Nota previa">
+                    Todo el código que aparece en este documento se ha redactado pensando en
+                    <strong> Python 3.11.9</strong> y en la imagen base <span className="inline-code">python:3.11.9-slim-bookworm</span>
+                    (Debian 12). Antes de copiarlo a un proyecto se recomienda <strong>verificarlo en el propio
+                    entorno</strong>: las versiones de bibliotecas de ML evolucionan rápido y un mismo modelo
+                    serializado puede comportarse de manera distinta entre versiones de scikit-learn. La regla
+                    básica es <em>fijar versiones en <span className="inline-code">requirements.txt</span></em> y <em>regenerar el
+                    artefacto serializado cuando se actualicen las dependencias</em>.
+                </Box>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">Objetivos de aprendizaje</h3>
+                <p className="mb-3">Al finalizar el estudio de este material, se espera que el estudiante sea capaz de:</p>
+
+                <ul className="list-disc pl-6 space-y-2 mb-6">
+                    <li>Describir las cuatro fases del ciclo de vida de un modelo en producción y los artefactos que se intercambian entre ellas.</li>
+                    <li>Distinguir <span className="inline-code">pickle</span> de <span className="inline-code">joblib</span>, justificar la elección de uno u otro y aplicar buenas prácticas de compresión y compatibilidad.</li>
+                    <li>Identificar las <strong>amenazas de seguridad</strong> asociadas a la deserialización de modelos y aplicar contramedidas razonables.</li>
+                    <li>Implementar un <strong>Singleton</strong> de modelo en FastAPI mediante el evento <span className="inline-code">lifespan</span> e inyectarlo en los <em>endpoints</em> con <span className="inline-code">Depends</span>.</li>
+                    <li>Construir un <strong>Dockerfile multi-etapa</strong> que produzca imágenes pequeñas y reproducibles para una API con dependencias pesadas de ML.</li>
+                    <li>Integrar todo lo anterior en un mini-proyecto que entrena, sirve y prueba un modelo de clasificación.</li>
+                </ul>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">Conexión con lo aprendido en semanas previas</h3>
+                <p className="mb-4">El material asume conocimiento operativo de los temas listados a continuación. No se re-explican; únicamente se invocan cuando aportan contexto al aprendizaje nuevo:</p>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                    <div className="usta-card p-5">
+                        <h5 className="font-bold text-navy mb-2" style={{ color: '#001A4D' }}>De la API</h5>
+                        <ul className="list-disc pl-5 space-y-1 text-sm">
+                            <li>Decoradores de FastAPI.</li>
+                            <li>Validación con Pydantic y errores 422.</li>
+                            <li><span className="inline-code">Depends</span> e inyección de dependencias.</li>
+                            <li>Type hinting como fuente de verdad.</li>
+                        </ul>
+                    </div>
+                    <div className="usta-card p-5">
+                        <h5 className="font-bold text-navy mb-2" style={{ color: '#001A4D' }}>De infraestructura</h5>
+                        <ul className="list-disc pl-5 space-y-1 text-sm">
+                            <li>Entornos virtuales y <span className="inline-code">requirements.txt</span>.</li>
+                            <li>Dockerfile, contexto de construcción, multi-stage.</li>
+                            <li>Imagen base <span className="inline-code">python:3.11.9-slim-bookworm</span>.</li>
+                            <li>Variables de entorno y despliegue PaaS.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        );
+
+        // ============================================================
+        // SECCIÓN 2 — Ciclo de vida del modelo
+        // ============================================================
+        const trainPyCode = `"""Entrena un clasificador sobre el conjunto Iris y serializa el pipeline.
+
+Ejecución: python train.py
+Salida: artifacts/model.joblib (objeto serializado + metadatos).
+"""
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+import joblib
+import sklearn
+from sklearn.datasets import load_iris
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+
+ARTIFACTS_DIR = Path("artifacts")
+MODEL_PATH = ARTIFACTS_DIR / "model.joblib"
+METADATA_PATH = ARTIFACTS_DIR / "model.metadata.json"
+
+
+def build_pipeline() -> Pipeline:
+    """Construye el pipeline preprocesamiento + estimador.
+
+    Encapsular el preprocesamiento dentro del Pipeline garantiza que la
+    misma transformación se aplique en entrenamiento y en predicción.
+    """
+    return Pipeline(
+        steps=[
+            ("scaler", StandardScaler()),
+            ("clf", RandomForestClassifier(n_estimators=100, random_state=42)),
+        ]
+    )
+
+
+def main() -> None:
+    ARTIFACTS_DIR.mkdir(exist_ok=True)
+
+    data = load_iris(as_frame=True)
+    X, y = data.data, data.target
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42, stratify=y
+    )
+
+    pipeline = build_pipeline()
+    pipeline.fit(X_train, y_train)
+
+    # Validación rápida (cinco particiones).
+    cv_scores = cross_val_score(pipeline, X_train, y_train, cv=5)
+    test_acc = pipeline.score(X_test, y_test)
+
+    # Serialización con compresión moderada (nivel 3).
+    joblib.dump(pipeline, MODEL_PATH, compress=3)
+
+    metadata = {
+        "trained_at": datetime.now(timezone.utc).isoformat(),
+        "sklearn_version": sklearn.__version__,
+        "feature_names": list(X.columns),
+        "target_names": data.target_names.tolist(),
+        "cv_mean_accuracy": float(cv_scores.mean()),
+        "cv_std_accuracy": float(cv_scores.std()),
+        "test_accuracy": float(test_acc),
+    }
+    METADATA_PATH.write_text(json.dumps(metadata, indent=2, ensure_ascii=False))
+
+    print(f"Modelo guardado en {MODEL_PATH}")
+    print(f"Exactitud test: {test_acc:.3f}  ·  CV: {cv_scores.mean():.3f}")
+
+
+if __name__ == "__main__":
+    main()
+`;
+
+        const guardarModeloCode = `# Comparación de las dos APIs aplicadas al mismo objeto.
+import pickle
+import joblib
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.datasets import make_classification
+
+X, y = make_classification(n_samples=2000, n_features=20, random_state=0)
+clf = RandomForestClassifier(n_estimators=200, random_state=0).fit(X, y)
+
+# (a) pickle puro: hay que abrir el archivo en modo binario explícitamente.
+with open("modelo_pickle.pkl", "wb") as f:
+    pickle.dump(clf, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+# (b) joblib: una sola llamada, con compresión opcional.
+joblib.dump(clf, "modelo_joblib.joblib", compress=3)
+`;
+
+        const lecturaSimetricaCode = `# Lectura: importante usar la misma biblioteca con la que se serializó.
+with open("modelo_pickle.pkl", "rb") as f:
+    clf_a = pickle.load(f)              # objeto original
+
+clf_b = joblib.load("modelo_joblib.joblib")
+`;
+
+        const antipatronCode = `@app.post("/predict")
+def predict(data: InputData):
+    # Antipatrón: cada petición lee el archivo de disco
+    # y reconstruye el objeto. Latencia muy alta y E/S innecesaria.
+    model = joblib.load("artifacts/model.joblib")
+    return {"prediction": int(model.predict([data.to_array()])[0])}
+`;
+
+        const smokeTestCode = `"""Verifica que el modelo cargado produce la predicción esperada
+en una entrada de referencia. Puede ejecutarse como script independiente
+en CI/CD o, mejor aún, integrarse dentro del lifespan de la API
+(ver el mini-proyecto, sección 5.5).
+"""
+import joblib
+import numpy as np
+
+model = joblib.load("artifacts/model.joblib")
+
+# Entrada de referencia conocida (Iris setosa).
+sample = np.array([[5.1, 3.5, 1.4, 0.2]])
+prediction = int(model.predict(sample)[0])
+expected = 0  # 'setosa' según el dataset Iris.
+
+assert prediction == expected, (
+    f"Smoke test fallido: se esperaba {expected}, se obtuvo {prediction}. "
+    "Posible incompatibilidad de versiones de scikit-learn."
+)
+print("Smoke test OK")
+`;
+
+        const verifyHashCode = `"""Verifica el hash del archivo serializado antes de cargarlo en memoria."""
+import hashlib
+import sys
+from pathlib import Path
+
+EXPECTED_SHA256 = "f3b1a2c4...d9e0"  # Generado tras el entrenamiento.
+MODEL_PATH = Path("artifacts/model.joblib")
+
+
+def sha256_of(path: Path) -> str:
+    h = hashlib.sha256()
+    with path.open("rb") as f:
+        for chunk in iter(lambda: f.read(1 << 16), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def main() -> None:
+    digest = sha256_of(MODEL_PATH)
+    if digest != EXPECTED_SHA256:
+        print(f"Hash no coincide ({digest}); abortando carga.", file=sys.stderr)
+        sys.exit(1)
+    print("Hash verificado.")
+
+
+if __name__ == "__main__":
+    main()
+`;
+
+        const CicloVidaSection = () => {
+            usePlotly('chart-serializacion',
+                () => ([{
+                    type: 'bar',
+                    orientation: 'h',
+                    x: [1.10, 1.05, 0.32, 0.26],
+                    y: ['pickle (sin compresión)', 'joblib (sin compresión)', 'joblib (compress=3)', 'joblib (compress=9)'],
+                    text: ['1.10 MB', '1.05 MB', '0.32 MB', '0.26 MB'],
+                    textposition: 'outside',
+                    cliponaxis: false,
+                    marker: {
+                        color: ['#B91C1C', '#ED1E79', '#3D008D', '#15803D'],
+                        line: { color: '#001A4D', width: 1 }
+                    },
+                    hovertemplate: '<b>%{y}</b><br>Tamaño: %{x} MB<extra></extra>'
+                }]),
+                () => ({
+                    title: {
+                        text: '<b>Tamaño del archivo serializado</b><br><sub>RandomForestClassifier(n_estimators=500) sobre el dataset Iris</sub>',
+                        x: 0.0, xanchor: 'left', font: { size: 14, color: '#001A4D' }
+                    },
+                    xaxis: { title: { text: 'Tamaño en disco (MB)' }, gridcolor: '#E2E8F0', range: [0, 1.35], zerolinecolor: '#E2E8F0' },
+                    yaxis: { autorange: 'reversed', automargin: true, tickfont: { size: 11.5 } },
+                    margin: { l: 200, r: 60, t: 80, b: 50 },
+                    font: { family: 'Montserrat, Helvetica Neue, Arial, sans-serif', size: 12, color: '#1E293B' },
+                    paper_bgcolor: 'white', plot_bgcolor: 'white',
+                    showlegend: false
+                })
+            );
+
+            return (
+                <div>
+                    <h3 className="text-lg font-semibold text-secondary mb-2">2.1 Visión general</h3>
+                    <p className="mb-3">
+                        Aunque a menudo se hable del «modelo» como un único objeto, en producción conviene pensarlo
+                        como un artefacto que recorre cuatro fases bien diferenciadas. Cada fase produce o consume
+                        un archivo concreto que viaja entre máquinas, contenedores y entornos.
+                    </p>
+
+                    <Pipeline steps={[
+                        { num: 1, title: 'Entrenamiento', desc: 'Datos históricos · ajuste de parámetros · validación.' },
+                        { num: 2, title: 'Serialización', desc: <>El objeto entrenado se guarda en disco (<span className="inline-code">.joblib</span>, <span className="inline-code">.pkl</span>).</> },
+                        { num: 3, title: 'Carga', desc: 'La API arranca y carga el artefacto en memoria una sola vez.' },
+                        { num: 4, title: 'Predicción', desc: 'El modelo ya cargado responde peticiones HTTP.' },
+                    ]} />
+
+                    <p className="mb-4">
+                        La frontera crítica se dibuja entre las fases 1 y 2 (en general en la máquina de un analista)
+                        y las fases 3 y 4 (en el servidor de producción). Lo que viaja entre ambos mundos es el
+                        <strong> artefacto serializado</strong>; todo lo demás —datos crudos, cuadernos, gráficas— se
+                        queda en el laboratorio.
+                    </p>
+
+                    <Box type="info" label="Idea central">
+                        Un modelo en producción no es un script: es un <strong>archivo binario</strong> versionado,
+                        acompañado de metadatos (versión de scikit-learn, fecha de entrenamiento, métricas de
+                        validación) y servido por un proceso que vive más allá de una sola petición.
+                    </Box>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">2.2 Entrenamiento</h3>
+                    <p className="mb-3">
+                        El entrenamiento se ejecuta una sola vez por cada nueva versión del modelo. Su salida no es
+                        una predicción, sino un objeto Python con estado: en scikit-learn, una instancia de
+                        <span className="inline-code">Pipeline</span>, <span className="inline-code">RandomForestClassifier</span>, etc., que ha visto los datos
+                        históricos y ajustado sus parámetros.
+                    </p>
+
+                    <p className="mb-2">
+                        Conviene encapsular el entrenamiento en un <strong>script independiente</strong> de la API. El script:
+                    </p>
+                    <ol className="list-decimal pl-6 space-y-1 mb-3">
+                        <li>Carga datos.</li>
+                        <li>Construye un <em>pipeline</em> (preprocesamiento + estimador).</li>
+                        <li>Ajusta y valida el modelo.</li>
+                        <li>Lo serializa a un archivo, junto con metadatos.</li>
+                    </ol>
+
+                    <CodeBlock title="train.py" code={trainPyCode} lang="python" />
+
+                    <p className="mb-2">Tres detalles merecen atención:</p>
+                    <ul className="list-disc pl-6 space-y-2 mb-4">
+                        <li>El <span className="inline-code">StandardScaler</span> está dentro del <span className="inline-code">Pipeline</span>. De ese modo, en producción <strong>nunca</strong> habrá que recordar normalizar manualmente las entradas: el propio pipeline aplica el mismo <span className="inline-code">fit</span> que se ajustó con los datos de entrenamiento.</li>
+                        <li>Se guarda un archivo de <strong>metadatos</strong> aparte. Sirve para diagnosticar problemas («¿qué versión de sklearn entrenó esto?») sin necesidad de cargar el modelo.</li>
+                        <li>Se usa <span className="inline-code">compress=3</span>: un equilibrio razonable entre tamaño del archivo y tiempo de carga.</li>
+                    </ul>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">
+                        2.3 Serialización: <span className="inline-code">pickle</span> vs <span className="inline-code">joblib</span>
+                    </h3>
+
+                    <p className="mb-3">
+                        Python ofrece <span className="inline-code">pickle</span> en su biblioteca estándar para convertir cualquier objeto
+                        en una secuencia de bytes y viceversa. <span className="inline-code">joblib</span> es una biblioteca externa que
+                        usa <em>internamente</em> el mismo protocolo de pickle, pero añade dos optimizaciones
+                        relevantes para <span className="inline-code">numpy</span>:
+                    </p>
+                    <ol className="list-decimal pl-6 space-y-1 mb-4">
+                        <li><strong>Persistencia eficiente de arrays grandes</strong>: serializa los buffers de <span className="inline-code">numpy</span> en bloque, sin la sobrecarga del protocolo de pickle objeto a objeto.</li>
+                        <li><strong>Compresión integrada</strong>: <span className="inline-code">joblib.dump(obj, path, compress=3)</span> comprime al vuelo (zlib, lzma, bz2) sin pasos intermedios.</li>
+                    </ol>
+
+                    <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                            <thead className="usta-gradient text-white">
+                                <tr>
+                                    <th className="px-3 py-2 text-left">Aspecto</th>
+                                    <th className="px-3 py-2 text-left">pickle</th>
+                                    <th className="px-3 py-2 text-left">joblib</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white">
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top">Origen</td>
+                                    <td className="px-3 py-2 align-top">Biblioteca estándar (no se instala nada).</td>
+                                    <td className="px-3 py-2 align-top">Paquete externo (<span className="inline-code">pip install joblib</span>; ya viene con scikit-learn).</td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top">Eficiencia con arrays NumPy grandes</td>
+                                    <td className="px-3 py-2 align-top">Aceptable; un array genera muchas operaciones del protocolo.</td>
+                                    <td className="px-3 py-2 align-top">Optimizada; serializa el buffer binario directamente.</td>
+                                </tr>
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top">Compresión integrada</td>
+                                    <td className="px-3 py-2 align-top text-red-700 font-semibold">No (requiere envolver en <span className="inline-code">gzip</span> u otro).</td>
+                                    <td className="px-3 py-2 align-top text-green-700 font-semibold">Sí, vía parámetro <span className="inline-code">compress=</span>.</td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top">API típica</td>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">pickle.dump(obj, f)</span> · necesita un archivo binario.</td>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">joblib.dump(obj, "ruta")</span> · acepta una ruta de archivo.</td>
+                                </tr>
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top">Uso recomendado</td>
+                                    <td className="px-3 py-2 align-top">Objetos Python pequeños, sin <span className="inline-code">numpy</span>.</td>
+                                    <td className="px-3 py-2 align-top">Modelos de scikit-learn, pipelines, objetos con muchos arrays.</td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top">Riesgo de seguridad</td>
+                                    <td className="px-3 py-2 align-top text-center" colSpan="2">
+                                        <strong>Idéntico</strong> en ambos: la deserialización puede ejecutar código arbitrario.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p className="mb-4">
+                        Como regla operativa: <strong>se prefiere <span className="inline-code">joblib</span> para modelos de
+                        scikit-learn</strong>; el propio equipo de scikit-learn lo recomienda en su documentación. Para
+                        objetos pequeños sin <span className="inline-code">numpy</span> (un diccionario de configuración, por ejemplo),
+                        <span className="inline-code">pickle</span> es perfectamente válido.
+                    </p>
+
+                    <h4 className="text-md font-semibold text-secondary mb-2">Comparación práctica de tamaños</h4>
+                    <p className="mb-3">
+                        Para un <span className="inline-code">RandomForestClassifier(n_estimators=500)</span> entrenado sobre el conjunto Iris,
+                        los tamaños típicos del archivo serializado son los siguientes:
+                    </p>
+
+                    <ChartFrame id="chart-serializacion" height="chart-h-340"
+                        caption="Figura 2.1 — Tamaño del artefacto en disco según la herramienta de serialización y el nivel de compresión." />
+
+                    <p className="text-sm text-gray-600 mb-4">
+                        Las cifras son orientativas y dependen de los datos y del estimador. Para
+                        bosques o <em>gradient boosting</em>, la diferencia entre <span className="inline-code">compress=3</span> y
+                        <span className="inline-code"> compress=9</span> suele ser pequeña en bytes ahorrados, pero el coste de descomprimir
+                        crece de forma notable con niveles altos. <span className="inline-code">compress=3</span> es el compromiso habitual.
+                    </p>
+
+                    <CodeBlock title="guardar_modelo.py" code={guardarModeloCode} lang="python" />
+
+                    <h4 className="text-md font-semibold text-secondary mt-4 mb-2">Lectura simétrica</h4>
+                    <CodeBlock title="leer_modelo.py" code={lecturaSimetricaCode} lang="python" />
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">2.4 Carga en producción</h3>
+                    <p className="mb-3">
+                        En la fase 3, el contenedor de producción arranca, lee el archivo
+                        <span className="inline-code"> artifacts/model.joblib</span> del sistema de archivos local —ya que se copió dentro de
+                        la imagen Docker o se montó como volumen— y lo deserializa en memoria. La operación es
+                        relativamente costosa: implica leer del disco, descomprimir y reconstruir el objeto. Este
+                        coste es justamente la razón por la que se aplica el <strong>patrón Singleton</strong> que
+                        se estudia en la sección 3.
+                    </p>
+
+                    <p className="mb-2">El error característico del principiante consiste en cargar el modelo dentro de la propia función del <em>endpoint</em>:</p>
+
+                    <CodeBlock title="main.py — antipatrón (no usar)" code={antipatronCode} lang="python" />
+
+                    <p className="mb-4">
+                        Más adelante se mostrará la implementación correcta. La consigna por ahora: <strong>la carga
+                        ocurre una sola vez, al arrancar el proceso</strong>.
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">2.5 Compatibilidad de versiones</h3>
+                    <p className="mb-3">
+                        Un artefacto de scikit-learn no es portable entre cualquier par de versiones. La biblioteca
+                        emite advertencias del tipo <span className="inline-code">InconsistentVersionWarning</span> cuando se intenta cargar
+                        un modelo entrenado con una versión distinta de la que está instalada. En el peor de los
+                        casos, la carga falla con un <span className="inline-code">AttributeError</span> porque una clase interna fue
+                        renombrada o un atributo desapareció.
+                    </p>
+
+                    <Box type="danger" label="Escenario ilustrativo">
+                        Considérese un equipo que entrena un modelo con <span className="inline-code">scikit-learn==1.3.2</span> y despliega
+                        después la API con <span className="inline-code">scikit-learn==1.5.2</span>. La carga puede no emitir error, pero un
+                        atributo interno renombrado entre versiones produce predicciones ligeramente distintas, sin
+                        advertencia visible. La <strong>fijación de versiones</strong> en
+                        <span className="inline-code"> requirements.txt</span> y el <em>smoke test</em> al arrancar habrían detectado la
+                        divergencia antes de exponer al usuario final.
+                    </Box>
+
+                    <p className="mb-2">Buenas prácticas aplicables:</p>
+                    <ul className="list-disc pl-6 space-y-2 mb-4">
+                        <li><strong>Fijar versiones exactas</strong> en <span className="inline-code">requirements.txt</span>: <span className="inline-code">scikit-learn==1.4.2</span>, no <span className="inline-code">scikit-learn{'>'}=1.4</span>. (En semanas anteriores se introdujo este principio para todas las dependencias; en el ámbito de ML es directamente obligatorio.)</li>
+                        <li><strong>Guardar metadatos</strong> con la versión de sklearn empleada (como en el <span className="inline-code">train.py</span> mostrado).</li>
+                        <li><strong>Reentrenar y reserializar</strong> cuando se actualicen las dependencias, en lugar de confiar en la retrocompatibilidad.</li>
+                        <li><strong>Validar el modelo recién cargado</strong> con una predicción conocida (un <em>smoke test</em>) durante el arranque de la API.</li>
+                    </ul>
+
+                    <CodeBlock title="smoke_test.py" code={smokeTestCode} lang="python" />
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">2.6 Seguridad</h3>
+                    <p className="mb-3">
+                        La documentación oficial de Python lo establece sin ambigüedad: <em>«It is possible to
+                        construct malicious pickle data which will execute arbitrary code during unpickling»</em>.
+                        <span className="inline-code"> joblib</span>, al apoyarse en pickle, hereda exactamente la misma propiedad.
+                    </p>
+                    <p className="mb-3">
+                        El mecanismo es sutil: durante la deserialización, Python invoca el método
+                        <span className="inline-code"> __reduce__</span> de los objetos. Un atacante puede fabricar un archivo cuyo
+                        <span className="inline-code"> __reduce__</span> ejecute <span className="inline-code">os.system("rm -rf /")</span> o cualquier otra orden.
+                    </p>
+
+                    <Box type="danger" label="Regla absoluta">
+                        <strong>Nunca</strong> se carga un archivo pickle/joblib que provenga de una fuente no
+                        confiable. Los modelos en producción deben provenir exclusivamente de un proceso de
+                        entrenamiento controlado por el equipo.
+                    </Box>
+
+                    <p className="mb-2">Contramedidas razonables:</p>
+                    <ul className="list-disc pl-6 space-y-2 mb-4">
+                        <li><strong>Almacenamiento seguro</strong>: el artefacto vive en un repositorio o <em>bucket</em> con control de acceso, no se descarga de internet sin verificación.</li>
+                        <li><strong>Hash de integridad</strong>: se calcula <span className="inline-code">sha256</span> tras el entrenamiento y se compara antes de cargar.</li>
+                        <li><strong>Aislamiento</strong>: el contenedor que sirve el modelo corre como usuario sin privilegios y solo abre el puerto HTTP estrictamente necesario (Semana V).</li>
+                        <li><strong>Formatos alternativos</strong>: cuando sea viable, se prefieren formatos «sin código» como <a href="https://onnx.ai/" target="_blank" rel="noopener noreferrer" className="text-primary underline">ONNX</a> o <a href="https://skops.readthedocs.io/" target="_blank" rel="noopener noreferrer" className="text-primary underline">skops</a> (<span className="inline-code">skops.io</span> permite cargar modelos de sklearn sin ejecutar código arbitrario, aunque a cambio de cierta verbosidad).</li>
+                    </ul>
+
+                    <CodeBlock title="verify_hash.py" code={verifyHashCode} lang="python" />
+                </div>
+            );
+        };
+
+        // ============================================================
+        // SECCIÓN 3 — Patrón Singleton
+        // ============================================================
+        const mlGlobalCode = `"""Variante 1 — Singleton implícito por importación de módulo."""
+from pathlib import Path
+
+import joblib
+from sklearn.pipeline import Pipeline
+
+MODEL_PATH = Path("artifacts/model.joblib")
+
+# Esta línea se ejecuta una sola vez por proceso.
+# Todas las importaciones posteriores reutilizan el mismo objeto.
+model: Pipeline = joblib.load(MODEL_PATH)
+`;
+
+        const mlClassCode = `"""Variante 2 — Singleton explícito mediante una clase."""
+from __future__ import annotations
+
+from pathlib import Path
+from threading import Lock
+from typing import ClassVar
+
+import joblib
+from sklearn.pipeline import Pipeline
+
+
+class ModelStore:
+    """Mantiene la instancia única del modelo en memoria."""
+
+    _instance: ClassVar[Pipeline | None] = None
+    _lock: ClassVar[Lock] = Lock()
+    MODEL_PATH: ClassVar[Path] = Path("artifacts/model.joblib")
+
+    @classmethod
+    def get(cls) -> Pipeline:
+        """Devuelve el modelo, cargándolo perezosamente si aún no está en memoria.
+
+        Doble verificación con cerrojo (double-checked locking) para evitar
+        que dos hilos lo carguen a la vez.
+        """
+        if cls._instance is None:
+            with cls._lock:
+                if cls._instance is None:
+                    cls._instance = joblib.load(cls.MODEL_PATH)
+        return cls._instance
+
+    @classmethod
+    def reset(cls) -> None:
+        """Útil para pruebas: olvida el modelo cargado."""
+        with cls._lock:
+            cls._instance = None
+`;
+
+        const lifespanSkeletonCode = `"""Carga del modelo al arrancar la API e inyección en los endpoints."""
+from __future__ import annotations
+
+from contextlib import asynccontextmanager
+from pathlib import Path
+from typing import AsyncIterator
+
+import joblib
+from fastapi import Depends, FastAPI, Request
+from sklearn.pipeline import Pipeline
+
+MODEL_PATH = Path("artifacts/model.joblib")
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Carga el modelo antes de aceptar peticiones y libera recursos al terminar."""
+    # --- Startup ---
+    app.state.model = joblib.load(MODEL_PATH)
+    # Smoke test: si esta línea falla, el contenedor no arranca.
+    _ = app.state.model.predict([[5.1, 3.5, 1.4, 0.2]])
+    print(f"[lifespan] Modelo cargado desde {MODEL_PATH}")
+
+    yield  # <-- la aplicación vive en este punto
+
+    # --- Shutdown ---
+    app.state.model = None
+    print("[lifespan] Modelo liberado")
+
+
+app = FastAPI(title="Iris API", lifespan=lifespan)
+
+
+def get_model(request: Request) -> Pipeline:
+    """Dependencia que expone el modelo a los endpoints."""
+    return request.app.state.model
+`;
+
+        const predictEndpointCode = `from app.schemas import IrisInput, IrisPrediction
+
+
+@app.post("/predict", response_model=IrisPrediction)
+def predict(
+    payload: IrisInput,
+    model: Pipeline = Depends(get_model),
+) -> IrisPrediction:
+    features = [[
+        payload.sepal_length, payload.sepal_width,
+        payload.petal_length, payload.petal_width,
+    ]]
+    label = int(model.predict(features)[0])
+    proba = model.predict_proba(features)[0].tolist()
+    return IrisPrediction(label=label, probabilities=proba)
+`;
+
+        const SingletonSection = () => {
+            usePlotly('chart-latencia',
+                () => ([
+                    {
+                        type: 'bar',
+                        name: 'Carga del modelo (joblib.load)',
+                        x: ['Sin Singleton<br>(carga por petición)', 'Con Singleton<br>(lifespan + Depends)'],
+                        y: [200, 0],
+                        text: ['~200 ms', ''],
+                        textposition: 'inside',
+                        insidetextfont: { color: 'white', size: 13 },
+                        marker: { color: '#B91C1C', line: { color: '#001A4D', width: 1 } },
+                        hovertemplate: '<b>Carga del modelo</b><br>%{y} ms<extra></extra>'
+                    },
+                    {
+                        type: 'bar',
+                        name: 'Inferencia (model.predict)',
+                        x: ['Sin Singleton<br>(carga por petición)', 'Con Singleton<br>(lifespan + Depends)'],
+                        y: [5, 5],
+                        text: ['~5 ms', '~5 ms'],
+                        textposition: 'outside',
+                        cliponaxis: false,
+                        marker: { color: '#15803D', line: { color: '#001A4D', width: 1 } },
+                        hovertemplate: '<b>Inferencia</b><br>%{y} ms<extra></extra>'
+                    }
+                ]),
+                () => ({
+                    title: {
+                        text: '<b>Latencia por petición HTTP</b><br><sub>El coste de carga aparece una sola vez al arrancar el proceso</sub>',
+                        x: 0.0, xanchor: 'left', font: { size: 14, color: '#001A4D' }
+                    },
+                    barmode: 'stack',
+                    xaxis: { tickfont: { size: 11.5 } },
+                    yaxis: { title: { text: 'Latencia (ms)' }, gridcolor: '#E2E8F0', range: [0, 230] },
+                    margin: { l: 60, r: 30, t: 80, b: 90 },
+                    font: { family: 'Montserrat, Helvetica Neue, Arial, sans-serif', size: 12, color: '#1E293B' },
+                    paper_bgcolor: 'white', plot_bgcolor: 'white',
+                    legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.22, font: { size: 11 } }
+                })
+            );
+
+            return (
+                <div>
+                    <h3 className="text-lg font-semibold text-secondary mb-2">3.1 El problema: cargar el modelo en cada petición</h3>
+                    <p className="mb-4">
+                        Una API que sirve un modelo recibe muchas peticiones por segundo, pero el modelo es el mismo
+                        para todas ellas. Cargarlo desde disco en cada llamada agrega una latencia
+                        innecesaria —decenas o cientos de milisegundos— y consume E/S de forma extravagante.
+                    </p>
+
+                    <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                            <thead className="usta-gradient text-white">
+                                <tr>
+                                    <th className="px-3 py-2 text-left">Estrategia</th>
+                                    <th className="px-3 py-2 text-left">Latencia por petición</th>
+                                    <th className="px-3 py-2 text-left">Memoria total</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white">
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top text-red-700 font-semibold">Cargar el modelo dentro del <em>endpoint</em></td>
+                                    <td className="px-3 py-2 align-top">~ <strong>200 ms</strong> de carga + 5 ms de inferencia</td>
+                                    <td className="px-3 py-2 align-top">El modelo aparece y desaparece; presión sobre el GC</td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top text-green-700 font-semibold">Cargar una sola vez al arrancar (Singleton)</td>
+                                    <td className="px-3 py-2 align-top">~ 5 ms de inferencia</td>
+                                    <td className="px-3 py-2 align-top">Una copia residente en memoria; constante</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <ChartFrame id="chart-latencia" height="chart-h-380"
+                        caption="Figura 3.1 — Descomposición de la latencia por petición. El Singleton elimina por completo el coste de carga repetida del artefacto." />
+
+                    <p className="mb-3">
+                        El <strong>patrón Singleton</strong> garantiza que un objeto exista en una sola instancia
+                        durante toda la vida del proceso. Aplicado a un modelo de ML, significa: «cargar el archivo
+                        <span className="inline-code"> .joblib</span> exactamente una vez, conservar el objeto resultante en memoria y
+                        reutilizarlo en cada petición».
+                    </p>
+
+                    <p className="mb-4">
+                        Python ofrece varias maneras de implementar este patrón. A continuación se examinan tres,
+                        ordenadas de la más sencilla a la más idiomática para FastAPI.
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">3.2 Variante 1: variable global de módulo</h3>
+                    <p className="mb-3">
+                        El sistema de importación de Python ya implementa un Singleton implícito: cada módulo se
+                        importa <strong>una sola vez</strong> por proceso, y todas las importaciones posteriores
+                        devuelven la misma referencia. Por tanto, asignar el modelo a una variable de módulo es la
+                        forma más simple del patrón.
+                    </p>
+
+                    <CodeBlock title="app/ml_global.py" code={mlGlobalCode} lang="python" />
+
+                    <p className="mb-2">Es funcional, pero arrastra dos limitaciones:</p>
+                    <ul className="list-disc pl-6 space-y-2 mb-4">
+                        <li>La carga ocurre <strong>al importar el módulo</strong>, no cuando la aplicación lo decide. Esto complica los tests: importar <span className="inline-code">app.ml_global</span> en una prueba unitaria intenta abrir <span className="inline-code">artifacts/model.joblib</span> aunque la prueba no necesite el modelo.</li>
+                        <li>No hay forma natural de inyectar el modelo en los <em>endpoints</em>: se hace por importación directa, lo que impide sustituirlo por un <em>mock</em> en pruebas.</li>
+                    </ul>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">3.3 Variante 2: clase Singleton explícita</h3>
+                    <p className="mb-3">
+                        Una clase con un atributo de clase y un método de carga perezosa expresa el patrón con más
+                        claridad y permite controlar cuándo ocurre la carga.
+                    </p>
+
+                    <CodeBlock title="app/ml_class.py" code={mlClassCode} lang="python" />
+
+                    <p className="mb-3">
+                        Esta forma facilita las pruebas: en un <em>fixture</em> de pytest se puede hacer
+                        <span className="inline-code"> ModelStore.reset()</span> y luego asignar manualmente
+                        <span className="inline-code"> ModelStore._instance = mock_model</span> para inyectar un sustituto.
+                    </p>
+
+                    <p className="mb-4">
+                        Sin embargo, sigue sin integrarse de forma natural con el sistema de
+                        <strong> inyección de dependencias</strong> de FastAPI. La tercera variante resuelve eso.
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">
+                        3.4 Variante 3 (recomendada): <span className="inline-code">lifespan</span> + <span className="inline-code">Depends</span>
+                    </h3>
+
+                    <p className="mb-2">FastAPI ofrece dos mecanismos directamente útiles:</p>
+                    <ol className="list-decimal pl-6 space-y-2 mb-4">
+                        <li><span className="inline-code">lifespan</span>: un <em>context manager</em> asíncrono que se ejecuta una vez al arrancar la aplicación y otra al detenerla. Es el lugar canónico para reservar y liberar recursos costosos —conexiones a bases de datos, modelos de ML, clientes HTTP—.</li>
+                        <li><span className="inline-code">Depends</span>: el sistema de inyección visto en semanas anteriores. Permite que cada <em>endpoint</em> reciba el recurso sin acoplarse a su construcción.</li>
+                    </ol>
+
+                    <Box type="info" label="Importante">
+                        Hasta hace pocas versiones, FastAPI usaba los decoradores
+                        <span className="inline-code"> @app.on_event("startup")</span> y <span className="inline-code">@app.on_event("shutdown")</span>. Esos
+                        decoradores siguen funcionando pero están <strong>marcados como deprecados</strong>: la
+                        forma actual y recomendada es el <em>context manager</em> <span className="inline-code">lifespan</span>. Todo el
+                        material que sigue lo usa.
+                    </Box>
+
+                    <p className="mb-3">
+                        El recurso compartido se almacena en <span className="inline-code">app.state</span>, un espacio reservado por
+                        Starlette (la base de FastAPI) para datos asociados a la vida de la aplicación.
+                    </p>
+
+                    <CodeBlock title="app/main.py — esqueleto con lifespan" code={lifespanSkeletonCode} lang="python" />
+
+                    <p className="mb-2">Y un <em>endpoint</em> que <strong>no sabe nada</strong> sobre cómo se cargó el modelo:</p>
+                    <CodeBlock title="endpoints.py" code={predictEndpointCode} lang="python" />
+
+                    <p className="mb-2">Ventajas de esta variante:</p>
+                    <ul className="list-disc pl-6 space-y-2 mb-6">
+                        <li>El modelo se carga <strong>una sola vez</strong>, exactamente cuando la aplicación arranca.</li>
+                        <li>El <em>endpoint</em> recibe el modelo por inyección. En tests se puede sobrescribir la dependencia con <span className="inline-code">app.dependency_overrides[get_model] = lambda: fake_model</span>.</li>
+                        <li>El recurso es <strong>asociado a la aplicación</strong>, no a un módulo. Si se inicia otra <span className="inline-code">FastAPI</span> en el mismo proceso (raro pero posible) cada una lleva su propio modelo.</li>
+                        <li>El bloque <em>after-yield</em> permite ejecutar limpieza al terminar (cerrar conexiones, liberar memoria).</li>
+                    </ul>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">3.5 Paralelismo con la sesión de SQLAlchemy</h3>
+                    <p className="mb-3">
+                        El estudiante ya conoce el patrón equivalente para bases de datos: una <span className="inline-code">engine</span>
+                        de SQLAlchemy se crea una sola vez al arrancar y se reutiliza durante toda la vida de la
+                        aplicación; las <span className="inline-code">Session</span> individuales se obtienen por inyección de dependencia.
+                        El modelo se trata exactamente igual:
+                    </p>
+
+                    <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                            <thead className="usta-gradient text-white">
+                                <tr>
+                                    <th className="px-3 py-2 text-left">SQLAlchemy</th>
+                                    <th className="px-3 py-2 text-left">Modelo de ML</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white">
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">engine = create_engine(URL)</span> en el módulo de configuración</td>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">app.state.model = joblib.load(...)</span> en <span className="inline-code">lifespan</span></td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">SessionLocal = sessionmaker(bind=engine)</span></td>
+                                    <td className="px-3 py-2 align-top">Modelo único compartido (no se «instancia» por petición).</td>
+                                </tr>
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">def get_db()</span> con <span className="inline-code">yield</span></td>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">def get_model()</span> sin <span className="inline-code">yield</span> (el modelo no se cierra entre peticiones).</td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">Depends(get_db)</span></td>
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">Depends(get_model)</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p className="mb-4">
+                        La diferencia conceptual reside en el ciclo de uso: una sesión de base de datos se abre y se
+                        cierra <strong>por petición</strong> para mantener la transacción aislada; el modelo de ML
+                        se carga <strong>por proceso</strong> y se comparte sin estado mutable. Por eso
+                        <span className="inline-code"> get_db</span> usa <span className="inline-code">yield</span> (gestiona el cierre) y <span className="inline-code">get_model</span>
+                        simplemente devuelve la referencia.
+                    </p>
+
+                    <Box type="tip" label="Memoria y procesos">
+                        Si el servidor se ejecuta con varios <em>workers</em> de uvicorn (<span className="inline-code">--workers 4</span>),
+                        cada <em>worker</em> es un <strong>proceso independiente</strong>: cada uno cargará su
+                        propia copia del modelo en memoria. Para un modelo de 200 MB, eso son 800 MB. Conviene
+                        dimensionar el contenedor en consecuencia o reducir el número de <em>workers</em>.
+                    </Box>
+                </div>
+            );
+        };
+
+        // ============================================================
+        // SECCIÓN 4 — Docker para ML
+        // ============================================================
+        const dockerMultiStageCode = `# =====================================================================
+# Etapa 1: builder — instala las dependencias en un entorno virtual.
+# =====================================================================
+FROM python:3.11.9-slim-bookworm AS builder
+
+# build-essential aporta gcc/make por si algún wheel no está precompilado.
+RUN apt-get update \\
+    && apt-get install -y --no-install-recommends build-essential \\
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear el entorno virtual en una ruta conocida.
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /build
+COPY requirements.txt .
+
+# --no-cache-dir evita arrastrar la caché de pip dentro del venv.
+RUN pip install --upgrade pip \\
+    && pip install --no-cache-dir -r requirements.txt
+
+
+# =====================================================================
+# Etapa 2: runtime — copia el venv y el código fuente sin herramientas.
+# =====================================================================
+FROM python:3.11.9-slim-bookworm AS runtime
+
+# Crear un usuario no privilegiado.
+RUN useradd --create-home --uid 1000 appuser
+
+# Copiar SOLO el venv listo desde la etapa de construcción.
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Buenas prácticas de Python en contenedores.
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+COPY --chown=appuser:appuser . .
+
+USER appuser
+
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+`;
+
+        const requirementsCpuCode = `# Índice extra solo para los wheels de PyTorch CPU-only.
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+scikit-learn==1.5.2
+joblib==1.4.2
+numpy==1.26.4
+
+# Forzar la rueda CPU sufijada con +cpu.
+torch==2.4.1+cpu
+`;
+
+        const pipCacheCode = `# Opción A — flag por comando (queda al gusto del autor).
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Opción B — variable de entorno (afecta a toda la etapa).
+ENV PIP_NO_CACHE_DIR=1
+RUN pip install -r requirements.txt
+`;
+
+        const dockerignoreCode = `# Entornos virtuales locales.
+.venv
+venv
+env
+
+# Cachés y archivos compilados.
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
+
+# Control de versiones y editores.
+.git
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+
+# Datos crudos (no entran a la imagen; el modelo serializado sí).
+data/
+notebooks/
+*.csv
+*.parquet
+
+# Variables sensibles.
+.env
+.env.*
+!.env.example
+
+# Documentación.
+docs/
+*.md
+!README.md
+
+# Pruebas (opcional: se incluyen si la imagen debe correr tests).
+tests/
+htmlcov/
+.coverage
+`;
+
+        const dockerNaiveCode = `FROM python:3.11.9                          # imagen completa, ~1 GB
+
+WORKDIR /app
+COPY . .                                    # copia .venv, .git, data/, etc.
+
+RUN pip install -r requirements.txt         # caches de pip dentro de la imagen
+
+# Sin usuario no privilegiado: la API corre como root.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+`;
+
+        const dockerOptCode = `# --------- builder ---------
+FROM python:3.11.9-slim-bookworm AS builder
+
+RUN apt-get update \\
+    && apt-get install -y --no-install-recommends build-essential \\
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install --upgrade pip \\
+    && pip install --no-cache-dir -r requirements.txt
+
+# --------- runtime ---------
+FROM python:3.11.9-slim-bookworm AS runtime
+
+RUN useradd --create-home --uid 1000 appuser
+
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH" \\
+    PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+COPY --chown=appuser:appuser app ./app
+COPY --chown=appuser:appuser artifacts ./artifacts
+
+USER appuser
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+`;
+
+        const DockerSection = () => {
+            usePlotly('chart-pytorch',
+                () => ([{
+                    type: 'bar',
+                    orientation: 'h',
+                    x: [350, 200, 2500],
+                    y: ['scikit-learn + numpy + scipy', 'torch (CPU-only)', 'torch (default, CUDA)'],
+                    text: ['~350 MB', '~200 MB', '~2500 MB'],
+                    textposition: 'outside',
+                    cliponaxis: false,
+                    marker: {
+                        color: ['#3D008D', '#15803D', '#B91C1C'],
+                        line: { color: '#001A4D', width: 1 }
+                    },
+                    hovertemplate: '<b>%{y}</b><br>%{x} MB instalados<extra></extra>'
+                }]),
+                () => ({
+                    title: {
+                        text: '<b>Tamaño instalado de paquetes ML en disco</b><br><sub>Escala logarítmica</sub>',
+                        x: 0.0, xanchor: 'left', font: { size: 14, color: '#001A4D' }
+                    },
+                    xaxis: {
+                        type: 'log', title: { text: 'Tamaño (MB) — escala logarítmica' },
+                        gridcolor: '#E2E8F0', range: [Math.log10(80), Math.log10(5000)]
+                    },
+                    yaxis: { autorange: 'reversed', automargin: true, tickfont: { size: 11.5 } },
+                    margin: { l: 230, r: 80, t: 80, b: 60 },
+                    font: { family: 'Montserrat, Helvetica Neue, Arial, sans-serif', size: 12, color: '#1E293B' },
+                    paper_bgcolor: 'white', plot_bgcolor: 'white',
+                    showlegend: false
+                })
+            );
+
+            usePlotly('chart-docker-comp',
+                () => ([
+                    {
+                        type: 'bar', orientation: 'h', name: 'Imagen base de Python',
+                        x: [1000, 130], y: ['Dockerfile.naive', 'Dockerfile optimizado'],
+                        text: ['1000 MB', '130 MB'], textposition: 'inside',
+                        insidetextfont: { color: 'white', size: 11 },
+                        marker: { color: '#3D008D' },
+                        hovertemplate: '<b>Imagen base</b>: %{x} MB<extra></extra>'
+                    },
+                    {
+                        type: 'bar', orientation: 'h', name: 'Dependencias Python (sklearn, numpy…)',
+                        x: [800, 200], y: ['Dockerfile.naive', 'Dockerfile optimizado'],
+                        text: ['800 MB', '200 MB'], textposition: 'inside',
+                        insidetextfont: { color: 'white', size: 11 },
+                        marker: { color: '#ED1E79' },
+                        hovertemplate: '<b>Dependencias Python</b>: %{x} MB<extra></extra>'
+                    },
+                    {
+                        type: 'bar', orientation: 'h', name: 'Caché de pip',
+                        x: [400, 0], y: ['Dockerfile.naive', 'Dockerfile optimizado'],
+                        text: ['400 MB', ''], textposition: 'inside',
+                        insidetextfont: { color: 'white', size: 11 },
+                        marker: { color: '#B91C1C' },
+                        hovertemplate: '<b>Caché de pip</b>: %{x} MB<extra></extra>'
+                    },
+                    {
+                        type: 'bar', orientation: 'h', name: 'Herramientas de compilación + .git',
+                        x: [150, 0], y: ['Dockerfile.naive', 'Dockerfile optimizado'],
+                        text: ['150 MB', ''], textposition: 'inside',
+                        insidetextfont: { color: '#001A4D', size: 11 },
+                        marker: { color: '#FDB913' },
+                        hovertemplate: '<b>build-essential + .git</b>: %{x} MB<extra></extra>'
+                    },
+                    {
+                        type: 'bar', orientation: 'h', name: 'Código de la app y artefactos',
+                        x: [50, 30], y: ['Dockerfile.naive', 'Dockerfile optimizado'],
+                        text: ['50 MB', '30 MB'], textposition: 'inside',
+                        insidetextfont: { color: 'white', size: 11 },
+                        marker: { color: '#15803D' },
+                        hovertemplate: '<b>App + artefactos</b>: %{x} MB<extra></extra>'
+                    }
+                ]),
+                () => ({
+                    title: {
+                        text: '<b>Composición del tamaño final de la imagen Docker</b>' +
+                              '<br><sub>Total ingenuo: ~2400 MB · Total optimizado: ~360 MB · Reducción ≈ 85 %</sub>',
+                        x: 0.0, xanchor: 'left', font: { size: 14, color: '#001A4D' }
+                    },
+                    barmode: 'stack',
+                    xaxis: { title: { text: 'Tamaño (MB)' }, gridcolor: '#E2E8F0' },
+                    yaxis: { autorange: 'reversed', automargin: true, tickfont: { size: 12 } },
+                    margin: { l: 180, r: 30, t: 80, b: 100 },
+                    font: { family: 'Montserrat, Helvetica Neue, Arial, sans-serif', size: 12, color: '#1E293B' },
+                    paper_bgcolor: 'white', plot_bgcolor: 'white',
+                    legend: { orientation: 'h', x: 0.5, xanchor: 'center', y: -0.18, font: { size: 10.5 } }
+                })
+            );
+
+            return (
+                <div>
+                    <h3 className="text-lg font-semibold text-secondary mb-2">4.1 Por qué la imagen crece tan rápido</h3>
+                    <p className="mb-3">
+                        En la Semana V se introdujo Docker y su construcción multi-etapa para una API ligera. Las
+                        cosas se complican cuando aparecen dependencias de ML, que arrastran consigo bibliotecas
+                        nativas voluminosas (BLAS, LAPACK, MKL, CUDA…). Tres factores agigantan la imagen:
+                    </p>
+                    <ol className="list-decimal pl-6 space-y-2 mb-4">
+                        <li><strong>Bibliotecas nativas binarias</strong>. <span className="inline-code">numpy</span> incorpora OpenBLAS, <span className="inline-code">scipy</span> añade más rutinas, <span className="inline-code">scikit-learn</span> trae binarios compilados. Una instalación combinada llega a ~250–350 MB.</li>
+                        <li><strong>Variantes con GPU por defecto</strong>. <span className="inline-code">pip install torch</span> instala por defecto el <em>wheel</em> con soporte CUDA, que pesa unos 2.5 GB; la variante CPU-only ronda los 200 MB.</li>
+                        <li><strong>Cachés y herramientas de compilación</strong>. La caché de pip (<span className="inline-code">~/.cache/pip</span>), el directorio <span className="inline-code">__pycache__</span> y las herramientas de compilación (<span className="inline-code">build-essential</span>, ~250 MB) sobreviven en la imagen si no se limpian.</li>
+                    </ol>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">
+                        4.2 Imagen base <span className="inline-code">slim</span>
+                    </h3>
+                    <p className="mb-3">
+                        La imagen oficial <span className="inline-code">python:3.11.9</span> incluye toda la documentación, herramientas de
+                        desarrollo (gcc, make), bibliotecas X11, etc. La variante <span className="inline-code">slim</span> elimina lo
+                        prescindible y deja un sistema Debian 12 mínimo:
+                    </p>
+
+                    <div className="overflow-x-auto mb-4">
+                        <table className="w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
+                            <thead className="usta-gradient text-white">
+                                <tr>
+                                    <th className="px-3 py-2 text-left">Imagen base</th>
+                                    <th className="px-3 py-2 text-left">Tamaño típico</th>
+                                    <th className="px-3 py-2 text-left">Cuándo usarla</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white">
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">python:3.11.9</span></td>
+                                    <td className="px-3 py-2 align-top">~ 1.0 GB</td>
+                                    <td className="px-3 py-2 align-top">Desarrollo local cuando no importa el tamaño.</td>
+                                </tr>
+                                <tr className="border-t bg-bg" style={{ background: '#F8FAFC' }}>
+                                    <td className="px-3 py-2 align-top text-green-700 font-semibold"><span className="inline-code">python:3.11.9-slim-bookworm</span></td>
+                                    <td className="px-3 py-2 align-top">~ 130 MB</td>
+                                    <td className="px-3 py-2 align-top"><strong>Producción.</strong> Punto de partida recomendado.</td>
+                                </tr>
+                                <tr className="border-t">
+                                    <td className="px-3 py-2 align-top"><span className="inline-code">python:3.11.9-alpine</span></td>
+                                    <td className="px-3 py-2 align-top">~ 60 MB</td>
+                                    <td className="px-3 py-2 align-top">Tentadora, pero usa <span className="inline-code">musl libc</span>: muchos <em>wheels</em> de ML no están disponibles para Alpine y deben compilarse desde fuente. <strong>No recomendada</strong> para proyectos con scikit-learn, numpy o PyTorch.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p className="mb-4">
+                        La elección práctica para una API de ML en Python es siempre
+                        <span className="inline-code"> python:3.11.9-slim-bookworm</span>.
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">4.3 Construcción multi-etapa con entorno virtual</h3>
+                    <p className="mb-4">
+                        El estudiante ya conoce el patrón <em>multi-stage</em> (Semana V): se compila en una etapa y
+                        se copian a la imagen final solo los artefactos resultantes. Para Python, el truco
+                        consiste en <strong>construir las dependencias dentro de un entorno virtual</strong> y
+                        copiar únicamente ese directorio a la etapa final. La imagen de producción no necesita
+                        compiladores ni cachés.
+                    </p>
+
+                    <CodeBlock title="Dockerfile (esquema multi-etapa)" code={dockerMultiStageCode} lang="dockerfile" />
+
+                    <p className="mb-2">Aspectos clave:</p>
+                    <ul className="list-disc pl-6 space-y-2 mb-4">
+                        <li>El <span className="inline-code">build-essential</span> (~250 MB) <strong>no llega a la imagen final</strong>: vive solo en la etapa <span className="inline-code">builder</span>.</li>
+                        <li>Las variables de entorno <span className="inline-code">PYTHONDONTWRITEBYTECODE</span> y <span className="inline-code">PYTHONUNBUFFERED</span> evitan crear <span className="inline-code">__pycache__</span> innecesarios y fuerzan que los <em>logs</em> se vacíen inmediatamente (clave en producción).</li>
+                        <li>Se ejecuta como usuario <span className="inline-code">appuser</span> (UID 1000), no como root: aplica el principio del menor privilegio.</li>
+                        <li>El orden de las instrucciones aprovecha la <strong>caché de capas</strong>: si solo cambia el código fuente (no <span className="inline-code">requirements.txt</span>), la etapa <span className="inline-code">builder</span> reusa la capa de instalación de dependencias y la reconstrucción es muy rápida.</li>
+                    </ul>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">4.4 PyTorch en versión CPU-only</h3>
+                    <p className="mb-4">
+                        Cuando el modelo está hecho con PyTorch, la diferencia entre instalar la versión
+                        predeterminada y la CPU-only es enorme:
+                    </p>
+
+                    <ChartFrame id="chart-pytorch" height="chart-h-340"
+                        caption="Figura 4.1 — Tamaño instalado de paquetes representativos de ML. La barra de PyTorch con CUDA es más de un orden de magnitud mayor que la variante CPU-only. La escala es logarítmica para que las tres categorías se aprecien en la misma figura." />
+
+                    <p className="mb-3">
+                        Si la API solo va a hacer inferencia en una máquina sin GPU —el caso más habitual en un PaaS
+                        sencillo—, instalar la variante CUDA es desperdicio puro. La forma correcta de pedir a pip
+                        la versión CPU es a través del <strong>índice oficial</strong> de PyTorch:
+                    </p>
+
+                    <CodeBlock title="requirements.txt" code={requirementsCpuCode} lang="text" />
+
+                    <p className="mb-4">
+                        Nota: las versiones exactas se anclan; las concretas que aparecen en el bloque anterior eran
+                        las disponibles en el momento de redactar este material y deben verificarse antes de usar.
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">
+                        4.5 Limpieza de cachés y <span className="inline-code">.dockerignore</span>
+                    </h3>
+
+                    <p className="mb-3">Dos fuentes de «basura» que se cuelan a menudo en la imagen:</p>
+
+                    <h4 className="text-md font-semibold text-secondary mb-2">Caché de pip dentro del contenedor</h4>
+                    <p className="mb-2">
+                        Cada <span className="inline-code">pip install</span> deja archivos en <span className="inline-code">~/.cache/pip</span>. Para una
+                        instalación con scikit-learn, numpy y scipy, esa caché puede pesar 400 MB. Se evita con la
+                        variable de entorno o con el flag:
+                    </p>
+
+                    <CodeBlock title="snippet — pip cache" code={pipCacheCode} lang="dockerfile" />
+
+                    <h4 className="text-md font-semibold text-secondary mt-4 mb-2">
+                        Contexto de construcción y <span className="inline-code">.dockerignore</span>
+                    </h4>
+
+                    <p className="mb-3">
+                        Cuando se ejecuta <span className="inline-code">docker build .</span>, el cliente envía al <em>daemon</em> todo el
+                        contenido del directorio actual (el «contexto»). Si en ese directorio hay un
+                        <span className="inline-code"> .venv</span> de 1 GB, una carpeta <span className="inline-code">data/</span> con los datos crudos del
+                        entrenamiento o la caché de tests, todo eso se transmite —y, peor aún, es susceptible de
+                        terminar copiado dentro de la imagen si hay un <span className="inline-code">COPY .</span>. El antídoto es un
+                        archivo <span className="inline-code">.dockerignore</span>:
+                    </p>
+
+                    <CodeBlock title=".dockerignore" code={dockerignoreCode} lang="text" />
+
+                    <p className="mb-4">
+                        Esta lista refleja recomendaciones generales; el contenido exacto depende del proyecto. La
+                        regla mnemotécnica: <em>«si no es código, configuración o el modelo serializado, lo más
+                        probable es que sobre»</em>.
+                    </p>
+
+                    <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">4.6 Comparación: Dockerfile ingenuo vs optimizado</h3>
+                    <p className="mb-3">
+                        Los dos archivos siguientes producen una API funcionalmente idéntica. El primero ilustra los
+                        antipatrones habituales; el segundo aplica todas las recomendaciones discutidas.
+                    </p>
+
+                    <h4 className="text-md font-semibold text-secondary mb-2">Versión ingenua (<strong>no recomendada</strong>)</h4>
+                    <CodeBlock title="Dockerfile.naive" code={dockerNaiveCode} lang="dockerfile" />
+
+                    <p className="mb-4">Resultado típico (un proyecto con scikit-learn): <strong>2.4 GB</strong>.</p>
+
+                    <h4 className="text-md font-semibold text-secondary mb-2">Versión optimizada</h4>
+                    <CodeBlock title="Dockerfile" code={dockerOptCode} lang="dockerfile" />
+
+                    <p className="mb-4">Resultado típico (mismo proyecto): <strong>~ 350 MB</strong>.</p>
+
+                    <ChartFrame id="chart-docker-comp" height="chart-h-420"
+                        caption="Figura 4.2 — Descomposición del tamaño de la imagen en sus componentes. La caché de pip y las herramientas de compilación, que el Dockerfile ingenuo arrastra hasta la imagen final, son las dos fuentes principales de ahorro." />
+
+                    <p className="mb-4">
+                        Reducción de ~85 % a igualdad de funcionalidad. Las consecuencias prácticas son: pruebas de
+                        CI/CD más rápidas, despliegues más baratos en planes gratuitos de PaaS y menor superficie
+                        de ataque.
+                    </p>
+
+                    <Box type="tip" label="Verificación útil">
+                        Tras construir la imagen, conviene auditar su contenido con
+                        <span className="inline-code"> docker history NOMBRE_IMAGEN --no-trunc</span> (qué tamaño aporta cada capa) y
+                        <span className="inline-code"> docker run --rm NOMBRE_IMAGEN du -sh /usr/local/lib/python3.11</span>. Esos dos
+                        comandos hacen visibles los excesos antes de desplegar.
+                    </Box>
+                </div>
+            );
+        };
+
+        // ============================================================
+        // SECCIÓN 5 — Mini-proyecto integrador
+        // ============================================================
+        const requirementsProyectoCode = `fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+scikit-learn==1.5.2
+joblib==1.4.2
+numpy==1.26.4
+httpx==0.27.2          # requerido por TestClient
+pytest==8.3.3
+`;
+
+        const schemasCode = `"""Modelos Pydantic para la entrada y la salida del endpoint /predict."""
+from __future__ import annotations
+
+from typing import Annotated
+
+from pydantic import BaseModel, Field, ConfigDict
+
+
+# Restricción de rango razonable para evitar entradas absurdas.
+PositiveLength = Annotated[float, Field(ge=0.0, le=20.0)]
+
+
+class IrisInput(BaseModel):
+    """Cuatro mediciones morfológicas en centímetros."""
+
+    sepal_length: PositiveLength
+    sepal_width: PositiveLength
+    petal_length: PositiveLength
+    petal_width: PositiveLength
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "sepal_length": 5.1,
+                    "sepal_width": 3.5,
+                    "petal_length": 1.4,
+                    "petal_width": 0.2,
+                }
+            ]
+        }
+    )
+
+
+class IrisPrediction(BaseModel):
+    """Respuesta: etiqueta entera, nombre de la clase y probabilidades."""
+
+    label: int = Field(description="Índice 0/1/2 de la clase predicha.")
+    class_name: str = Field(description="Nombre legible: setosa, versicolor o virginica.")
+    probabilities: list[float] = Field(description="Probabilidad de cada clase, en el mismo orden.")
+`;
+
+        const mlPyCode = `"""Helpers para cargar el modelo y la dependencia Depends(get_model).
+
+La carga ocurre en main.py dentro del lifespan; este módulo sólo provee
+las utilidades para acceder al modelo desde los endpoints.
+"""
+from __future__ import annotations
+
+from pathlib import Path
+
+import joblib
+from fastapi import HTTPException, Request, status
+from sklearn.pipeline import Pipeline
+
+MODEL_PATH = Path("artifacts/model.joblib")
+TARGET_NAMES: tuple[str, ...] = ("setosa", "versicolor", "virginica")
+
+
+def load_model(path: Path = MODEL_PATH) -> Pipeline:
+    """Lee el archivo serializado y devuelve el pipeline."""
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Artefacto no encontrado en {path}. Ejecutar \`python train.py\` primero."
+        )
+    return joblib.load(path)
+
+
+def get_model(request: Request) -> Pipeline:
+    """Dependencia inyectada en los endpoints.
+
+    Lanza 503 si por algún motivo el lifespan no logró cargar el modelo,
+    en lugar de explotar con AttributeError más adelante.
+    """
+    model = getattr(request.app.state, "model", None)
+    if model is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="El modelo no está disponible en este momento.",
+        )
+    return model
+`;
+
+        const mainPyCode = `"""API Iris: predice la especie a partir de cuatro mediciones."""
+from __future__ import annotations
+
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
+from fastapi import Depends, FastAPI
+from sklearn.pipeline import Pipeline
+
+from app.ml import TARGET_NAMES, get_model, load_model
+from app.schemas import IrisInput, IrisPrediction
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+    """Carga el modelo al arrancar y lo libera al detenerse."""
+    app.state.model = load_model()
+    # Smoke test con una muestra conocida.
+    sample = [[5.1, 3.5, 1.4, 0.2]]
+    label = int(app.state.model.predict(sample)[0])
+    assert label == 0, f"Smoke test fallido: se esperaba 0, se obtuvo {label}"
+    print("[lifespan] Modelo cargado y verificado.")
+    yield
+    app.state.model = None
+
+
+app = FastAPI(
+    title="Iris API",
+    version="1.0.0",
+    description="Clasificador de Iris servido con FastAPI y scikit-learn.",
+    lifespan=lifespan,
+)
+
+
+@app.get("/health")
+def health() -> dict[str, str]:
+    """Indicador mínimo de vida útil para sondas del PaaS."""
+    return {"status": "ok"}
+
+
+@app.post("/predict", response_model=IrisPrediction)
+def predict(
+    payload: IrisInput,
+    model: Pipeline = Depends(get_model),
+) -> IrisPrediction:
+    features = [[
+        payload.sepal_length,
+        payload.sepal_width,
+        payload.petal_length,
+        payload.petal_width,
+    ]]
+    label = int(model.predict(features)[0])
+    proba = model.predict_proba(features)[0].tolist()
+    return IrisPrediction(
+        label=label,
+        class_name=TARGET_NAMES[label],
+        probabilities=proba,
+    )
+`;
+
+        const testApiCode = `"""Pruebas del endpoint /predict sustituyendo la dependencia del modelo."""
+from __future__ import annotations
+
+import numpy as np
+import pytest
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.ml import get_model
+
+
+class FakeModel:
+    """Doble de prueba con la misma interfaz que un Pipeline de sklearn."""
+
+    def predict(self, X):
+        # Devuelve siempre la clase 0 (setosa).
+        return np.zeros(len(X), dtype=int)
+
+    def predict_proba(self, X):
+        return np.tile([0.9, 0.05, 0.05], (len(X), 1))
+
+
+@pytest.fixture
+def client():
+    app.dependency_overrides[get_model] = lambda: FakeModel()
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
+
+
+def test_health(client):
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+def test_predict_ok(client):
+    payload = {
+        "sepal_length": 5.1,
+        "sepal_width": 3.5,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+    }
+    response = client.post("/predict", json=payload)
+    assert response.status_code == 200
+    body = response.json()
+    assert body["label"] == 0
+    assert body["class_name"] == "setosa"
+    assert sum(body["probabilities"]) == pytest.approx(1.0, abs=1e-6)
+
+
+def test_predict_invalid_input(client):
+    payload = {
+        "sepal_length": -1.0,   # viola la restriccion ge=0
+        "sepal_width": 3.5,
+        "petal_length": 1.4,
+        "petal_width": 0.2,
+    }
+    response = client.post("/predict", json=payload)
+    assert response.status_code == 422   # error de validacion de Pydantic
+`;
+
+        const dockerignoreProyectoCode = `.venv
+venv
+env
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.git
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+data/
+notebooks/
+*.csv
+*.parquet
+.env
+.env.*
+!.env.example
+docs/
+htmlcov/
+.coverage
+`;
+
+        const dockerfileProyectoCode = `# =====================================================================
+# Etapa 1: builder
+# =====================================================================
+FROM python:3.11.9-slim-bookworm AS builder
+
+RUN apt-get update \\
+    && apt-get install -y --no-install-recommends build-essential \\
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install --upgrade pip \\
+    && pip install --no-cache-dir -r requirements.txt
+
+
+# =====================================================================
+# Etapa 2: runtime
+# =====================================================================
+FROM python:3.11.9-slim-bookworm AS runtime
+
+RUN useradd --create-home --uid 1000 appuser
+
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH" \\
+    PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1
+
+WORKDIR /app
+COPY --chown=appuser:appuser app ./app
+COPY --chown=appuser:appuser artifacts ./artifacts
+
+USER appuser
+EXPOSE 8000
+
+# Uvicorn lee PORT si está presente (el PaaS lo inyecta); si no, usa 8000.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port \${PORT:-8000}"]
+`;
+
+        const terminalSessionCode = `# 1. Entorno virtual local y dependencias.
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+# 2. Entrenamiento. Genera artifacts/model.joblib y artifacts/model.metadata.json
+python train.py
+
+# 3. Pruebas (no requieren el modelo real, gracias al Fake del fixture).
+pytest -v
+
+# 4. Servidor local.
+uvicorn app.main:app --reload --port 8000
+# Documentación interactiva en http://localhost:8000/docs
+
+# 5. Construcción y ejecución del contenedor.
+docker build -t iris-api:1.0 .
+docker run --rm -p 8000:8000 iris-api:1.0
+
+# 6. Verificación rápida del tamaño de la imagen.
+docker images iris-api:1.0
+`;
+
+        const projectTreeContent = `iris-api/
+├── artifacts/                  ← se genera con \`python train.py\`
+│   ├── model.joblib
+│   └── model.metadata.json
+├── app/
+│   ├── __init__.py
+│   ├── main.py                 ← FastAPI + lifespan
+│   ├── ml.py                   ← carga del modelo
+│   └── schemas.py              ← Pydantic
+├── tests/
+│   ├── __init__.py
+│   └── test_api.py             ← pytest + TestClient
+├── train.py                    ← entrenamiento offline
+├── requirements.txt
+├── .dockerignore
+└── Dockerfile`;
+
+        const ProyectoSection = () => (
+            <div>
+                <p className="mb-4">
+                    Esta sección reúne todos los conceptos en un proyecto pequeño pero completo: entrena un
+                    clasificador de Iris, lo serializa, lo sirve mediante un Singleton inyectado por
+                    <span className="inline-code"> Depends</span>, lo prueba con pytest y lo empaqueta con un Dockerfile multi-etapa.
+                </p>
+
+                <h3 className="text-lg font-semibold text-secondary mb-2">5.1 Estructura del proyecto</h3>
+                <div className="bg-gray-100 rounded-lg p-4 my-3 font-mono text-sm whitespace-pre overflow-x-auto"
+                     style={{ borderLeft: '4px solid #FDB913', background: '#F1F5F9' }}>
+                    {projectTreeContent}
+                </div>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">5.2 Dependencias</h3>
+                <CodeBlock title="requirements.txt" code={requirementsProyectoCode} lang="text" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">5.3 Esquemas Pydantic (entrada y salida)</h3>
+                <CodeBlock title="app/schemas.py" code={schemasCode} lang="python" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">5.4 Carga del modelo (Singleton centralizado)</h3>
+                <CodeBlock title="app/ml.py" code={mlPyCode} lang="python" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">5.5 Aplicación FastAPI</h3>
+                <CodeBlock title="app/main.py" code={mainPyCode} lang="python" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">5.6 Pruebas con pytest y TestClient</h3>
+                <p className="mb-3">
+                    El test sustituye la dependencia <span className="inline-code">get_model</span> por un <em>mock</em>: así se prueba
+                    la lógica del <em>endpoint</em> sin necesidad de que exista el archivo
+                    <span className="inline-code"> artifacts/model.joblib</span>. Es un ejemplo concreto de la ventaja didáctica de
+                    <span className="inline-code"> Depends</span>.
+                </p>
+
+                <CodeBlock title="tests/test_api.py" code={testApiCode} lang="python" />
+
+                <Box type="tip" label="Detalle importante">
+                    <span className="inline-code">TestClient</span> debe usarse como <em>context manager</em>
+                    (<span className="inline-code">with TestClient(app) as c:</span>) para que se ejecuten correctamente los eventos
+                    del <span className="inline-code">lifespan</span>. Si no, el bloque <em>startup</em> nunca se dispara y
+                    <span className="inline-code"> app.state.model</span> permanecería sin definir. Como aquí se sobrescribe
+                    <span className="inline-code"> get_model</span>, no es estrictamente necesario, pero es una buena costumbre.
+                </Box>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">
+                    5.7 Empaquetado: <span className="inline-code">.dockerignore</span> y Dockerfile
+                </h3>
+                <CodeBlock title=".dockerignore" code={dockerignoreProyectoCode} lang="text" />
+                <CodeBlock title="Dockerfile" code={dockerfileProyectoCode} lang="dockerfile" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">5.8 Comandos para ejecutar el proyecto</h3>
+                <p className="mb-3">
+                    Secuencia completa, desde el código fuente recién clonado hasta la imagen lista para desplegar:
+                </p>
+
+                <CodeBlock title="terminal — sesión de ejemplo" code={terminalSessionCode} lang="shell" />
+
+                <p className="mb-4">
+                    Una vez que la imagen está construida, el despliegue en Railway, Render u otro PaaS de los
+                    vistos en la Semana V se reduce a conectar el repositorio: la plataforma detecta el
+                    <span className="inline-code"> Dockerfile</span> y reproduce los pasos anteriores en su infraestructura.
+                </p>
+            </div>
+        );
+
+        // ============================================================
+        // SECCIÓN 6 — Autoevaluación
+        // ============================================================
+        // ── Fase 3 · Tablero (criterio 14 de la rubrica, 3 %) ──────────────
+        const tableroCorsCode = `# app/main.py  —  permitir que el tablero consuma la API
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    # En el proyecto, pon aqui el origen real del tablero.
+    # "*" solo es aceptable mientras desarrollas en local.
+    allow_origins=["*"],
+    allow_methods=["POST", "GET"],
+    allow_headers=["*"],
+)`;
+
+        const tableroHtmlCode = `<!-- tablero/index.html  —  un solo archivo, sin build ni dependencias -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tablero — Clasificador de Iris</title>
+  <style>
+    body   { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    label  { display: block; margin: .6rem 0 .2rem; font-size: .9rem; }
+    input  { width: 100%; padding: .5rem; }
+    button { margin-top: 1rem; padding: .6rem 1.2rem; cursor: pointer; }
+    #salida{ margin-top: 1.5rem; padding: 1rem; border-radius: 8px; background: #F1F5F9; }
+    .error { background: #FEE2E2; }
+  </style>
+</head>
+<body>
+  <h1>Clasificador de Iris</h1>
+  <p>Introduce las cuatro medidas en centimetros.</p>
+
+  <form id="formulario">
+    <label>Largo del sepalo <input name="sepal_length" type="number" step="0.1" value="5.1" required></label>
+    <label>Ancho del sepalo <input name="sepal_width"  type="number" step="0.1" value="3.5" required></label>
+    <label>Largo del petalo <input name="petal_length" type="number" step="0.1" value="1.4" required></label>
+    <label>Ancho del petalo <input name="petal_width"  type="number" step="0.1" value="0.2" required></label>
+    <button type="submit">Predecir</button>
+  </form>
+
+  <div id="salida" hidden></div>
+
+<script>
+// La URL de tu API desplegada en Render. En local: http://127.0.0.1:8000
+const API = "https://encuestas-api.onrender.com";
+
+const salida = document.getElementById("salida");
+
+document.getElementById("formulario").addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  const datos = Object.fromEntries(
+    [...new FormData(evento.target)].map(([k, v]) => [k, parseFloat(v)])
+  );
+
+  salida.hidden = false;
+  salida.className = "";
+  salida.textContent = "Consultando la API...";
+
+  try {
+    const respuesta = await fetch(API + "/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(datos),
+    });
+
+    // 422 es el error de validacion de Pydantic que viste en la semana 4:
+    // el tablero tiene que saber leerlo, no solo el camino feliz.
+    if (respuesta.status === 422) {
+      const { detail } = await respuesta.json();
+      salida.className = "error";
+      salida.textContent = "Datos invalidos: " +
+        detail.map(e => e.loc.join(".") + " " + e.msg).join(" | ");
+      return;
+    }
+    if (!respuesta.ok) throw new Error("HTTP " + respuesta.status);
+
+    const { especie, probabilidad } = await respuesta.json();
+    salida.textContent =
+      "Especie: " + especie + "  ·  confianza " + (probabilidad * 100).toFixed(1) + " %";
+  } catch (e) {
+    salida.className = "error";
+    salida.textContent = "No se pudo contactar con la API: " + e.message;
+  }
+});
+<\/script>
+</body>
+</html>`;
+
+        const TableroSection = () => (
+            <div>
+                <p className="mb-4">
+                    La rúbrica del proyecto integrador evalúa un <strong>tablero</strong> con un 3 %
+                    (criterio 14), y hasta esta sección ningún módulo del curso te decía cómo construirlo.
+                    Ésta lo hace, y con una advertencia por delante: <strong>no es una sesión de desarrollo
+                    frontend</strong>. Lo que se evalúa es que exista una interfaz que consuma <em>tu</em> API
+                    real y muestre el resultado. Nada más, y nada menos.
+                </p>
+
+                <div className="p-4 rounded-lg mb-4" style={{ background: '#FFFBEB', border: '1px solid #FDE68A' }}>
+                    <p className="text-sm">
+                        <strong>Qué cuenta como tablero, para que no lo sobredimensiones:</strong> una página
+                        que recoge las entradas del modelo, llama a tu endpoint <span className="inline-code">/predict</span>,
+                        pinta la predicción y <em>no se rompe</em> cuando la API responde un error. Un solo
+                        archivo HTML es suficiente. No hace falta React, ni npm, ni un servidor aparte.
+                    </p>
+                </div>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">6.1 Primero, dejar que el navegador te llame</h3>
+                <p className="mb-3">
+                    Si abres el tablero como archivo local y tu API está en Render, el navegador va a bloquear la
+                    petición: son orígenes distintos. Es la política del <em>mismo origen</em>, y no es un fallo
+                    tuyo. Se resuelve declarando en la API qué orígenes pueden llamarla:
+                </p>
+                <CodeBlock title="app/main.py — CORS" code={tableroCorsCode} lang="python" />
+                <p className="mb-3 text-sm text-gray-600">
+                    <span className="inline-code">allow_origins=["*"]</span> abre la API a cualquier origen. Sirve
+                    mientras desarrollas; en el proyecto entregado, pon la URL real de tu tablero. Es el mismo
+                    criterio de la semana 8: lo que en desarrollo es cómodo, en producción se declara.
+                </p>
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">6.2 El tablero completo</h3>
+                <p className="mb-3">
+                    Un archivo, sin dependencias. Cambia la constante <span className="inline-code">API</span> por la
+                    URL de tu servicio y ábrelo en el navegador:
+                </p>
+                <CodeBlock title="tablero/index.html" code={tableroHtmlCode} lang="text" />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-2">6.3 Lo que hace que este tablero apruebe</h3>
+                <p className="mb-3">
+                    Tres detalles, y son los tres que suelen faltar:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 mb-4 text-sm">
+                    <li>
+                        <strong>Lee el 422.</strong> Cuando Pydantic rechaza la entrada, la respuesta trae la lista
+                        <span className="inline-code"> detail</span> que viste en la semana 4. El tablero la muestra
+                        campo por campo en vez de decir «error». Es la diferencia entre una interfaz usable y una
+                        que obliga a abrir la consola.
+                    </li>
+                    <li>
+                        <strong>Distingue «la API dijo que no» de «la API no contestó».</strong> Un 422 es una
+                        respuesta válida; un fallo de red es otra cosa. El <span className="inline-code">catch</span>
+                        cubre el segundo caso, que es el que vas a encontrar cuando Render suspenda el servicio
+                        gratuito por inactividad y la primera petición tarde en despertar el contenedor.
+                    </li>
+                    <li>
+                        <strong>Consume la API desplegada, no una simulación.</strong> En la sustentación se abre la
+                        URL pública y se hace una predicción en vivo. Un tablero con datos inventados dentro del
+                        HTML se detecta en la primera pregunta.
+                    </li>
+                </ul>
+
+                <div className="p-4 rounded-lg" style={{ background: '#F0F9FF', border: '1px solid #BAE6FD' }}>
+                    <p className="text-sm">
+                        <strong>Dónde encaja en el cronograma:</strong> el taller de la semana 15 integra «modelo, API
+                        y tablero» según el syllabus. Si llegas a esa sesión con este archivo funcionando contra tu
+                        endpoint, el criterio 14 está cerrado y puedes dedicar el taller a lo que de verdad cuesta.
+                    </p>
+                </div>
+            </div>
+        );
+
+        const AutoSection = () => (
+            <div>
+                <p className="mb-4">
+                    Las preguntas y ejercicios siguientes están pensados para verificar la comprensión del
+                    material. Se recomienda intentar responder cada apartado <em>antes</em> de leer la solución.
+                    En los ejercicios prácticos las soluciones son indicaciones —«pistas»— para guiar la
+                    construcción del código sin sustituir el esfuerzo del estudiante.
+                </p>
+
+                <h3 className="text-lg font-semibold text-secondary mb-3">6.1 Preguntas conceptuales</h3>
+
+                <QA
+                    q={<>P1. ¿Por qué se prefiere <span className="inline-code">joblib</span> a <span className="inline-code">pickle</span> para modelos de scikit-learn, si ambos usan internamente el mismo protocolo?</>}
+                    a={<><strong>R.</strong> Porque <span className="inline-code">joblib</span> serializa los buffers de <span className="inline-code">numpy</span> en bloque (en vez de objeto a objeto) y ofrece compresión integrada, lo que reduce significativamente el tamaño y el tiempo de E/S. Los modelos de scikit-learn están repletos de arrays NumPy, así que la mejora es notoria.</>}
+                />
+
+                <QA
+                    q={<>P2. ¿Qué ventaja aporta cargar el modelo en el bloque <span className="inline-code">lifespan</span> frente a hacerlo dentro del propio <em>endpoint</em>?</>}
+                    a={<><strong>R.</strong> En el <em>endpoint</em>, el modelo se carga en cada petición: latencia de cientos de milisegundos y E/S innecesaria. En <span className="inline-code">lifespan</span> se carga una sola vez al arrancar el proceso y se reutiliza, dejando la latencia de cada petición en el orden de la inferencia (típicamente milisegundos).</>}
+                />
+
+                <QA
+                    q={<>P3. ¿Por qué la carga de un archivo pickle/joblib desde una fuente no confiable es peligrosa? ¿Qué se hace para mitigarlo?</>}
+                    a={<><strong>R.</strong> Porque el protocolo permite que el método <span className="inline-code">__reduce__</span> de un objeto ejecute código arbitrario durante la deserialización. Mitigaciones: cargar solo artefactos generados por el equipo, verificar un hash sha256 antes de la carga, ejecutar el contenedor como usuario sin privilegios y, cuando sea posible, usar formatos «sin código» como ONNX o <span className="inline-code">skops.io</span>.</>}
+                />
+
+                <QA
+                    q={<>P4. Un compañero comenta: «la imagen base <span className="inline-code">python:3.11.9-alpine</span> es la más pequeña, así que la usaré para mi API de scikit-learn». ¿Qué se le respondería?</>}
+                    a={<><strong>R.</strong> Que Alpine usa <span className="inline-code">musl libc</span> en vez de <span className="inline-code">glibc</span>, y por tanto la mayoría de <em>wheels</em> precompilados de scikit-learn, numpy y scipy <strong>no están disponibles</strong> para esa libc. Pip terminará compilando desde fuente, lo que consume mucho tiempo y suele fallar. Para una API de ML en Python se prefiere <span className="inline-code">python:3.11.9-slim-bookworm</span>.</>}
+                />
+
+                <QA
+                    q={<>P5. ¿Qué papel juega <span className="inline-code">app.dependency_overrides</span> en las pruebas? ¿Por qué es preferible a inyectar globalmente un <em>mock</em>?</>}
+                    a={<><strong>R.</strong> Permite reemplazar la implementación de cualquier <em>dependency</em> (<span className="inline-code">get_model</span>, <span className="inline-code">get_db</span>, …) solo durante los tests. Es preferible al <em>monkeypatching</em> global porque queda contenido en el <em>fixture</em> de pytest (<span className="inline-code">app.dependency_overrides.clear()</span> al final), lo que evita filtraciones entre pruebas y mantiene el código de producción intacto.</>}
+                />
+
+                <QA
+                    q={<>P6. ¿Qué efecto tiene la opción <span className="inline-code">compress=3</span> en <span className="inline-code">joblib.dump</span> y por qué no se elige siempre <span className="inline-code">compress=9</span>?</>}
+                    a={<><strong>R.</strong> <span className="inline-code">compress=3</span> aplica compresión zlib de nivel medio: reduce el archivo a ~25–30 % del tamaño original con un coste pequeño de tiempo. Niveles altos (8 o 9) ahorran poco espacio adicional y aumentan tanto el tiempo de <em>dump</em> como el de <em>load</em>; en producción, esa carga se paga al arrancar. <span className="inline-code">compress=3</span> es un buen compromiso por defecto.</>}
+                />
+
+                <QA
+                    q={<>P7. ¿Cuál es el papel de la primera etapa (<span className="inline-code">builder</span>) en un Dockerfile multi-etapa? ¿Qué pasaría si se omitiera?</>}
+                    a={<><strong>R.</strong> En la etapa <span className="inline-code">builder</span> se instalan las dependencias junto con herramientas de compilación (<span className="inline-code">build-essential</span>, ~250 MB) que pueden ser necesarias para construir <em>wheels</em> desde fuente. La etapa <span className="inline-code">runtime</span> copia únicamente el entorno virtual ya construido. Si se omitiera esa separación, el <span className="inline-code">build-essential</span> y la caché de pip viajarían a la imagen final, sumando cientos de megabytes innecesarios.</>}
+                />
+
+                <QA
+                    q={<>P8. ¿Qué hace exactamente <span className="inline-code">--extra-index-url https://download.pytorch.org/whl/cpu</span> en un <span className="inline-code">requirements.txt</span> y por qué es relevante para el tamaño de la imagen?</>}
+                    a={<><strong>R.</strong> Indica a pip un índice <em>adicional</em> donde buscar <em>wheels</em>. Combinado con un identificador <span className="inline-code">+cpu</span> en la versión de <span className="inline-code">torch</span>, permite instalar la rueda CPU-only (~200 MB) en lugar de la predeterminada con CUDA (~2.5 GB). En un contenedor sin GPU, la diferencia se traduce en despliegues mucho más rápidos y baratos.</>}
+                />
+
+                <QA
+                    q={<>P9. Si la API se ejecuta con <span className="inline-code">uvicorn --workers 4</span>, ¿cuántas instancias del modelo habrá en memoria? ¿Por qué?</>}
+                    a={<><strong>R.</strong> Cuatro. Cada <em>worker</em> de uvicorn es un proceso independiente; el <span className="inline-code">lifespan</span> se ejecuta una vez por proceso, así que cada uno carga su propia copia. Para modelos grandes conviene reducir el número de <em>workers</em> o aumentar la RAM del contenedor.</>}
+                />
+
+                <QA
+                    q={<>P10. Un <span className="inline-code">RandomForestClassifier</span> entrenado y serializado con <span className="inline-code">scikit-learn==1.4.2</span> se carga en un contenedor que tiene <span className="inline-code">scikit-learn==1.5.2</span>. ¿Qué se debe hacer?</>}
+                    a={<><strong>R.</strong> Aunque la carga puede funcionar, no debe asumirse: hay cambios internos entre versiones que pueden alterar predicciones o lanzar <span className="inline-code">AttributeError</span>. La acción correcta es <strong>reentrenar y reserializar</strong> el modelo con la versión instalada en producción y, en cualquier caso, <strong>fijar la versión exacta</strong> en <span className="inline-code">requirements.txt</span> para impedir derivas silenciosas.</>}
+                />
+
+                <h3 className="text-lg font-semibold text-secondary mt-6 mb-3">6.2 Ejercicios prácticos</h3>
+
+                <QA
+                    q={<>E1. Adaptar el mini-proyecto para clasificar dígitos manuscritos (<span className="inline-code">sklearn.datasets.load_digits</span>) en lugar de Iris.</>}
+                    a={<><strong>Pista.</strong> El cambio se concentra en tres archivos: <span className="inline-code">train.py</span> (cambiar el dataset y, si se desea, el estimador), <span className="inline-code">app/schemas.py</span> (la entrada pasa de cuatro <em>floats</em> a una lista de 64 píxeles; conviene un validador <span className="inline-code">@field_validator</span> que confirme el tamaño) y <span className="inline-code">app/ml.py</span> (actualizar <span className="inline-code">TARGET_NAMES</span>). El esquema de carga con <span className="inline-code">lifespan</span> y la inyección con <span className="inline-code">Depends</span> permanecen intactos.</>}
+                />
+
+                <QA
+                    q={<>E2. Añadir un <em>endpoint</em> <span className="inline-code">GET /model-info</span> que devuelva los metadatos del modelo (versión de scikit-learn, fecha de entrenamiento, accuracy) leyéndolos del archivo <span className="inline-code">artifacts/model.metadata.json</span> generado por <span className="inline-code">train.py</span>.</>}
+                    a={<><strong>Pista.</strong> Cargar el JSON dentro del <span className="inline-code">lifespan</span> y guardar el diccionario en <span className="inline-code">app.state.model_metadata</span>. Crear una dependencia <span className="inline-code">get_model_metadata</span> análoga a <span className="inline-code">get_model</span> y consumirla con <span className="inline-code">Depends</span> en el nuevo <em>endpoint</em>. Diseñar un <span className="inline-code">BaseModel</span> <span className="inline-code">ModelInfo</span> con los campos esperados para que la respuesta esté validada.</>}
+                />
+
+                <QA
+                    q={<>E3. Reducir el tamaño de la imagen Docker a menos de 200 MB para una API que solo usa scikit-learn (sin PyTorch).</>}
+                    a={<><strong>Pista.</strong> Partiendo del Dockerfile optimizado, se obtienen ahorros adicionales: (a) instalar únicamente las dependencias estrictamente necesarias (revisar el <span className="inline-code">requirements.txt</span> y purgar lo que se quedó por inercia); (b) verificar el contenido del <span className="inline-code">.dockerignore</span> ejecutando <span className="inline-code">docker build --progress=plain</span> y observando los archivos copiados; (c) ejecutar <span className="inline-code">docker history --no-trunc</span> sobre la imagen y eliminar las capas más pesadas; (d) considerar <span className="inline-code">find /opt/venv -name __pycache__ -type d -exec rm -rf {'{}'} +</span> dentro del <em>builder</em> para reducir aún más el venv.</>}
+                />
+
+                <QA
+                    q={<>E4. Implementar una verificación de hash sha256 para el archivo del modelo que se ejecute al arrancar la API. Si el hash no coincide con el esperado, el contenedor no debe aceptar tráfico.</>}
+                    a={<><strong>Pista.</strong> En el <span className="inline-code">lifespan</span>, antes de <span className="inline-code">joblib.load</span>, calcular el hash con <span className="inline-code">hashlib.sha256</span> sobre el archivo. Comparar contra una constante (idealmente leída de una variable de entorno <span className="inline-code">EXPECTED_MODEL_SHA256</span>; recordar el uso de <span className="inline-code">python-dotenv</span> de la Semana III para gestionar variables sensibles). Si difiere, lanzar <span className="inline-code">RuntimeError</span>: FastAPI no completará el arranque y el orquestador del PaaS interpretará la falla, evitando que tráfico real toque un modelo de origen sospechoso.</>}
+                />
+
+                <QA
+                    q={<>E5. Diseñar una prueba de integración que <strong>sí</strong> use el modelo real (no el <em>fake</em>): el <em>fixture</em> entrena un mini-modelo dentro de un directorio temporal y configura la API para leerlo desde allí.</>}
+                    a={<><strong>Pista.</strong> Usar la <em>fixture</em> incorporada <span className="inline-code">tmp_path</span> de pytest. Dentro de ella entrenar un <span className="inline-code">LogisticRegression</span> sobre dos o tres ejemplos sintéticos y guardarlo con <span className="inline-code">joblib.dump</span>. Sustituir <span className="inline-code">load_model</span> mediante <span className="inline-code">app.dependency_overrides</span> por una función que apunte al archivo temporal. Validar después la pirámide: tests unitarios rápidos con <em>fake</em>, tests de integración más lentos con modelo real.</>}
+                />
+
+                <Box type="info" label="Para profundizar">
+                    Tres líneas de lectura recomendadas para quien desee continuar más allá de este material:
+                    (a) la guía oficial de
+                    <a href="https://scikit-learn.org/stable/model_persistence.html" target="_blank" rel="noopener noreferrer" className="text-primary underline"> persistencia de modelos de scikit-learn</a>;
+                    (b) la documentación del proyecto
+                    <a href="https://skops.readthedocs.io/" target="_blank" rel="noopener noreferrer" className="text-primary underline"> skops</a>, una alternativa más segura a
+                    <span className="inline-code"> pickle</span>;
+                    (c) la sección
+                    <a href="https://fastapi.tiangolo.com/advanced/events/" target="_blank" rel="noopener noreferrer" className="text-primary underline"> «Lifespan Events»</a> de la
+                    documentación de FastAPI, donde se detallan patrones avanzados como la carga
+                    condicional de modelos según variables de entorno.
+                </Box>
+            </div>
+        );
+
+        // ============================================================
+        // CURRICULUM
+        // ============================================================
+        const curriculum = [
+            { id: 'intro',     title: '1. Introducción y objetivos',  icon: 'BookOpen',    component: IntroSection },
+            { id: 'ciclo',     title: '2. Ciclo de vida del modelo',  icon: 'Activity',    component: CicloVidaSection },
+            { id: 'singleton', title: '3. Patrón Singleton',          icon: 'Cpu',         component: SingletonSection },
+            { id: 'docker',    title: '4. Docker para ML',            icon: 'Server',      component: DockerSection },
+            { id: 'proyecto',  title: '5. Mini-proyecto integrador',  icon: 'Code',        component: ProyectoSection },
+            { id: 'tablero',   title: '6. El tablero (rúbrica 3 %)',  icon: 'Activity',    component: TableroSection },
+            { id: 'auto',      title: '7. Autoevaluación',            icon: 'CheckSquare', component: AutoSection },
+        ];
+
+        // ============================================================
+        // APP — sidebar fijo + contenido scrolleable
+        // ============================================================
+        const App = () => {
+            const [activeLessonIndex, setActiveLessonIndex] = useState(0);
+            const [sidebarOpen, setSidebarOpen] = useState(true);
+
+            const activeLesson = curriculum[activeLessonIndex];
+            const ActiveComponent = activeLesson.component;
+
+            return (
+                <div className="flex h-screen overflow-hidden relative">
+
+                    {/* Botón flotante para toggle del sidebar */}
+                    <button
+                        onClick={() => setSidebarOpen(prev => !prev)}
+                        className="fixed top-4 left-4 z-50 p-2.5 rounded-full shadow-lg text-white transition-all hover:scale-110"
+                        style={{ background: 'linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)' }}
+                        title={sidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}
+                    >
+                        <i className={`fas ${sidebarOpen ? 'fa-times' : 'fa-bars'} text-sm`}></i>
+                    </button>
+
+                    {/* Overlay (móvil) */}
+                    {sidebarOpen && (
+                        <div
+                            className="fixed inset-0 bg-black/20 z-30 lg:hidden"
+                            onClick={() => setSidebarOpen(false)}
+                        />
+                    )}
+
+                    {/* Sidebar de navegación — se mueve con el documento (siempre visible mientras el contenido hace scroll) */}
+                    <aside
+                        className="flex-shrink-0 overflow-y-auto z-40 flex flex-col"
+                        style={{
+                            background: 'linear-gradient(180deg, #001A4D 0%, #002868 100%)',
+                            width: sidebarOpen ? '17rem' : '0',
+                            minWidth: sidebarOpen ? '17rem' : '0',
+                            opacity: sidebarOpen ? 1 : 0,
+                            transition: 'width 0.3s ease, min-width 0.3s ease, opacity 0.25s ease',
+                            overflow: sidebarOpen ? 'visible auto' : 'hidden'
+                        }}
+                    >
+                        <div className="p-6 pt-16 border-b border-white/10">
+                            <h1 className="text-white font-bold text-lg tracking-tight flex items-center gap-2">
+                                <span className="text-secondary">ML</span>en<span className="text-gold">Producción</span>
+                            </h1>
+                            <p className="text-xs text-white/50 mt-1">Python para APIs e IA Aplicada · Semana VI</p>
+                        </div>
+
+                        <nav className="p-4 space-y-2">
+                            {curriculum.map((lesson, idx) => (
+                                <button
+                                    key={lesson.id}
+                                    onClick={() => {
+                                        setActiveLessonIndex(idx);
+                                        if (window.innerWidth < 1024) setSidebarOpen(false);
+                                    }}
+                                    className={`w-full flex items-start gap-3 px-3 py-3 text-sm rounded-lg transition-all text-left ${
+                                        activeLessonIndex === idx
+                                            ? 'text-white shadow-lg'
+                                            : 'text-white/60 hover:text-white hover:bg-white/10'
+                                    }`}
+                                    style={activeLessonIndex === idx
+                                        ? { background: 'linear-gradient(140deg, #3D008D 0%, #ED1E79 100%)' }
+                                        : {}
+                                    }
+                                >
+                                    <span className="flex-shrink-0 mt-0.5" style={{ width: 18, height: 18 }}>
+                                        {renderIcon(lesson.icon, 18)}
+                                    </span>
+                                    <span className="font-medium leading-tight break-words">{lesson.title}</span>
+                                </button>
+                            ))}
+                        </nav>
+
+                        <div className="mt-auto p-4 text-[10px] text-white/40 border-t border-white/10">
+                            <p>Python 3.11.9 · FastAPI 0.115</p>
+                            <p>scikit-learn · joblib · Docker</p>
+                        </div>
+                    </aside>
+
+                    {/* Área principal */}
+                    <main className="flex-1 flex overflow-hidden bg-bg">
+                        <div className="flex-1 overflow-y-auto p-6 lg:p-12">
+                            <div className="max-w-5xl mx-auto w-full">
+
+                                <div className="mb-6 flex items-center justify-between">
+                                    <span className="text-xs font-bold tracking-wider text-secondary uppercase">
+                                        Lección {activeLessonIndex + 1} de {curriculum.length}
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <button
+                                            disabled={activeLessonIndex === 0}
+                                            onClick={() => setActiveLessonIndex(c => c - 1)}
+                                            className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                                            title="Lección anterior"
+                                        >
+                                            {renderIcon('ChevronLeft')}
+                                        </button>
+                                        <button
+                                            disabled={activeLessonIndex === curriculum.length - 1}
+                                            onClick={() => setActiveLessonIndex(c => c + 1)}
+                                            className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-30 transition-colors"
+                                            title="Lección siguiente"
+                                        >
+                                            {renderIcon('ChevronRight')}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <SectionHeader title={activeLesson.title} icon={Icons[activeLesson.icon]} />
+
+                                {/* Cabecera de portada en la primera lección */}
+                                {activeLessonIndex === 0 && (
+                                    <div className="mb-8 text-center bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+                                        <p className="text-xs uppercase tracking-widest text-secondary font-bold mb-2">
+                                            Python para APIs · Semana VI
+                                        </p>
+                                        <h1 className="text-2xl font-bold text-primary mb-2">
+                                            Modelos de Machine Learning en Producción
+                                        </h1>
+                                        <p className="text-gray-600 font-light">
+                                            Ciclo de vida del modelo, patrón Singleton para FastAPI e imágenes Docker
+                                            optimizadas para dependencias de ML.
+                                        </p>
+                                        <div className="flex justify-center flex-wrap gap-2 mt-4 text-xs">
+                                            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">Python 3.11.9</span>
+                                            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">FastAPI</span>
+                                            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">scikit-learn · joblib</span>
+                                            <span className="px-3 py-1 rounded-full bg-primary/10 text-primary">Docker · Debian 12</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Contenido dinámico de la lección activa */}
+                                <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed animate-fade-in"
+                                     key={activeLesson.id}>
+                                    <ActiveComponent />
+                                </div>
+
+                                {/* Footer */}
+                                <footer className="mt-20 pt-8 border-t border-gray-200">
+                                    <div className="usta-header rounded-xl p-6 text-center">
+                                        <p className="text-white font-medium text-sm">
+                                            <strong>Semana VI · Modelos de ML en Producción</strong>
+                                        </p>
+                                        <p className="text-xs mt-1 text-white/70">
+                                            Material elaborado para el curso de Python para APIs e Inteligencia Artificial.
+                                        </p>
+                                        <p className="text-[10px] mt-2 text-white/50">
+                                            Versiones de referencia: Python 3.11.9 · FastAPI 0.115 · scikit-learn 1.5 · Docker (Debian 12 bookworm).
+                                        </p>
+                                    </div>
+                                </footer>
+
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
