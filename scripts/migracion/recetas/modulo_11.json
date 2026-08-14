@@ -21,6 +21,7 @@
       "Multi-stage",
       "python:3.11.9-slim-bookworm"
     ],
+    "stack": "Docker · python:3.11.9-slim-bookworm",
     "storageKey": "usta_2026i_apis_cap11"
   },
   "secciones": [

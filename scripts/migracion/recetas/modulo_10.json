@@ -21,6 +21,7 @@
       "Fixtures",
       "Reproducibilidad"
     ],
+    "stack": "pytest · httpx · TestClient",
     "storageKey": "usta_2026i_apis_cap10"
   },
   "secciones": [

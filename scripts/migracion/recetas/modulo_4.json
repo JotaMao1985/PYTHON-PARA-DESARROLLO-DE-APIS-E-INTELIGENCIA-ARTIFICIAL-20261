@@ -21,6 +21,7 @@
       "field_validator",
       "HTTP 422"
     ],
+    "stack": "Pydantic v2",
     "storageKey": "usta_2026i_apis_cap04"
   },
   "secciones": [

@@ -2151,6 +2151,7 @@
             ra: "Desacoplar la lógica de negocio de la lógica de ruta mediante el sistema de dependencias de FastAPI.",
             contenidoSyllabus: "De lo duro a lo flexible: variables de entorno. El patrón de inyección de dependencias. Reutilización: conexión a base de datos y carga de configuración.",
             temas: ["FastAPI Depends", "python-dotenv", "BaseSettings", "lru_cache"],
+            stack: "FastAPI Depends · python-dotenv",
             storageKey: "usta_2026i_apis_cap08",
         };
 
@@ -3125,7 +3126,7 @@ def resumen_estadistico(db: Session = Depends(get_db)):
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

@@ -2175,6 +2175,7 @@
             ra: "Empaquetar la aplicación y sus dependencias en una imagen reproducible.",
             contenidoSyllabus: "Del entorno virtual al contenedor. Contenedores frente a máquinas virtuales. Estructura del Dockerfile. Imagen base python:3.11.9-slim-bookworm. Construcción multietapa.",
             temas: ["Docker", "Dockerfile", "Multi-stage", "python:3.11.9-slim-bookworm"],
+            stack: "Docker · python:3.11.9-slim-bookworm",
             storageKey: "usta_2026i_apis_cap11",
         };
 
@@ -4246,7 +4247,7 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

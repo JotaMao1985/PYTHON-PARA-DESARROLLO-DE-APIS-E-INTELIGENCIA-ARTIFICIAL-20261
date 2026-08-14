@@ -21,6 +21,7 @@
       "Pydantic",
       "requirements.txt"
     ],
+    "stack": "JSON · Requests · requirements.txt",
     "storageKey": "usta_2026i_apis_cap02"
   },
   "secciones": [

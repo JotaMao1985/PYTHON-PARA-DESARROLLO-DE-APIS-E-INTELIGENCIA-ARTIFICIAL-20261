@@ -66,6 +66,10 @@ def indentar_jsx(cuerpo: str, ancho: int) -> str:
                   lambda m: guardados[int(m.group(1))], sangrado)
 
 
+# La línea que `lp-base.html` trae escrita a mano al pie del menú. Es de LPF,
+# no de este curso, y se sustituye por el `stack` de la receta. Ver el paso 3b.
+PIE_LPF = "<p>Pseudocódigo · Python · R · VBA</p>"
+
 INI_SEC = "        /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */"
 FIN_SEC = "        /* === SECCIONES FIN === */"
 INI_CSS = "        /* === ESTILOS DEL MÓDULO INICIO — del <style> del archivo heredado === */"
@@ -268,6 +272,35 @@ def main():
     bloque_cfg = "        const CONFIG = {\n" + campos + "\n        };"
     texto = re.sub(r"        const CONFIG = \{.*?\n        \};", lambda _: bloque_cfg,
                    texto, count=1, flags=re.S)
+
+    # 3b · el pie de la barra lateral
+    #
+    # `lp-base.html` escribe ahí, a mano, la lista de lenguajes de Lógica de
+    # Programación Financiera —«Pseudocódigo · Python · R · VBA»—, y de los
+    # cuatro este curso sólo usa uno. Estuvo en los trece capítulos publicados
+    # hasta agosto de 2026: nadie lo vio porque es una línea de diez píxeles al
+    # pie del menú, que es donde mejor se esconde una cosa falsa.
+    #
+    # Pasa a salir de la receta, con el mismo `stack` que el syllabus declara
+    # para esa semana —«FastAPI · Uvicorn · OpenAPI»— para que el capítulo y el
+    # syllabus no puedan decir cosas distintas.
+    #
+    # Se comprueban las dos mitades, porque las dos fallan calladas: sin
+    # `stack` en la receta el pie diría `undefined`, y si la plantilla cambia
+    # esa línea la sustitución no encuentra nada y vuelve la de LPF a los
+    # trece.
+    if not receta["config"].get("stack"):
+        print("ERROR: la receta no declara `config.stack`, que es lo que va al pie de\n"
+              "       la barra lateral. Cópielo del syllabus, de la fila de esa semana.",
+              file=sys.stderr)
+        return 1
+    texto, n = re.subn(re.escape(PIE_LPF), "<p>{CONFIG.stack}</p>", texto)
+    if n != 1:
+        print(f"ERROR: la plantilla ya no trae «{PIE_LPF}» al pie de la barra lateral\n"
+              f"       ({n} coincidencias). Si LP-CORE cambió esa línea, hay que\n"
+              f"       actualizar `PIE_LPF`; si no, el capítulo saldría publicando los\n"
+              f"       lenguajes de otro curso.", file=sys.stderr)
+        return 1
 
     # 4 · gráficas
     graf = piezas / "graficas.jsx"
