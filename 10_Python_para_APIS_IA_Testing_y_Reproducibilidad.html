@@ -2156,6 +2156,7 @@
             ra: "Automatizar la verificación del comportamiento de la API con pruebas unitarias y de integración.",
             contenidoSyllabus: "La pirámide de testing. pytest. TestClient de FastAPI. Fixtures. Qué significa que un resultado sea reproducible.",
             temas: ["pytest", "TestClient", "Fixtures", "Reproducibilidad"],
+            stack: "pytest · httpx · TestClient",
             storageKey: "usta_2026i_apis_cap10",
         };
 
@@ -3120,29 +3121,29 @@
                                         función pura que calcula la media y el error estándar:</p>
 
                                     <CodeBlock title="app/stats.py" lang="python" code={`# app/stats.py
-                from math import sqrt
+from math import sqrt
 
-                def media_y_ee(datos: list[float]) -> tuple[float, float]:
-                    """Devuelve (media, error estándar). Requiere n >= 2."""
-                    n = len(datos)
-                    if n < 2:
-                        raise ValueError("Se requieren al menos 2 observaciones")
-                    media = sum(datos) / n
-                    var = sum((x - media) ** 2 for x in datos) / (n - 1)
-                    return media, sqrt(var / n)`} />
+def media_y_ee(datos: list[float]) -> tuple[float, float]:
+    """Devuelve (media, error estándar). Requiere n >= 2."""
+    n = len(datos)
+    if n < 2:
+        raise ValueError("Se requieren al menos 2 observaciones")
+    media = sum(datos) / n
+    var = sum((x - media) ** 2 for x in datos) / (n - 1)
+    return media, sqrt(var / n)`} />
 
                                     <CodeBlock title="tests/test_stats.py" lang="python" code={`# tests/test_stats.py
-                import pytest
-                from app.stats import media_y_ee
+import pytest
+from app.stats import media_y_ee
 
-                def test_media_y_ee_rechaza_una_sola_observacion():
-                    with pytest.raises(ValueError, match="al menos 2"):
-                        media_y_ee([5.0])
+def test_media_y_ee_rechaza_una_sola_observacion():
+    with pytest.raises(ValueError, match="al menos 2"):
+        media_y_ee([5.0])
 
-                def test_media_y_ee_caso_canonico():
-                    media, ee = media_y_ee([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
-                    assert media == pytest.approx(5.0)
-                    assert ee == pytest.approx(0.7071067811865476, rel=1e-9)`} />
+def test_media_y_ee_caso_canonico():
+    media, ee = media_y_ee([2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0])
+    assert media == pytest.approx(5.0)
+    assert ee == pytest.approx(0.7071067811865476, rel=1e-9)`} />
 
                                     <h3>2.2 Pruebas de integración</h3>
                                     <p>Verifican que dos o más componentes colaboran correctamente. Una prueba de integración
@@ -3222,37 +3223,37 @@
 
                                     <h3>3.1 Estructura de proyecto recomendada</h3>
                                     <CodeBlock lang="text" code={`encuestas-api/
-                ├── app/
-                │   ├── __init__.py
-                │   ├── main.py
-                │   ├── stats.py
-                │   ├── models.py
-                │   └── db.py
-                ├── tests/
-                │   ├── __init__.py
-                │   ├── conftest.py            # fixtures compartidas
-                │   ├── test_stats.py
-                │   ├── test_endpoints.py
-                │   └── test_reproducibilidad.py
-                ├── pyproject.toml
-                ├── pytest.ini
-                └── requirements.txt`} />
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── stats.py
+│   ├── models.py
+│   └── db.py
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py            # fixtures compartidas
+│   ├── test_stats.py
+│   ├── test_endpoints.py
+│   └── test_reproducibilidad.py
+├── pyproject.toml
+├── pytest.ini
+└── requirements.txt`} />
 
                                     <h3>3.2 Configuración mínima</h3>
                                     <p>El archivo <code>pytest.ini</code> declara la configuración del proyecto. Se recomienda
                                         como mínimo:</p>
 
                                     <CodeBlock title="pytest.ini" lang="toml" code={`# pytest.ini
-                [pytest]
-                minversion = 8.0
-                testpaths = tests
-                python_files = test_*.py
-                python_functions = test_*
-                addopts = -ra --strict-markers --strict-config -q
-                markers =
-                    slow: pruebas lentas (excluir con -m "not slow")
-                    integration: pruebas que tocan la base de datos
-                    statistics: pruebas que validan resultados numéricos`} />
+[pytest]
+minversion = 8.0
+testpaths = tests
+python_files = test_*.py
+python_functions = test_*
+addopts = -ra --strict-markers --strict-config -q
+markers =
+    slow: pruebas lentas (excluir con -m "not slow")
+    integration: pruebas que tocan la base de datos
+    statistics: pruebas que validan resultados numéricos`} />
 
                                     <p>La opción <code>--strict-markers</code> obliga a declarar cada marcador, evitando
                                         typos silenciosos del tipo <code>@pytest.mark.intgration</code>. La opción <code>-ra</code> imprime un resumen de pruebas que no fueron <em>passed</em>.
@@ -3264,16 +3265,16 @@
                                         los <em>helpers</em> <code>pytest.approx</code> y <code>math.isclose</code>:</p>
 
                                     <CodeBlock lang="python" code={`import pytest
-                from app.stats import media_y_ee
+from app.stats import media_y_ee
 
-                def test_media_de_normales_centrada_en_cero():
-                    import random
-                    random.seed(42)
-                    datos = [random.gauss(0, 1) for _ in range(1000)]
-                    media, ee = media_y_ee(datos)
-                    # Tolerancia: 4 errores estándar evita una prueba inestable (flaky)
-                    # sin volverla trivialmente cierta.
-                    assert abs(media) < 4 * ee, f"Media {media} fuera de banda"`} />
+def test_media_de_normales_centrada_en_cero():
+    import random
+    random.seed(42)
+    datos = [random.gauss(0, 1) for _ in range(1000)]
+    media, ee = media_y_ee(datos)
+    # Tolerancia: 4 errores estándar evita una prueba inestable (flaky)
+    # sin volverla trivialmente cierta.
+    assert abs(media) < 4 * ee, f"Media {media} fuera de banda"`} />
 
                                     <h3>3.4 Parametrización</h3>
                                     <p>El decorador <code>@pytest.mark.parametrize</code> ejecuta una misma prueba con varios
@@ -3281,21 +3282,21 @@
                                         pytest indica exactamente cuál.</p>
 
                                     <CodeBlock lang="python" code={`import pytest
-                from app.stats import media_y_ee
+from app.stats import media_y_ee
 
-                @pytest.mark.parametrize(
-                    "datos, media_esperada",
-                    [
-                        ([1.0, 2.0, 3.0],          2.0),
-                        ([10.0, 20.0],               15.0),
-                        ([-1.0, 0.0, 1.0],          0.0),
-                        ([100.0] * 5 + [200.0] * 5, 150.0),
-                    ],
-                    ids=["trio", "par", "simetrica", "bimodal"],
-                )
-                def test_media_de_casos_canonicos(datos, media_esperada):
-                    media, _ = media_y_ee(datos)
-                    assert media == pytest.approx(media_esperada)`} />
+@pytest.mark.parametrize(
+    "datos, media_esperada",
+    [
+        ([1.0, 2.0, 3.0],          2.0),
+        ([10.0, 20.0],               15.0),
+        ([-1.0, 0.0, 1.0],          0.0),
+        ([100.0] * 5 + [200.0] * 5, 150.0),
+    ],
+    ids=["trio", "par", "simetrica", "bimodal"],
+)
+def test_media_de_casos_canonicos(datos, media_esperada):
+    media, _ = media_y_ee(datos)
+    assert media == pytest.approx(media_esperada)`} />
 
                                     <p>Los identificadores explícitos en <code>ids=[...]</code> facilitan filtrar pruebas con <code>pytest -k bimodal</code> y producen reportes legibles.
                                     </p>
@@ -3315,30 +3316,30 @@
                                     </ul>
 
                                     <CodeBlock lang="python" code={`import pytest
-                import sys
+import sys
 
-                @pytest.mark.slow
-                def test_simulacion_montecarlo_grande():
-                    # Se ejecuta solo cuando se invoca con -m slow
-                    ...
+@pytest.mark.slow
+def test_simulacion_montecarlo_grande():
+    # Se ejecuta solo cuando se invoca con -m slow
+    ...
 
-                @pytest.mark.skipif(sys.platform == "win32", reason="Backend BLAS distinto")
-                def test_residuales_consistentes_con_R():
-                    ...
+@pytest.mark.skipif(sys.platform == "win32", reason="Backend BLAS distinto")
+def test_residuales_consistentes_con_R():
+    ...
 
-                @pytest.mark.xfail(reason="Bug #142: precisión flotante en estrato vacío")
-                def test_resumen_estrato_vacio():
-                    ...`} />
+@pytest.mark.xfail(reason="Bug #142: precisión flotante en estrato vacío")
+def test_resumen_estrato_vacio():
+    ...`} />
 
                                     <p>Para ejecutar selectivamente:</p>
                                     <CodeBlock lang="shell" code={`# Solo unitarias rápidas:
-                pytest -m "not slow"
+pytest -m "not slow"
 
-                # Solo integración:
-                pytest -m integration
+# Solo integración:
+pytest -m integration
 
-                # Una prueba específica por nombre:
-                pytest tests/test_stats.py::test_media_de_casos_canonicos[bimodal]`} />
+# Una prueba específica por nombre:
+pytest tests/test_stats.py::test_media_de_casos_canonicos[bimodal]`} />
 
                                     <Box type="tip" label="Sugerencia didáctica">
 
@@ -3362,71 +3363,71 @@
                                     <h3>4.1 Configuración de la aplicación de ejemplo</h3>
 
                                     <CodeBlock title="app/main.py" lang="python" code={`# app/main.py
-                from fastapi import FastAPI, Depends, HTTPException
-                from pydantic import BaseModel, Field, field_validator
-                from .stats import media_y_ee
+from fastapi import FastAPI, Depends, HTTPException
+from pydantic import BaseModel, Field, field_validator
+from .stats import media_y_ee
 
-                app = FastAPI(title="encuestas-api", version="1.0.0")
+app = FastAPI(title="encuestas-api", version="1.0.0")
 
-                class Observacion(BaseModel):
-                    edad: int = Field(ge=18, le=120)
-                    ingreso: float = Field(gt=0)
-                    estrato: int = Field(ge=1, le=6)
+class Observacion(BaseModel):
+    edad: int = Field(ge=18, le=120)
+    ingreso: float = Field(gt=0)
+    estrato: int = Field(ge=1, le=6)
 
-                    @field_validator("ingreso")
-                    @classmethod
-                    def ingreso_no_atipico(cls, v: float) -> float:
-                        if v > 1e9:
-                            raise ValueError("Ingreso fuera de rango plausible")
-                        return v
+    @field_validator("ingreso")
+    @classmethod
+    def ingreso_no_atipico(cls, v: float) -> float:
+        if v > 1e9:
+            raise ValueError("Ingreso fuera de rango plausible")
+        return v
 
-                # Almacenamiento en memoria para el ejemplo;
-                # en producción se inyecta una sesión de SQLAlchemy.
-                _almacen: list[Observacion] = []
+# Almacenamiento en memoria para el ejemplo;
+# en producción se inyecta una sesión de SQLAlchemy.
+_almacen: list[Observacion] = []
 
-                def obtener_almacen() -> list[Observacion]:
-                    return _almacen
+def obtener_almacen() -> list[Observacion]:
+    return _almacen
 
-                @app.post("/muestras", status_code=201)
-                def crear_muestra(obs: Observacion, almacen=Depends(obtener_almacen)):
-                    almacen.append(obs)
-                    return {"id": len(almacen) - 1, "obs": obs}
+@app.post("/muestras", status_code=201)
+def crear_muestra(obs: Observacion, almacen=Depends(obtener_almacen)):
+    almacen.append(obs)
+    return {"id": len(almacen) - 1, "obs": obs}
 
-                @app.get("/resumen/media")
-                def resumen_media(almacen=Depends(obtener_almacen)):
-                    if len(almacen) < 2:
-                        raise HTTPException(status_code=409,
-                                            detail="Se requieren al menos 2 observaciones")
-                    media, ee = media_y_ee([o.ingreso for o in almacen])
-                    return {"n": len(almacen), "media": media, "error_estandar": ee,
-                            "ic95": [media - 1.96 * ee, media + 1.96 * ee]}`} />
+@app.get("/resumen/media")
+def resumen_media(almacen=Depends(obtener_almacen)):
+    if len(almacen) < 2:
+        raise HTTPException(status_code=409,
+                            detail="Se requieren al menos 2 observaciones")
+    media, ee = media_y_ee([o.ingreso for o in almacen])
+    return {"n": len(almacen), "media": media, "error_estandar": ee,
+            "ic95": [media - 1.96 * ee, media + 1.96 * ee]}`} />
 
                                     <h3>4.2 Pruebas con TestClient</h3>
 
                                     <CodeBlock title="tests/test_endpoints.py" lang="python" code={`# tests/test_endpoints.py
-                from fastapi.testclient import TestClient
-                from app.main import app
+from fastapi.testclient import TestClient
+from app.main import app
 
-                client = TestClient(app)
+client = TestClient(app)
 
-                def test_post_muestra_valida_devuelve_201():
-                    payload = {"edad": 35, "ingreso": 2_500_000, "estrato": 3}
-                    response = client.post("/muestras", json=payload)
-                    assert response.status_code == 201
-                    cuerpo = response.json()
-                    assert cuerpo["obs"]["edad"] == 35
-                    assert cuerpo["obs"]["ingreso"] == 2_500_000
+def test_post_muestra_valida_devuelve_201():
+    payload = {"edad": 35, "ingreso": 2_500_000, "estrato": 3}
+    response = client.post("/muestras", json=payload)
+    assert response.status_code == 201
+    cuerpo = response.json()
+    assert cuerpo["obs"]["edad"] == 35
+    assert cuerpo["obs"]["ingreso"] == 2_500_000
 
-                def test_post_muestra_con_edad_invalida_devuelve_422():
-                    response = client.post("/muestras",
-                                           json={"edad": -1, "ingreso": 100, "estrato": 3})
-                    assert response.status_code == 422
-                    errores = response.json()["detail"]
-                    assert any(e["loc"] == ["body", "edad"] for e in errores)
+def test_post_muestra_con_edad_invalida_devuelve_422():
+    response = client.post("/muestras",
+                           json={"edad": -1, "ingreso": 100, "estrato": 3})
+    assert response.status_code == 422
+    errores = response.json()["detail"]
+    assert any(e["loc"] == ["body", "edad"] for e in errores)
 
-                def test_resumen_media_falla_con_pocas_observaciones():
-                    response = client.get("/resumen/media")
-                    assert response.status_code == 409`} />
+def test_resumen_media_falla_con_pocas_observaciones():
+    response = client.get("/resumen/media")
+    assert response.status_code == 409`} />
 
                                     <Box type="warn" label="Cuidado con el estado compartido">
 
@@ -3441,24 +3442,24 @@
                                         autenticación falsa o relojes deterministas:</p>
 
                                     <CodeBlock lang="python" code={`from fastapi.testclient import TestClient
-                from app.main import app, obtener_almacen, Observacion
+from app.main import app, obtener_almacen, Observacion
 
-                def test_resumen_media_con_almacen_inyectado():
-                    # El endpoint accede a o.ingreso (atributo), por lo que el almacén falso
-                    # debe contener instancias de Observacion, no diccionarios crudos.
-                    almacen_falso = [
-                        Observacion(edad=30, ingreso=1_000, estrato=2),
-                        Observacion(edad=40, ingreso=3_000, estrato=4),
-                    ]
-                    app.dependency_overrides[obtener_almacen] = lambda: almacen_falso
+def test_resumen_media_con_almacen_inyectado():
+    # El endpoint accede a o.ingreso (atributo), por lo que el almacén falso
+    # debe contener instancias de Observacion, no diccionarios crudos.
+    almacen_falso = [
+        Observacion(edad=30, ingreso=1_000, estrato=2),
+        Observacion(edad=40, ingreso=3_000, estrato=4),
+    ]
+    app.dependency_overrides[obtener_almacen] = lambda: almacen_falso
 
-                    try:
-                        client = TestClient(app)
-                        r = client.get("/resumen/media")
-                        assert r.status_code == 200
-                        assert r.json()["media"] == pytest.approx(2_000)
-                    finally:
-                        app.dependency_overrides.clear()`} />
+    try:
+        client = TestClient(app)
+        r = client.get("/resumen/media")
+        assert r.status_code == 200
+        assert r.json()["media"] == pytest.approx(2_000)
+    finally:
+        app.dependency_overrides.clear()`} />
 
                                     <p>El bloque <code>try/finally</code> garantiza que las modificaciones no se filtren a otras
                                         pruebas. En la próxima sección este patrón se encapsula en una fixture, que lo hace
@@ -3472,21 +3473,21 @@
                                     </p>
 
                                     <CodeBlock lang="python" code={`import asyncio, pytest, httpx
-                from app.main import app
+from app.main import app
 
-                @pytest.mark.asyncio
-                async def test_dos_post_concurrentes():
-                    async with httpx.AsyncClient(
-                        transport=httpx.ASGITransport(app=app), base_url="http://test"
-                    ) as ac:
-                        # asyncio.gather las dispara en paralelo; el orden de respuesta no se asume.
-                        r1, r2 = await asyncio.gather(
-                            ac.post("/muestras",
-                                    json={"edad": 30, "ingreso": 1000, "estrato": 2}),
-                            ac.post("/muestras",
-                                    json={"edad": 40, "ingreso": 3000, "estrato": 4}),
-                        )
-                    assert r1.status_code == 201 and r2.status_code == 201`} />
+@pytest.mark.asyncio
+async def test_dos_post_concurrentes():
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=app), base_url="http://test"
+    ) as ac:
+        # asyncio.gather las dispara en paralelo; el orden de respuesta no se asume.
+        r1, r2 = await asyncio.gather(
+            ac.post("/muestras",
+                    json={"edad": 30, "ingreso": 1000, "estrato": 2}),
+            ac.post("/muestras",
+                    json={"edad": 40, "ingreso": 3000, "estrato": 4}),
+        )
+    assert r1.status_code == 201 and r2.status_code == 201`} />
 
                                     <Box type="info" label="Ejercicio 4.1">
 
@@ -3514,20 +3515,20 @@
 
                                     <h3>5.1 Fixture mínima</h3>
                                     <CodeBlock title="tests/conftest.py" lang="python" code={`# tests/conftest.py
-                import pytest
+import pytest
 
-                @pytest.fixture
-                def muestra_normal_pequena() -> list[float]:
-                    """Muestra fija para pruebas determinísticas."""
-                    return [2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0]
+@pytest.fixture
+def muestra_normal_pequena() -> list[float]:
+    """Muestra fija para pruebas determinísticas."""
+    return [2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 7.0, 9.0]
 
-                # tests/test_stats.py
-                from app.stats import media_y_ee
-                import pytest
+# tests/test_stats.py
+from app.stats import media_y_ee
+import pytest
 
-                def test_media_constante_via_fixture(muestra_normal_pequena):
-                    media, _ = media_y_ee(muestra_normal_pequena)
-                    assert media == pytest.approx(5.0)`} />
+def test_media_constante_via_fixture(muestra_normal_pequena):
+    media, _ = media_y_ee(muestra_normal_pequena)
+    assert media == pytest.approx(5.0)`} />
 
                                     <p>Al colocar la fixture en <code>conftest.py</code>, pytest la pone disponible para todas
                                         las pruebas del directorio sin necesidad de importarla.</p>
@@ -3581,24 +3582,24 @@
                                         posteriores:</p>
 
                                     <CodeBlock lang="python" code={`import pytest
-                from sqlalchemy import create_engine
-                from sqlalchemy.orm import sessionmaker
-                from app.db import Base
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.db import Base
 
-                @pytest.fixture(scope="function")
-                def db_sesion():
-                    # SETUP: motor SQLite en memoria, esquema creado.
-                    engine = create_engine("sqlite:///:memory:", future=True)
-                    Base.metadata.create_all(engine)
-                    Session = sessionmaker(bind=engine, future=True)
-                    sesion = Session()
+@pytest.fixture(scope="function")
+def db_sesion():
+    # SETUP: motor SQLite en memoria, esquema creado.
+    engine = create_engine("sqlite:///:memory:", future=True)
+    Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine, future=True)
+    sesion = Session()
 
-                    yield sesion
+    yield sesion
 
-                    # TEARDOWN: cerrar sesión y eliminar BD.
-                    sesion.close()
-                    Base.metadata.drop_all(engine)
-                    engine.dispose()`} />
+    # TEARDOWN: cerrar sesión y eliminar BD.
+    sesion.close()
+    Base.metadata.drop_all(engine)
+    engine.dispose()`} />
 
                                     <h3>5.4 Composición de fixtures</h3>
                                     <p>Las fixtures pueden depender unas de otras. pytest resuelve el grafo de dependencias y
@@ -3606,56 +3607,56 @@
                                         cliente HTTP y datos sembrados:</p>
 
                                     <CodeBlock lang="python" code={`import pytest
-                from fastapi.testclient import TestClient
-                from app.main import app, obtener_almacen
+from fastapi.testclient import TestClient
+from app.main import app, obtener_almacen
 
-                @pytest.fixture
-                def almacen_vacio() -> list:
-                    return []
+@pytest.fixture
+def almacen_vacio() -> list:
+    return []
 
-                @pytest.fixture
-                def cliente(almacen_vacio):
-                    app.dependency_overrides[obtener_almacen] = lambda: almacen_vacio
-                    with TestClient(app) as c:
-                        yield c
-                    app.dependency_overrides.clear()
+@pytest.fixture
+def cliente(almacen_vacio):
+    app.dependency_overrides[obtener_almacen] = lambda: almacen_vacio
+    with TestClient(app) as c:
+        yield c
+    app.dependency_overrides.clear()
 
-                def test_post_y_resumen_via_fixture(cliente):
-                    cliente.post("/muestras", json={"edad": 30, "ingreso": 1000, "estrato": 2})
-                    cliente.post("/muestras", json={"edad": 40, "ingreso": 3000, "estrato": 4})
-                    r = cliente.get("/resumen/media")
-                    assert r.status_code == 200
-                    assert r.json()["n"] == 2
-                    assert r.json()["media"] == 2000`} />
+def test_post_y_resumen_via_fixture(cliente):
+    cliente.post("/muestras", json={"edad": 30, "ingreso": 1000, "estrato": 2})
+    cliente.post("/muestras", json={"edad": 40, "ingreso": 3000, "estrato": 4})
+    r = cliente.get("/resumen/media")
+    assert r.status_code == 200
+    assert r.json()["n"] == 2
+    assert r.json()["media"] == 2000`} />
 
                                     <h3>5.5 Fábricas de datos parametrizables</h3>
                                     <p>Una fixture que devuelve una <em>función</em> permite generar datos a la medida dentro de
                                         cada prueba. Es el patrón <em>factory-as-fixture</em>:</p>
 
                                     <CodeBlock lang="python" code={`import pytest
-                import random
+import random
 
-                @pytest.fixture
-                def fabrica_observaciones():
-                    """Devuelve una función que produce listas de observaciones reproducibles."""
-                    def _fabricar(n: int, semilla: int = 2026, ingreso_medio: float = 2_000_000):
-                        rng = random.Random(semilla)
-                        return [
-                            {
-                                "edad": rng.randint(18, 75),
-                                "ingreso": max(1.0, rng.gauss(ingreso_medio, ingreso_medio * 0.2)),
-                                "estrato": rng.randint(1, 6),
-                            }
-                            for _ in range(n)
-                        ]
-                    return _fabricar
+@pytest.fixture
+def fabrica_observaciones():
+    """Devuelve una función que produce listas de observaciones reproducibles."""
+    def _fabricar(n: int, semilla: int = 2026, ingreso_medio: float = 2_000_000):
+        rng = random.Random(semilla)
+        return [
+            {
+                "edad": rng.randint(18, 75),
+                "ingreso": max(1.0, rng.gauss(ingreso_medio, ingreso_medio * 0.2)),
+                "estrato": rng.randint(1, 6),
+            }
+            for _ in range(n)
+        ]
+    return _fabricar
 
-                def test_resumen_con_30_observaciones(cliente, fabrica_observaciones):
-                    for obs in fabrica_observaciones(30, semilla=1):
-                        cliente.post("/muestras", json=obs)
-                    r = cliente.get("/resumen/media")
-                    assert r.json()["n"] == 30
-                    assert r.json()["ic95"][0] < r.json()["media"] < r.json()["ic95"][1]`} />
+def test_resumen_con_30_observaciones(cliente, fabrica_observaciones):
+    for obs in fabrica_observaciones(30, semilla=1):
+        cliente.post("/muestras", json=obs)
+    r = cliente.get("/resumen/media")
+    assert r.json()["n"] == 30
+    assert r.json()["ic95"][0] < r.json()["media"] < r.json()["ic95"][1]`} />
 
                                     <p>Como la fábrica recibe la semilla, las pruebas que la utilicen son completamente
                                         deterministas: cada vez que se ejecuten producirán los mismos datos sintéticos.</p>
@@ -3667,17 +3668,17 @@
                                         con diferentes valores. Esto multiplica todas las pruebas que la consuman:</p>
 
                                     <CodeBlock lang="python" code={`@pytest.fixture(params=[30, 100, 500], ids=["n30", "n100", "n500"])
-                def tamano_muestra(request) -> int:
-                    return request.param
+def tamano_muestra(request) -> int:
+    return request.param
 
-                def test_resumen_responde_para_varios_tamanos(cliente, fabrica_observaciones, tamano_muestra):
-                    for obs in fabrica_observaciones(tamano_muestra, semilla=7):
-                        cliente.post("/muestras", json=obs)
-                    cuerpo = cliente.get("/resumen/media").json()
-                    assert cuerpo["n"] == tamano_muestra
-                    assert cuerpo["ic95"][0] < cuerpo["media"] < cuerpo["ic95"][1]
-                    # Verificar que el IC se estrecha con n requiere comparar entre tamaños:
-                    # se delega al ejercicio 7.2 de la autoevaluación.`} />
+def test_resumen_responde_para_varios_tamanos(cliente, fabrica_observaciones, tamano_muestra):
+    for obs in fabrica_observaciones(tamano_muestra, semilla=7):
+        cliente.post("/muestras", json=obs)
+    cuerpo = cliente.get("/resumen/media").json()
+    assert cuerpo["n"] == tamano_muestra
+    assert cuerpo["ic95"][0] < cuerpo["media"] < cuerpo["ic95"][1]
+    # Verificar que el IC se estrecha con n requiere comparar entre tamaños:
+    # se delega al ejercicio 7.2 de la autoevaluación.`} />
 
                                     <Box type="info" label="Diagnóstico de fixtures">
 
@@ -3711,36 +3712,36 @@
                                     </ul>
 
                                     <CodeBlock title="requirements.in" lang="text" code={`# requirements.in
-                fastapi>=0.110,<0.120
-                uvicorn[standard]>=0.30,<0.32
-                pydantic>=2.7,<3.0
-                sqlalchemy>=2.0,<3.0
-                python-dotenv>=1.0,<2.0
-                numpy>=1.26,<2.0
-                pytest>=8.0,<9.0
-                httpx>=0.27,<0.29
-                pytest-asyncio>=0.23,<0.25`} />
+fastapi>=0.110,<0.120
+uvicorn[standard]>=0.30,<0.32
+pydantic>=2.7,<3.0
+sqlalchemy>=2.0,<3.0
+python-dotenv>=1.0,<2.0
+numpy>=1.26,<2.0
+pytest>=8.0,<9.0
+httpx>=0.27,<0.29
+pytest-asyncio>=0.23,<0.25`} />
 
                                     <p>Para resolver versiones transitivas existen dos caminos. El más sencillo, sin
                                         herramientas adicionales:</p>
 
                                     <CodeBlock lang="shell" code={`# Crear y activar un entorno virtual limpio.
-                python3.11 -m venv .venv
-                source .venv/bin/activate         # macOS / Linux
-                # .venv\\Scripts\\activate         # Windows
+python3.11 -m venv .venv
+source .venv/bin/activate         # macOS / Linux
+# .venv\\Scripts\\activate         # Windows
 
-                # Instalar las dependencias declaradas.
-                pip install -r requirements.in
+# Instalar las dependencias declaradas.
+pip install -r requirements.in
 
-                # Congelar el árbol completo con versiones exactas.
-                pip freeze --exclude-editable > requirements.txt`} />
+# Congelar el árbol completo con versiones exactas.
+pip freeze --exclude-editable > requirements.txt`} />
 
                                     <p>El más robusto utiliza <code>pip-tools</code>, que recalcula el lockfile cuando cambia el
                                         archivo de entrada y produce un fichero ordenado y comentado:</p>
 
                                     <CodeBlock lang="shell" code={`pip install pip-tools
-                pip-compile --generate-hashes --output-file=requirements.txt requirements.in
-                pip-sync requirements.txt`} />
+pip-compile --generate-hashes --output-file=requirements.txt requirements.in
+pip-sync requirements.txt`} />
 
                                     <Box type="tip" label="Hashes y verificación">
 
@@ -3755,22 +3756,22 @@
                                     <p>El proyecto declara la versión exacta de Python en dos lugares:</p>
 
                                     <CodeBlock title="pyproject.toml" lang="toml" code={`# pyproject.toml
-                [project]
-                name = "encuestas-api"
-                version = "1.0.0"
-                requires-python = "==3.11.9"`} />
+[project]
+name = "encuestas-api"
+version = "1.0.0"
+requires-python = "==3.11.9"`} />
 
                                     <CodeBlock lang="text" code={`# .python-version  (lo lee pyenv para activar el intérprete correcto)
-                3.11.9`} />  /* TODO revisar lang */
+3.11.9`} />  /* TODO revisar lang */
 
                                     <p>El test reproducible verifica esta condición al iniciar la suite:</p>
 
                                     <CodeBlock title="tests/test_reproducibilidad.py" lang="python" code={`# tests/test_reproducibilidad.py
-                import sys
+import sys
 
-                def test_version_de_python():
-                    assert sys.version_info[:3] == (3, 11, 9), \\
-                        f"Versión de Python inesperada: {sys.version}"`} />
+def test_version_de_python():
+    assert sys.version_info[:3] == (3, 11, 9), \\
+        f"Versión de Python inesperada: {sys.version}"`} />
 
                                     <h3>6.3 Semillas y aleatoriedad determinista</h3>
                                     <p>Cualquier procedimiento estadístico que use números aleatorios debe sembrar
@@ -3778,27 +3779,27 @@
                                         consuma aleatoriedad y se documenta en la configuración del proyecto.</p>
 
                                     <CodeBlock title="app/aleatorio.py" lang="python" code={`# app/aleatorio.py
-                import os
-                import random
-                import numpy as np
+import os
+import random
+import numpy as np
 
-                def configurar_semillas(semilla: int | None = None) -> int:
-                    """Fija las semillas de random y numpy. Devuelve la semilla efectiva."""
-                    if semilla is None:
-                        semilla = int(os.environ.get("APP_SEED", "2026"))
-                    random.seed(semilla)
-                    np.random.seed(semilla)
-                    return semilla
+def configurar_semillas(semilla: int | None = None) -> int:
+    """Fija las semillas de random y numpy. Devuelve la semilla efectiva."""
+    if semilla is None:
+        semilla = int(os.environ.get("APP_SEED", "2026"))
+    random.seed(semilla)
+    np.random.seed(semilla)
+    return semilla
 
-                # app/regresion.py
-                import numpy as np
+# app/regresion.py
+import numpy as np
 
-                def simular_regresion(n: int, beta0: float, beta1: float):
-                    rng = np.random.default_rng(seed=2026)  # API moderna preferible
-                    x = rng.uniform(0, 10, size=n)
-                    eps = rng.normal(0, 1, size=n)
-                    y = beta0 + beta1 * x + eps
-                    return x, y`} />
+def simular_regresion(n: int, beta0: float, beta1: float):
+    rng = np.random.default_rng(seed=2026)  # API moderna preferible
+    x = rng.uniform(0, 10, size=n)
+    eps = rng.normal(0, 1, size=n)
+    y = beta0 + beta1 * x + eps
+    return x, y`} />
 
                                     <Box type="warn" label="Sembrar el RNG global no basta">
 
@@ -3815,31 +3816,31 @@
                                         valores numéricos relevantes deben tener formatos exactos:</p>
 
                                     <CodeBlock title=".env.example" lang="text" code={`# .env.example
-                APP_SEED=2026
-                APP_NIVEL_CONFIANZA=0.95
-                APP_TOLERANCIA_NUMERICA=1e-9
-                APP_BD_URL=sqlite:///./encuestas.db
-                APP_LOG_LEVEL=INFO`} />
+APP_SEED=2026
+APP_NIVEL_CONFIANZA=0.95
+APP_TOLERANCIA_NUMERICA=1e-9
+APP_BD_URL=sqlite:///./encuestas.db
+APP_LOG_LEVEL=INFO`} />
 
                                     <p>El módulo de configuración carga estos valores con <code>python-dotenv</code> y los
                                         expone como objeto Pydantic, ya conocido por los estudiantes:</p>
 
                                     <CodeBlock title="app/config.py" lang="python" code={`# app/config.py
-                from functools import lru_cache
-                from pydantic import Field
-                from pydantic_settings import BaseSettings, SettingsConfigDict
+from functools import lru_cache
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-                class Configuracion(BaseSettings):
-                    model_config = SettingsConfigDict(env_file=".env", env_prefix="APP_")
+class Configuracion(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", env_prefix="APP_")
 
-                    seed: int = Field(default=2026, ge=0)
-                    nivel_confianza: float = Field(default=0.95, gt=0.5, lt=1.0)
-                    tolerancia_numerica: float = Field(default=1e-9, gt=0)
-                    bd_url: str = "sqlite:///./encuestas.db"
+    seed: int = Field(default=2026, ge=0)
+    nivel_confianza: float = Field(default=0.95, gt=0.5, lt=1.0)
+    tolerancia_numerica: float = Field(default=1e-9, gt=0)
+    bd_url: str = "sqlite:///./encuestas.db"
 
-                @lru_cache
-                def obtener_config() -> Configuracion:
-                    return Configuracion()`} />
+@lru_cache
+def obtener_config() -> Configuracion:
+    return Configuracion()`} />
 
                                     <h3>6.5 Pruebas que validan reproducibilidad numérica</h3>
                                     <p>Una suite reproducible incluye pruebas explícitas que ejecutan el procedimiento dos veces
@@ -3848,23 +3849,23 @@
                                         evaluación de un sumatorio:</p>
 
                                     <CodeBlock title="tests/test_reproducibilidad.py" lang="python" code={`# tests/test_reproducibilidad.py
-                import numpy as np
-                from app.aleatorio import configurar_semillas
-                from app.regresion import simular_regresion
+import numpy as np
+from app.aleatorio import configurar_semillas
+from app.regresion import simular_regresion
 
-                def test_regresion_simulada_es_reproducible():
-                    x1, y1 = simular_regresion(100, beta0=2.0, beta1=0.5)
-                    x2, y2 = simular_regresion(100, beta0=2.0, beta1=0.5)
-                    assert np.allclose(x1, x2, rtol=0, atol=0)
-                    assert np.allclose(y1, y2, rtol=0, atol=0)
+def test_regresion_simulada_es_reproducible():
+    x1, y1 = simular_regresion(100, beta0=2.0, beta1=0.5)
+    x2, y2 = simular_regresion(100, beta0=2.0, beta1=0.5)
+    assert np.allclose(x1, x2, rtol=0, atol=0)
+    assert np.allclose(y1, y2, rtol=0, atol=0)
 
-                def test_semilla_global_se_aplica():
-                    s1 = configurar_semillas(42)
-                    a = np.random.random(5)
-                    s2 = configurar_semillas(42)
-                    b = np.random.random(5)
-                    assert s1 == s2 == 42
-                    assert np.array_equal(a, b)`} />
+def test_semilla_global_se_aplica():
+    s1 = configurar_semillas(42)
+    a = np.random.random(5)
+    s2 = configurar_semillas(42)
+    b = np.random.random(5)
+    assert s1 == s2 == 42
+    assert np.array_equal(a, b)`} />
 
                                     <GraficaReproducibilidad caption="Figura 6.1 — Dos invocaciones independientes de simular_regresion(n=100, β₀=2, β₁=0.5) con la misma semilla producen arreglos que coinciden bit a bit. Si la prueba test_regresion_simulada_es_reproducible fallara, la causa más probable sería un cambio de versión de NumPy o un olvido de fijar la semilla." />
 
@@ -4015,22 +4016,22 @@
 
                                     <h3>8.2 Comandos útiles</h3>
                                     <CodeBlock lang="shell" code={`# Ejecutar toda la suite con resumen detallado:
-                pytest -ra
+pytest -ra
 
-                # Solo pruebas que coincidan con un patrón en el nombre:
-                pytest -k "regresion and not slow"
+# Solo pruebas que coincidan con un patrón en el nombre:
+pytest -k "regresion and not slow"
 
-                # Mostrar las 10 pruebas más lentas:
-                pytest --durations=10
+# Mostrar las 10 pruebas más lentas:
+pytest --durations=10
 
-                # Detener al primer fallo (útil para depurar):
-                pytest -x
+# Detener al primer fallo (útil para depurar):
+pytest -x
 
-                # Reejecutar solo las pruebas que fallaron en la última corrida:
-                pytest --lf
+# Reejecutar solo las pruebas que fallaron en la última corrida:
+pytest --lf
 
-                # Listar fixtures disponibles:
-                pytest --fixtures`} />
+# Listar fixtures disponibles:
+pytest --fixtures`} />
 
                                     <h3>8.3 Referencias oficiales</h3>
                                     <ul>
@@ -4139,7 +4140,7 @@
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

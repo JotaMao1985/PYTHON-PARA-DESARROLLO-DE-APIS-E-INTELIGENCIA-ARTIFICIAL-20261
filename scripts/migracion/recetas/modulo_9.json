@@ -21,6 +21,7 @@
       "Alembic",
       "ORM"
     ],
+    "stack": "SQLAlchemy · SQLite · Alembic",
     "storageKey": "usta_2026i_apis_cap09"
   },
   "secciones": [

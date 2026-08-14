@@ -2154,6 +2154,7 @@
             ra: "Declarar contratos de datos verificables en tiempo de ejecución mediante modelos Pydantic.",
             contenidoSyllabus: "El tipo como fuente de verdad. Modelos, campos y coerción. Serialización y deserialización. Errores de validación como respuesta HTTP 422.",
             temas: ["Pydantic v2", "Field", "field_validator", "HTTP 422"],
+            stack: "Pydantic v2",
             storageKey: "usta_2026i_apis_cap04",
         };
 
@@ -2184,17 +2185,17 @@
 
                 <CodeBlock title="Ejemplo de Datos Corruptos" lang="python" code={`# Ejemplo de datos corruptos que pueden arruinar un análisis
 
-                # Problema: Tipos inconsistentes
-                datos_crudos = [
-                    {"edad": 25, "peso": 70.5, "altura": 1.75},
-                    {"edad": "30", "peso": "80.2", "altura": "1.80"},  # Strings en lugar de números
-                    {"edad": None, "peso": -5, "altura": 3.5},  # Valores imposibles
-                ]
+# Problema: Tipos inconsistentes
+datos_crudos = [
+    {"edad": 25, "peso": 70.5, "altura": 1.75},
+    {"edad": "30", "peso": "80.2", "altura": "1.80"},  # Strings en lugar de números
+    {"edad": None, "peso": -5, "altura": 3.5},  # Valores imposibles
+]
 
-                # Sin validación, estos datos pasan desapercibidos
-                # y arruinan tus cálculos estadísticos
-                promedio_peso = sum(d["peso"] for d in datos_crudos) / len(datos_crudos)
-                print(f"Promedio calculado: {promedio_peso}")  # ¡Incorrecto!`} />
+# Sin validación, estos datos pasan desapercibidos
+# y arruinan tus cálculos estadísticos
+promedio_peso = sum(d["peso"] for d in datos_crudos) / len(datos_crudos)
+print(f"Promedio calculado: {promedio_peso}")  # ¡Incorrecto!`} />
             </div>
         );
 
@@ -2214,25 +2215,25 @@
                                     </div>
 
                 <CodeBlock title="Instalación y Concepto Básico" lang="python" code={`# Instalación de pydantic
-                # pip install pydantic
+# pip install pydantic
 
-                from pydantic import BaseModel
+from pydantic import BaseModel
 
-                # Definimos un modelo simple
-                class Persona(BaseModel):
-                    nombre: str
-                    edad: int
-                    email: str
+# Definimos un modelo simple
+class Persona(BaseModel):
+    nombre: str
+    edad: int
+    email: str
 
-                # Pydantic valida automáticamente los tipos
-                p = Persona(nombre="Ana", edad=25, email="ana@ejemplo.com")
-                print(p)
+# Pydantic valida automáticamente los tipos
+p = Persona(nombre="Ana", edad=25, email="ana@ejemplo.com")
+print(p)
 
-                # Intentar crear con datos inválidos lanza error
-                try:
-                    p_invalida = Persona(nombre="Ana", edad="veinte", email="correo-invalido")
-                except Exception as e:
-                    print(f"Error capturado: {e}")`} />
+# Intentar crear con datos inválidos lanza error
+try:
+    p_invalida = Persona(nombre="Ana", edad="veinte", email="correo-invalido")
+except Exception as e:
+    print(f"Error capturado: {e}")`} />
             </div>
         );
 
@@ -2275,37 +2276,37 @@
                                     </div>
 
                 <CodeBlock title="Anatomía de un Modelo Estadístico" lang="python" code={`from pydantic import BaseModel
-                from typing import List, Optional
+from typing import List, Optional
 
-                # Un Modelo es el "plano" o contrato de tus datos
-                class Experimento(BaseModel):
-                    # 1. Campo Obligatorio
-                    # Sintaxis: nombre_campo : tipo
-                    id_experimento: int 
+# Un Modelo es el "plano" o contrato de tus datos
+class Experimento(BaseModel):
+    # 1. Campo Obligatorio
+    # Sintaxis: nombre_campo : tipo
+    id_experimento: int 
+    
+    # 2. Campo con Valor por Defecto
+    # Sintaxis: nombre : tipo = valor
+    investigador: str = "Anónimo"
+    
+    # 3. Campo Opcional (puede ser None)
+    # Útil para datos faltantes en estadística
+    temperatura: Optional[float] = None
+    
+    # 4. Listas Tipadas (Series de datos)
+    # Valida que cada elemento de la lista sea un float
+    mediciones: List[float] = []
 
-                    # 2. Campo con Valor por Defecto
-                    # Sintaxis: nombre : tipo = valor
-                    investigador: str = "Anónimo"
+# --- Probando el modelo ---
 
-                    # 3. Campo Opcional (puede ser None)
-                    # Útil para datos faltantes en estadística
-                    temperatura: Optional[float] = None
+# Caso: Datos incompletos pero válidos (usa defaults)
+exp1 = Experimento(id_experimento=101, mediciones=[2.5, 3.1])
+print(exp1)
+# Output: id_experimento=101 investigador='Anónimo' temperatura=None mediciones=[2.5, 3.1]
 
-                    # 4. Listas Tipadas (Series de datos)
-                    # Valida que cada elemento de la lista sea un float
-                    mediciones: List[float] = []
-
-                # --- Probando el modelo ---
-
-                # Caso: Datos incompletos pero válidos (usa defaults)
-                exp1 = Experimento(id_experimento=101, mediciones=[2.5, 3.1])
-                print(exp1)
-                # Output: id_experimento=101 investigador='Anónimo' temperatura=None mediciones=[2.5, 3.1]
-
-                # Método Útil: Exportar a diccionario (Ideal para Pandas)
-                data_dict = exp1.model_dump()
-                print(data_dict)
-                # Output: {'id_experimento': 101, 'investigador': 'Anónimo', 'temperatura': None, 'mediciones': [2.5, 3.1]}`} />
+# Método Útil: Exportar a diccionario (Ideal para Pandas)
+data_dict = exp1.model_dump()
+print(data_dict)
+# Output: {'id_experimento': 101, 'investigador': 'Anónimo', 'temperatura': None, 'mediciones': [2.5, 3.1]}`} />
             </div>
         );
 
@@ -2397,123 +2398,123 @@
                                     </div>
 
                 <CodeBlock title="Metadatos y Restricciones Numéricas" lang="python" code={`from pydantic import BaseModel, Field
-                from typing import Optional
+from typing import Optional
 
-                class VariableEstadistica(BaseModel):
-                    # Field(...) indica que el campo es obligatorio aunque no tenga valor por defecto
-                    nombre: str = Field(
-                        ..., 
-                        description="Nombre de la variable en el dataset",
-                        min_length=2,           # Mínimo 2 caracteres
-                        max_length=50           # Máximo 50 caracteres
-                    )
+class VariableEstadistica(BaseModel):
+    # Field(...) indica que el campo es obligatorio aunque no tenga valor por defecto
+    nombre: str = Field(
+        ..., 
+        description="Nombre de la variable en el dataset",
+        min_length=2,           # Mínimo 2 caracteres
+        max_length=50           # Máximo 50 caracteres
+    )
+    
+    # Restricciones numéricas directas (sin escribir validadores complejos)
+    # gt = greater than (mayor que)
+    desviacion_std: float = Field(
+        ..., 
+        gt=0, 
+        description="La desviación debe ser positiva"
+    )
+    
+    # ge = greater than or equal (mayor o igual que)
+    # le = less than or equal (menor o igual que)
+    probabilidad_exito: float = Field(
+        ..., 
+        ge=0, 
+        le=1, 
+        description="Probabilidad entre 0 y 1"
+    )
+    
+    # default: valor por defecto
+    n_muestras: int = Field(
+        default=30, 
+        ge=1, 
+        le=10000,
+        description="Tamaño de muestra (mínimo 1, máximo 10000)"
+    )
+    
+    # Ejemplo con múltiple_of (múltiplo de)
+    nivel_confianza: int = Field(
+        default=95,
+        ge=90,
+        le=99,
+        multiple_of=5,          # Solo valores múltiplos de 5
+        description="Nivel de confianza: 90, 95 o 99"
+    )
 
-                    # Restricciones numéricas directas (sin escribir validadores complejos)
-                    # gt = greater than (mayor que)
-                    desviacion_std: float = Field(
-                        ..., 
-                        gt=0, 
-                        description="La desviación debe ser positiva"
-                    )
+class Paciente(BaseModel):
+    # Validación de strings con pattern (expresión regular)
+    email: str = Field(
+        ...,
+        pattern=r"^[\w\.-]+@[\w\.-]+\.\w+$",
+        description="Correo electrónico válido"
+    )
+    
+    # Edad con rango realista
+    edad: int = Field(
+        ...,
+        ge=0,
+        le=120,
+        description="Edad en años (0-120)"
+    )
+    
+    # Código postal de longitud fija
+    codigo_postal: str = Field(
+        ...,
+        min_length=5,
+        max_length=5,
+        pattern=r"^\d{5}$",     # Exactamente 5 dígitos
+        description="Código postal de 5 dígitos"
+    )
 
-                    # ge = greater than or equal (mayor o igual que)
-                    # le = less than or equal (menor o igual que)
-                    probabilidad_exito: float = Field(
-                        ..., 
-                        ge=0, 
-                        le=1, 
-                        description="Probabilidad entre 0 y 1"
-                    )
+# --- Ejemplos de uso ---
 
-                    # default: valor por defecto
-                    n_muestras: int = Field(
-                        default=30, 
-                        ge=1, 
-                        le=10000,
-                        description="Tamaño de muestra (mínimo 1, máximo 10000)"
-                    )
+# 1. Datos válidos
+print("=== Ejemplo 1: Datos Válidos ===")
+var = VariableEstadistica(
+    nombre="Temperatura",
+    desviacion_std=2.5,
+    probabilidad_exito=0.85,
+    n_muestras=100,
+    nivel_confianza=95
+)
+print(f"✓ Variable creada: {var.nombre}")
+print(f"  Nivel de confianza: {var.nivel_confianza}%")
 
-                    # Ejemplo con múltiple_of (múltiplo de)
-                    nivel_confianza: int = Field(
-                        default=95,
-                        ge=90,
-                        le=99,
-                        multiple_of=5,          # Solo valores múltiplos de 5
-                        description="Nivel de confianza: 90, 95 o 99"
-                    )
+# 2. Error: desviación negativa
+print("\\n=== Ejemplo 2: Error de validación ===")
+try:
+    v = VariableEstadistica(
+        nombre="Edad", 
+        desviacion_std=-5,      # Error: debe ser > 0
+        probabilidad_exito=0.5
+    )
+except Exception as e:
+    print(f"✗ Error: {e}")
 
-                class Paciente(BaseModel):
-                    # Validación de strings con pattern (expresión regular)
-                    email: str = Field(
-                        ...,
-                        pattern=r"^[\w\.-]+@[\w\.-]+\.\w+$",
-                        description="Correo electrónico válido"
-                    )
+# 3. Error: nivel de confianza no es múltiplo de 5
+print("\\n=== Ejemplo 3: Múltiplo inválido ===")
+try:
+    v = VariableEstadistica(
+        nombre="Test",
+        desviacion_std=1.5,
+        probabilidad_exito=0.5,
+        nivel_confianza=93      # Error: debe ser múltiplo de 5
+    )
+except Exception as e:
+    print(f"✗ Error: {e}")
 
-                    # Edad con rango realista
-                    edad: int = Field(
-                        ...,
-                        ge=0,
-                        le=120,
-                        description="Edad en años (0-120)"
-                    )
-
-                    # Código postal de longitud fija
-                    codigo_postal: str = Field(
-                        ...,
-                        min_length=5,
-                        max_length=5,
-                        pattern=r"^\d{5}$",     # Exactamente 5 dígitos
-                        description="Código postal de 5 dígitos"
-                    )
-
-                # --- Ejemplos de uso ---
-
-                # 1. Datos válidos
-                print("=== Ejemplo 1: Datos Válidos ===")
-                var = VariableEstadistica(
-                    nombre="Temperatura",
-                    desviacion_std=2.5,
-                    probabilidad_exito=0.85,
-                    n_muestras=100,
-                    nivel_confianza=95
-                )
-                print(f"✓ Variable creada: {var.nombre}")
-                print(f"  Nivel de confianza: {var.nivel_confianza}%")
-
-                # 2. Error: desviación negativa
-                print("\\n=== Ejemplo 2: Error de validación ===")
-                try:
-                    v = VariableEstadistica(
-                        nombre="Edad", 
-                        desviacion_std=-5,      # Error: debe ser > 0
-                        probabilidad_exito=0.5
-                    )
-                except Exception as e:
-                    print(f"✗ Error: {e}")
-
-                # 3. Error: nivel de confianza no es múltiplo de 5
-                print("\\n=== Ejemplo 3: Múltiplo inválido ===")
-                try:
-                    v = VariableEstadistica(
-                        nombre="Test",
-                        desviacion_std=1.5,
-                        probabilidad_exito=0.5,
-                        nivel_confianza=93      # Error: debe ser múltiplo de 5
-                    )
-                except Exception as e:
-                    print(f"✗ Error: {e}")
-
-                # 4. Error: código postal inválido
-                print("\\n=== Ejemplo 4: Pattern inválido ===")
-                try:
-                    p = Paciente(
-                        email="paciente@hospital.com",
-                        edad=25,
-                        codigo_postal="ABC12"   # Error: debe ser 5 dígitos
-                    )
-                except Exception as e:
-                    print(f"✗ Error: {e}")`} />
+# 4. Error: código postal inválido
+print("\\n=== Ejemplo 4: Pattern inválido ===")
+try:
+    p = Paciente(
+        email="paciente@hospital.com",
+        edad=25,
+        codigo_postal="ABC12"   # Error: debe ser 5 dígitos
+    )
+except Exception as e:
+    print(f"✗ Error: {e}")`} />
             </div>
         );
 
@@ -2552,40 +2553,40 @@
                                     </div>
 
                 <CodeBlock title="Manejando la Ausencia de Datos" lang="python" code={`from pydantic import BaseModel, Field
-                from typing import Optional
+from typing import Optional
 
-                class RegistroPaciente(BaseModel):
-                    # 1. OBLIGATORIO (Required)
-                    # Debe estar presente y no puede ser None
-                    id_paciente: int
+class RegistroPaciente(BaseModel):
+    # 1. OBLIGATORIO (Required)
+    # Debe estar presente y no puede ser None
+    id_paciente: int
 
-                    # 2. OPCIONAL con valor por defecto
-                    # Si no se envía, asume el valor 0. Nunca será None.
-                    hijos: int = 0
+    # 2. OPCIONAL con valor por defecto
+    # Si no se envía, asume el valor 0. Nunca será None.
+    hijos: int = 0
 
-                    # 3. NULLABLE (Puede ser None) - Estilo Clásico
-                    # Puede ser un float o None. Por defecto es None.
-                    # Útil para datos faltantes (NaN en estadística).
-                    peso: Optional[float] = None
+    # 3. NULLABLE (Puede ser None) - Estilo Clásico
+    # Puede ser un float o None. Por defecto es None.
+    # Útil para datos faltantes (NaN en estadística).
+    peso: Optional[float] = None
 
-                    # 4. NULLABLE - Estilo Moderno (Python 3.10+)
-                    # Exactamente lo mismo que arriba, sintaxis más limpia.
-                    altura: float | None = None
+    # 4. NULLABLE - Estilo Moderno (Python 3.10+)
+    # Exactamente lo mismo que arriba, sintaxis más limpia.
+    altura: float | None = None
 
-                    # 5. OBLIGATORIO pero NULLABLE (Caso Especial)
-                    # El campo DEBE enviarse en el JSON, pero se permite que el valor sea null.
-                    # Diferencia entre "no medido" (no enviado) y "medido pero nulo".
-                    diagnostico_previo: str | None = Field(...)
+    # 5. OBLIGATORIO pero NULLABLE (Caso Especial)
+    # El campo DEBE enviarse en el JSON, pero se permite que el valor sea null.
+    # Diferencia entre "no medido" (no enviado) y "medido pero nulo".
+    diagnostico_previo: str | None = Field(...)
 
-                # --- Ejemplos ---
+# --- Ejemplos ---
 
-                # Correcto: id es obligatorio. hijos usa default. peso es None.
-                p1 = RegistroPaciente(id_paciente=1, diagnostico_previo=None)
-                print(p1)
-                # Output: id_paciente=1 hijos=0 peso=None altura=None diagnostico_previo=None
+# Correcto: id es obligatorio. hijos usa default. peso es None.
+p1 = RegistroPaciente(id_paciente=1, diagnostico_previo=None)
+print(p1)
+# Output: id_paciente=1 hijos=0 peso=None altura=None diagnostico_previo=None
 
-                # Error: Falta diagnostico_previo (aunque permitimos que sea None, EXIGIMOS que se envíe la clave)
-                # p2 = RegistroPaciente(id_paciente=2) -> ValidationError`} />
+# Error: Falta diagnostico_previo (aunque permitimos que sea None, EXIGIMOS que se envíe la clave)
+# p2 = RegistroPaciente(id_paciente=2) -> ValidationError`} />
             </div>
         );
 
@@ -2616,36 +2617,36 @@
 
                 <CodeBlock title="Limpieza y Lógica Personalizada" lang="python" code={`from pydantic import BaseModel, field_validator
 
-                class MedicionLab(BaseModel):
-                    concentracion: float
-                    estado: str
+class MedicionLab(BaseModel):
+    concentracion: float
+    estado: str
 
-                    # 1. MODO 'BEFORE' (Limpieza de Datos)
-                    # Se ejecuta ANTES de que Pydantic intente validar el tipo.
-                    # Ideal para arreglar "datos sucios" (ej. coma decimal).
-                    @field_validator('concentracion', mode='before')
-                    @classmethod
-                    def corregir_decimales(cls, v):
-                        # Si recibimos un string "10,5", lo convertimos a 10.5
-                        if isinstance(v, str):
-                            return float(v.replace(',', '.'))
-                        return v
+    # 1. MODO 'BEFORE' (Limpieza de Datos)
+    # Se ejecuta ANTES de que Pydantic intente validar el tipo.
+    # Ideal para arreglar "datos sucios" (ej. coma decimal).
+    @field_validator('concentracion', mode='before')
+    @classmethod
+    def corregir_decimales(cls, v):
+        # Si recibimos un string "10,5", lo convertimos a 10.5
+        if isinstance(v, str):
+            return float(v.replace(',', '.'))
+        return v
 
-                    # 2. MODO 'AFTER' (Validación Lógica - Default)
-                    # Se ejecuta DESPUÉS de asegurar que el tipo es correcto.
-                    @field_validator('estado')
-                    @classmethod
-                    def validar_estado(cls, v):
-                        estados_validos = ['solido', 'liquido', 'gas']
-                        if v.lower() not in estados_validos:
-                            raise ValueError(f"Estado desconocido. Use: {estados_validos}")
-                        return v.lower() # Normalizamos a minúsculas
+    # 2. MODO 'AFTER' (Validación Lógica - Default)
+    # Se ejecuta DESPUÉS de asegurar que el tipo es correcto.
+    @field_validator('estado')
+    @classmethod
+    def validar_estado(cls, v):
+        estados_validos = ['solido', 'liquido', 'gas']
+        if v.lower() not in estados_validos:
+            raise ValueError(f"Estado desconocido. Use: {estados_validos}")
+        return v.lower() # Normalizamos a minúsculas
 
-                # --- Prueba ---
-                # Input sucio: coma decimal y mayúsculas
-                dato = MedicionLab(concentracion="12,5", estado="LIQUIDO")
-                print(dato)
-                # Output: concentracion=12.5 estado='liquido'`} />
+# --- Prueba ---
+# Input sucio: coma decimal y mayúsculas
+dato = MedicionLab(concentracion="12,5", estado="LIQUIDO")
+print(dato)
+# Output: concentracion=12.5 estado='liquido'`} />
             </div>
         );
 
@@ -2709,43 +2710,43 @@
                                     </div>
 
                 <CodeBlock title="Qué le llega a quien consume tu API cuando la validación falla" lang="python" code={`# ═══════════════════════════════════════════════════════════
-                # DEL ValidationError DE PYDANTIC AL 422 DE HTTP
-                # Este bloque se ejecuta sin FastAPI: muestra la MISMA estructura
-                # de error que FastAPI devuelve en el cuerpo de la respuesta 422.
-                # ═══════════════════════════════════════════════════════════
-                import json
-                from pydantic import BaseModel, Field, ValidationError
+# DEL ValidationError DE PYDANTIC AL 422 DE HTTP
+# Este bloque se ejecuta sin FastAPI: muestra la MISMA estructura
+# de error que FastAPI devuelve en el cuerpo de la respuesta 422.
+# ═══════════════════════════════════════════════════════════
+import json
+from pydantic import BaseModel, Field, ValidationError
 
 
-                class Encuestado(BaseModel):
-                    """El contrato: esto es lo que la API acepta."""
-                    id_encuestado: int
-                    edad: int = Field(ge=0, le=120, description="Edad en anios cumplidos")
-                    ingreso: float = Field(gt=0)
+class Encuestado(BaseModel):
+    """El contrato: esto es lo que la API acepta."""
+    id_encuestado: int
+    edad: int = Field(ge=0, le=120, description="Edad en anios cumplidos")
+    ingreso: float = Field(gt=0)
 
 
-                # --- Peticion con TRES cosas mal a la vez ---
-                payload_malo = {"id_encuestado": "abc", "edad": -5, "ingreso": 0}
+# --- Peticion con TRES cosas mal a la vez ---
+payload_malo = {"id_encuestado": "abc", "edad": -5, "ingreso": 0}
 
-                try:
-                    Encuestado(**payload_malo)
-                except ValidationError as e:
-                    # .errors() es la lista que FastAPI pone tal cual en {"detail": [...]}
-                    print("Numero de errores:", len(e.errors()))
-                    for err in e.errors():
-                        print(f"  loc={list(err['loc'])}  type={err['type']}")
+try:
+    Encuestado(**payload_malo)
+except ValidationError as e:
+    # .errors() es la lista que FastAPI pone tal cual en {"detail": [...]}
+    print("Numero de errores:", len(e.errors()))
+    for err in e.errors():
+        print(f"  loc={list(err['loc'])}  type={err['type']}")
 
-                    # Asi se ve el cuerpo de la respuesta HTTP 422 que recibe el cliente:
-                    cuerpo_422 = {"detail": [
-                        {"loc": ["body", *err["loc"]], "msg": err["msg"], "type": err["type"]}
-                        for err in e.errors()
-                    ]}
-                    print("\\nCuerpo de la respuesta 422:")
-                    print(json.dumps(cuerpo_422, indent=2, ensure_ascii=False)[:400])
+    # Asi se ve el cuerpo de la respuesta HTTP 422 que recibe el cliente:
+    cuerpo_422 = {"detail": [
+        {"loc": ["body", *err["loc"]], "msg": err["msg"], "type": err["type"]}
+        for err in e.errors()
+    ]}
+    print("\\nCuerpo de la respuesta 422:")
+    print(json.dumps(cuerpo_422, indent=2, ensure_ascii=False)[:400])
 
-                # El punto: Pydantic reporta los TRES errores de una vez, no se para en el
-                # primero. Quien consume tu API arregla todo de una pasada en vez de
-                # descubrir los fallos de uno en uno.`} />
+# El punto: Pydantic reporta los TRES errores de una vez, no se para en el
+# primero. Quien consume tu API arregla todo de una pasada en vez de
+# descubrir los fallos de uno en uno.`} />
             </div>
         );
 
@@ -2769,42 +2770,42 @@
                                     </div>
 
                 <CodeBlock title="Integración con Pandas para Big Data" lang="python" code={`import pandas as pd
-                from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel, ValidationError
 
-                # 1. Definimos el Modelo de Calidad
-                class Transaccion(BaseModel):
-                    id_tx: int
-                    monto: float
-                    categoria: str
+# 1. Definimos el Modelo de Calidad
+class Transaccion(BaseModel):
+    id_tx: int
+    monto: float
+    categoria: str
 
-                # 2. Leemos datos crudos (Simulando un CSV con errores)
-                df = pd.DataFrame([
-                    {'id_tx': 1, 'monto': 100.50, 'categoria': 'comida'},     # Correcto
-                    {'id_tx': '2', 'monto': 200, 'categoria': 'transporte'},  # Coerción OK (str->int)
-                    {'id_tx': 3, 'monto': 'error', 'categoria': 'ocio'},      # ERROR (Monto inválido)
-                ])
+# 2. Leemos datos crudos (Simulando un CSV con errores)
+df = pd.DataFrame([
+    {'id_tx': 1, 'monto': 100.50, 'categoria': 'comida'},     # Correcto
+    {'id_tx': '2', 'monto': 200, 'categoria': 'transporte'},  # Coerción OK (str->int)
+    {'id_tx': 3, 'monto': 'error', 'categoria': 'ocio'},      # ERROR (Monto inválido)
+])
 
-                # 3. Validamos Fila por Fila
-                registros_limpios = []
-                errores = []
+# 3. Validamos Fila por Fila
+registros_limpios = []
+errores = []
 
-                # Iteramos sobre el DF convirtiendo a dict
-                for i, fila in df.iterrows():
-                    try:
-                        # Convertimos la fila (Series) a diccionario y validamos
-                        # **fila.to_dict() desempaqueta los valores en el modelo
-                        dato = Transaccion(**fila.to_dict())
-                        registros_limpios.append(dato.model_dump())
-                    except ValidationError as e:
-                        errores.append({'indice_fila': i, 'error': str(e)})
+# Iteramos sobre el DF convirtiendo a dict
+for i, fila in df.iterrows():
+    try:
+        # Convertimos la fila (Series) a diccionario y validamos
+        # **fila.to_dict() desempaqueta los valores en el modelo
+        dato = Transaccion(**fila.to_dict())
+        registros_limpios.append(dato.model_dump())
+    except ValidationError as e:
+        errores.append({'indice_fila': i, 'error': str(e)})
 
-                # 4. Resultados
-                print(f"Registros válidos: {len(registros_limpios)}")
-                print(f"Registros fallidos: {len(errores)}")
+# 4. Resultados
+print(f"Registros válidos: {len(registros_limpios)}")
+print(f"Registros fallidos: {len(errores)}")
 
-                # Creamos el DF final solo con datos confiables
-                df_final = pd.DataFrame(registros_limpios)
-                print(df_final)`} />
+# Creamos el DF final solo con datos confiables
+df_final = pd.DataFrame(registros_limpios)
+print(df_final)`} />
             </div>
         );
 
@@ -2869,17 +2870,17 @@
 
                 <CodeBlock title="Fuentes Consultadas" lang="python" code={`# Recursos adicionales para seguir aprendiendo
 
-                # Documentación oficial de Pydantic
-                # https://docs.pydantic.dev/
+# Documentación oficial de Pydantic
+# https://docs.pydantic.dev/
 
-                # Instalación de Pydantic
-                pip install pydantic
+# Instalación de Pydantic
+pip install pydantic
 
-                # Para validación con Pandas (ejemplo adicional)
-                pip install pandas pydantic
+# Para validación con Pandas (ejemplo adicional)
+pip install pandas pydantic
 
-                # Repositorio de ejemplos prácticos
-                # Busca en GitHub: pydantic-examples-data-science`} />
+# Repositorio de ejemplos prácticos
+# Busca en GitHub: pydantic-examples-data-science`} />
             </div>
         );
         /* === SECCIONES FIN === */
@@ -2968,7 +2969,7 @@
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

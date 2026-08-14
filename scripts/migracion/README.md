@@ -420,7 +420,7 @@ para que el resultado no dependa de desde dónde se invoque:
   "piezas":  "build/migracion/m11",               // lo intermedio, no se versiona
   "salida":  "11_Python_para_APIS_IA_Contenedores_y_Docker.html",  // el nombre de siempre
   "componentes": "scripts/migracion/componentes/modulo_3.jsx",  // opcional: los propios
-  "config":  { /* lo que el App lee: titulo, ra, horas, asignatura, lema… */ },
+  "config":  { /* lo que el App lee: titulo, ra, horas, asignatura, lema, stack… */ },
   "secciones": [ { "id": "vms", "componente": "VmsSection",
                    "titulo": "3. Contenedores vs máquinas virtuales",
                    "icono": "Layers" } ]
@@ -430,8 +430,16 @@ para que el resultado no dependa de desde dónde se invoque:
 `componentes` sólo lo usa la familia `curriculum`, y es una ruta a un archivo
 del repositorio, no de `build/`: lo que se escribe a mano tiene que versionarse.
 
-`montar.py` comprueba dos cosas de la receta antes de montar, y las dos por el
-mismo motivo: fallaban sin avisar.
+`config.stack` es el pie de la barra lateral, y se copia del syllabus —de la
+fila de esa semana— para que el capítulo y el syllabus no puedan decir cosas
+distintas. Antes esa línea la escribía `lp-base.html` a mano, y decía
+«Pseudocódigo · Python · R · VBA»: los lenguajes de Lógica de Programación
+Financiera, en un curso que sólo usa uno de los cuatro. Estuvo así en los trece
+capítulos publicados hasta agosto de 2026, y nadie lo vio, porque son diez
+píxeles al pie del menú —que es donde mejor se esconde una cosa falsa—.
+
+`montar.py` comprueba cuatro cosas de la receta antes de montar, y las cuatro
+por el mismo motivo: fallaban sin avisar.
 
 - **Los iconos.** Salen del objeto `Icons`, que los declara en **dos** sitios:
   el literal `const Icons = {…}` y el `Object.assign(Icons, {…})` con que
@@ -444,6 +452,11 @@ mismo motivo: fallaban sin avisar.
   con confiar en la poda: precisamente porque la receta lo nombra, `podar` lo
   da por vivo y no lo retira. Pasó con `PortadaSection`, que es una de las
   secciones de muestra de LPF.
+- **Que la receta traiga `stack`.** Sin él, el pie de la barra lateral diría
+  `undefined`.
+- **Que la plantilla siga trayendo la línea que se sustituye.** Si LP-CORE la
+  cambia, la sustitución no encuentra nada y los trece capítulos volverían a
+  publicar los lenguajes del otro curso, en silencio y otra vez.
 
 La poda tenía además un defecto silencioso, corregido en agosto de 2026: cada
 declaración muerta llegaba «hasta donde empieza la siguiente», y eso incluía el

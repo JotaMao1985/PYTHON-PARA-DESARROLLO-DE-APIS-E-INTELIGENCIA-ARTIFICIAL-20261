@@ -21,6 +21,7 @@
       "BaseSettings",
       "lru_cache"
     ],
+    "stack": "FastAPI Depends · python-dotenv",
     "storageKey": "usta_2026i_apis_cap08"
   },
   "secciones": [

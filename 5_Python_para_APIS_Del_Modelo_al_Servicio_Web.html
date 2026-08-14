@@ -2152,6 +2152,7 @@
             ra: "Explicar el ciclo petición-respuesta y situar un análisis estadístico dentro de una arquitectura de servicio.",
             contenidoSyllabus: "Servidor web, WSGI y ASGI. Routing. Flask frente a los frameworks modernos. Síncrono frente a asíncrono.",
             temas: ["WSGI", "ASGI", "Routing", "FastAPI"],
+            stack: "WSGI · ASGI · HTTP",
             storageKey: "usta_2026i_apis_cap05",
         };
 
@@ -2242,15 +2243,15 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Una aplicación WSGI, en su forma más pura, es simplemente una función <em>callable</em>:</p>
 
                                             <CodeBlock title="Python" lang="python" code={`# La aplicación WSGI más simple del mundo
-                def app(environ, start_response):
-                    """
-                    environ: diccionario con toda la info de la petición HTTP
-                    start_response: función para enviar los headers de respuesta
-                    """
-                    status = "200 OK"
-                    headers = [("Content-Type", "text/plain")]
-                    start_response(status, headers)
-                    return [b"Hola desde una app WSGI pura"]`} />
+def app(environ, start_response):
+    """
+    environ: diccionario con toda la info de la petición HTTP
+    start_response: función para enviar los headers de respuesta
+    """
+    status = "200 OK"
+    headers = [("Content-Type", "text/plain")]
+    start_response(status, headers)
+    return [b"Hola desde una app WSGI pura"]`} />
 
                                             <p className="text-gray-700 leading-relaxed mb-5">Nadie escribe aplicaciones así en la práctica. Para eso existen los frameworks —FastAPI hoy, Flask en la generación anterior—, que encapsulan esta complejidad. Lo que acabas de ver es lo que <em>no</em> vas a tener que escribir nunca.</p>
 
@@ -2258,19 +2259,19 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Todo framework trae un servidor de desarrollo —<code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">uvicorn --reload</code> en FastAPI, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">flask run</code> en Flask— y <strong>ninguno de los dos es apto para producción</strong>: recargan el código en caliente, no gestionan varios procesos y no están endurecidos frente a un cliente hostil. En producción se lanza el mismo servidor con otra configuración, o se le pone un gestor de procesos delante:</p>
 
                                             <CodeBlock title="Terminal" lang="shell" code={`# ── ASGI: lo que usa este curso ──────────────────────────
-                # Desarrollo: recarga al guardar. NO usar en produccion.
-                uvicorn app.main:app --reload
+# Desarrollo: recarga al guardar. NO usar en produccion.
+uvicorn app.main:app --reload
 
-                # Produccion: varios procesos, sin recarga.
-                # Es la linea que ira en el Dockerfile de la semana 11.
-                uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+# Produccion: varios procesos, sin recarga.
+# Es la linea que ira en el Dockerfile de la semana 11.
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 
-                # ── WSGI: la generacion anterior, para que la reconozcas ─
-                # Gunicorn con una app Flask
-                gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
+# ── WSGI: la generacion anterior, para que la reconozcas ─
+# Gunicorn con una app Flask
+gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
 
-                # Waitress (multiplataforma, incluye Windows)
-                waitress-serve --port=8000 app:app`} />
+# Waitress (multiplataforma, incluye Windows)
+waitress-serve --port=8000 app:app`} />
 
                                             <p className="text-gray-700 leading-relaxed mb-5">El parámetro <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">--workers 4</code> le dice a Gunicorn que lance 4 procesos independientes de tu aplicación. Cada worker puede atender una petición simultáneamente. Es como tener <strong>4 cocinas paralelas</strong> en el restaurante.</p>
 
@@ -2382,50 +2383,50 @@
 
                                             <CodeBlock title="FastAPI — routing.py" lang="python" code={`from fastapi import FastAPI, Query
 
-                app = FastAPI()
+app = FastAPI()
 
-                # Ruta estática — decorador específico por método HTTP
-                @app.get("/health")
-                async def health_check():
-                    return {"status": "ok"}
+# Ruta estática — decorador específico por método HTTP
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
 
-                # Variable de ruta — el tipo se infiere del type hint
-                @app.get("/dataset/{dataset_name}/summary")
-                async def dataset_summary(dataset_name: str):
-                    return {"dataset": dataset_name, "rows": 1500}
+# Variable de ruta — el tipo se infiere del type hint
+@app.get("/dataset/{dataset_name}/summary")
+async def dataset_summary(dataset_name: str):
+    return {"dataset": dataset_name, "rows": 1500}
 
-                # Query parameters — se definen como argumentos de la función
-                @app.get("/filter")
-                async def filter_data(
-                    min_age: int = Query(default=0, ge=0, description="Edad mínima"),
-                    max_age: int = Query(default=120, le=150, description="Edad máxima"),
-                ):
-                    return {"min_age": min_age, "max_age": max_age}`} />
+# Query parameters — se definen como argumentos de la función
+@app.get("/filter")
+async def filter_data(
+    min_age: int = Query(default=0, ge=0, description="Edad mínima"),
+    max_age: int = Query(default=120, le=150, description="Edad máxima"),
+):
+    return {"min_age": min_age, "max_age": max_age}`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 El mismo routing en Flask, para que lo reconozcas</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Esto es lo que vas a encontrar en la mayor parte del codigo Python que ya esta en produccion, asi que conviene que lo leas sin esfuerzo. Flask usa el mismo decorador <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.route()</code> para todos los metodos HTTP, y los parametros hay que sacarlos y convertirlos a mano: fijate en <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">request.args.get(..., type=int)</code>, que es la linea que en FastAPI no existe porque la escribe el type hint.</p>
 
                                             <CodeBlock title="Flask — routing.py" lang="python" code={`from flask import Flask, request, jsonify
 
-                app = Flask(__name__)
+app = Flask(__name__)
 
-                # Ruta estática simple
-                @app.route("/health")
-                def health_check():
-                    return jsonify({"status": "ok"})
+# Ruta estática simple
+@app.route("/health")
+def health_check():
+    return jsonify({"status": "ok"})
 
-                # Variable de ruta: captura un valor dinámico de la URL
-                @app.route("/dataset/<string:dataset_name>/summary")
-                def dataset_summary(dataset_name: str):
-                    return jsonify({"dataset": dataset_name, "rows": 1500})
+# Variable de ruta: captura un valor dinámico de la URL
+@app.route("/dataset/<string:dataset_name>/summary")
+def dataset_summary(dataset_name: str):
+    return jsonify({"dataset": dataset_name, "rows": 1500})
 
-                # Query parameters: valores opcionales después del '?'
-                # Ejemplo: GET /filter?min_age=25&max_age=60
-                @app.route("/filter")
-                def filter_data():
-                    min_age = request.args.get("min_age", default=0, type=int)
-                    max_age = request.args.get("max_age", default=120, type=int)
-                    return jsonify({"min_age": min_age, "max_age": max_age})`} />
+# Query parameters: valores opcionales después del '?'
+# Ejemplo: GET /filter?min_age=25&max_age=60
+@app.route("/filter")
+def filter_data():
+    min_age = request.args.get("min_age", default=0, type=int)
+    max_age = request.args.get("max_age", default=120, type=int)
+    return jsonify({"min_age": min_age, "max_age": max_age})`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Tabla Comparativa de Routing</h3>
                                             <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
@@ -2455,69 +2456,69 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Veamos cómo se implementa un endpoint de predicción con Flask, el framework veterano (2010). Observa la validación manual y la falta de documentación automática:</p>
 
                                             <CodeBlock title="app_flask.py" lang="python" code={`from flask import Flask, request, jsonify
-                import numpy as np
-                import pickle
+import numpy as np
+import pickle
 
-                app = Flask(__name__)
+app = Flask(__name__)
 
-                # Cargar modelo pre-entrenado
-                with open("modelo_credito.pkl", "rb") as f:
-                    modelo = pickle.load(f)
+# Cargar modelo pre-entrenado
+with open("modelo_credito.pkl", "rb") as f:
+    modelo = pickle.load(f)
 
-                @app.route("/predict", methods=["POST"])
-                def predict():
-                    data = request.get_json()
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
 
-                    # ⚠️ Validación completamente manual
-                    required = ["income", "debt_ratio", "years_employed"]
-                    for field in required:
-                        if field not in data:
-                            return jsonify({"error": f"Falta el campo: {field}"}), 400
+    # ⚠️ Validación completamente manual
+    required = ["income", "debt_ratio", "years_employed"]
+    for field in required:
+        if field not in data:
+            return jsonify({"error": f"Falta el campo: {field}"}), 400
 
-                    features = np.array([[data["income"], data["debt_ratio"], data["years_employed"]]])
-                    probability = modelo.predict_proba(features)[0][1]
+    features = np.array([[data["income"], data["debt_ratio"], data["years_employed"]]])
+    probability = modelo.predict_proba(features)[0][1]
 
-                    return jsonify({
-                        "probability": round(float(probability), 4),
-                        "risk_level": "alto" if probability > 0.5 else "bajo"
-                    })`} />
+    return jsonify({
+        "probability": round(float(probability), 4),
+        "risk_level": "alto" if probability > 0.5 else "bajo"
+    })`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 El mismo endpoint en FastAPI</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Ahora veamos cómo el mismo endpoint se reimagina con FastAPI. Observa cómo Pydantic maneja la validación y la documentación se genera automáticamente:</p>
 
                                             <CodeBlock title="app_fastapi.py" lang="python" code={`from fastapi import FastAPI
-                from pydantic import BaseModel, Field
-                import numpy as np
-                import pickle
+from pydantic import BaseModel, Field
+import numpy as np
+import pickle
 
-                app = FastAPI(
-                    title="API de Riesgo Crediticio",
-                    description="Modelo de regresión logística para scoring crediticio",
-                    version="1.0.0",
-                )
+app = FastAPI(
+    title="API de Riesgo Crediticio",
+    description="Modelo de regresión logística para scoring crediticio",
+    version="1.0.0",
+)
 
-                with open("modelo_credito.pkl", "rb") as f:
-                    modelo = pickle.load(f)
+with open("modelo_credito.pkl", "rb") as f:
+    modelo = pickle.load(f)
 
-                # ✅ Validación automática vía Pydantic
-                class CreditRequest(BaseModel):
-                    income: float = Field(..., gt=0, description="Ingreso mensual en USD")
-                    debt_ratio: float = Field(..., ge=0, le=1, description="Ratio deuda/ingreso")
-                    years_employed: int = Field(..., ge=0, description="Años de empleo")
+# ✅ Validación automática vía Pydantic
+class CreditRequest(BaseModel):
+    income: float = Field(..., gt=0, description="Ingreso mensual en USD")
+    debt_ratio: float = Field(..., ge=0, le=1, description="Ratio deuda/ingreso")
+    years_employed: int = Field(..., ge=0, description="Años de empleo")
 
-                class CreditResponse(BaseModel):
-                    probability: float
-                    risk_level: str
+class CreditResponse(BaseModel):
+    probability: float
+    risk_level: str
 
-                @app.post("/predict", response_model=CreditResponse)
-                async def predict(data: CreditRequest):
-                    features = np.array([[data.income, data.debt_ratio, data.years_employed]])
-                    probability = float(modelo.predict_proba(features)[0][1])
+@app.post("/predict", response_model=CreditResponse)
+async def predict(data: CreditRequest):
+    features = np.array([[data.income, data.debt_ratio, data.years_employed]])
+    probability = float(modelo.predict_proba(features)[0][1])
 
-                    return CreditResponse(
-                        probability=round(probability, 4),
-                        risk_level="alto" if probability > 0.5 else "bajo",
-                    )`} />
+    return CreditResponse(
+        probability=round(probability, 4),
+        risk_level="alto" if probability > 0.5 else "bajo",
+    )`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 ¿Por qué migró el ecosistema?</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">No fue una moda. Hay razones técnicas concretas:</p>
@@ -2590,48 +2591,48 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Un endpoint que consulta dos fuentes de datos antes de hacer una predicción. Primero síncrono (Flask), luego asíncrono (FastAPI):</p>
 
                                             <CodeBlock title="Flask — síncrono (0.3 + 0.2 = 0.5s)" lang="python" code={`import time
-                from flask import Flask, jsonify
+from flask import Flask, jsonify
 
-                app = Flask(__name__)
+app = Flask(__name__)
 
-                def obtener_historial_credito(user_id: str) -> dict:
-                    time.sleep(0.3)  # Simula consulta a BD externa
-                    return {"score": 720, "defaults": 0}
+def obtener_historial_credito(user_id: str) -> dict:
+    time.sleep(0.3)  # Simula consulta a BD externa
+    return {"score": 720, "defaults": 0}
 
-                def obtener_datos_empleo(user_id: str) -> dict:
-                    time.sleep(0.2)  # Simula consulta a otro servicio
-                    return {"years": 5, "income": 55000}
+def obtener_datos_empleo(user_id: str) -> dict:
+    time.sleep(0.2)  # Simula consulta a otro servicio
+    return {"years": 5, "income": 55000}
 
-                @app.route("/evaluate/<user_id>")
-                def evaluate(user_id: str):
-                    # ⚠️ Secuencial: 0.3 + 0.2 = 0.5 segundos mínimo
-                    credito = obtener_historial_credito(user_id)
-                    empleo = obtener_datos_empleo(user_id)
-                    risk_score = credito["score"] * 0.6 + empleo["years"] * 10
-                    return jsonify({"user": user_id, "risk_score": risk_score})`} />
+@app.route("/evaluate/<user_id>")
+def evaluate(user_id: str):
+    # ⚠️ Secuencial: 0.3 + 0.2 = 0.5 segundos mínimo
+    credito = obtener_historial_credito(user_id)
+    empleo = obtener_datos_empleo(user_id)
+    risk_score = credito["score"] * 0.6 + empleo["years"] * 10
+    return jsonify({"user": user_id, "risk_score": risk_score})`} />
 
                                             <CodeBlock title="FastAPI — asíncrono (max(0.3, 0.2) = 0.3s)" lang="python" code={`import asyncio
-                from fastapi import FastAPI
+from fastapi import FastAPI
 
-                app = FastAPI()
+app = FastAPI()
 
-                async def obtener_historial_credito(user_id: str) -> dict:
-                    await asyncio.sleep(0.3)  # NO bloquea, cede control
-                    return {"score": 720, "defaults": 0}
+async def obtener_historial_credito(user_id: str) -> dict:
+    await asyncio.sleep(0.3)  # NO bloquea, cede control
+    return {"score": 720, "defaults": 0}
 
-                async def obtener_datos_empleo(user_id: str) -> dict:
-                    await asyncio.sleep(0.2)  # NO bloquea, cede control
-                    return {"years": 5, "income": 55000}
+async def obtener_datos_empleo(user_id: str) -> dict:
+    await asyncio.sleep(0.2)  # NO bloquea, cede control
+    return {"years": 5, "income": 55000}
 
-                @app.get("/evaluate/{user_id}")
-                async def evaluate(user_id: str):
-                    # ✅ Concurrente: ambas consultas en paralelo
-                    credito, empleo = await asyncio.gather(
-                        obtener_historial_credito(user_id),
-                        obtener_datos_empleo(user_id),
-                    )
-                    risk_score = credito["score"] * 0.6 + empleo["years"] * 10
-                    return {"user": user_id, "risk_score": risk_score}`} />
+@app.get("/evaluate/{user_id}")
+async def evaluate(user_id: str):
+    # ✅ Concurrente: ambas consultas en paralelo
+    credito, empleo = await asyncio.gather(
+        obtener_historial_credito(user_id),
+        obtener_datos_empleo(user_id),
+    )
+    risk_score = credito["score"] * 0.6 + empleo["years"] * 10
+    return {"user": user_id, "risk_score": risk_score}`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.5 Advertencia: async no es magia para todo</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5"><code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code> brilla en tareas <strong>I/O-bound</strong>. Para tareas <strong>CPU-bound</strong> (como entrenar un modelo o calcular bootstrapping), <code>async</code> no ayuda porque el procesador está realmente ocupado. La estrategia correcta es delegar el cómputo a un proceso separado con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">run_in_executor</code> + <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">ProcessPoolExecutor</code>.</p>
@@ -2972,7 +2973,7 @@
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

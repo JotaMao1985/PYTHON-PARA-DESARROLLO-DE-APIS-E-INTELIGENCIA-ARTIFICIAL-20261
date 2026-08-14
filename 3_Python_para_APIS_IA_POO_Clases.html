@@ -2152,6 +2152,7 @@
             ra: "Modelar entidades estadísticas con clases para sostener la validación y la persistencia posteriores.",
             contenidoSyllabus: "Clases, atributos y métodos aplicados al modelado estadístico. Composición frente a herencia. Métodos especiales. Por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero.",
             temas: ["Clases", "Herencia", "Polimorfismo", "dataclasses"],
+            stack: "Python 3.11.9 · POO · dataclasses",
             storageKey: "usta_2026i_apis_cap03",
         };
 
@@ -2185,23 +2186,29 @@
            en `localStorage`: sólo el modelo elegido.
         ============================================================ */
 
-        /* Los modelos caducan. `gemini-2.0-flash` se apagó el 1 de junio de 2026 y los
-           `gemini-1.5-*` ya no existen para una clave nueva: pedirlos devuelve 404, así
-           que tres de las cuatro opciones que ofrecía esta lista estaban muertas.
-           Se revisa contra ai.google.dev/gemini-api/docs/deprecations cada semestre.
+        /* Los modelos caducan, y ésa fue la avería: `gemini-2.0-flash` se apagó el 1 de
+           junio de 2026 y los `gemini-1.5-*` ya no existen, así que tres de las cuatro
+           opciones que ofrecía esta lista devolvían 404.
 
-           `pensamiento` es lo que hay que mandar en `generationConfig.thinkingConfig`
-           para que el modelo no gaste medio minuto razonando antes de escribir una
-           clase de veinte líneas. La forma NO es la misma en las dos familias —los 3.x
-           usan `thinkingLevel`, los 2.5 el `thinkingBudget` en tokens— y mandarle a un
-           modelo la llave de la otra familia es un 400. Por eso viaja junto al `id`,
-           y no como una constante suelta: es una propiedad del modelo, no de la app.
-           `gemini-2.5-pro` no puede apagar el pensamiento; se queda sin la clave. */
+           Los cuatro de abajo se probaron uno por uno contra la API el 13 de agosto de
+           2026 con una clave del plan gratuito, que es la que va a tener el estudiante.
+           No basta con que el modelo salga en el catálogo: `gemini-2.5-pro` y
+           `gemini-2.5-flash-lite` siguen listados y contestan «no longer available to
+           new users», y los `pro` de la familia 3 contestan 429 —el plan gratuito no
+           tiene cuota para ellos—. Por eso aquí no hay ninguna opción «pro»: sería
+           ofrecerle al curso un botón que no puede pulsar.
+           Antes de cada semestre: repetir la prueba, no mirar sólo la documentación.
+
+           `pensamiento` es lo que se manda en `generationConfig.thinkingConfig` para
+           que el modelo no gaste medio minuto razonando antes de escribir una clase de
+           veinte líneas. La forma NO es la misma en las dos familias —los 3.x usan
+           `thinkingLevel`, los 2.5 el `thinkingBudget` en tokens— y cruzarlas es un
+           400. Por eso viaja junto al `id`: es una propiedad del modelo, no de la app. */
         const MODELOS_GEMINI = [
             { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (recomendado)', pensamiento: { thinkingLevel: 'low' } },
+            { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash (equilibrado)', pensamiento: { thinkingLevel: 'low' } },
             { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite (el más rápido)', pensamiento: { thinkingLevel: 'low' } },
-            { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (estable)', pensamiento: { thinkingBudget: 0 } },
-            { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (avanzado)' }
+            { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (estable)', pensamiento: { thinkingBudget: 0 } }
         ];
         const MODELO_POR_DEFECTO = MODELOS_GEMINI[0].id;
 
@@ -2487,27 +2494,27 @@
 
                 <CodeBlock title="La Clase Moneda — Tu Primer Objeto" lang="python" code={`import random
 
-                class Coin:
-                    def __init__(self):
-                        # El Constructor: Define el estado inicial
-                        # self.sideup es el atributo que guarda "Cara" o "Cruz"
-                        self.sideup = "Heads"
+class Coin:
+    def __init__(self):
+        # El Constructor: Define el estado inicial
+        # self.sideup es el atributo que guarda "Cara" o "Cruz"
+        self.sideup = "Heads"
 
-                    def toss(self):
-                        # Un Método: Una acción que cambia el estado
-                        if random.randint(0, 1) == 0:
-                            self.sideup = "Heads"
-                        else:
-                            self.sideup = "Tails"
+    def toss(self):
+        # Un Método: Una acción que cambia el estado
+        if random.randint(0, 1) == 0:
+            self.sideup = "Heads"
+        else:
+            self.sideup = "Tails"
 
-                    def get_sideup(self):
-                        # Un Método: Una acción para ver el estado
-                        return self.sideup
+    def get_sideup(self):
+        # Un Método: Una acción para ver el estado
+        return self.sideup
 
-                # Crear un objeto (Instanciar)
-                mi_moneda = Coin()
-                mi_moneda.toss()
-                print(mi_moneda.get_sideup())`} />
+# Crear un objeto (Instanciar)
+mi_moneda = Coin()
+mi_moneda.toss()
+print(mi_moneda.get_sideup())`} />
             </div>
         );
 
@@ -2528,16 +2535,16 @@
                                     </div>
 
                 <CodeBlock title="Constructor __init__ del Analizador" lang="python" code={`class AnalizadorDatos:
-                    def __init__(self, lista_numeros):
-                        # Guardamos la lista dentro del objeto
-                        # como un 'atributo'
-                        self.datos = lista_numeros
-                        self.n = len(lista_numeros)
-                        print(f"Analizador iniciado con {self.n} datos")
+    def __init__(self, lista_numeros):
+        # Guardamos la lista dentro del objeto
+        # como un 'atributo'
+        self.datos = lista_numeros
+        self.n = len(lista_numeros)
+        print(f"Analizador iniciado con {self.n} datos")
 
-                # Crear (Instanciar) el objeto
-                mi_estudio = AnalizadorDatos([5, 8, 12, 3])
-                # Ahora 'mi_estudio' tiene sus propios datos guardados`} />
+# Crear (Instanciar) el objeto
+mi_estudio = AnalizadorDatos([5, 8, 12, 3])
+# Ahora 'mi_estudio' tiene sus propios datos guardados`} />
             </div>
         );
 
@@ -2557,20 +2564,20 @@
                                     </div>
 
                 <CodeBlock title="Atributos de Instancia vs Clase" lang="python" code={`class AnalizadorDatos:
-                    # Atributo de Clase (Compartido por todos)
-                    # Ej: Nivel de confianza por defecto (95%)
-                    confianza = 0.95
+    # Atributo de Clase (Compartido por todos)
+    # Ej: Nivel de confianza por defecto (95%)
+    confianza = 0.95
 
-                    def __init__(self, datos):
-                        # Atributo de Instancia (Único para este objeto)
-                        self.datos = datos
+    def __init__(self, datos):
+        # Atributo de Instancia (Único para este objeto)
+        self.datos = datos
 
-                estudio1 = AnalizadorDatos([1, 2, 3])
-                estudio2 = AnalizadorDatos([8, 9, 10])
+estudio1 = AnalizadorDatos([1, 2, 3])
+estudio2 = AnalizadorDatos([8, 9, 10])
 
-                # Ambos comparten la misma confianza
-                print(estudio1.confianza) # 0.95
-                print(estudio2.confianza) # 0.95`} />
+# Ambos comparten la misma confianza
+print(estudio1.confianza) # 0.95
+print(estudio2.confianza) # 0.95`} />
             </div>
         );
 
@@ -2586,22 +2593,22 @@
                                     </div>
 
                 <CodeBlock title="Métodos de Tendencia Central" lang="python" code={`class AnalizadorDatos:
-                    def __init__(self, datos):
-                        self.datos = datos
+    def __init__(self, datos):
+        self.datos = datos
 
-                    def media(self):
-                        # self.datos es accesible aquí
-                        return sum(self.datos) / len(self.datos)
+    def media(self):
+        # self.datos es accesible aquí
+        return sum(self.datos) / len(self.datos)
 
-                    def mediana(self):
-                        sorted_data = sorted(self.datos)
-                        n = len(sorted_data)
-                        mid = n // 2
-
-                        if n % 2 == 0:
-                            return (sorted_data[mid-1] + sorted_data[mid]) / 2
-                        else:
-                            return sorted_data[mid]`} />
+    def mediana(self):
+        sorted_data = sorted(self.datos)
+        n = len(sorted_data)
+        mid = n // 2
+        
+        if n % 2 == 0:
+            return (sorted_data[mid-1] + sorted_data[mid]) / 2
+        else:
+            return sorted_data[mid]`} />
             </div>
         );
 
@@ -2702,40 +2709,40 @@
                                     </div>
 
                 <CodeBlock title="Varianza Poblacional vs Muestral" lang="python" code={`class EstadisticaBase:
-                    def __init__(self, datos):
-                        self.datos = datos
-                        self.mu = sum(datos) / len(datos)
+    def __init__(self, datos):
+        self.datos = datos
+        self.mu = sum(datos) / len(datos)
 
-                    def varianza(self):
-                        raise NotImplementedError("Usar subclase")
+    def varianza(self):
+        raise NotImplementedError("Usar subclase")
 
-                class Poblacion(EstadisticaBase):
-                    def varianza(self):
-                        # Divide por N
-                        numerador = sum((x - self.mu) ** 2 for x in self.datos)
-                        return numerador / len(self.datos)
+class Poblacion(EstadisticaBase):
+    def varianza(self):
+        # Divide por N
+        numerador = sum((x - self.mu) ** 2 for x in self.datos)
+        return numerador / len(self.datos)
 
-                class Muestra(EstadisticaBase):
-                    def varianza(self):
-                        # Divide por N - 1 (Corrección de Bessel)
-                        numerador = sum((x - self.mu) ** 2 for x in self.datos)
-                        return numerador / (len(self.datos) - 1)
+class Muestra(EstadisticaBase):
+    def varianza(self):
+        # Divide por N - 1 (Corrección de Bessel)
+        numerador = sum((x - self.mu) ** 2 for x in self.datos)
+        return numerador / (len(self.datos) - 1)
 
-                # Calificaciones de TODOS los estudiantes de un curso pequeño (población)
-                calificaciones_curso = [85, 90, 78, 92, 88]
-                pob = Poblacion(calificaciones_curso)
+# Calificaciones de TODOS los estudiantes de un curso pequeño (población)
+calificaciones_curso = [85, 90, 78, 92, 88]
+pob = Poblacion(calificaciones_curso)
 
-                print(f"Media del curso: {pob.mu:.2f}")
-                print(f"Varianza poblacional: {pob.varianza():.2f}")
-                print(f"Desv. estándar poblacional: {pob.varianza()**0.5:.2f}")
+print(f"Media del curso: {pob.mu:.2f}")
+print(f"Varianza poblacional: {pob.varianza():.2f}")
+print(f"Desv. estándar poblacional: {pob.varianza()**0.5:.2f}")
 
-                # Calificaciones de una muestra aleatoria de estudiantes de toda la universidad
-                muestra_uni = [85, 90, 78, 92, 88, 76, 95, 89]
-                muest = Muestra(muestra_uni)
+# Calificaciones de una muestra aleatoria de estudiantes de toda la universidad
+muestra_uni = [85, 90, 78, 92, 88, 76, 95, 89]
+muest = Muestra(muestra_uni)
 
-                print(f"\\nMedia muestral: {muest.mu:.2f}")
-                print(f"Varianza muestral: {muest.varianza():.2f}")
-                print(f"Desv. estándar muestral: {muest.varianza()**0.5:.2f}")`} />
+print(f"\\nMedia muestral: {muest.mu:.2f}")
+print(f"Varianza muestral: {muest.varianza():.2f}")
+print(f"Desv. estándar muestral: {muest.varianza()**0.5:.2f}")`} />
             </div>
         );
 
@@ -2806,62 +2813,62 @@
                                     </div>
 
                 <CodeBlock title="De una clase a mano a dataclass, y de ahí a todo lo demás" lang="python" code={`# ═══════════════════════════════════════════════════════
-                # DE UNA CLASE A MANO A UNA dataclass
-                # El mismo objeto, escrito de las dos formas.
-                # ═══════════════════════════════════════════════════════
-                from dataclasses import dataclass, field
+# DE UNA CLASE A MANO A UNA dataclass
+# El mismo objeto, escrito de las dos formas.
+# ═══════════════════════════════════════════════════════
+from dataclasses import dataclass, field
 
-                # --- 1. Lo que has escrito hoy: todo a mano ---
-                class ObservacionManual:
-                    """Una observación de la encuesta, escrita a la manera clásica."""
+# --- 1. Lo que has escrito hoy: todo a mano ---
+class ObservacionManual:
+    """Una observación de la encuesta, escrita a la manera clásica."""
 
-                    def __init__(self, id_encuestado: int, edad: int, ingreso: float):
-                        self.id_encuestado = id_encuestado
-                        self.edad = edad
-                        self.ingreso = ingreso
+    def __init__(self, id_encuestado: int, edad: int, ingreso: float):
+        self.id_encuestado = id_encuestado
+        self.edad = edad
+        self.ingreso = ingreso
 
-                    def __repr__(self):
-                        return (f"ObservacionManual(id_encuestado={self.id_encuestado}, "
-                                f"edad={self.edad}, ingreso={self.ingreso})")
-
-
-                # --- 2. Lo mismo con @dataclass: __init__ y __repr__ salen gratis ---
-                @dataclass
-                class Observacion:
-                    """La misma observación. Fíjate en que los TIPOS ahora están declarados."""
-                    id_encuestado: int
-                    edad: int
-                    ingreso: float
-                    etiquetas: list[str] = field(default_factory=list)   # mutable: nunca [] directo
-
-                    def es_adulto(self) -> bool:
-                        """Los métodos siguen funcionando igual: una dataclass es una clase."""
-                        return self.edad >= 18
+    def __repr__(self):
+        return (f"ObservacionManual(id_encuestado={self.id_encuestado}, "
+                f"edad={self.edad}, ingreso={self.ingreso})")
 
 
-                obs = Observacion(id_encuestado=1, edad=34, ingreso=2_500_000)
-                print(obs)                    # el __repr__ lo escribio @dataclass
-                print("Adulto:", obs.es_adulto())
+# --- 2. Lo mismo con @dataclass: __init__ y __repr__ salen gratis ---
+@dataclass
+class Observacion:
+    """La misma observación. Fíjate en que los TIPOS ahora están declarados."""
+    id_encuestado: int
+    edad: int
+    ingreso: float
+    etiquetas: list[str] = field(default_factory=list)   # mutable: nunca [] directo
 
-                # ═══════════════════════════════════════════════════════
-                # EL PUNTO IMPORTANTE, Y EL LIMITE DE dataclasses
-                # ═══════════════════════════════════════════════════════
-                # @dataclass NO comprueba los tipos. Esto no falla:
-                sospechosa = Observacion(id_encuestado="uno", edad="treinta y cuatro", ingreso=None)
-                print(sospechosa)
-                print("Tipo de edad:", type(sospechosa.edad).__name__)   # str, y a nadie le importo
+    def es_adulto(self) -> bool:
+        """Los métodos siguen funcionando igual: una dataclass es una clase."""
+        return self.edad >= 18
 
-                # En la semana 4, Pydantic toma esta MISMA sintaxis y le anade la comprobacion:
-                #     from pydantic import BaseModel
-                #     class Observacion(BaseModel):
-                #         id_encuestado: int
-                #         edad: int
-                #         ingreso: float
-                # ...y entonces la linea de arriba lanza un ValidationError en vez de callarse.
-                #
-                # En la semana 9, SQLAlchemy toma esta misma clase y la convierte en una TABLA.
-                # En la semana 6, FastAPI la lee para generar la validacion de entrada y la
-                # documentacion de la API sin que tu escribas nada mas.`} />
+
+obs = Observacion(id_encuestado=1, edad=34, ingreso=2_500_000)
+print(obs)                    # el __repr__ lo escribio @dataclass
+print("Adulto:", obs.es_adulto())
+
+# ═══════════════════════════════════════════════════════
+# EL PUNTO IMPORTANTE, Y EL LIMITE DE dataclasses
+# ═══════════════════════════════════════════════════════
+# @dataclass NO comprueba los tipos. Esto no falla:
+sospechosa = Observacion(id_encuestado="uno", edad="treinta y cuatro", ingreso=None)
+print(sospechosa)
+print("Tipo de edad:", type(sospechosa.edad).__name__)   # str, y a nadie le importo
+
+# En la semana 4, Pydantic toma esta MISMA sintaxis y le anade la comprobacion:
+#     from pydantic import BaseModel
+#     class Observacion(BaseModel):
+#         id_encuestado: int
+#         edad: int
+#         ingreso: float
+# ...y entonces la linea de arriba lanza un ValidationError en vez de callarse.
+#
+# En la semana 9, SQLAlchemy toma esta misma clase y la convierte en una TABLA.
+# En la semana 6, FastAPI la lee para generar la validacion de entrada y la
+# documentacion de la API sin que tu escribas nada mas.`} />
             </div>
         );
 
@@ -2995,84 +3002,84 @@
                                     </div>
 
                 <CodeBlock title="Script Completo: Generador de Clases con Gemini" lang="python" code={`import google.generativeai as genai
-                import os
-                import re
-                import time
+import os
+import re
+import time
 
-                from dotenv import load_dotenv
-                load_dotenv()
+from dotenv import load_dotenv
+load_dotenv()
 
-                class GeneradorClases:
-                    """
-                    Genera clases Python usando la API de Google Gemini.
-                    Encapsula la configuración, el prompt y la comunicación con la IA.
-                    """
+class GeneradorClases:
+    """
+    Genera clases Python usando la API de Google Gemini.
+    Encapsula la configuración, el prompt y la comunicación con la IA.
+    """
 
-                    def __init__(self, modelo="gemini-2.5-flash"):
-                        # Leer la API Key de variable de entorno (seguro)
-                        api_key = os.environ.get("GEMINI_API_KEY")
+    def __init__(self, modelo="gemini-2.5-flash"):
+        # Leer la API Key de variable de entorno (seguro)
+        api_key = os.environ.get("GEMINI_API_KEY")
 
-                        if not api_key:
-                            raise ValueError(
-                                "No se encontró GEMINI_API_KEY. "
-                                "Configúrala con: export GEMINI_API_KEY='tu_clave'"
-                            )
+        if not api_key:
+            raise ValueError(
+                "No se encontró GEMINI_API_KEY. "
+                "Configúrala con: export GEMINI_API_KEY='tu_clave'"
+            )
 
-                        # Configurar la librería con la clave
-                        genai.configure(api_key=api_key)
+        # Configurar la librería con la clave
+        genai.configure(api_key=api_key)
 
-                        # Crear el modelo con instrucción de sistema
-                        self.model = genai.GenerativeModel(
-                            model_name=modelo,
-                            system_instruction=(
-                                "Eres un profesor de Python para estudiantes "
-                                "de estadística en la Universidad Santo Tomás. "
-                                "Genera SOLO código Python puro, sin markdown."
-                            )
-                        )
-                        self.intentos_max = 3
+        # Crear el modelo con instrucción de sistema
+        self.model = genai.GenerativeModel(
+            model_name=modelo,
+            system_instruction=(
+                "Eres un profesor de Python para estudiantes "
+                "de estadística en la Universidad Santo Tomás. "
+                "Genera SOLO código Python puro, sin markdown."
+            )
+        )
+        self.intentos_max = 3
 
-                    def generar(self, concepto):
-                        """Genera una clase Python para el concepto dado."""
-                        prompt = f"""Genera una clase Python para: "{concepto}".
-                Incluye:
-                - Docstring descriptivo
-                - Constructor __init__ con al menos 3 atributos
-                - Al menos 2 métodos útiles con docstrings
-                - Comentarios en español
-                - Ejemplo de uso al final"""
+    def generar(self, concepto):
+        """Genera una clase Python para el concepto dado."""
+        prompt = f"""Genera una clase Python para: "{concepto}".
+Incluye:
+- Docstring descriptivo
+- Constructor __init__ con al menos 3 atributos
+- Al menos 2 métodos útiles con docstrings
+- Comentarios en español
+- Ejemplo de uso al final"""
 
-                        # Reintentos con backoff exponencial
-                        for intento in range(self.intentos_max):
-                            try:
-                                respuesta = self.model.generate_content(prompt)
-                                codigo = respuesta.text
+        # Reintentos con backoff exponencial
+        for intento in range(self.intentos_max):
+            try:
+                respuesta = self.model.generate_content(prompt)
+                codigo = respuesta.text
 
-                                # Limpiar posibles bloques markdown
-                                codigo = re.sub(
-                                    r'^\\x60\\x60\\x60python\\n?', '', codigo
-                                )
-                                codigo = re.sub(r'\\n?\\x60\\x60\\x60$', '', codigo)
-                                return codigo.strip()
+                # Limpiar posibles bloques markdown
+                codigo = re.sub(
+                    r'^\\x60\\x60\\x60python\\n?', '', codigo
+                )
+                codigo = re.sub(r'\\n?\\x60\\x60\\x60$', '', codigo)
+                return codigo.strip()
 
-                            except Exception as e:
-                                print(f"Intento {intento + 1} falló: {e}")
-                                if intento < self.intentos_max - 1:
-                                    espera = 2 ** intento  # 1s, 2s, 4s
-                                    print(f"Reintentando en {espera}s...")
-                                    time.sleep(espera)
-                                else:
-                                    return f"Error después de {self.intentos_max} intentos: {e}"
+            except Exception as e:
+                print(f"Intento {intento + 1} falló: {e}")
+                if intento < self.intentos_max - 1:
+                    espera = 2 ** intento  # 1s, 2s, 4s
+                    print(f"Reintentando en {espera}s...")
+                    time.sleep(espera)
+                else:
+                    return f"Error después de {self.intentos_max} intentos: {e}"
 
-                # --- Uso del generador ---
-                if __name__ == "__main__":
-                    generador = GeneradorClases()
+# --- Uso del generador ---
+if __name__ == "__main__":
+    generador = GeneradorClases()
 
-                    concepto = input("¿Qué clase quieres generar? ")
-                    print(f"\\nGenerando clase para '{concepto}'...\\n")
+    concepto = input("¿Qué clase quieres generar? ")
+    print(f"\\nGenerando clase para '{concepto}'...\\n")
 
-                    resultado = generador.generar(concepto)
-                    print(resultado)`} />
+    resultado = generador.generar(concepto)
+    print(resultado)`} />
             </div>
         );
 
@@ -3124,17 +3131,17 @@
 
                 <CodeBlock title="Fuentes Consultadas" lang="python" code={`# Recursos adicionales para seguir aprendiendo
 
-                # Documentación oficial de Python sobre POO
-                # https://docs.python.org/3/tutorial/classes.html
+# Documentación oficial de Python sobre POO
+# https://docs.python.org/3/tutorial/classes.html
 
-                # Tutorial recomendado sobre POO en Python
-                # https://realpython.com/python-classes/
+# Tutorial recomendado sobre POO en Python
+# https://realpython.com/python-classes/
 
-                # Libro gratuito: Python para Análisis de Datos
-                # https://wesmckinney.com/book/
+# Libro gratuito: Python para Análisis de Datos
+# https://wesmckinney.com/book/
 
-                # Repositorio con ejemplos de POO aplicada a estadística
-                # Busca en GitHub: python-oop-statistics-examples`} />
+# Repositorio con ejemplos de POO aplicada a estadística
+# Busca en GitHub: python-oop-statistics-examples`} />
             </div>
         );
         /* === SECCIONES FIN === */
@@ -3222,7 +3229,7 @@
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

@@ -2175,6 +2175,7 @@
             ra: "Empaquetar la aplicación y sus dependencias en una imagen reproducible.",
             contenidoSyllabus: "Del entorno virtual al contenedor. Contenedores frente a máquinas virtuales. Estructura del Dockerfile. Imagen base python:3.11.9-slim-bookworm. Construcción multietapa.",
             temas: ["Docker", "Dockerfile", "Multi-stage", "python:3.11.9-slim-bookworm"],
+            stack: "Docker · python:3.11.9-slim-bookworm",
             storageKey: "usta_2026i_apis_cap11",
         };
 
@@ -2548,8 +2549,8 @@
                                             Para reproducir los ejemplos se recomienda instalar <strong>Docker Desktop</strong> (Windows, macOS) o <strong>Docker Engine</strong> (distribuciones de Linux). La
                                             verificación se hace ejecutando en una terminal:
                                             <CodeBlock lang="shell" code={`$ docker --version
-                Docker version 24.x.y, build ...
-                $ docker run --rm hello-world`} />
+Docker version 24.x.y, build ...
+$ docker run --rm hello-world`} />
                                             La segunda orden descarga una imagen mínima y la ejecuta. Si imprime el mensaje <em>Hello from Docker!</em>, el entorno está listo.
                                         </Box>
             </div>
@@ -2868,17 +2869,17 @@
                                         <h3>5.1 Anatomía mínima</h3>
 
                                         <CodeBlock title="Dockerfile" lang="dockerfile" code={`# Dockerfile — versión didáctica mínima
-                FROM python:3.11.9-slim-bookworm
+FROM python:3.11.9-slim-bookworm
 
-                WORKDIR /app
+WORKDIR /app
 
-                COPY requirements.txt .
-                RUN pip install --no-cache-dir -r requirements.txt
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-                COPY app/ ./app/
+COPY app/ ./app/
 
-                EXPOSE 8000
-                CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
 
                                         <p>Cada palabra mayúscula es una instrucción reconocida por el motor de Docker.
                                             A continuación se describen las más importantes.</p>
@@ -3000,13 +3001,13 @@
                                         </ul>
 
                                         <CodeBlock lang="dockerfile" code={`# Anti-patrón: una sola instrucción COPY rompe la caché en cada cambio
-                COPY . .
-                RUN pip install -r requirements.txt
+COPY . .
+RUN pip install -r requirements.txt
 
-                # Patrón correcto: dependencias primero, código después
-                COPY requirements.txt .
-                RUN pip install --no-cache-dir -r requirements.txt
-                COPY app/ ./app/`} />
+# Patrón correcto: dependencias primero, código después
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/`} />
 
                                         <h3>5.5 Forma <em>exec</em> vs forma <em>shell</em></h3>
 
@@ -3159,15 +3160,15 @@
                                             siempre la versión completa:</p>
 
                                         <CodeBlock lang="dockerfile" code={`# No recomendado: la versión flota.
-                FROM python:3.11-slim
+FROM python:3.11-slim
 
-                # Recomendado: versión exacta.
-                FROM python:3.11.9-slim-bookworm
+# Recomendado: versión exacta.
+FROM python:3.11.9-slim-bookworm
 
-                # Reproducibilidad máxima: hash criptográfico de la imagen.
-                # El hash se obtiene con: docker pull python:3.11.9-slim-bookworm
-                # y luego: docker inspect python:3.11.9-slim-bookworm --format='{{index .RepoDigests 0}}'
-                FROM python:3.11.9-slim-bookworm@sha256:abc123...def`} />
+# Reproducibilidad máxima: hash criptográfico de la imagen.
+# El hash se obtiene con: docker pull python:3.11.9-slim-bookworm
+# y luego: docker inspect python:3.11.9-slim-bookworm --format='{{index .RepoDigests 0}}'
+FROM python:3.11.9-slim-bookworm@sha256:abc123...def`} />
 
                                         <p>Fijar el hash digest (<code>@sha256:...</code>) es la forma más estricta de
                                             reproducibilidad: garantiza que el contenido de la imagen base es bit a bit el
@@ -3189,16 +3190,16 @@
                                             rutas absolutas del anfitrión ni navegar fuera con <code>..</code>.</p>
 
                                         <CodeBlock lang="shell" code={`$ cd /home/usuario/proyectos/regresion-api
-                $ docker build -t regresion-api:0.1.0 .
-                [+] Building 12.4s (10/10) FINISHED
-                 => transferring context: 482.31kB                              0.1s
-                 => [internal] load build definition from Dockerfile             0.0s
-                 => [1/5] FROM docker.io/library/python:3.11.9-slim-bookworm     2.1s
-                 => [2/5] WORKDIR /app                                            0.0s
-                 => [3/5] COPY requirements.txt .                                 0.0s
-                 => [4/5] RUN pip install --no-cache-dir -r requirements.txt    8.7s
-                 => [5/5] COPY app/ ./app/                                        0.1s
-                 => exporting to image                                            1.4s`} />
+$ docker build -t regresion-api:0.1.0 .
+[+] Building 12.4s (10/10) FINISHED
+ => transferring context: 482.31kB                              0.1s
+ => [internal] load build definition from Dockerfile             0.0s
+ => [1/5] FROM docker.io/library/python:3.11.9-slim-bookworm     2.1s
+ => [2/5] WORKDIR /app                                            0.0s
+ => [3/5] COPY requirements.txt .                                 0.0s
+ => [4/5] RUN pip install --no-cache-dir -r requirements.txt    8.7s
+ => [5/5] COPY app/ ./app/                                        0.1s
+ => exporting to image                                            1.4s`} />
 
                                         <p>La línea <em>transferring context</em> indica que se enviaron 482 KB al daemon. En
                                             proyectos descuidados ese número puede crecer hasta varios gigabytes.</p>
@@ -3212,51 +3213,51 @@
 
                                         <CodeBlock title=".dockerignore" lang="text" code={`# .dockerignore
 
-                # Control de versiones
-                .git
-                .gitignore
-                .gitattributes
+# Control de versiones
+.git
+.gitignore
+.gitattributes
 
-                # Entornos virtuales locales (no se reutilizan dentro de la imagen)
-                .venv
-                venv
-                env
+# Entornos virtuales locales (no se reutilizan dentro de la imagen)
+.venv
+venv
+env
 
-                # Cachés de Python
-                __pycache__
-                *.pyc
-                *.pyo
-                .pytest_cache
-                .mypy_cache
-                .ruff_cache
+# Cachés de Python
+__pycache__
+*.pyc
+*.pyo
+.pytest_cache
+.mypy_cache
+.ruff_cache
 
-                # Notebooks de exploración (suelen contener datos crudos voluminosos)
-                notebooks/
-                *.ipynb_checkpoints
+# Notebooks de exploración (suelen contener datos crudos voluminosos)
+notebooks/
+*.ipynb_checkpoints
 
-                # Datos crudos y artefactos pesados
-                data/raw/
-                data/interim/
-                *.csv
-                *.parquet
-                *.feather
+# Datos crudos y artefactos pesados
+data/raw/
+data/interim/
+*.csv
+*.parquet
+*.feather
 
-                # Configuración local sensible
-                .env
-                .env.local
-                *.pem
-                *.key
+# Configuración local sensible
+.env
+.env.local
+*.pem
+*.key
 
-                # Documentación e IDE
-                README.md
-                docs/
-                .idea/
-                .vscode/
-                *.swp
+# Documentación e IDE
+README.md
+docs/
+.idea/
+.vscode/
+*.swp
 
-                # El propio Dockerfile no se necesita dentro de la imagen
-                Dockerfile
-                .dockerignore`} />
+# El propio Dockerfile no se necesita dentro de la imagen
+Dockerfile
+.dockerignore`} />
 
                                         <h3>7.3 ¿Por qué importa tanto este archivo?</h3>
 
@@ -3308,13 +3309,13 @@
                                         <h3>8.1 Esquema general</h3>
 
                                         <CodeBlock lang="dockerfile" code={`# Etapa 1: builder — todo lo que sólo hace falta durante la construcción
-                FROM python:3.11.9-slim-bookworm AS builder
-                # ... instalar compiladores, descargar dependencias, compilar wheels ...
+FROM python:3.11.9-slim-bookworm AS builder
+# ... instalar compiladores, descargar dependencias, compilar wheels ...
 
-                # Etapa 2: runtime — la imagen final que se entrega a producción
-                FROM python:3.11.9-slim-bookworm AS runtime
-                COPY --from=builder /opt/venv /opt/venv
-                # ... copiar el código y arrancar la aplicación ...`} />
+# Etapa 2: runtime — la imagen final que se entrega a producción
+FROM python:3.11.9-slim-bookworm AS runtime
+COPY --from=builder /opt/venv /opt/venv
+# ... copiar el código y arrancar la aplicación ...`} />
 
                                         <p>La imagen final, identificada por la etapa con la última instrucción <code>FROM</code> (o por una etapa nombrada con <code>--target</code>), contiene
                                             sólo lo que se copió explícitamente. Las herramientas de la etapa <em>builder</em> no aparecen en el resultado.
@@ -3346,56 +3347,56 @@
 
                                         <CodeBlock lang="dockerfile" code={`# syntax=docker/dockerfile:1.7
 
-                # ============================================================
-                # Etapa 1 — builder
-                # ============================================================
-                FROM python:3.11.9-slim-bookworm AS builder
+# ============================================================
+# Etapa 1 — builder
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS builder
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1 \\
-                    PIP_NO_CACHE_DIR=1 \\
-                    PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PIP_NO_CACHE_DIR=1 \\
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-                # build-essential sólo se necesita para compilar wheels que no
-                # lleguen precompiladas; se descarta junto con esta etapa.
-                RUN apt-get update \\
-                 && apt-get install -y --no-install-recommends build-essential \\
-                 && rm -rf /var/lib/apt/lists/*
+# build-essential sólo se necesita para compilar wheels que no
+# lleguen precompiladas; se descarta junto con esta etapa.
+RUN apt-get update \\
+ && apt-get install -y --no-install-recommends build-essential \\
+ && rm -rf /var/lib/apt/lists/*
 
-                # Entorno virtual aislado en /opt/venv (será portable a la etapa runtime)
-                RUN python -m venv /opt/venv
-                ENV PATH="/opt/venv/bin:$PATH"
+# Entorno virtual aislado en /opt/venv (será portable a la etapa runtime)
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-                WORKDIR /build
-                COPY requirements.txt .
-                RUN pip install --upgrade pip \\
-                 && pip install -r requirements.txt
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install --upgrade pip \\
+ && pip install -r requirements.txt
 
-                # ============================================================
-                # Etapa 2 — runtime
-                # ============================================================
-                FROM python:3.11.9-slim-bookworm AS runtime
+# ============================================================
+# Etapa 2 — runtime
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS runtime
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1 \\
-                    PATH="/opt/venv/bin:$PATH"
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PATH="/opt/venv/bin:$PATH"
 
-                # Usuario no privilegiado para ejecutar la aplicación.
-                RUN groupadd --system --gid 1001 appgroup \\
-                 && useradd  --system --uid 1001 --gid appgroup --create-home appuser
+# Usuario no privilegiado para ejecutar la aplicación.
+RUN groupadd --system --gid 1001 appgroup \\
+ && useradd  --system --uid 1001 --gid appgroup --create-home appuser
 
-                WORKDIR /app
+WORKDIR /app
 
-                # Sólo se trae el entorno virtual: ni compiladores ni cachés de apt.
-                COPY --from=builder /opt/venv /opt/venv
+# Sólo se trae el entorno virtual: ni compiladores ni cachés de apt.
+COPY --from=builder /opt/venv /opt/venv
 
-                # Código de la aplicación con propietario no-root.
-                COPY --chown=appuser:appgroup app/ ./app/
+# Código de la aplicación con propietario no-root.
+COPY --chown=appuser:appgroup app/ ./app/
 
-                USER appuser
+USER appuser
 
-                EXPOSE 8000
-                CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
 
                                         <h3>8.4 Comparación de tamaño</h3>
 
@@ -3443,7 +3444,7 @@
                                             punto intermedio para depurar.</p>
 
                                         <CodeBlock lang="shell" code={`$ docker build --target builder -t regresion-api:builder .
-                $ docker run --rm -it regresion-api:builder bash`} />
+$ docker run --rm -it regresion-api:builder bash`} />
 
                                         <p>Este patrón abre una shell dentro del builder e inspecciona el entorno virtual
                                             instalado, las versiones resueltas por <code>pip</code> y el tamaño exacto de
@@ -3470,18 +3471,18 @@
                                         <h3>9.1 Estructura del proyecto</h3>
 
                                         <CodeBlock lang="text" code={`regresion-api/
-                ├── app/
-                │   ├── __init__.py
-                │   ├── main.py            # Aplicación FastAPI
-                │   ├── modelo.py          # Carga y predicción del modelo
-                │   ├── schemas.py         # Modelos Pydantic
-                │   └── modelo.json        # Coeficientes entrenados
-                ├── tests/
-                │   ├── __init__.py
-                │   └── test_api.py
-                ├── requirements.txt
-                ├── .dockerignore
-                └── Dockerfile`} />
+├── app/
+│   ├── __init__.py
+│   ├── main.py            # Aplicación FastAPI
+│   ├── modelo.py          # Carga y predicción del modelo
+│   ├── schemas.py         # Modelos Pydantic
+│   └── modelo.json        # Coeficientes entrenados
+├── tests/
+│   ├── __init__.py
+│   └── test_api.py
+├── requirements.txt
+├── .dockerignore
+└── Dockerfile`} />
 
                                         <h3>9.2 Modelo entrenado fuera de línea</h3>
 
@@ -3491,46 +3492,46 @@
                                             versionado).</p>
 
                                         <CodeBlock title="app/modelo.json" lang="json" code={`# app/modelo.json — coeficientes de y = 2.3 * x + 1.7
-                {
-                    "version": "0.1.0",
-                    "intercepto": 1.7,
-                    "pendiente": 2.3,
-                    "x_min": -10.0,
-                    "x_max": 10.0
-                }`} />
+{
+    "version": "0.1.0",
+    "intercepto": 1.7,
+    "pendiente": 2.3,
+    "x_min": -10.0,
+    "x_max": 10.0
+}`} />
 
                                         <h3>9.3 Carga del modelo (<code>app/modelo.py</code>)</h3>
 
                                         <CodeBlock title="app/modelo.py" lang="python" code={`# app/modelo.py
-                from __future__ import annotations
+from __future__ import annotations
 
-                import json
-                from dataclasses import dataclass
-                from functools import lru_cache
-                from pathlib import Path
+import json
+from dataclasses import dataclass
+from functools import lru_cache
+from pathlib import Path
 
-                RUTA_MODELO = Path(__file__).parent / "modelo.json"
-
-
-                @dataclass(frozen=True)
-                class ModeloRegresion:
-                    """Regresión lineal simple con coeficientes inmutables."""
-                    version: str
-                    intercepto: float
-                    pendiente: float
-                    x_min: float
-                    x_max: float
-
-                    def predecir(self, x: float) -> float:
-                        return self.intercepto + self.pendiente * x
+RUTA_MODELO = Path(__file__).parent / "modelo.json"
 
 
-                @lru_cache(maxsize=1)
-                def cargar_modelo() -> ModeloRegresion:
-                    """Carga el modelo desde disco una sola vez por proceso."""
-                    with RUTA_MODELO.open("r", encoding="utf-8") as f:
-                        datos = json.load(f)
-                    return ModeloRegresion(**datos)`} />
+@dataclass(frozen=True)
+class ModeloRegresion:
+    """Regresión lineal simple con coeficientes inmutables."""
+    version: str
+    intercepto: float
+    pendiente: float
+    x_min: float
+    x_max: float
+
+    def predecir(self, x: float) -> float:
+        return self.intercepto + self.pendiente * x
+
+
+@lru_cache(maxsize=1)
+def cargar_modelo() -> ModeloRegresion:
+    """Carga el modelo desde disco una sola vez por proceso."""
+    with RUTA_MODELO.open("r", encoding="utf-8") as f:
+        datos = json.load(f)
+    return ModeloRegresion(**datos)`} />
 
                                         <p>La función <code>cargar_modelo</code>, decorada con <code>@lru_cache</code>, se
                                             integra con el patrón de inyección de dependencias visto en la Semana III: actúa
@@ -3540,30 +3541,30 @@
                                         <h3>9.4 Esquemas Pydantic (<code>app/schemas.py</code>)</h3>
 
                                         <CodeBlock title="app/schemas.py" lang="python" code={`# app/schemas.py
-                from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator
 
 
-                class EntradaPrediccion(BaseModel):
-                    x: float = Field(..., description="Variable explicativa")
+class EntradaPrediccion(BaseModel):
+    x: float = Field(..., description="Variable explicativa")
 
-                    @field_validator("x")
-                    @classmethod
-                    def validar_rango(cls, valor: float) -> float:
-                        if not -1000.0 <= valor <= 1000.0:
-                            raise ValueError("x debe pertenecer a [-1000, 1000]")
-                        return valor
+    @field_validator("x")
+    @classmethod
+    def validar_rango(cls, valor: float) -> float:
+        if not -1000.0 <= valor <= 1000.0:
+            raise ValueError("x debe pertenecer a [-1000, 1000]")
+        return valor
 
 
-                class SalidaPrediccion(BaseModel):
-                    y_hat: float = Field(..., description="Predicción del modelo")
-                    extrapolado: bool = Field(
-                        ...,
-                        description="True si x cae fuera del rango observado en entrenamiento",
-                    )
-                    version_modelo: str = Field(
-                        ...,
-                        description="Versión semántica del modelo servido",
-                    )`} />
+class SalidaPrediccion(BaseModel):
+    y_hat: float = Field(..., description="Predicción del modelo")
+    extrapolado: bool = Field(
+        ...,
+        description="True si x cae fuera del rango observado en entrenamiento",
+    )
+    version_modelo: str = Field(
+        ...,
+        description="Versión semántica del modelo servido",
+    )`} />
 
                                         <p>La validación con <code>@field_validator</code> y la respuesta automática HTTP
                                             422 frente a cargas útiles inválidas son herencia directa de las semanas previas
@@ -3591,71 +3592,71 @@
                                         <h3>9.5 Aplicación FastAPI (<code>app/main.py</code>)</h3>
 
                                         <CodeBlock title="app/main.py" lang="python" code={`# app/main.py
-                from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends
 
-                from app.modelo import ModeloRegresion, cargar_modelo
-                from app.schemas import EntradaPrediccion, SalidaPrediccion
+from app.modelo import ModeloRegresion, cargar_modelo
+from app.schemas import EntradaPrediccion, SalidaPrediccion
 
-                app = FastAPI(
-                    title="regresion-api",
-                    version="0.1.0",
-                    description="API mínima que sirve un modelo de regresión lineal simple.",
-                )
-
-
-                @app.get("/health", status_code=200)
-                def health() -> dict[str, str]:
-                    """Sondeo de vida útil para orquestadores."""
-                    return {"status": "ok"}
+app = FastAPI(
+    title="regresion-api",
+    version="0.1.0",
+    description="API mínima que sirve un modelo de regresión lineal simple.",
+)
 
 
-                @app.post("/predicciones", response_model=SalidaPrediccion)
-                def predecir(
-                    entrada: EntradaPrediccion,
-                    modelo: ModeloRegresion = Depends(cargar_modelo),
-                ) -> SalidaPrediccion:
-                    y_hat = modelo.predecir(entrada.x)
-                    return SalidaPrediccion(
-                        y_hat=y_hat,
-                        extrapolado=not (modelo.x_min <= entrada.x <= modelo.x_max),
-                        version_modelo=modelo.version,
-                    )`} />
+@app.get("/health", status_code=200)
+def health() -> dict[str, str]:
+    """Sondeo de vida útil para orquestadores."""
+    return {"status": "ok"}
+
+
+@app.post("/predicciones", response_model=SalidaPrediccion)
+def predecir(
+    entrada: EntradaPrediccion,
+    modelo: ModeloRegresion = Depends(cargar_modelo),
+) -> SalidaPrediccion:
+    y_hat = modelo.predecir(entrada.x)
+    return SalidaPrediccion(
+        y_hat=y_hat,
+        extrapolado=not (modelo.x_min <= entrada.x <= modelo.x_max),
+        version_modelo=modelo.version,
+    )`} />
 
                                         <h3>9.6 Pruebas mínimas (<code>tests/test_api.py</code>)</h3>
 
                                         <CodeBlock title="tests/test_api.py" lang="python" code={`# tests/test_api.py
-                from fastapi.testclient import TestClient
+from fastapi.testclient import TestClient
 
-                from app.main import app
+from app.main import app
 
-                cliente = TestClient(app)
-
-
-                def test_health_devuelve_200():
-                    respuesta = cliente.get("/health")
-                    assert respuesta.status_code == 200
-                    assert respuesta.json() == {"status": "ok"}
+cliente = TestClient(app)
 
 
-                def test_prediccion_consistente_con_los_coeficientes():
-                    respuesta = cliente.post("/predicciones", json={"x": 2.0})
-                    assert respuesta.status_code == 200
-                    cuerpo = respuesta.json()
-                    # y = 2.3 * 2.0 + 1.7 = 6.3
-                    assert abs(cuerpo["y_hat"] - 6.3) < 1e-9
-                    assert cuerpo["extrapolado"] is False
-                    assert cuerpo["version_modelo"] == "0.1.0"
+def test_health_devuelve_200():
+    respuesta = cliente.get("/health")
+    assert respuesta.status_code == 200
+    assert respuesta.json() == {"status": "ok"}
 
 
-                def test_prediccion_marca_extrapolacion():
-                    respuesta = cliente.post("/predicciones", json={"x": 50.0})
-                    assert respuesta.status_code == 200
-                    assert respuesta.json()["extrapolado"] is True
+def test_prediccion_consistente_con_los_coeficientes():
+    respuesta = cliente.post("/predicciones", json={"x": 2.0})
+    assert respuesta.status_code == 200
+    cuerpo = respuesta.json()
+    # y = 2.3 * 2.0 + 1.7 = 6.3
+    assert abs(cuerpo["y_hat"] - 6.3) < 1e-9
+    assert cuerpo["extrapolado"] is False
+    assert cuerpo["version_modelo"] == "0.1.0"
 
 
-                def test_x_fuera_de_rango_devuelve_422():
-                    respuesta = cliente.post("/predicciones", json={"x": 5000.0})
-                    assert respuesta.status_code == 422`} />
+def test_prediccion_marca_extrapolacion():
+    respuesta = cliente.post("/predicciones", json={"x": 50.0})
+    assert respuesta.status_code == 200
+    assert respuesta.json()["extrapolado"] is True
+
+
+def test_x_fuera_de_rango_devuelve_422():
+    respuesta = cliente.post("/predicciones", json={"x": 5000.0})
+    assert respuesta.status_code == 422`} />
 
                                         <Box type="tip" label="Dependencias de desarrollo aparte">
 
@@ -3670,9 +3671,9 @@
                                         <h3>9.7 Dependencias (<code>requirements.txt</code>)</h3>
 
                                         <CodeBlock title="requirements.txt" lang="text" code={`# requirements.txt — versiones fijadas para reproducibilidad
-                fastapi==0.111.0
-                uvicorn[standard]==0.30.1
-                pydantic==2.7.4`} />
+fastapi==0.111.0
+uvicorn[standard]==0.30.1
+pydantic==2.7.4`} />
 
                                         <p>Las versiones se fijan con <code>==</code> y no con <code>&gt;=</code>, en
                                             coherencia con la Semana 10. Así, dos construcciones separadas por meses
@@ -3681,25 +3682,25 @@
                                         <h3>9.8 <code>.dockerignore</code> del proyecto</h3>
 
                                         <CodeBlock title=".dockerignore" lang="text" code={`# .dockerignore
-                .git
-                .gitignore
-                .venv
-                venv
-                __pycache__
-                *.pyc
-                .pytest_cache
-                .mypy_cache
-                .ruff_cache
-                .env
-                .env.*
-                tests/
-                notebooks/
-                docs/
-                README.md
-                .idea/
-                .vscode/
-                Dockerfile
-                .dockerignore`} />
+.git
+.gitignore
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.env
+.env.*
+tests/
+notebooks/
+docs/
+README.md
+.idea/
+.vscode/
+Dockerfile
+.dockerignore`} />
 
                                         <p>Las pruebas se excluyen del contexto de la imagen final: se ejecutan en una etapa
                                             separada del pipeline (o en una etapa <em>tester</em> intermedia, si se desea
@@ -3717,100 +3718,100 @@
                                         <h3>9.9 Dockerfile final (multi-stage)</h3>
 
                                         <CodeBlock title="Dockerfile" lang="dockerfile" code={`# Dockerfile
-                # syntax=docker/dockerfile:1.7
+# syntax=docker/dockerfile:1.7
 
-                # ============================================================
-                # Etapa 1 — builder: prepara un entorno virtual con dependencias
-                # ============================================================
-                FROM python:3.11.9-slim-bookworm AS builder
+# ============================================================
+# Etapa 1 — builder: prepara un entorno virtual con dependencias
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS builder
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1 \\
-                    PIP_NO_CACHE_DIR=1 \\
-                    PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PIP_NO_CACHE_DIR=1 \\
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-                # Dependencias de compilación: necesarias sólo si una wheel debe
-                # compilarse desde fuente. Se descartan junto con esta etapa.
-                RUN apt-get update \\
-                 && apt-get install -y --no-install-recommends build-essential \\
-                 && rm -rf /var/lib/apt/lists/*
+# Dependencias de compilación: necesarias sólo si una wheel debe
+# compilarse desde fuente. Se descartan junto con esta etapa.
+RUN apt-get update \\
+ && apt-get install -y --no-install-recommends build-essential \\
+ && rm -rf /var/lib/apt/lists/*
 
-                # Entorno virtual aislado en /opt/venv. Se eligió esta ruta porque
-                # es portable a la etapa runtime con un único COPY.
-                RUN python -m venv /opt/venv
-                ENV PATH="/opt/venv/bin:$PATH"
+# Entorno virtual aislado en /opt/venv. Se eligió esta ruta porque
+# es portable a la etapa runtime con un único COPY.
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-                WORKDIR /build
+WORKDIR /build
 
-                # 1) Sólo el archivo de dependencias para maximizar el caché de capas.
-                COPY requirements.txt .
-                RUN pip install --upgrade pip \\
-                 && pip install -r requirements.txt
+# 1) Sólo el archivo de dependencias para maximizar el caché de capas.
+COPY requirements.txt .
+RUN pip install --upgrade pip \\
+ && pip install -r requirements.txt
 
-                # ============================================================
-                # Etapa 2 — runtime: imagen final, sólo lo necesario para ejecutar
-                # ============================================================
-                FROM python:3.11.9-slim-bookworm AS runtime
+# ============================================================
+# Etapa 2 — runtime: imagen final, sólo lo necesario para ejecutar
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS runtime
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1 \\
-                    PATH="/opt/venv/bin:$PATH"
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PATH="/opt/venv/bin:$PATH"
 
-                # Usuario y grupo del sistema para ejecutar la aplicación sin privilegios.
-                RUN groupadd --system --gid 1001 appgroup \\
-                 && useradd  --system --uid 1001 --gid appgroup --create-home appuser
+# Usuario y grupo del sistema para ejecutar la aplicación sin privilegios.
+RUN groupadd --system --gid 1001 appgroup \\
+ && useradd  --system --uid 1001 --gid appgroup --create-home appuser
 
-                WORKDIR /app
+WORKDIR /app
 
-                # Entorno virtual completo, traído del builder.
-                COPY --from=builder /opt/venv /opt/venv
+# Entorno virtual completo, traído del builder.
+COPY --from=builder /opt/venv /opt/venv
 
-                # Código de la aplicación, propietario asignado al usuario no-root.
-                COPY --chown=appuser:appgroup app/ ./app/
+# Código de la aplicación, propietario asignado al usuario no-root.
+COPY --chown=appuser:appgroup app/ ./app/
 
-                USER appuser
+USER appuser
 
-                EXPOSE 8000
+EXPOSE 8000
 
-                # Sondeo de salud: el orquestador interroga el endpoint /health.
-                HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \\
-                    CMD python -c "import urllib.request, sys; \\
-                    sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health').status == 200 else sys.exit(1)"
+# Sondeo de salud: el orquestador interroga el endpoint /health.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \\
+    CMD python -c "import urllib.request, sys; \\
+    sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health').status == 200 else sys.exit(1)"
 
-                CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
 
                                         <h3>9.10 Construcción y ejecución</h3>
 
                                         <CodeBlock lang="shell" code={`$ cd regresion-api
 
-                # Construye la imagen y la etiqueta con la versión semántica.
-                $ docker build -t regresion-api:0.1.0 .
+# Construye la imagen y la etiqueta con la versión semántica.
+$ docker build -t regresion-api:0.1.0 .
 
-                # Lanza un contenedor en primer plano y publica el puerto 8000.
-                $ docker run --rm -p 8000:8000 --name regresion regresion-api:0.1.0
+# Lanza un contenedor en primer plano y publica el puerto 8000.
+$ docker run --rm -p 8000:8000 --name regresion regresion-api:0.1.0
 
-                # Desde otra terminal: comprueba el endpoint de salud.
-                $ curl -s http://localhost:8000/health
-                {"status":"ok"}
+# Desde otra terminal: comprueba el endpoint de salud.
+$ curl -s http://localhost:8000/health
+{"status":"ok"}
 
-                # Solicita una predicción.
-                $ curl -s -X POST http://localhost:8000/predicciones \\
-                       -H 'Content-Type: application/json' \\
-                       -d '{"x": 2.0}'
-                {"y_hat":6.3,"extrapolado":false,"version_modelo":"0.1.0"}
+# Solicita una predicción.
+$ curl -s -X POST http://localhost:8000/predicciones \\
+       -H 'Content-Type: application/json' \\
+       -d '{"x": 2.0}'
+{"y_hat":6.3,"extrapolado":false,"version_modelo":"0.1.0"}
 
-                # Solicita la documentación interactiva (Swagger UI).
-                $ open http://localhost:8000/docs`} />
+# Solicita la documentación interactiva (Swagger UI).
+$ open http://localhost:8000/docs`} />
 
                                         <Box type="info" label="Verificación">
 
                                             Para comprobar que la imagen se ejecuta como usuario no privilegiado, basta con
                                             inspeccionar el contenedor en marcha:
                                             <CodeBlock lang="shell" code={`$ docker exec regresion id
-                uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)`} />
+uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)`} />
                                             Y medir el tamaño efectivo:
                                             <CodeBlock lang="shell" code={`$ docker images regresion-api:0.1.0 --format "{{.Size}}"
-                187MB`} />
+187MB`} />
                                         </Box>
 
                                         <h3>9.11 Recapitulación de decisiones</h3>
@@ -3897,21 +3898,21 @@
                                             de la carpeta <code>app/</code>. Identifíquese el problema y propóngase una
                                             corrección:
                                             <CodeBlock lang="dockerfile" code={`FROM python:3.11.9-slim-bookworm
-                WORKDIR /app
-                COPY . .
-                RUN pip install --no-cache-dir -r requirements.txt
-                CMD ["uvicorn", "app.main:app"]`} />
+WORKDIR /app
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["uvicorn", "app.main:app"]`} />
                                         </Box>
 
                                         <Accordion items={[{ titulo: 'Solución comentada 10.3', contenido: (<>El problema es que <code>COPY . .</code> incluye el código fuente; cualquier
                                             cambio en <code>app/</code> invalida la capa siguiente y obliga a reinstalar
                                             todas las dependencias. La corrección consiste en separar la copia de <code>requirements.txt</code> de la del código:
                                             <CodeBlock lang="dockerfile" code={`FROM python:3.11.9-slim-bookworm
-                WORKDIR /app
-                COPY requirements.txt .
-                RUN pip install --no-cache-dir -r requirements.txt
-                COPY app/ ./app/
-                CMD ["uvicorn", "app.main:app"]`} />
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+CMD ["uvicorn", "app.main:app"]`} />
                                             Mientras <code>requirements.txt</code> no cambie, la capa de instalación se
                                             reutiliza y la reconstrucción tarda segundos en lugar de minutos.</>) }]} />
 
@@ -3980,27 +3981,27 @@
                                         </Box>
 
                                         <Accordion items={[{ titulo: 'Solución comentada 10.7', contenido: (<><CodeBlock title="Dockerfile" lang="dockerfile" code={`# Dockerfile mono-etapa, didáctico
-                FROM python:3.11.9-slim-bookworm
+FROM python:3.11.9-slim-bookworm
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1
 
-                # Usuario no privilegiado.
-                RUN groupadd --system --gid 1001 appgroup \\
-                 && useradd  --system --uid 1001 --gid appgroup --create-home appuser
+# Usuario no privilegiado.
+RUN groupadd --system --gid 1001 appgroup \\
+ && useradd  --system --uid 1001 --gid appgroup --create-home appuser
 
-                WORKDIR /app
+WORKDIR /app
 
-                # Dependencias primero para preservar el caché.
-                COPY requirements.txt .
-                RUN pip install --no-cache-dir -r requirements.txt
+# Dependencias primero para preservar el caché.
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-                # Código después; cambios aquí no reinstalan paquetes.
-                COPY --chown=appuser:appgroup app/ ./app/
+# Código después; cambios aquí no reinstalan paquetes.
+COPY --chown=appuser:appgroup app/ ./app/
 
-                USER appuser
-                EXPOSE 8000
-                CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
+USER appuser
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
                                             El orden <em>requirements.txt → pip install → código</em> garantiza que la capa
                                             de dependencias se reutilice mientras el archivo de dependencias no cambie. La
                                             instrucción <code>USER appuser</code> aplica el principio de menor privilegio.</>) }]} />
@@ -4015,28 +4016,28 @@
 
                                         <Accordion items={[{ titulo: 'Solución comentada 10.8', contenido: (<><CodeBlock lang="dockerfile" code={`# syntax=docker/dockerfile:1.7
 
-                # --- builder ---
-                FROM python:3.11.9-slim-bookworm AS builder
-                ENV PIP_NO_CACHE_DIR=1
-                RUN python -m venv /opt/venv
-                ENV PATH="/opt/venv/bin:$PATH"
-                WORKDIR /build
-                COPY requirements.txt .
-                RUN pip install --upgrade pip && pip install -r requirements.txt
+# --- builder ---
+FROM python:3.11.9-slim-bookworm AS builder
+ENV PIP_NO_CACHE_DIR=1
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-                # --- runtime ---
-                FROM python:3.11.9-slim-bookworm AS runtime
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1 \\
-                    PATH="/opt/venv/bin:$PATH"
-                RUN groupadd --system --gid 1001 appgroup \\
-                 && useradd  --system --uid 1001 --gid appgroup --create-home appuser
-                WORKDIR /app
-                COPY --from=builder /opt/venv /opt/venv
-                COPY --chown=appuser:appgroup app/ ./app/
-                USER appuser
-                EXPOSE 8000
-                CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
+# --- runtime ---
+FROM python:3.11.9-slim-bookworm AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PATH="/opt/venv/bin:$PATH"
+RUN groupadd --system --gid 1001 appgroup \\
+ && useradd  --system --uid 1001 --gid appgroup --create-home appuser
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+COPY --chown=appuser:appgroup app/ ./app/
+USER appuser
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
                                             La imagen final se reduce porque no contiene los archivos auxiliares de <code>pip</code> ni los <em>caches</em> intermedios; sólo el entorno virtual y
                                             el código. El patrón es idéntico al del ejemplo integrador y resulta directamente
                                             transferible a otras APIs estadísticas.</>) }]} />
@@ -4246,7 +4247,7 @@
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

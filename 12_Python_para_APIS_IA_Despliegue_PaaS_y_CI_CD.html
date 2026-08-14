@@ -2183,6 +2183,7 @@
             ra: "Publicar la API containerizada en internet y automatizar su verificación en cada cambio.",
             contenidoSyllabus: "El concepto de plataforma como servicio. Variables de entorno en producción frente a desarrollo. Integración continua con GitHub Actions. Lectura de logs.",
             temas: ["Render", "GitHub Actions", "Variables de entorno", "Logs"],
+            stack: "Render · GitHub Actions · Docker",
             storageKey: "usta_2026i_apis_cap12",
         };
 
@@ -2901,32 +2902,32 @@
                                     sistema de tipos como fuente de verdad:</p>
 
                 <CodeBlock title="app/config.py" lang="python" code={`# app/config.py
-                from functools import lru_cache
-                from pydantic import Field
-                from pydantic_settings import BaseSettings, SettingsConfigDict
+from functools import lru_cache
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-                class Configuracion(BaseSettings):
-                    model_config = SettingsConfigDict(
-                        env_file=".env",
-                        env_prefix="APP_",
-                        extra="ignore",
-                    )
+class Configuracion(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_prefix="APP_",
+        extra="ignore",
+    )
 
-                    # Generales
-                    entorno: str = Field(default="development")        # development | production
-                    debug: bool = Field(default=True)
-                    log_level: str = Field(default="INFO")
+    # Generales
+    entorno: str = Field(default="development")        # development | production
+    debug: bool = Field(default=True)
+    log_level: str = Field(default="INFO")
 
-                    # Persistencia
-                    bd_url: str = Field(default="sqlite:///./encuestas.db")
+    # Persistencia
+    bd_url: str = Field(default="sqlite:///./encuestas.db")
 
-                    # Numéricos del dominio estadístico
-                    seed: int = Field(default=2026, ge=0)
-                    nivel_confianza: float = Field(default=0.95, gt=0.5, lt=1.0)
+    # Numéricos del dominio estadístico
+    seed: int = Field(default=2026, ge=0)
+    nivel_confianza: float = Field(default=0.95, gt=0.5, lt=1.0)
 
-                @lru_cache
-                def obtener_config() -> Configuracion:
-                    return Configuracion()`} />
+@lru_cache
+def obtener_config() -> Configuracion:
+    return Configuracion()`} />
 
                                 <p>El estudiante reconocerá el patrón: <code>obtener_config</code> se inyecta con <code>Depends</code> en cualquier endpoint y la cache asegura que la lectura ocurre una
                                     sola vez por proceso.</p>
@@ -2937,22 +2938,22 @@
                                     variables y valores ficticios. La estructura típica es:</p>
 
                 <CodeBlock title=".env.example" lang="text" code={`# .env.example  (versionado, sin valores reales)
-                APP_ENTORNO=development
-                APP_DEBUG=true
-                APP_LOG_LEVEL=INFO
-                APP_BD_URL=sqlite:///./encuestas.db
-                APP_SEED=2026
-                APP_NIVEL_CONFIANZA=0.95`} />
+APP_ENTORNO=development
+APP_DEBUG=true
+APP_LOG_LEVEL=INFO
+APP_BD_URL=sqlite:///./encuestas.db
+APP_SEED=2026
+APP_NIVEL_CONFIANZA=0.95`} />
 
                                 <p>El <code>.gitignore</code> debe contener al menos:</p>
 
                 <CodeBlock lang="text" code={`# .gitignore
-                .env
-                .env.*.local
-                __pycache__/
-                *.pyc
-                .venv/
-                encuestas.db`} />
+.env
+.env.*.local
+__pycache__/
+*.pyc
+.venv/
+encuestas.db`} />
 
                                 <Box type="warn" label="Errores frecuentes">
 
@@ -2967,18 +2968,18 @@
                                     típica luce así:</p>
 
                 <CodeBlock lang="shell" code={`# Variables configuradas en el panel del PaaS (no en el repositorio)
-                APP_ENTORNO=production
-                APP_DEBUG=false
-                APP_LOG_LEVEL=INFO
-                APP_BD_URL=postgresql+psycopg://usuario:secreto@host:5432/encuestas
-                APP_SEED=2026
-                APP_NIVEL_CONFIANZA=0.95
-                # PORT lo inyecta automáticamente el proveedor; no debe definirse a mano`} />
+APP_ENTORNO=production
+APP_DEBUG=false
+APP_LOG_LEVEL=INFO
+APP_BD_URL=postgresql+psycopg://usuario:secreto@host:5432/encuestas
+APP_SEED=2026
+APP_NIVEL_CONFIANZA=0.95
+# PORT lo inyecta automáticamente el proveedor; no debe definirse a mano`} />
 
                                 <p>Cuando se aprovisiona una base de datos PostgreSQL gestionada (un servicio de base de datos de Render), el proveedor expone una variable como <code>DATABASE_URL</code> que puede referenciarse desde la configuración:</p>
 
                 <CodeBlock lang="text" code={`# Render permite referenciar variables de otros servicios:
-                APP_BD_URL=\${{Postgres.DATABASE_URL}}`} />  /* TODO revisar lang */
+APP_BD_URL=\${{Postgres.DATABASE_URL}}`} />  /* TODO revisar lang */
 
                                 <h3>3.5 El puerto en producción: <code>$PORT</code></h3>
                                 <p>Una diferencia operativa importante: el PaaS decide en qué puerto el contenedor debe
@@ -2986,7 +2987,7 @@
                                     arranque debe usar esa variable, no un número fijo. Para Uvicorn:</p>
 
                 <CodeBlock lang="dockerfile" code={`# Comando de arranque dentro del Dockerfile
-                CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port \${PORT:-8000}"]`} />
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port \${PORT:-8000}"]`} />
 
                                 <p>La sintaxis <code>$&#123;PORT:-8000&#125;</code> es la expansión POSIX habitual: si <code>PORT</code> no está definida, se usa <code>8000</code>. Esto mantiene compatibilidad con <code>docker run -p 8000:8000</code> en local y con la inyección del proveedor en
                                     producción.</p>
@@ -3065,39 +3066,39 @@
                                 <p>Para la API <code>encuestas-api</code>, un workflow mínimo que ejecuta <code>pytest</code> en cada <em>push</em> y cada <em>pull request</em> hacia <code>main</code> tiene esta forma:</p>
 
                 <CodeBlock title=".github/workflows/ci.yml" lang="yaml" code={`# .github/workflows/ci.yml
-                name: CI - tests
+name: CI - tests
 
-                on:
-                  push:
-                    branches: [main]
-                  pull_request:
-                    branches: [main]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-                jobs:
-                  tests:
-                    runs-on: ubuntu-latest
-                    steps:
-                      - name: Clonar repositorio
-                        uses: actions/checkout@v4
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v4
 
-                      - name: Configurar Python 3.11.9
-                        uses: actions/setup-python@v5
-                        with:
-                          python-version: "3.11.9"
-                          cache: "pip"
+      - name: Configurar Python 3.11.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+          cache: "pip"
 
-                      - name: Instalar dependencias
-                        run: |
-                          python -m pip install --upgrade pip
-                          pip install -r requirements.txt
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-                      - name: Ejecutar suite con pytest
-                        env:
-                          APP_ENTORNO: test
-                          APP_DEBUG: "false"
-                          APP_LOG_LEVEL: WARNING
-                          APP_BD_URL: sqlite:///./test.db
-                        run: pytest -ra --maxfail=1`} />
+      - name: Ejecutar suite con pytest
+        env:
+          APP_ENTORNO: test
+          APP_DEBUG: "false"
+          APP_LOG_LEVEL: WARNING
+          APP_BD_URL: sqlite:///./test.db
+        run: pytest -ra --maxfail=1`} />
 
                                 <h4>Lectura del workflow paso a paso</h4>
                                 <ol>
@@ -3152,14 +3153,14 @@
                                     workflow:</p>
 
                 <CodeBlock lang="yaml" code={`      - name: Lint con ruff
-                        run: |
-                          pip install ruff==0.5.0
-                          ruff check app tests
+        run: |
+          pip install ruff==0.5.0
+          ruff check app tests
 
-                      - name: Cobertura mínima del 85 %
-                        run: |
-                          pip install pytest-cov==5.0.0
-                          pytest --cov=app --cov-report=term-missing --cov-fail-under=85`} />
+      - name: Cobertura mínima del 85 %
+        run: |
+          pip install pytest-cov==5.0.0
+          pytest --cov=app --cov-report=term-missing --cov-fail-under=85`} />
 
                                 <p>El parámetro <code>--cov-fail-under=85</code> hace fallar el workflow si la cobertura
                                     cae por debajo del umbral, materializando una política objetiva sobre el repositorio.</p>
@@ -3232,64 +3233,64 @@
                                 </ul>
 
                 <CodeBlock title="app/logs.py" lang="python" code={`# app/logs.py
-                import logging
-                import sys
-                from app.config import obtener_config
+import logging
+import sys
+from app.config import obtener_config
 
-                def configurar_logging() -> None:
-                    config = obtener_config()
-                    nivel = getattr(logging, config.log_level.upper(), logging.INFO)
+def configurar_logging() -> None:
+    config = obtener_config()
+    nivel = getattr(logging, config.log_level.upper(), logging.INFO)
 
-                    formato = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
-                    fecha = "%Y-%m-%dT%H:%M:%S%z"
+    formato = "%(asctime)s | %(levelname)-8s | %(name)s | %(message)s"
+    fecha = "%Y-%m-%dT%H:%M:%S%z"
 
-                    handler = logging.StreamHandler(sys.stdout)
-                    handler.setFormatter(logging.Formatter(formato, datefmt=fecha))
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter(formato, datefmt=fecha))
 
-                    root = logging.getLogger()
-                    root.setLevel(nivel)
-                    root.handlers = [handler]
-                    # Acalla el ruido de Uvicorn por debajo de WARNING en producción
-                    logging.getLogger("uvicorn.access").setLevel(
-                        logging.WARNING if config.entorno == "production" else logging.INFO
-                    )`} />
+    root = logging.getLogger()
+    root.setLevel(nivel)
+    root.handlers = [handler]
+    # Acalla el ruido de Uvicorn por debajo de WARNING en producción
+    logging.getLogger("uvicorn.access").setLevel(
+        logging.WARNING if config.entorno == "production" else logging.INFO
+    )`} />
 
                                 <p>Y en el módulo principal de la aplicación se invoca antes de instanciar FastAPI:</p>
 
                 <CodeBlock title="app/main.py" lang="python" code={`# app/main.py
-                from fastapi import FastAPI
-                from app.logs import configurar_logging
+from fastapi import FastAPI
+from app.logs import configurar_logging
 
-                configurar_logging()
-                app = FastAPI(title="encuestas-api", version="0.5.0")`} />
+configurar_logging()
+app = FastAPI(title="encuestas-api", version="0.5.0")`} />
 
                                 <h3>5.4 Emisión de logs desde un endpoint</h3>
                                 <p>El logger se obtiene por nombre de módulo (<code>__name__</code>) y se emiten mensajes
                                     con el nivel correspondiente. Es importante <em>no concatenar</em> strings: se usa el <em>lazy formatting</em> de <code>%</code>, que solo formatea si el log se emite:</p>
 
                 <CodeBlock title="app/api/regresion.py" lang="python" code={`# app/api/regresion.py
-                import logging
-                from fastapi import APIRouter, HTTPException
-                from app.schemas import RegresionInput  # modelo Pydantic con campos x, y
+import logging
+from fastapi import APIRouter, HTTPException
+from app.schemas import RegresionInput  # modelo Pydantic con campos x, y
 
-                logger = logging.getLogger(__name__)
-                router = APIRouter()
+logger = logging.getLogger(__name__)
+router = APIRouter()
 
-                @router.post("/modelos/regresion")
-                def ajustar(payload: RegresionInput):
-                    logger.info("Ajuste solicitado: n=%d", len(payload.x))
+@router.post("/modelos/regresion")
+def ajustar(payload: RegresionInput):
+    logger.info("Ajuste solicitado: n=%d", len(payload.x))
 
-                    try:
-                        resultado = ajuste_ols(payload.x, payload.y)
-                    except ValueError as e:
-                        logger.warning("Datos inadecuados: %s", e)
-                        raise HTTPException(status_code=422, detail=str(e))
-                    except Exception:
-                        logger.exception("Fallo inesperado en ajuste")
-                        raise HTTPException(status_code=500, detail="Error interno")
+    try:
+        resultado = ajuste_ols(payload.x, payload.y)
+    except ValueError as e:
+        logger.warning("Datos inadecuados: %s", e)
+        raise HTTPException(status_code=422, detail=str(e))
+    except Exception:
+        logger.exception("Fallo inesperado en ajuste")
+        raise HTTPException(status_code=500, detail="Error interno")
 
-                    logger.info("Ajuste OK: R2=%.4f", resultado.r2)
-                    return resultado`} />
+    logger.info("Ajuste OK: R2=%.4f", resultado.r2)
+    return resultado`} />
 
                                 <p>El método <code>logger.exception</code> registra el mensaje y, automáticamente, la traza
                                     completa de la excepción en curso. Es la forma correcta de capturar fallas inesperadas
@@ -3321,8 +3322,8 @@
                                     Esto permite filtrar por campos sin recurrir a expresiones regulares:</p>
 
                 <CodeBlock lang="json" code={`# Log estructurado, una línea por evento
-                {"ts": "2026-04-30T14:22:42Z", "level": "INFO", "logger": "app.api.regresion",
-                 "event": "ajuste_ok", "n": 128, "r2": 0.8731, "duracion_ms": 42}`} />
+{"ts": "2026-04-30T14:22:42Z", "level": "INFO", "logger": "app.api.regresion",
+ "event": "ajuste_ok", "n": 128, "r2": 0.8731, "duracion_ms": 42}`} />
 
                                 <p>Bibliotecas como <code>structlog</code> o <code>python-json-logger</code> simplifican
                                     esa salida. Para el alcance de este curso es suficiente con el formateador de texto
@@ -3379,36 +3380,36 @@
                                 <p>Una versión productiva completa, compatible con ambos proveedores, es:</p>
 
                 <CodeBlock lang="dockerfile" code={`# ============================ Etapa de construcción
-                FROM python:3.11.9-slim-bookworm AS builder
+FROM python:3.11.9-slim-bookworm AS builder
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1 \\
-                    PIP_NO_CACHE_DIR=1 \\
-                    PIP_DISABLE_PIP_VERSION_CHECK=1
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1 \\
+    PIP_NO_CACHE_DIR=1 \\
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-                WORKDIR /build
+WORKDIR /build
 
-                COPY requirements.txt .
-                RUN pip install --prefix=/install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --prefix=/install -r requirements.txt
 
-                # ============================ Etapa final
-                FROM python:3.11.9-slim-bookworm
+# ============================ Etapa final
+FROM python:3.11.9-slim-bookworm
 
-                ENV PYTHONDONTWRITEBYTECODE=1 \\
-                    PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1 \\
+    PYTHONUNBUFFERED=1
 
-                # Usuario sin privilegios
-                RUN useradd --create-home --uid 1000 api
-                USER api
+# Usuario sin privilegios
+RUN useradd --create-home --uid 1000 api
+USER api
 
-                WORKDIR /app
+WORKDIR /app
 
-                COPY --from=builder /install /usr/local
-                COPY --chown=api:api app ./app
+COPY --from=builder /install /usr/local
+COPY --chown=api:api app ./app
 
-                # El proveedor inyecta PORT; en local cae a 8000
-                EXPOSE 8000
-                CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port \${PORT:-8000}"]`} />
+# El proveedor inyecta PORT; en local cae a 8000
+EXPOSE 8000
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port \${PORT:-8000}"]`} />
 
                                 <Box type="info" label="Por qué PYTHONUNBUFFERED=1">
 
@@ -3455,13 +3456,13 @@
                                     contenedor está sano. En FastAPI se añade fácilmente:</p>
 
                 <CodeBlock title="app/api/salud.py" lang="python" code={`# app/api/salud.py
-                from fastapi import APIRouter
+from fastapi import APIRouter
 
-                router = APIRouter()
+router = APIRouter()
 
-                @router.get("/healthz")
-                def salud():
-                    return {"status": "ok"}`} />
+@router.get("/healthz")
+def salud():
+    return {"status": "ok"}`} />
 
                                 <p>En Render no es obligatorio definirlo (la simple aceptación de conexiones TCP basta).
                                     En Render se configura en <em>Settings ▸ Health Check Path = /healthz</em>. El nombre <code>/healthz</code> es una convención de Kubernetes adoptada por la comunidad: la <code>z</code> al final reduce la probabilidad de colisión con un endpoint de negocio.</p>
@@ -3525,25 +3526,25 @@
                                 <details>
                                     <summary>Solución 7.2</summary>
                 <CodeBlock title="app/config.py" lang="python" code={`# app/config.py (fragmento)
-                from pydantic import field_validator
+from pydantic import field_validator
 
-                class Configuracion(BaseSettings):
-                    cors_origins: list[str] = Field(default_factory=list)
+class Configuracion(BaseSettings):
+    cors_origins: list[str] = Field(default_factory=list)
 
-                    @field_validator("cors_origins", mode="before")
-                    @classmethod
-                    def parsear_csv(cls, v):
-                        if isinstance(v, str):
-                            return [s.strip() for s in v.split(",") if s.strip()]
-                        return v`} />
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parsear_csv(cls, v):
+        if isinstance(v, str):
+            return [s.strip() for s in v.split(",") if s.strip()]
+        return v`} />
                 <CodeBlock title="tests/test_config.py" lang="python" code={`# tests/test_config.py
-                from app.config import obtener_config
+from app.config import obtener_config
 
-                def test_cors_origins_se_parsea_de_csv(monkeypatch):
-                    monkeypatch.setenv("APP_CORS_ORIGINS", "https://a.uni.edu,https://b.uni.edu")
-                    obtener_config.cache_clear()  # Forzar relectura
-                    cfg = obtener_config()
-                    assert cfg.cors_origins == ["https://a.uni.edu", "https://b.uni.edu"]`} />
+def test_cors_origins_se_parsea_de_csv(monkeypatch):
+    monkeypatch.setenv("APP_CORS_ORIGINS", "https://a.uni.edu,https://b.uni.edu")
+    obtener_config.cache_clear()  # Forzar relectura
+    cfg = obtener_config()
+    assert cfg.cors_origins == ["https://a.uni.edu", "https://b.uni.edu"]`} />
                                 </details>
 
                                 <Box type="info" label="Ejercicio 7.3 — Workflow de CI">
@@ -3555,19 +3556,19 @@
                                 <details>
                                     <summary>Solución 7.3</summary>
                 <CodeBlock lang="yaml" code={`jobs:
-                  tests:
-                    runs-on: ubuntu-latest
-                    steps: # (igual que antes)
+  tests:
+    runs-on: ubuntu-latest
+    steps: # (igual que antes)
 
-                  lint:
-                    runs-on: ubuntu-latest
-                    steps:
-                      - uses: actions/checkout@v4
-                      - uses: actions/setup-python@v5
-                        with:
-                          python-version: "3.11.9"
-                      - run: pip install ruff==0.5.0
-                      - run: ruff check app tests`} />
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+      - run: pip install ruff==0.5.0
+      - run: ruff check app tests`} />
                                     <p>En <em>Settings ▸ Branches ▸ Branch protection rules</em> de GitHub se marcan <em>tests</em> y <em>lint</em> como <em>required status checks</em>. Sin ambos en
                                         verde, el botón de <em>merge</em> queda deshabilitado.</p>
                                 </details>
@@ -3578,11 +3579,11 @@
                                     (ii) cuál fue la causa probable del error 500, (iii) qué cambio mitigaría una repetición
                                     del incidente.
                 <CodeBlock lang="text" code={`2026-04-30T14:23:09+0000 | INFO    | app.api.regresion | Ajuste solicitado: n=3
-                2026-04-30T14:23:09+0000 | ERROR   | app.api.regresion | Fallo inesperado en ajuste
-                Traceback (most recent call last):
-                  File "/app/app/stats.py", line 47, in ajuste_ols
-                    XtX_inv = numpy.linalg.inv(XtX)
-                numpy.linalg.LinAlgError: Singular matrix`} />
+2026-04-30T14:23:09+0000 | ERROR   | app.api.regresion | Fallo inesperado en ajuste
+Traceback (most recent call last):
+  File "/app/app/stats.py", line 47, in ajuste_ols
+    XtX_inv = numpy.linalg.inv(XtX)
+numpy.linalg.LinAlgError: Singular matrix`} />
                                 </Box>
                                 <details>
                                     <summary>Solución 7.4</summary>
@@ -3604,11 +3605,11 @@
                                     Identifíquense los problemas en el siguiente <code>Dockerfile</code> en el contexto de
                                     un despliegue en Render, y propónganse correcciones:
                 <CodeBlock lang="dockerfile" code={`FROM python:3.11.9-slim-bookworm
-                ENV APP_BD_URL=postgresql://prod_user:s3cret@db:5432/encuestas
-                COPY . /app
-                WORKDIR /app
-                RUN pip install -r requirements.txt
-                CMD uvicorn app.main:app --host 127.0.0.1 --port 8000`} />
+ENV APP_BD_URL=postgresql://prod_user:s3cret@db:5432/encuestas
+COPY . /app
+WORKDIR /app
+RUN pip install -r requirements.txt
+CMD uvicorn app.main:app --host 127.0.0.1 --port 8000`} />
                                 </Box>
                                 <details>
                                     <summary>Solución 7.5</summary>
@@ -3635,18 +3636,18 @@
                                 <details>
                                     <summary>Solución 7.6</summary>
                 <CodeBlock lang="python" code={`from fastapi import APIRouter, Depends, HTTPException
-                from sqlalchemy import text
-                from app.db import obtener_sesion
+from sqlalchemy import text
+from app.db import obtener_sesion
 
-                router = APIRouter()
+router = APIRouter()
 
-                @router.get("/readyz")
-                def listo(sesion = Depends(obtener_sesion)):
-                    try:
-                        sesion.execute(text("SELECT 1"))
-                    except Exception:
-                        raise HTTPException(status_code=503, detail="BD no disponible")
-                    return {"status": "ready"}`} />
+@router.get("/readyz")
+def listo(sesion = Depends(obtener_sesion)):
+    try:
+        sesion.execute(text("SELECT 1"))
+    except Exception:
+        raise HTTPException(status_code=503, detail="BD no disponible")
+    return {"status": "ready"}`} />
                                     <p>Distinción clave: <code>/healthz</code> (<em>liveness</em>) responde mientras el
                                         proceso esté vivo y permite al PaaS decidir si reiniciar el contenedor; <code>/readyz</code> (<em>readiness</em>) responde sólo si el servicio está en
                                         condiciones de atender tráfico, lo cual incluye dependencias externas. Devolver <code>503</code> en <code>/readyz</code> permite al balanceador <em>retirar</em> la
@@ -3703,25 +3704,25 @@
 
                                 <h3>8.2 Comandos y rutas útiles</h3>
                 <CodeBlock lang="shell" code={`# Construir la imagen localmente con la misma base que en producción
-                docker build -t encuestas-api:local .
+docker build -t encuestas-api:local .
 
-                # Ejecutar el contenedor con variables productivas simuladas
-                docker run --rm -p 8000:8000 \\
-                  -e APP_ENTORNO=production \\
-                  -e APP_DEBUG=false \\
-                  -e APP_LOG_LEVEL=INFO \\
-                  -e APP_BD_URL=sqlite:///./encuestas.db \\
-                  -e PORT=8000 \\
-                  encuestas-api:local
+# Ejecutar el contenedor con variables productivas simuladas
+docker run --rm -p 8000:8000 \\
+  -e APP_ENTORNO=production \\
+  -e APP_DEBUG=false \\
+  -e APP_LOG_LEVEL=INFO \\
+  -e APP_BD_URL=sqlite:///./encuestas.db \\
+  -e PORT=8000 \\
+  encuestas-api:local
 
-                # Probar el health check tras el despliegue
-                curl https://<dominio>/healthz
+# Probar el health check tras el despliegue
+curl https://<dominio>/healthz
 
-                # Disparar manualmente un workflow de Actions desde la línea de comando (con gh CLI)
-                gh workflow run ci.yml --ref main
+# Disparar manualmente un workflow de Actions desde la línea de comando (con gh CLI)
+gh workflow run ci.yml --ref main
 
-                # Listar variables configuradas en el repo (Actions secrets)
-                gh secret list`} />
+# Listar variables configuradas en el repo (Actions secrets)
+gh secret list`} />
 
                                 <h3>8.3 Referencias oficiales</h3>
                                 <ul>
@@ -3827,7 +3828,7 @@
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

@@ -22,6 +22,7 @@
       "Singleton",
       "Docker"
     ],
+    "stack": "Scikit-Learn · joblib · Docker",
     "storageKey": "usta_2026i_apis_cap13"
   },
   "secciones": [

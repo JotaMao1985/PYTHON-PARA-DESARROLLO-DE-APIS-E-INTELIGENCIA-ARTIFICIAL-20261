@@ -21,6 +21,7 @@
       "Routing",
       "FastAPI"
     ],
+    "stack": "WSGI · ASGI · HTTP",
     "storageKey": "usta_2026i_apis_cap05"
   },
   "secciones": [

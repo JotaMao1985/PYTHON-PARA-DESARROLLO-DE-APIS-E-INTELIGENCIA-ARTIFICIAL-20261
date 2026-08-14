@@ -2160,6 +2160,7 @@
             ra: "Exponer un modelo entrenado mediante un endpoint eficiente y con resultados consistentes con el entrenamiento.",
             contenidoSyllabus: "Ciclo de vida del modelo: entrenar, serializar, cargar, predecir. El patrón Singleton para no recargar el modelo en cada petición. Coste de las dependencias de ML sobre el tamaño de la imagen.",
             temas: ["scikit-learn", "joblib", "Singleton", "Docker"],
+            stack: "Scikit-Learn · joblib · Docker",
             storageKey: "usta_2026i_apis_cap13",
         };
 
@@ -4127,7 +4128,7 @@ document.getElementById("formulario").addEventListener("submit", async (evento) 
 
                         <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
                             <p>{CONFIG.ra} · {CONFIG.horas} horas</p>
-                            <p>Pseudocódigo · Python · R · VBA</p>
+                            <p>{CONFIG.stack}</p>
                         </div>
                     </aside>
 

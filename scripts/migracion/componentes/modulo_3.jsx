@@ -23,23 +23,29 @@
    en `localStorage`: sólo el modelo elegido.
 ============================================================ */
 
-/* Los modelos caducan. `gemini-2.0-flash` se apagó el 1 de junio de 2026 y los
-   `gemini-1.5-*` ya no existen para una clave nueva: pedirlos devuelve 404, así
-   que tres de las cuatro opciones que ofrecía esta lista estaban muertas.
-   Se revisa contra ai.google.dev/gemini-api/docs/deprecations cada semestre.
+/* Los modelos caducan, y ésa fue la avería: `gemini-2.0-flash` se apagó el 1 de
+   junio de 2026 y los `gemini-1.5-*` ya no existen, así que tres de las cuatro
+   opciones que ofrecía esta lista devolvían 404.
 
-   `pensamiento` es lo que hay que mandar en `generationConfig.thinkingConfig`
-   para que el modelo no gaste medio minuto razonando antes de escribir una
-   clase de veinte líneas. La forma NO es la misma en las dos familias —los 3.x
-   usan `thinkingLevel`, los 2.5 el `thinkingBudget` en tokens— y mandarle a un
-   modelo la llave de la otra familia es un 400. Por eso viaja junto al `id`,
-   y no como una constante suelta: es una propiedad del modelo, no de la app.
-   `gemini-2.5-pro` no puede apagar el pensamiento; se queda sin la clave. */
+   Los cuatro de abajo se probaron uno por uno contra la API el 13 de agosto de
+   2026 con una clave del plan gratuito, que es la que va a tener el estudiante.
+   No basta con que el modelo salga en el catálogo: `gemini-2.5-pro` y
+   `gemini-2.5-flash-lite` siguen listados y contestan «no longer available to
+   new users», y los `pro` de la familia 3 contestan 429 —el plan gratuito no
+   tiene cuota para ellos—. Por eso aquí no hay ninguna opción «pro»: sería
+   ofrecerle al curso un botón que no puede pulsar.
+   Antes de cada semestre: repetir la prueba, no mirar sólo la documentación.
+
+   `pensamiento` es lo que se manda en `generationConfig.thinkingConfig` para
+   que el modelo no gaste medio minuto razonando antes de escribir una clase de
+   veinte líneas. La forma NO es la misma en las dos familias —los 3.x usan
+   `thinkingLevel`, los 2.5 el `thinkingBudget` en tokens— y cruzarlas es un
+   400. Por eso viaja junto al `id`: es una propiedad del modelo, no de la app. */
 const MODELOS_GEMINI = [
     { id: 'gemini-3.6-flash', name: 'Gemini 3.6 Flash (recomendado)', pensamiento: { thinkingLevel: 'low' } },
+    { id: 'gemini-3.5-flash', name: 'Gemini 3.5 Flash (equilibrado)', pensamiento: { thinkingLevel: 'low' } },
     { id: 'gemini-3.5-flash-lite', name: 'Gemini 3.5 Flash-Lite (el más rápido)', pensamiento: { thinkingLevel: 'low' } },
-    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (estable)', pensamiento: { thinkingBudget: 0 } },
-    { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro (avanzado)' }
+    { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash (estable)', pensamiento: { thinkingBudget: 0 } }
 ];
 const MODELO_POR_DEFECTO = MODELOS_GEMINI[0].id;
 
