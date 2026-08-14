@@ -813,20 +813,22 @@ print(estudio2.confianza) # 0.95`,
         self.datos = datos
         self.mu = sum(datos) / len(datos)
 
+    def suma_de_cuadrados(self):
+        # Lo que las dos varianzas comparten, escrito UNA sola vez.
+        return sum((x - self.mu) ** 2 for x in self.datos)
+
     def varianza(self):
         raise NotImplementedError("Usar subclase")
 
 class Poblacion(EstadisticaBase):
     def varianza(self):
         # Divide por N
-        numerador = sum((x - self.mu) ** 2 for x in self.datos)
-        return numerador / len(self.datos)
+        return self.suma_de_cuadrados() / len(self.datos)
 
 class Muestra(EstadisticaBase):
     def varianza(self):
         # Divide por N - 1 (Corrección de Bessel)
-        numerador = sum((x - self.mu) ** 2 for x in self.datos)
-        return numerador / (len(self.datos) - 1)
+        return self.suma_de_cuadrados() / (len(self.datos) - 1)
 
 # Calificaciones de TODOS los estudiantes de un curso pequeño (población)
 calificaciones_curso = [85, 90, 78, 92, 88]
