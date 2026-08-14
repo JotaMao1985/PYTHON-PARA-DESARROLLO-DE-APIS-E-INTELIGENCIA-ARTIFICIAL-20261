@@ -430,6 +430,8 @@
         /* USTA Card Style */
         .usta-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
         .usta-card:hover { box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12); transform: translateY(-4px); }
+        /* Tip box USTA style */
+        .tip-box { background: linear-gradient(135deg, rgba(61, 0, 141, 0.08) 0%, rgba(237, 30, 121, 0.08) 100%); border: 1px solid rgba(61, 0, 141, 0.2); }
         /* === ESTILOS DEL MÓDULO FIN === */
 
     </style>
@@ -2658,10 +2660,10 @@ print(estudio2.confianza) # 0.95`} />
                                                 En nuestro caso, el método <code>.varianza()</code> existe en ambas clases hijas, pero cada una lo calcula distinto:
                                             </p>
                                             <div className="grid grid-cols-2 gap-3 text-sm mb-3">
-                                                <Box type="info">
+                                                <div className="tip-box rounded-lg p-3">
                                                     <div className="font-bold text-primary text-xs uppercase mb-1">Poblacion.varianza()</div>
                                                     <div>Divide por <strong>N</strong> (total de datos)</div>
-                                                </Box>
+                                                </div>
                                                 <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
                                                     <div className="font-bold text-secondary text-xs uppercase mb-1">Muestra.varianza()</div>
                                                     <div>Divide por <strong>N − 1</strong> (corrección de Bessel)</div>

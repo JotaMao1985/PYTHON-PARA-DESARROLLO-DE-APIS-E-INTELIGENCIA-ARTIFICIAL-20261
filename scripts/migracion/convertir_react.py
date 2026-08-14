@@ -219,6 +219,18 @@ def cuestionario(cuerpo, avisos):
     return ("\n\n".join(jsx) if jsx else None), titulo
 
 
+def div_que_envuelve(cuerpo, pos):
+    """La etiqueta `<div…>` abierta que contiene a `pos`, o None."""
+    pila = []
+    for m in re.finditer(r"<div\b[^>]*?(/?)>|</div>", cuerpo[:pos]):
+        if m.group(0) == "</div>":
+            if pila:
+                pila.pop()
+        elif not m.group(1):          # `<div … />` no abre nada
+            pila.append(m.group(0))
+    return pila[-1] if pila else None
+
+
 def convertir_cajas(cuerpo):
     """`div.tip-box` → `Box`, con el rótulo en negrita como etiqueta.
 
@@ -230,18 +242,33 @@ def convertir_cajas(cuerpo):
     sacarlo de su `<ul>` para meterlo en un `Box` rompería la lista. Ése se
     queda como está, y su CSS lo rescata `estilos.py`.
 
+    Y sólo fuera de una rejilla. `Box` es un aviso de ancho completo, con
+    `px-5 py-4` y `my-4`; de celda de un `grid` no sirve. En «Herencia y
+    polimorfismo» del módulo 3 el heredado comparaba `Poblacion.varianza()`
+    con `Muestra.varianza()` en dos tarjetas `p-3` gemelas —una teñida, la
+    otra blanca—, y convertir sólo la teñida las descabalaba: distinto
+    relleno, distinto borde y 32 px menos de alto, que son justo los márgenes
+    del `Box`. Dentro de una rejilla la caja se queda como está y su CSS lo
+    rescata `estilos.py`, igual que el `<li>` del módulo 4.
+
     La clase no tiene por qué ir primero. En los módulos 3, 4 y 6 siempre va,
     pero buscar `className="tip-box…` habría fallado en silencio el día que no
     —y una caja sin convertir no se nota: se ve igual, con el CSS heredado—.
     """
+    desde = 0
     while True:
-        m = re.search(r'<div\s[^>]*className="[^"]*\btip-box\b[^"]*"[^>]*>', cuerpo)
+        m = re.search(r'<div\s[^>]*className="[^"]*\btip-box\b[^"]*"[^>]*>', cuerpo[desde:])
         if not m:
             return cuerpo
-        fin = fin_elemento(cuerpo, m.start(), "div")
+        ini, tras_apertura = desde + m.start(), desde + m.end()
+        fin = fin_elemento(cuerpo, ini, "div")
         if not fin:
             return cuerpo
-        interior = cuerpo[m.end():fin - len("</div>")]
+        padre = div_que_envuelve(cuerpo, ini)
+        if padre and re.search(r'className="[^"]*\bgrid\b', padre):
+            desde = ini + 1
+            continue
+        interior = cuerpo[tras_apertura:fin - len("</div>")]
 
         rotulo = re.match(r'\s*<strong[^>]*>(.*?)</strong>', interior, re.S)
         etiqueta = (" ".join(texto_plano(rotulo.group(1)).split()).rstrip(":")
@@ -250,8 +277,11 @@ def convertir_cajas(cuerpo):
         if rotulo:
             interior = interior[rotulo.end():].lstrip()
         attr = f' label="{atributo(etiqueta)}"' if etiqueta else ""
-        cuerpo = (cuerpo[:m.start()] + f'<Box type="{tipo}"{attr}>' + interior
+        cuerpo = (cuerpo[:ini] + f'<Box type="{tipo}"{attr}>' + interior
                   + "</Box>" + cuerpo[fin:])
+        # `<Box` ya no casa con el patrón, así que basta con no volver atrás:
+        # avanzar es lo que garantiza que una caja saltada no se reexamine.
+        desde = ini + 1
 
 
 def seccion_jsx(entrada, avisos, quiz=None):

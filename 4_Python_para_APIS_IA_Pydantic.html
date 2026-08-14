@@ -2317,7 +2317,7 @@ print(data_dict)
                                             A veces, solo con el tipo de dato (<code>int</code>, <code>float</code>) no basta. La función <code>Field</code> te permite personalizar cada campo individualmente con dos propósitos principales:
                                         </p>
                                         <div className="grid md:grid-cols-2 gap-4">
-                                            <Box type="info">
+                                            <div className="tip-box p-4 rounded-lg">
                                                 <h4 className="font-bold text-primary mb-2">1. Restricciones de Validación</h4>
                                                 <p className="text-sm text-gray-700 mb-3">
                                                     En lugar de escribir funciones complejas, puedes usar argumentos como <code>gt</code> (mayor que), <code>lt</code> (menor que), <code>ge</code> (mayor o igual), <code>max_length</code>, etc.
@@ -2342,7 +2342,7 @@ print(data_dict)
                                                         <li><code>decimal_places</code> = decimales</li>
                                                     </ul>
                                                 </div>
-                                            </Box>
+                                            </div>
                                             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border border-emerald-200">
                                                 <h4 className="font-bold text-emerald-700 mb-2">2. Documentación (Metadatos)</h4>
                                                 <p className="text-sm text-emerald-900">
@@ -2597,12 +2597,12 @@ print(p1)
                                             Mientras que <code>Field</code> define <em>restricciones simples</em> (rangos, longitud), el decorador <code>@field_validator</code> es para <strong>lógica compleja y limpieza de datos</strong>.
                                         </p>
                                         <div className="grid md:grid-cols-2 gap-4">
-                                            <Box type="info">
+                                            <div className="tip-box p-4 rounded-lg">
                                                 <h4 className="font-bold text-primary mb-2"><i className="fas fa-broom mr-1"></i> Limpieza (mode='before')</h4>
                                                 <p className="text-sm text-gray-700">
                                                     Crucial en estadística. Permite recibir datos "sucios" (como formatos de fecha exóticos o decimales europeos) y transformarlos antes de que Pydantic lance un error de tipo.
                                                 </p>
-                                            </Box>
+                                            </div>
                                             <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
                                                 <h4 className="font-bold text-orange-700 mb-2"><i className="fas fa-clipboard-check mr-1"></i> Reglas de Negocio (mode='after')</h4>
                                                 <p className="text-sm text-orange-900">
