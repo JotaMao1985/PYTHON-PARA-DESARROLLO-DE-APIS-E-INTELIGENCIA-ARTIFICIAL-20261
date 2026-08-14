@@ -2248,101 +2248,101 @@
                 <table><thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th>Mejor para</th></tr></thead><tbody><tr><td>GET (Leer) 🔍</td><td><ul><li>Simple y rápido</li><li>Cacheable por el navegador</li><li>Se puede guardar en favoritos</li></ul></td><td><ul><li>No seguro para datos sensibles</li><li>Límite de longitud en URL</li><li>Solo envía texto</li></ul></td><td>Consultas de datos, Búsquedas, Filtros</td></tr><tr><td>POST (Escribir) 📝</td><td><ul><li>Seguro (datos en el cuerpo)</li><li>Sin límite de tamaño</li><li>Soporta binarios (archivos, imágenes)</li></ul></td><td><ul><li>No cacheable por defecto</li><li>Más complejo de construir manualmente</li></ul></td><td>Login, Subir archivos, Enviar formularios, Inferencia de modelos</td></tr></tbody></table>
 
                 <CodeBlock title="Cliente API Robusto (OOP + Session)" lang="python" code={`import requests
-                from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any
 
-                class APIClient:
-                    """
-                    Cliente profesional para interactuar con APIs.
-                    Encapsula la configuración (URL, Claves) para no repetirla.
-                    """
+class APIClient:
+    """
+    Cliente profesional para interactuar con APIs.
+    Encapsula la configuración (URL, Claves) para no repetirla.
+    """
+    
+    def __init__(self, base_url: str, api_key: str):
+        """
+        El CONSTRUCTOR: Se ejecuta automáticamente al crear la clase.
+        Aquí configuramos lo que el robot necesita 'recordar': la URL y la Llave.
+        """
+        self.base_url = base_url
+        
+        # Session: Un 'Túnel Permanente' (Conexión TCP) con el servidor.
+        # Mejora el rendimiento al no tener que reconectar en cada petición.
+        self.session = requests.Session()
+        
+        # Headers Globales: Se enviarán en TODAS las peticiones de esta sesión.
+        # Así no tenemos que escribir 'Authorization' en cada función.
+        self.session.headers.update({
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "MiAppDataScience/1.0"
+        })
 
-                    def __init__(self, base_url: str, api_key: str):
-                        """
-                        El CONSTRUCTOR: Se ejecuta automáticamente al crear la clase.
-                        Aquí configuramos lo que el robot necesita 'recordar': la URL y la Llave.
-                        """
-                        self.base_url = base_url
+    def get_data(self, endpoint: str, params: Optional[Dict] = None) -> Dict:
+        """
+        Método para LEER datos (Verbo HTTP: GET).
+        :param endpoint: La parte final de la URL (ej: 'usuarios/1')
+        :param params: Filtros opcionales (ej: {'page': 2})
+        """
+        try:
+            url = f"{self.base_url}/{endpoint}"
+            # Usamos self.session.get en lugar de requests.get
+            response = self.session.get(url, params=params, timeout=10)
+            
+            # ¡IMPORTANTE! Valida si el código es 200 OK.
+            # Si es 4xx o 5xx, lanza una excepción (salta al 'except').
+            response.raise_for_status() 
+            
+            return response.json() # Convierte el texto JSON a Diccionario Python
+            
+        except requests.exceptions.HTTPError as err:
+            # Manejo de errores específicos según el código de estado
+            if response.status_code == 401:
+                print("⛔ Error: Credenciales inválidas (Token vencido o incorrecto).")
+            elif response.status_code == 429:
+                print("⏳ Error: Rate Limit. Estás haciendo muchas peticiones muy rápido.")
+            else:
+                print(f"❌ Error HTTP Genérico: {err}")
+            return {}
+            
+        except Exception as e:
+            print(f"🔥 Error crítico (Red, Timeout, etc): {e}")
+            return {}
 
-                        # Session: Un 'Túnel Permanente' (Conexión TCP) con el servidor.
-                        # Mejora el rendimiento al no tener que reconectar en cada petición.
-                        self.session = requests.Session()
+    def predict(self, features: Dict[str, Any]) -> float:
+        """
+        Método para ENVIAR datos y recibir predicción (Verbo HTTP: POST).
+        :param features: Diccionario con los datos del modelo (ej: {'edad': 30})
+        """
+        try:
+            url = f"{self.base_url}/predict"
+            # 'json=features' convierte automáticamente el dict a JSON válido
+            response = self.session.post(url, json=features, timeout=5)
+            response.raise_for_status()
+            
+            # Asumimos que la API devuelve algo como: {"prediction": 4500.50}
+            return response.json().get('prediction', 0.0)
+            
+        except Exception as e:
+            print(f"❌ Error en predicción: {e}")
+            return 0.0
 
-                        # Headers Globales: Se enviarán en TODAS las peticiones de esta sesión.
-                        # Así no tenemos que escribir 'Authorization' en cada función.
-                        self.session.headers.update({
-                            "Authorization": f"Bearer {api_key}",
-                            "Content-Type": "application/json",
-                            "User-Agent": "MiAppDataScience/1.0"
-                        })
+# --- EJEMPLO DE USO ---
 
-                    def get_data(self, endpoint: str, params: Optional[Dict] = None) -> Dict:
-                        """
-                        Método para LEER datos (Verbo HTTP: GET).
-                        :param endpoint: La parte final de la URL (ej: 'usuarios/1')
-                        :param params: Filtros opcionales (ej: {'page': 2})
-                        """
-                        try:
-                            url = f"{self.base_url}/{endpoint}"
-                            # Usamos self.session.get en lugar de requests.get
-                            response = self.session.get(url, params=params, timeout=10)
+# 1. Instanciar la clase (Crear el objeto 'cliente')
+# Aquí se ejecuta el __init__
+cliente = APIClient(base_url="https://api.empresa.com/v1", api_key="sk_live_123")
 
-                            # ¡IMPORTANTE! Valida si el código es 200 OK.
-                            # Si es 4xx o 5xx, lanza una excepción (salta al 'except').
-                            response.raise_for_status() 
+# 2. Consultar estado (Usa el método GET)
+print("📡 Consultando estado del sistema...")
+status = cliente.get_data("system/status")
+print(f"✅ Estado: {status.get('status', 'Desconocido')}")
 
-                            return response.json() # Convierte el texto JSON a Diccionario Python
-
-                        except requests.exceptions.HTTPError as err:
-                            # Manejo de errores específicos según el código de estado
-                            if response.status_code == 401:
-                                print("⛔ Error: Credenciales inválidas (Token vencido o incorrecto).")
-                            elif response.status_code == 429:
-                                print("⏳ Error: Rate Limit. Estás haciendo muchas peticiones muy rápido.")
-                            else:
-                                print(f"❌ Error HTTP Genérico: {err}")
-                            return {}
-
-                        except Exception as e:
-                            print(f"🔥 Error crítico (Red, Timeout, etc): {e}")
-                            return {}
-
-                    def predict(self, features: Dict[str, Any]) -> float:
-                        """
-                        Método para ENVIAR datos y recibir predicción (Verbo HTTP: POST).
-                        :param features: Diccionario con los datos del modelo (ej: {'edad': 30})
-                        """
-                        try:
-                            url = f"{self.base_url}/predict"
-                            # 'json=features' convierte automáticamente el dict a JSON válido
-                            response = self.session.post(url, json=features, timeout=5)
-                            response.raise_for_status()
-
-                            # Asumimos que la API devuelve algo como: {"prediction": 4500.50}
-                            return response.json().get('prediction', 0.0)
-
-                        except Exception as e:
-                            print(f"❌ Error en predicción: {e}")
-                            return 0.0
-
-                # --- EJEMPLO DE USO ---
-
-                # 1. Instanciar la clase (Crear el objeto 'cliente')
-                # Aquí se ejecuta el __init__
-                cliente = APIClient(base_url="https://api.empresa.com/v1", api_key="sk_live_123")
-
-                # 2. Consultar estado (Usa el método GET)
-                print("📡 Consultando estado del sistema...")
-                status = cliente.get_data("system/status")
-                print(f"✅ Estado: {status.get('status', 'Desconocido')}")
-
-                # 3. Realizar predicción (Usa el método POST)
-                print("\\n🤖 Solicitando predicción...")
-                input_data = {"kms": 50000, "año": 2020, "marca": "Toyota"}
-                precio = cliente.predict(input_data)
-                print(f"💰 Precio estimado: \${precio:,.2f}")`} />
+# 3. Realizar predicción (Usa el método POST)
+print("\\n🤖 Solicitando predicción...")
+input_data = {"kms": 50000, "año": 2020, "marca": "Toyota"}
+precio = cliente.predict(input_data)
+print(f"💰 Precio estimado: \${precio:,.2f}")`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ Estado del sistema: ONLINE
-                💰 Precio estimado: $45,200.00`} /></>) }]} />
+💰 Precio estimado: $45,200.00`} /></>) }]} />
 
                 <h4>🔍 Desglosando el Código</h4>
 
@@ -2355,15 +2355,15 @@
                         ]} />
 
                 <Accordion items={[{ titulo: "🐍 Glosario Python: Clases y Métodos", contenido: (<><table><thead><tr><th>Término</th><th>Definición</th></tr></thead><tbody><tr><td><code>def</code></td><td>Palabra clave para definir una función (o método si está dentro de una clase).</td></tr><tr><td><code>__init__</code></td><td>El <strong>Constructor</strong>. Es un método especial que se ejecuta <em>automáticamente</em> al crear una nueva instancia de la clase. Se usa para inicializar variables (como <code>self.api_key</code>) y configurar el objeto antes de usarlo.</td></tr><tr><td><code>class</code></td><td>La <strong>Plantilla</strong> (Blueprint). Define la estructura y el comportamiento de los objetos. Es como el plano de una casa; los objetos son las casas construidas a partir de ese plano.</td></tr><tr><td><code>Conexión TCP</code></td><td>El <strong>Túnel</strong> de comunicación. Es el canal estable por donde viajan los datos. Abrir este túnel es costoso (lento), por eso usamos <code>Session</code> para mantenerlo abierto y reutilizarlo.</td></tr></tbody></table><h4>¿Por qué usar Clases? (Vs Código Espagueti)</h4><p>Las clases nos permiten <strong>encapsular</strong> datos y lógica, evitando el desorden de variables globales.</p><CodeBlock title="❌ SIN CLASES (Difícil de mantener)" lang="python" code={`# ❌ SIN CLASES (Difícil de mantener)
-                url1 = "api.com"
-                key1 = "123"
+url1 = "api.com"
+key1 = "123"
 
-                def get_data(u, k):
-                    pass # lógica...
+def get_data(u, k):
+    pass # lógica...
 
-                get_data(url1, key1) # Hay que pasar todo siempre`} /><CodeBlock title="✅ CON CLASES (Limpio y Reusable)" lang="python" code={`# ✅ CON CLASES (Limpio y Reusable)
-                cliente = APIClient("api.com", "123")
-                cliente.get_data() # ¡Ya sabe su URL y Key!`} /></>) }]} />
+get_data(url1, key1) # Hay que pasar todo siempre`} /><CodeBlock title="✅ CON CLASES (Limpio y Reusable)" lang="python" code={`# ✅ CON CLASES (Limpio y Reusable)
+cliente = APIClient("api.com", "123")
+cliente.get_data() # ¡Ya sabe su URL y Key!`} /></>) }]} />
             </div>
         );
 
@@ -2386,50 +2386,50 @@
                 <table><thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th>Mejor para</th></tr></thead><tbody><tr><td>JSON 📄</td><td><ul><li>Legible por humanos (Texto)</li><li>Universal (Interoperable)</li><li>Seguro (Solo datos)</li></ul></td><td><ul><li>Pierde tipos complejos (Tuplas -> Listas, Fechas -> Strings)</li><li>Más lento con grandes volúmenes numéricos</li></ul></td><td>APIs REST, Configuración, Compartir datos entre lenguajes</td></tr><tr><td>Pickle 🥒</td><td><ul><li>Guarda TODO (Funciones, Clases, Modelos)</li><li>Mantiene tipos exactos</li><li>Binario (Eficiente para objetos Python)</li></ul></td><td><ul><li>Solo Python (No sirve para Java/JS)</li><li>Inseguro (Ejecución de código arbitrario)</li><li>Frágil entre versiones de librerías</li></ul></td><td>Persistencia de Modelos ML, Pausar/Reanudar procesos, Caché local</td></tr></tbody></table>
 
                 <CodeBlock title="El Problema de las Fechas (Type Loss)" lang="python" code={`import json
-                import pickle
-                from datetime import datetime
+import pickle
+from datetime import datetime
 
-                # Datos con tipos complejos (Fecha)
-                data = {
-                    "evento": "Clase de Python",
-                    "fecha": datetime.now(), # <--- Objeto complejo
-                    "asistentes": ("Juan", "Maria") # <--- Tupla
-                }
+# Datos con tipos complejos (Fecha)
+data = {
+    "evento": "Clase de Python",
+    "fecha": datetime.now(), # <--- Objeto complejo
+    "asistentes": ("Juan", "Maria") # <--- Tupla
+}
 
-                print(f"🐍 Original: {type(data['fecha'])} - {type(data['asistentes'])}")
+print(f"🐍 Original: {type(data['fecha'])} - {type(data['asistentes'])}")
 
-                # --- INTENTO 1: JSON ---
-                try:
-                    # json.dumps(data) # ❌ Error: Object of type datetime is not JSON serializable
+# --- INTENTO 1: JSON ---
+try:
+    # json.dumps(data) # ❌ Error: Object of type datetime is not JSON serializable
+    
+    # Solución: Convertir a String manualmente
+    data_json = data.copy()
+    data_json['fecha'] = str(data['fecha']) 
+    
+    texto_json = json.dumps(data_json)
+    print(f"📄 JSON: {texto_json}")
+    
+    # Al recuperar... ¡perdimos los tipos!
+    recuperado = json.loads(texto_json)
+    print(f"💔 Recuperado: {type(recuperado['fecha'])} (Ahora es str) y {type(recuperado['asistentes'])} (Ahora es list)")
+except Exception as e:
+    print(e)
 
-                    # Solución: Convertir a String manualmente
-                    data_json = data.copy()
-                    data_json['fecha'] = str(data['fecha']) 
+# --- INTENTO 2: PICKLE ---
+# Pickle guarda el objeto TAL CUAL (Binario)
+bytes_pickle = pickle.dumps(data)
+print(f"🥒 Pickle (Bytes): {bytes_pickle[:20]}...")
 
-                    texto_json = json.dumps(data_json)
-                    print(f"📄 JSON: {texto_json}")
-
-                    # Al recuperar... ¡perdimos los tipos!
-                    recuperado = json.loads(texto_json)
-                    print(f"💔 Recuperado: {type(recuperado['fecha'])} (Ahora es str) y {type(recuperado['asistentes'])} (Ahora es list)")
-                except Exception as e:
-                    print(e)
-
-                # --- INTENTO 2: PICKLE ---
-                # Pickle guarda el objeto TAL CUAL (Binario)
-                bytes_pickle = pickle.dumps(data)
-                print(f"🥒 Pickle (Bytes): {bytes_pickle[:20]}...")
-
-                recuperado_pkl = pickle.loads(bytes_pickle)
-                print(f"✨ Restaurado: {type(recuperado_pkl['fecha'])} y {type(recuperado_pkl['asistentes'])}")
-                print("¡Conservó la Fecha y la Tupla exactas!")`} />
+recuperado_pkl = pickle.loads(bytes_pickle)
+print(f"✨ Restaurado: {type(recuperado_pkl['fecha'])} y {type(recuperado_pkl['asistentes'])}")
+print("¡Conservó la Fecha y la Tupla exactas!")`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`🐍 Original: <class 'datetime.datetime'> - <class 'tuple'>
-                📄 JSON: {"evento": "Clase de Python", "fecha": "2023-10-27...", "asistentes": ["Juan", "Maria"]}
-                💔 Recuperado: <class 'str'> (Ahora es str) y <class 'list'> (Ahora es list)
-                🥒 Pickle (Bytes): b'\\x80\\x04\\x95\\x8e\\x00\\x00\\x00\\x00\\x00\\x00\\x00}...' 
-                ✨ Restaurado: <class 'datetime.datetime'> y <class 'tuple'>
-                ¡Conservó la Fecha y la Tupla exactas!`} /></>) }]} />
+📄 JSON: {"evento": "Clase de Python", "fecha": "2023-10-27...", "asistentes": ["Juan", "Maria"]}
+💔 Recuperado: <class 'str'> (Ahora es str) y <class 'list'> (Ahora es list)
+🥒 Pickle (Bytes): b'\\x80\\x04\\x95\\x8e\\x00\\x00\\x00\\x00\\x00\\x00\\x00}...' 
+✨ Restaurado: <class 'datetime.datetime'> y <class 'tuple'>
+¡Conservó la Fecha y la Tupla exactas!`} /></>) }]} />
 
                 <h4>🔍 Análisis del Código</h4>
 
@@ -2465,82 +2465,82 @@
                 <table><thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th>Mejor para</th></tr></thead><tbody><tr><td>Validación Manual 🚧</td><td><ul><li>No requiere librerías extra</li></ul></td><td><ul><li>Verbosidad extrema (muchos `if/else`)</li><li>Difícil de leer y mantener</li><li>Reinventa la rueda en cada función</li></ul></td><td>Scripts diminutos sin dependencias</td></tr><tr><td>Pydantic 🛡️</td><td><ul><li>Declarativo (Legible)</li><li>Coerción automática (Str -> Int)</li><li>Mensajes de error estandarizados</li><li>Serialización (.model_dump())</li></ul></td><td><ul><li>Requiere instalar librería</li><li>Curva de aprendizaje inicial</li></ul></td><td>APIs (FastAPI), Pipelines de Datos, Configuración</td></tr></tbody></table>
 
                 <CodeBlock title="Contrato de Datos Completo: Field, Optional, Validadores y DataFrames" lang="python" code={`from pydantic import BaseModel, Field, field_validator, ValidationError
-                from typing import Optional, List
-                import pandas as pd
+from typing import Optional, List
+import pandas as pd
 
-                # ══════════════════════════════════════════════════
-                # 1. MODELO CON FIELD, OPTIONAL Y VALIDADOR
-                # ══════════════════════════════════════════════════
+# ══════════════════════════════════════════════════
+# 1. MODELO CON FIELD, OPTIONAL Y VALIDADOR
+# ══════════════════════════════════════════════════
 
-                class VariableEstadistica(BaseModel):
-                    # Campo obligatorio con restricción de longitud
-                    nombre: str = Field(..., min_length=2, description="Nombre de la variable")
+class VariableEstadistica(BaseModel):
+    # Campo obligatorio con restricción de longitud
+    nombre: str = Field(..., min_length=2, description="Nombre de la variable")
 
-                    # Restricción numérica: gt = mayor que 0 (la desviación no puede ser negativa)
-                    desviacion_std: float = Field(..., gt=0, description="Desviación estándar positiva")
+    # Restricción numérica: gt = mayor que 0 (la desviación no puede ser negativa)
+    desviacion_std: float = Field(..., gt=0, description="Desviación estándar positiva")
 
-                    # Restricción de rango: ge=0, le=1 (probabilidad entre 0 y 1)
-                    probabilidad: float = Field(..., ge=0, le=1, description="Probabilidad [0,1]")
+    # Restricción de rango: ge=0, le=1 (probabilidad entre 0 y 1)
+    probabilidad: float = Field(..., ge=0, le=1, description="Probabilidad [0,1]")
 
-                    # Campo NULLABLE (puede ser None) → Dato faltante en estadística
-                    # Diferencia clave: None (no medido) vs 0 (medido con valor cero)
-                    n_muestras: Optional[int] = Field(default=None, ge=1)
+    # Campo NULLABLE (puede ser None) → Dato faltante en estadística
+    # Diferencia clave: None (no medido) vs 0 (medido con valor cero)
+    n_muestras: Optional[int] = Field(default=None, ge=1)
 
-                    # Campo con valor por defecto
-                    activa: bool = True
+    # Campo con valor por defecto
+    activa: bool = True
 
-                    # VALIDADOR mode='before': Limpieza de datos sucios
-                    # Se ejecuta ANTES de verificar el tipo → Ideal para arreglar formatos
-                    @field_validator('desviacion_std', mode='before')
-                    @classmethod
-                    def corregir_coma_decimal(cls, v):
-                        if isinstance(v, str):
-                            return float(v.replace(',', '.'))  # "2,5" → 2.5
-                        return v
+    # VALIDADOR mode='before': Limpieza de datos sucios
+    # Se ejecuta ANTES de verificar el tipo → Ideal para arreglar formatos
+    @field_validator('desviacion_std', mode='before')
+    @classmethod
+    def corregir_coma_decimal(cls, v):
+        if isinstance(v, str):
+            return float(v.replace(',', '.'))  # "2,5" → 2.5
+        return v
 
-                    # VALIDADOR mode='after': Regla de negocio (post-tipado)
-                    @field_validator('nombre')
-                    @classmethod
-                    def normalizar_nombre(cls, v: str) -> str:
-                        return v.strip().lower()  # "  Edad  " → "edad"
+    # VALIDADOR mode='after': Regla de negocio (post-tipado)
+    @field_validator('nombre')
+    @classmethod
+    def normalizar_nombre(cls, v: str) -> str:
+        return v.strip().lower()  # "  Edad  " → "edad"
 
-                # --- Prueba del Modelo ---
-                try:
-                    v1 = VariableEstadistica(
-                        nombre="  Peso  ", desviacion_std="12,5",  # Coma decimal (dato sucio)
-                        probabilidad=0.95, n_muestras=None          # Dato faltante explícito
-                    )
-                    print(f"✅ Modelo: {v1}")
-                    print(f"📦 Dict:  {v1.model_dump()}")
-                except ValidationError as e:
-                    print(f"❌ ERROR: {e}")
+# --- Prueba del Modelo ---
+try:
+    v1 = VariableEstadistica(
+        nombre="  Peso  ", desviacion_std="12,5",  # Coma decimal (dato sucio)
+        probabilidad=0.95, n_muestras=None          # Dato faltante explícito
+    )
+    print(f"✅ Modelo: {v1}")
+    print(f"📦 Dict:  {v1.model_dump()}")
+except ValidationError as e:
+    print(f"❌ ERROR: {e}")
 
-                # ══════════════════════════════════════════════════
-                # 2. VALIDACIÓN DE DATAFRAME (PANDAS)
-                # ══════════════════════════════════════════════════
+# ══════════════════════════════════════════════════
+# 2. VALIDACIÓN DE DATAFRAME (PANDAS)
+# ══════════════════════════════════════════════════
 
-                class Transaccion(BaseModel):
-                    id_tx: int
-                    monto: float = Field(gt=0)
-                    categoria: str
+class Transaccion(BaseModel):
+    id_tx: int
+    monto: float = Field(gt=0)
+    categoria: str
 
-                df = pd.DataFrame([
-                    {"id_tx": 1,   "monto": 100.50, "categoria": "comida"},     # ✅ OK
-                    {"id_tx": "2", "monto": 200,    "categoria": "transporte"}, # ✅ Coerción str→int
-                    {"id_tx": 3,   "monto": "abc",  "categoria": "ocio"},       # ❌ Monto inválido
-                ])
+df = pd.DataFrame([
+    {"id_tx": 1,   "monto": 100.50, "categoria": "comida"},     # ✅ OK
+    {"id_tx": "2", "monto": 200,    "categoria": "transporte"}, # ✅ Coerción str→int
+    {"id_tx": 3,   "monto": "abc",  "categoria": "ocio"},       # ❌ Monto inválido
+])
 
-                limpios, errores = [], []
-                for i, fila in df.iterrows():
-                    try:
-                        dato = Transaccion(**fila.to_dict())
-                        limpios.append(dato.model_dump())
-                    except ValidationError as e:
-                        errores.append({"fila": i, "error": str(e)})
+limpios, errores = [], []
+for i, fila in df.iterrows():
+    try:
+        dato = Transaccion(**fila.to_dict())
+        limpios.append(dato.model_dump())
+    except ValidationError as e:
+        errores.append({"fila": i, "error": str(e)})
 
-                print(f"\\n📊 Válidos: {len(limpios)} | Fallidos: {len(errores)}")
-                df_final = pd.DataFrame(limpios)
-                print(df_final)`} />
+print(f"\\n📊 Válidos: {len(limpios)} | Fallidos: {len(errores)}")
+df_final = pd.DataFrame(limpios)
+print(df_final)`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ Modelo: nombre='peso' desviacion_std=12.5 probabilidad=0.95 n_muestras=None activa=True\\n📦 Dict: {'nombre': 'peso', 'desviacion_std': 12.5, 'probabilidad': 0.95, 'n_muestras': None, 'activa': True}\\n\\n📊 Válidos: 2 | Fallidos: 1\\n   id_tx   monto   categoria\\n0      1  100.50      comida\\n1      2  200.00  transporte`} /></>) }]} />
 
@@ -2579,30 +2579,30 @@
                 <table><thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th>Mejor para</th></tr></thead><tbody><tr><td>Instalación Global 🌍</td><td><ul><li>Fácil al principio (solo `pip install`)</li></ul></td><td><ul><li>Conflictos de versiones entre proyectos</li><li>Rompe el sistema operativo</li><li>Irreproducible</li></ul></td><td>Nada (Evitar siempre)</td></tr><tr><td>Entorno Virtual 📦</td><td><ul><li>Aislamiento total</li><li>Reproducible (requirements.txt)</li><li>Seguro</li></ul></td><td><ul><li>Requiere pasos extra (activar)</li></ul></td><td>Todos los proyectos de Python</td></tr></tbody></table>
 
                 <CodeBlock title="Flujo de Trabajo Profesional" lang="bash" code={`# 1. CREAR el entorno virtual (solo una vez)
-                # (Esto crea una carpeta .venv oculta)
-                python -m venv .venv
+# (Esto crea una carpeta .venv oculta)
+python -m venv .venv
 
-                # 2. ACTIVAR el entorno (Cada vez que trabajes)
-                # Mac/Linux:
-                source .venv/bin/activate
-                # Windows:
-                # .\\.venv\\Scripts\\activate
+# 2. ACTIVAR el entorno (Cada vez que trabajes)
+# Mac/Linux:
+source .venv/bin/activate
+# Windows:
+# .\\.venv\\Scripts\\activate
 
-                # (Verás que tu terminal cambia: "(.venv) user@mac:~$")
+# (Verás que tu terminal cambia: "(.venv) user@mac:~$")
 
-                # 3. INSTALAR librerías (Se guardan en .venv, no en el sistema)
-                pip install pandas==2.0.3 numpy scikit-learn
+# 3. INSTALAR librerías (Se guardan en .venv, no en el sistema)
+pip install pandas==2.0.3 numpy scikit-learn
 
-                # 4. CONGELAR versiones para compartir
-                pip freeze > requirements.txt
+# 4. CONGELAR versiones para compartir
+pip freeze > requirements.txt
 
-                # --- Contenido generado en requirements.txt ---
-                # numpy==1.24.3
-                # pandas==2.0.3
-                # ...`} />
+# --- Contenido generado en requirements.txt ---
+# numpy==1.24.3
+# pandas==2.0.3
+# ...`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`(.venv) $ pip freeze > requirements.txt
-                (Se crea el archivo con las versiones exactas)`} /></>) }]} />
+(Se crea el archivo con las versiones exactas)`} /></>) }]} />
 
                 <h4>🔍 El Ciclo de Vida</h4>
 
@@ -2634,15 +2634,15 @@
                 <table><thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th>Mejor para</th></tr></thead><tbody><tr><td>Copy-Paste 📋</td><td><ul><li>Rápido para una vez</li></ul></td><td><ul><li>Código duplicado</li><li>Difícil de mantener</li><li>Errores se multiplican</li></ul></td><td>Nunca en producción</td></tr><tr><td>Funciones 🛠️</td><td><ul><li>Reutilizable</li><li>Legible</li><li>Fácil de testear</li></ul></td><td><ul><li>Requiere pensar la abstracción</li></ul></td><td>Todo bloque de lógica repetida</td></tr></tbody></table>
 
                 <CodeBlock title="Tu Primera Función" lang="python" code={`def agregar_tres(input_var):
-                    """
-                    Suma 3 al numero entregado.
-                    """
-                    output_var = input_var + 3
-                    return output_var
+    """
+    Suma 3 al numero entregado.
+    """
+    output_var = input_var + 3
+    return output_var
 
-                # Probando la funcion
-                nuevo_numero = agregar_tres(10)
-                print(f"El resultado es: {nuevo_numero}")`} />
+# Probando la funcion
+nuevo_numero = agregar_tres(10)
+print(f"El resultado es: {nuevo_numero}")`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`El resultado es: 13`} /></>) }]} />
 
@@ -2678,80 +2678,80 @@
                 <table><thead><tr><th>Herramienta</th><th>Para qué</th><th>Detalle</th></tr></thead><tbody><tr><td>🐍 Python 3.11+</td><td>Rendimiento</td><td>Pattern matching, mejor velocidad, mensajes de error claros. Base sólida para análisis modernos.</td></tr><tr><td>📦 venv/conda</td><td>Aislamiento</td><td>Entornos reproducibles. requirements.txt para compartir. Evita conflictos de dependencias.</td></tr><tr><td>🐳 Docker</td><td>Reproducibilidad Total</td><td>Empaqueta SO + Python + libs. Ideal para papers y producción.</td></tr><tr><td>📋 Git + GitHub</td><td>Versionado y Respaldo</td><td>Historial de cambios, colaboración, respaldo en nube. Esencial para cualquier proyecto.</td></tr><tr><td>🛡️ Decoradores</td><td>Validación Automática</td><td>Verifican supuestos antes de ejecutar tests. Código DRY y robusto.</td></tr></tbody></table>
 
                 <CodeBlock title="Plantilla: Inicio de Proyecto de Análisis" lang="python" code={`# ═══════════════════════════════════════════════════════════
-                # SCRIPT DE INICIO RÁPIDO PARA NUEVO PROYECTO
-                # Copia y ejecuta estos comandos en tu terminal
-                # ═══════════════════════════════════════════════════════════
+# SCRIPT DE INICIO RÁPIDO PARA NUEVO PROYECTO
+# Copia y ejecuta estos comandos en tu terminal
+# ═══════════════════════════════════════════════════════════
 
-                # 1. Crear estructura de carpetas
-                mkdir mi_proyecto_tesis
-                cd mi_proyecto_tesis
-                mkdir datos scripts outputs figuras
+# 1. Crear estructura de carpetas
+mkdir mi_proyecto_tesis
+cd mi_proyecto_tesis
+mkdir datos scripts outputs figuras
 
-                # 2. Inicializar Git
-                git init
+# 2. Inicializar Git
+git init
 
-                # 3. Crear .gitignore
-                cat > .gitignore << 'EOF'
-                # Datos (no subir a GitHub)
-                datos/
-                *.csv
-                *.xlsx
-                *.parquet
+# 3. Crear .gitignore
+cat > .gitignore << 'EOF'
+# Datos (no subir a GitHub)
+datos/
+*.csv
+*.xlsx
+*.parquet
 
-                # Outputs regenerables
-                outputs/
-                figuras/
-                *.png
-                *.pdf
+# Outputs regenerables
+outputs/
+figuras/
+*.png
+*.pdf
 
-                # Entornos
-                venv/
-                env/
-                .env
-                *.pyc
-                __pycache__/
+# Entornos
+venv/
+env/
+.env
+*.pyc
+__pycache__/
 
-                # Sistema
-                .DS_Store
-                Thumbs.db
-                EOF
+# Sistema
+.DS_Store
+Thumbs.db
+EOF
 
-                # 4. Crear entorno virtual
-                python -m venv env
-                source env/bin/activate  # Windows: env\\Scripts\\activate
+# 4. Crear entorno virtual
+python -m venv env
+source env/bin/activate  # Windows: env\\Scripts\\activate
 
-                # 5. Instalar dependencias base
-                pip install pandas numpy scipy matplotlib statsmodels
-                pip freeze > requirements.txt
+# 5. Instalar dependencias base
+pip install pandas numpy scipy matplotlib statsmodels
+pip freeze > requirements.txt
 
-                # 6. Crear archivo principal
-                cat > scripts/analisis_principal.py << 'EOF'
-                """
-                Análisis Principal - Mi Proyecto
-                Autor: Tu Nombre
-                Fecha: $(date +%Y-%m-%d)
-                """
-                import pandas as pd
-                import numpy as np
-                from scipy import stats
+# 6. Crear archivo principal
+cat > scripts/analisis_principal.py << 'EOF'
+"""
+Análisis Principal - Mi Proyecto
+Autor: Tu Nombre
+Fecha: $(date +%Y-%m-%d)
+"""
+import pandas as pd
+import numpy as np
+from scipy import stats
 
-                def main():
-                    # Tu código aquí
-                    print("Proyecto iniciado correctamente")
+def main():
+    # Tu código aquí
+    print("Proyecto iniciado correctamente")
 
-                if __name__ == "__main__":
-                    main()
-                EOF
+if __name__ == "__main__":
+    main()
+EOF
 
-                # 7. Primer commit
-                git add .
-                git commit -m "Estructura inicial del proyecto"
+# 7. Primer commit
+git add .
+git commit -m "Estructura inicial del proyecto"
 
-                # 8. Conectar con GitHub (reemplaza URL)
-                # git remote add origin https://github.com/usuario/mi_proyecto.git
-                # git push -u origin main
+# 8. Conectar con GitHub (reemplaza URL)
+# git remote add origin https://github.com/usuario/mi_proyecto.git
+# git push -u origin main
 
-                echo "✅ Proyecto listo para trabajar"`} />
+echo "✅ Proyecto listo para trabajar"`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ Proyecto listo para trabajar\\n📁 Estructura: datos/ scripts/ outputs/ figuras/\\n🐍 Entorno: env/ activado\\n📋 Git: Repositorio inicializado`} /></>) }]} />
 

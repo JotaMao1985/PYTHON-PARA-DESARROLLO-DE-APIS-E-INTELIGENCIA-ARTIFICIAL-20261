@@ -2309,12 +2309,12 @@
 
 
                                             <CodeBlock title="main.py — ❌ ANTIPATRÓN" lang="python" code={`# main.py — ❌ ANTIPATRÓN
-                from sqlalchemy import create_engine
+from sqlalchemy import create_engine
 
-                DATABASE_URL = "postgresql://admin:SuperSecreto123@192.168.1.50:5432/encuestas_db"
-                API_KEY_REDCAP = "abc123xyz789"
+DATABASE_URL = "postgresql://admin:SuperSecreto123@192.168.1.50:5432/encuestas_db"
+API_KEY_REDCAP = "abc123xyz789"
 
-                engine = create_engine(DATABASE_URL)`} />
+engine = create_engine(DATABASE_URL)`} />
 
                                             <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
                                                 <thead className="bg-gray-100">
@@ -2339,13 +2339,13 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Paso 1.2: Crear el archivo <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code></h4>
                                             <p className="text-gray-700 leading-relaxed mb-5">En la <strong>raíz</strong> de tu proyecto (al mismo nivel que <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code>), crea un archivo llamado <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code>:</p>
                                             <CodeBlock title=".env" lang="text" code={`# .env — Este archivo NO se sube a Git
-                DB_HOST=localhost
-                DB_PORT=5432
-                DB_NAME=encuestas_db
-                DB_USER=admin
-                DB_PASSWORD=SuperSecreto123
-                DEBUG_MODE=true
-                SAMPLE_SIZE=1000`} />
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=encuestas_db
+DB_USER=admin
+DB_PASSWORD=SuperSecreto123
+DEBUG_MODE=true
+SAMPLE_SIZE=1000`} />
 
                                             <Box type="warn" label="⚠️ Importante">Agrega <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code> a tu archivo <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.gitignore</code> inmediatamente. Esto evita que se suba al repositorio por accidente. Tu <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.gitignore</code> debe incluir al menos: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.env</code>, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">__pycache__/</code>, y <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">*.pyc</code>.
                                             </Box>
@@ -2354,39 +2354,39 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Aquí es donde <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">pydantic-settings</code> brilla. En lugar de leer las variables como strings crudos, defines una clase que <strong>valida y convierte los tipos automáticamente</strong>:</p>
 
                                             <CodeBlock title="config.py" lang="python" code={`# config.py
-                from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-                class Settings(BaseSettings):
-                    """
-                    Configuración de la aplicación.
-                    Cada atributo se mapea a una variable de entorno
-                    del mismo nombre (case-insensitive por defecto).
-                    """
+class Settings(BaseSettings):
+    """
+    Configuración de la aplicación.
+    Cada atributo se mapea a una variable de entorno
+    del mismo nombre (case-insensitive por defecto).
+    """
 
-                    # --- Conexión a Base de Datos ---
-                    db_host: str
-                    db_port: int                    # Convierte "5432" (str) → 5432 (int)
-                    db_name: str
-                    db_user: str
-                    db_password: str
+    # --- Conexión a Base de Datos ---
+    db_host: str
+    db_port: int                    # Convierte "5432" (str) → 5432 (int)
+    db_name: str
+    db_user: str
+    db_password: str
 
-                    # --- Parámetros de la aplicación ---
-                    debug_mode: bool = False        # Valor por defecto si no está en .env
-                    sample_size: int = 500          # Tamaño de muestra por defecto
+    # --- Parámetros de la aplicación ---
+    debug_mode: bool = False        # Valor por defecto si no está en .env
+    sample_size: int = 500          # Tamaño de muestra por defecto
 
-                    model_config = SettingsConfigDict(
-                        env_file=".env",            # Archivo de donde leer las variables
-                        env_file_encoding="utf-8",
-                    )
+    model_config = SettingsConfigDict(
+        env_file=".env",            # Archivo de donde leer las variables
+        env_file_encoding="utf-8",
+    )
 
-                    @property
-                    def database_url(self) -> str:
-                        """Construye la URL de conexión a partir de las partes."""
-                        return (
-                            f"postgresql://{self.db_user}:{self.db_password}"
-                            f"@{self.db_host}:{self.db_port}/{self.db_name}"
-                        )`} />
+    @property
+    def database_url(self) -> str:
+        """Construye la URL de conexión a partir de las partes."""
+        return (
+            f"postgresql://{self.db_user}:{self.db_password}"
+            f"@{self.db_host}:{self.db_port}/{self.db_name}"
+        )`} />
 
                                             <Accordion items={[{ titulo: "¿Qué hace Pydantic con los tipos?", contenido: (<><div className="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
                                                     <p><code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">db_port: int</code> → Pydantic lee <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"5432"</code> del <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">.env</code> y lo convierte a <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">int</code>. Si pones <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">"abc"</code>, la app <strong>no arranca</strong> y te dice exactamente qué falló.</p>
@@ -2468,21 +2468,21 @@
 
                                             <CodeBlock title="Ejemplo mínimo de Depends" lang="python" code={`from fastapi import FastAPI, Depends
 
-                app = FastAPI()
+app = FastAPI()
 
 
-                def get_sample_size() -> int:
-                    """Dependencia simple: retorna un valor de configuración."""
-                    return 1000
+def get_sample_size() -> int:
+    """Dependencia simple: retorna un valor de configuración."""
+    return 1000
 
 
-                @app.get("/experimento")
-                def crear_experimento(n: int = Depends(get_sample_size)):
-                    """
-                    FastAPI ejecuta get_sample_size() automáticamente
-                    y pasa el resultado como 'n'.
-                    """
-                    return {"mensaje": f"Experimento creado con n={n}"}`} />
+@app.get("/experimento")
+def crear_experimento(n: int = Depends(get_sample_size)):
+    """
+    FastAPI ejecuta get_sample_size() automáticamente
+    y pasa el resultado como 'n'.
+    """
+    return {"mensaje": f"Experimento creado con n={n}"}`} />
 
                                             <Box type="info" label="¿Por qué no simplemente llamar get_sample_size() dentro del endpoint?">Porque <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends</code> te da tres ventajas: <strong>(1) Reutilización</strong> — usas la misma dependencia en 20 endpoints sin repetir código. <strong>(2) Testeo</strong> — en pruebas puedes reemplazar la dependencia por un mock sin tocar el endpoint. <strong>(3) Composición</strong> — las dependencias pueden depender de otras, formando un árbol que FastAPI resuelve automáticamente.
                                             </Box>
@@ -2493,20 +2493,20 @@
                                             <CodeBlock title="Dependencia con yield" lang="python" code={`from typing import Generator
 
 
-                def get_db_session() -> Generator:
-                    """
-                    Dependencia con ciclo de vida:
-                    - Antes del yield: se crea el recurso (abrir sesión).
-                    - yield: el endpoint usa el recurso.
-                    - Después del yield: se limpia (cerrar sesión).
-                    """
-                    print("→ Abriendo sesión de BD")
-                    session = {"fake": "session"}  # Simulación
-                    try:
-                        yield session
-                    finally:
-                        print("→ Cerrando sesión de BD")
-                        # Aquí: session.close() en una app real`} />
+def get_db_session() -> Generator:
+    """
+    Dependencia con ciclo de vida:
+    - Antes del yield: se crea el recurso (abrir sesión).
+    - yield: el endpoint usa el recurso.
+    - Después del yield: se limpia (cerrar sesión).
+    """
+    print("→ Abriendo sesión de BD")
+    session = {"fake": "session"}  # Simulación
+    try:
+        yield session
+    finally:
+        print("→ Cerrando sesión de BD")
+        # Aquí: session.close() en una app real`} />
 
 
                                             <div className="my-8 rounded-xl overflow-hidden shadow-lg">
@@ -2541,20 +2541,20 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Ahora conectamos con el Módulo 1. Creamos una dependencia que instancie <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Settings</code>:</p>
 
                                             <CodeBlock title="dependencies.py" lang="python" code={`# dependencies.py
-                from functools import lru_cache
-                from config import Settings
+from functools import lru_cache
+from config import Settings
 
 
-                @lru_cache
-                def get_settings() -> Settings:
-                    """
-                    Carga la configuración desde .env.
-
-                    @lru_cache asegura que Settings() se instancie UNA sola vez
-                    y se reutilice en todas las peticiones. Evita leer
-                    el archivo .env en cada request.
-                    """
-                    return Settings()`} />
+@lru_cache
+def get_settings() -> Settings:
+    """
+    Carga la configuración desde .env.
+    
+    @lru_cache asegura que Settings() se instancie UNA sola vez
+    y se reutilice en todas las peticiones. Evita leer
+    el archivo .env en cada request.
+    """
+    return Settings()`} />
 
                                             <Accordion items={[{ titulo: "¿Qué hace @lru_cache aquí?", contenido: (<><div className="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
                                                     <p><code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">@lru_cache</code> es un decorador de la biblioteca estándar de Python. <strong>Memoriza</strong> el resultado de la función: la primera vez ejecuta <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Settings()</code> (que lee el disco), las siguientes retorna el mismo objeto sin volver a leer el <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">.env</code>. Es como cachear el resultado de un cálculo estadístico costoso para no repetirlo innecesariamente.</p>
@@ -2632,220 +2632,220 @@
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 Estructura Final del Proyecto</h3>
                                             <div className="bg-gray-900 text-gray-100 rounded-xl p-5 font-mono text-sm leading-relaxed mt-4 shadow-lg">
                 <CodeBlock lang="text" code={`proyecto_encuestas/
-                ├── .env                 ← Configuración sensible (NO en Git)
-                ├── .gitignore
-                ├── requirements.txt
-                ├── config.py            ← Definición tipada de Settings
-                ├── database.py          ← Motor y sesión de SQLAlchemy
-                ├── dependencies.py      ← Funciones de dependencia
-                ├── models.py            ← Modelos de SQLAlchemy (tablas)
-                ├── schemas.py           ← Esquemas Pydantic (entrada/salida)
-                └── main.py              ← Solo endpoints, limpio y legible`} />
+├── .env                 ← Configuración sensible (NO en Git)
+├── .gitignore
+├── requirements.txt
+├── config.py            ← Definición tipada de Settings
+├── database.py          ← Motor y sesión de SQLAlchemy
+├── dependencies.py      ← Funciones de dependencia
+├── models.py            ← Modelos de SQLAlchemy (tablas)
+├── schemas.py           ← Esquemas Pydantic (entrada/salida)
+└── main.py              ← Solo endpoints, limpio y legible`} />
                                             </div>
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 Código Final: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">database.py</code></h3>
 
                                             <CodeBlock title="database.py" lang="python" code={`# database.py
-                from sqlalchemy import create_engine
-                from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 
-                class Base(DeclarativeBase):
-                    """Clase base para todos los modelos de SQLAlchemy."""
-                    pass
+class Base(DeclarativeBase):
+    """Clase base para todos los modelos de SQLAlchemy."""
+    pass
 
 
-                def build_engine(database_url: str):
-                    """Crea el motor de conexión a la BD."""
-                    return create_engine(database_url, echo=False)
+def build_engine(database_url: str):
+    """Crea el motor de conexión a la BD."""
+    return create_engine(database_url, echo=False)
 
 
-                def build_session_factory(database_url: str):
-                    """
-                    Crea una fábrica de sesiones.
-                    Una 'sesión' es el objeto a través del cual haces
-                    queries, inserts, updates, etc.
-                    """
-                    engine = build_engine(database_url)
-                    return sessionmaker(
-                        autocommit=False,
-                        autoflush=False,
-                        bind=engine,
-                    )`} />
+def build_session_factory(database_url: str):
+    """
+    Crea una fábrica de sesiones.
+    Una 'sesión' es el objeto a través del cual haces
+    queries, inserts, updates, etc.
+    """
+    engine = build_engine(database_url)
+    return sessionmaker(
+        autocommit=False,
+        autoflush=False,
+        bind=engine,
+    )`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.4 Código Final: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">models.py</code></h3>
 
                                             <CodeBlock title="models.py" lang="python" code={`# models.py
-                from sqlalchemy import Column, Integer, String, Float, DateTime
-                from sqlalchemy.sql import func
-                from database import Base
+from sqlalchemy import Column, Integer, String, Float, DateTime
+from sqlalchemy.sql import func
+from database import Base
 
 
-                class Encuesta(Base):
-                    """
-                    Modelo que representa una tabla de resultados de encuestas.
-                    Cada fila es una respuesta individual de un participante.
-                    """
-                    __tablename__ = "encuestas"
+class Encuesta(Base):
+    """
+    Modelo que representa una tabla de resultados de encuestas.
+    Cada fila es una respuesta individual de un participante.
+    """
+    __tablename__ = "encuestas"
 
-                    id = Column(Integer, primary_key=True, index=True)
-                    participante_id = Column(String(50), nullable=False)
-                    pregunta = Column(String(200), nullable=False)
-                    respuesta_likert = Column(Integer, nullable=False)  # Escala 1-5
-                    tiempo_respuesta_seg = Column(Float)                # Segundos
-                    fecha_registro = Column(
-                        DateTime(timezone=True),
-                        server_default=func.now(),
-                    )`} />
+    id = Column(Integer, primary_key=True, index=True)
+    participante_id = Column(String(50), nullable=False)
+    pregunta = Column(String(200), nullable=False)
+    respuesta_likert = Column(Integer, nullable=False)  # Escala 1-5
+    tiempo_respuesta_seg = Column(Float)                # Segundos
+    fecha_registro = Column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+    )`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.5 Código Final: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">schemas.py</code></h3>
 
                                             <CodeBlock title="schemas.py" lang="python" code={`# schemas.py
-                from pydantic import BaseModel, Field
-                from datetime import datetime
+from pydantic import BaseModel, Field
+from datetime import datetime
 
 
-                class EncuestaCreate(BaseModel):
-                    """Esquema para recibir datos de una nueva respuesta."""
-                    participante_id: str = Field(
-                        ..., min_length=1, max_length=50,
-                        examples=["P-0042"],
-                    )
-                    pregunta: str = Field(
-                        ..., min_length=1, max_length=200,
-                        examples=["¿Qué tan satisfecho está con el servicio?"],
-                    )
-                    respuesta_likert: int = Field(..., ge=1, le=5)
-                    tiempo_respuesta_seg: float | None = Field(
-                        default=None, ge=0, examples=[12.5],
-                    )
+class EncuestaCreate(BaseModel):
+    """Esquema para recibir datos de una nueva respuesta."""
+    participante_id: str = Field(
+        ..., min_length=1, max_length=50,
+        examples=["P-0042"],
+    )
+    pregunta: str = Field(
+        ..., min_length=1, max_length=200,
+        examples=["¿Qué tan satisfecho está con el servicio?"],
+    )
+    respuesta_likert: int = Field(..., ge=1, le=5)
+    tiempo_respuesta_seg: float | None = Field(
+        default=None, ge=0, examples=[12.5],
+    )
 
 
-                class EncuestaRead(BaseModel):
-                    """Esquema para retornar datos de una respuesta."""
-                    id: int
-                    participante_id: str
-                    pregunta: str
-                    respuesta_likert: int
-                    tiempo_respuesta_seg: float | None
-                    fecha_registro: datetime
+class EncuestaRead(BaseModel):
+    """Esquema para retornar datos de una respuesta."""
+    id: int
+    participante_id: str
+    pregunta: str
+    respuesta_likert: int
+    tiempo_respuesta_seg: float | None
+    fecha_registro: datetime
 
-                    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True}
 
 
-                class ResumenEstadistico(BaseModel):
-                    """Esquema para retornar un resumen de las respuestas."""
-                    total_respuestas: int
-                    media_likert: float
-                    desviacion_estandar_likert: float`} />
+class ResumenEstadistico(BaseModel):
+    """Esquema para retornar un resumen de las respuestas."""
+    total_respuestas: int
+    media_likert: float
+    desviacion_estandar_likert: float`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.6 Código Final: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">dependencies.py</code> Completo</h3>
 
                                             <CodeBlock title="dependencies.py — versión completa" lang="python" code={`# dependencies.py — versión completa
-                from typing import Generator
-                from functools import lru_cache
+from typing import Generator
+from functools import lru_cache
 
-                from fastapi import Depends
-                from sqlalchemy.orm import Session
+from fastapi import Depends
+from sqlalchemy.orm import Session
 
-                from config import Settings
-                from database import build_session_factory
-
-
-                @lru_cache
-                def get_settings() -> Settings:
-                    return Settings()
+from config import Settings
+from database import build_session_factory
 
 
-                @lru_cache
-                def _get_session_factory(db_url: str):
-                    """Cachea la fábrica para no recrear el Engine en cada request."""
-                    return build_session_factory(db_url)
+@lru_cache
+def get_settings() -> Settings:
+    return Settings()
 
 
-                def get_db(
-                    settings: Settings = Depends(get_settings),
-                ) -> Generator[Session, None, None]:
-                    """
-                    Dependencia que provee una sesión de base de datos.
+@lru_cache
+def _get_session_factory(db_url: str):
+    """Cachea la fábrica para no recrear el Engine en cada request."""
+    return build_session_factory(db_url)
 
-                    Nota cómo esta dependencia DEPENDE de get_settings.
-                    FastAPI resuelve el árbol automáticamente:
-                      get_settings() → settings → get_db(settings) → session
-                    """
-                    SessionFactory = _get_session_factory(settings.database_url)
-                    session = SessionFactory()
-                    try:
-                        yield session
-                    finally:
-                        session.close()`} />
+
+def get_db(
+    settings: Settings = Depends(get_settings),
+) -> Generator[Session, None, None]:
+    """
+    Dependencia que provee una sesión de base de datos.
+    
+    Nota cómo esta dependencia DEPENDE de get_settings.
+    FastAPI resuelve el árbol automáticamente:
+      get_settings() → settings → get_db(settings) → session
+    """
+    SessionFactory = _get_session_factory(settings.database_url)
+    session = SessionFactory()
+    try:
+        yield session
+    finally:
+        session.close()`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.7 Código Final: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code> Limpio</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Observa lo <strong>limpio</strong> que queda cuando toda la infraestructura está delegada. El archivo solo contiene endpoints y orquestación:</p>
 
                                             <CodeBlock title="main.py — API limpia" lang="python" code={`# main.py
-                from fastapi import FastAPI, Depends, HTTPException
-                from sqlalchemy.orm import Session
-                from sqlalchemy import func as sql_func
+from fastapi import FastAPI, Depends, HTTPException
+from sqlalchemy.orm import Session
+from sqlalchemy import func as sql_func
 
-                from config import Settings
-                from dependencies import get_db, get_settings
-                from models import Encuesta
-                from schemas import EncuestaCreate, EncuestaRead, ResumenEstadistico
+from config import Settings
+from dependencies import get_db, get_settings
+from models import Encuesta
+from schemas import EncuestaCreate, EncuestaRead, ResumenEstadistico
 
-                app = FastAPI(
-                    title="API de Encuestas Estadísticas",
-                    version="1.0.0",
-                )
-
-
-                @app.get("/health")
-                def health_check(settings: Settings = Depends(get_settings)):
-                    return {"status": "ok", "debug": settings.debug_mode}
+app = FastAPI(
+    title="API de Encuestas Estadísticas",
+    version="1.0.0",
+)
 
 
-                @app.post("/encuestas", response_model=EncuestaRead, status_code=201)
-                def registrar_respuesta(
-                    datos: EncuestaCreate,
-                    db: Session = Depends(get_db),
-                ):
-                    """Registra una nueva respuesta de encuesta."""
-                    nueva = Encuesta(**datos.model_dump())
-                    db.add(nueva)
-                    db.commit()
-                    db.refresh(nueva)
-                    return nueva
+@app.get("/health")
+def health_check(settings: Settings = Depends(get_settings)):
+    return {"status": "ok", "debug": settings.debug_mode}
 
 
-                @app.get("/encuestas", response_model=list[EncuestaRead])
-                def listar_respuestas(
-                    skip: int = 0,
-                    limit: int = 100,
-                    db: Session = Depends(get_db),
-                    settings: Settings = Depends(get_settings),
-                ):
-                    """Lista las respuestas con paginación."""
-                    limit = min(limit, settings.sample_size)
-                    return db.query(Encuesta).offset(skip).limit(limit).all()
+@app.post("/encuestas", response_model=EncuestaRead, status_code=201)
+def registrar_respuesta(
+    datos: EncuestaCreate,
+    db: Session = Depends(get_db),
+):
+    """Registra una nueva respuesta de encuesta."""
+    nueva = Encuesta(**datos.model_dump())
+    db.add(nueva)
+    db.commit()
+    db.refresh(nueva)
+    return nueva
 
 
-                @app.get("/encuestas/resumen", response_model=ResumenEstadistico)
-                def resumen_estadistico(db: Session = Depends(get_db)):
-                    """Calcula estadísticas descriptivas de las respuestas."""
-                    resultado = db.query(
-                        sql_func.count(Encuesta.id).label("total"),
-                        sql_func.avg(Encuesta.respuesta_likert).label("media"),
-                        sql_func.stddev(Encuesta.respuesta_likert).label("stddev"),
-                    ).first()
+@app.get("/encuestas", response_model=list[EncuestaRead])
+def listar_respuestas(
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+):
+    """Lista las respuestas con paginación."""
+    limit = min(limit, settings.sample_size)
+    return db.query(Encuesta).offset(skip).limit(limit).all()
 
-                    if resultado.total == 0:
-                        raise HTTPException(status_code=404, detail="Sin datos")
 
-                    return ResumenEstadistico(
-                        total_respuestas=resultado.total,
-                        media_likert=round(float(resultado.media), 4),
-                        desviacion_estandar_likert=round(float(resultado.stddev or 0), 4),
-                    )`} />
+@app.get("/encuestas/resumen", response_model=ResumenEstadistico)
+def resumen_estadistico(db: Session = Depends(get_db)):
+    """Calcula estadísticas descriptivas de las respuestas."""
+    resultado = db.query(
+        sql_func.count(Encuesta.id).label("total"),
+        sql_func.avg(Encuesta.respuesta_likert).label("media"),
+        sql_func.stddev(Encuesta.respuesta_likert).label("stddev"),
+    ).first()
+
+    if resultado.total == 0:
+        raise HTTPException(status_code=404, detail="Sin datos")
+
+    return ResumenEstadistico(
+        total_respuestas=resultado.total,
+        media_likert=round(float(resultado.media), 4),
+        desviacion_estandar_likert=round(float(resultado.stddev or 0), 4),
+    )`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.8 Responsabilidad de Cada Archivo</h3>
                                             <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">

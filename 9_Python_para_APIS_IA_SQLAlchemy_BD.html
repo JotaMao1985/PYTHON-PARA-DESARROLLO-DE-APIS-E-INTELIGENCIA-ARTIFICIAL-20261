@@ -2190,8 +2190,8 @@
 
                                             <div className="bg-gray-900 text-gray-100 rounded-xl p-5 font-mono text-sm leading-relaxed my-4 shadow-lg">
                 <CodeBlock lang="text" code={`usuario = Usuario(nombre="Ada", email="ada@mail.com")
-                session.add(usuario)
-                session.commit()`} />  /* TODO revisar lang */
+session.add(usuario)
+session.commit()`} />  /* TODO revisar lang */
                                             </div>
 
                                             <p className="text-gray-700 leading-relaxed mb-5">El ORM genera el SQL por ti. Esto tiene ventajas enormes: tu IDE te avisa si escribes mal un nombre de columna, no necesitas memorizar la sintaxis SQL exacta de cada motor, y — lo más importante — <strong>te protege automáticamente contra ataques de SQL Injection</strong> (cuando alguien intenta "inyectar" código malicioso a través de los datos de entrada).</p>
@@ -2385,43 +2385,43 @@
 
 
                                             <CodeBlock title="demo_orm_vs_raw.py" lang="python" code={`from sqlalchemy import create_engine, text, String, select
-                from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 
-                engine = create_engine("sqlite://", echo=True)
+engine = create_engine("sqlite://", echo=True)
 
-                class Base(DeclarativeBase):
-                    pass
+class Base(DeclarativeBase):
+    pass
 
-                class Usuario(Base):
-                    __tablename__ = "usuarios"
-                    id: Mapped[int] = mapped_column(primary_key=True)
-                    nombre: Mapped[str] = mapped_column(String(50))
-                    email: Mapped[str] = mapped_column(String(255), unique=True)
+class Usuario(Base):
+    __tablename__ = "usuarios"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre: Mapped[str] = mapped_column(String(50))
+    email: Mapped[str] = mapped_column(String(255), unique=True)
 
-                Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
-                # ═══ ENFOQUE 1: ORM — el "traductor" trabaja por ti ═══
-                with Session(engine) as session:
-                    nuevo = Usuario(nombre="Ada Lovelace", email="ada@example.com")
-                    session.add(nuevo)
-                    session.commit()
+# ═══ ENFOQUE 1: ORM — el "traductor" trabaja por ti ═══
+with Session(engine) as session:
+    nuevo = Usuario(nombre="Ada Lovelace", email="ada@example.com")
+    session.add(nuevo)
+    session.commit()
 
-                    stmt = select(Usuario).where(Usuario.nombre == "Ada Lovelace")
-                    usuario = session.scalars(stmt).first()
-                    print(f"ORM → {usuario.nombre}, {usuario.email}")
+    stmt = select(Usuario).where(Usuario.nombre == "Ada Lovelace")
+    usuario = session.scalars(stmt).first()
+    print(f"ORM → {usuario.nombre}, {usuario.email}")
 
-                # ═══ ENFOQUE 2: Raw SQL con text() — SEGURO ═══
-                with engine.connect() as conn:
-                    conn.execute(
-                        text("INSERT INTO usuarios (nombre, email) VALUES (:nombre, :email)"),
-                        {"nombre": "Grace Hopper", "email": "grace@example.com"}
-                    )
-                    conn.commit()
+# ═══ ENFOQUE 2: Raw SQL con text() — SEGURO ═══
+with engine.connect() as conn:
+    conn.execute(
+        text("INSERT INTO usuarios (nombre, email) VALUES (:nombre, :email)"),
+        {"nombre": "Grace Hopper", "email": "grace@example.com"}
+    )
+    conn.commit()
 
-                # ═══ ❌ ANTI-PATRÓN: SQL con f-string — ¡NUNCA! ═══
-                # entrada = "'; DROP TABLE usuarios; --"
-                # query = f"SELECT * FROM usuarios WHERE nombre = '{entrada}'"
-                # ↑ Esto ejecutaría DROP TABLE. Usa SIEMPRE parámetros.`} />
+# ═══ ❌ ANTI-PATRÓN: SQL con f-string — ¡NUNCA! ═══
+# entrada = "'; DROP TABLE usuarios; --"
+# query = f"SELECT * FROM usuarios WHERE nombre = '{entrada}'"
+# ↑ Esto ejecutaría DROP TABLE. Usa SIEMPRE parámetros.`} />
 
                                             <Box type="danger" label="⚠️ Punto de Atención: SQL Injection.">La regla es absoluta: <strong>nunca</strong> uses f-strings, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">.format()</code> ni concatenación para construir SQL con datos del usuario. Tanto el ORM como <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">text()</code> con parámetros nombrados (<code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">:nombre</code>) manejan esto automáticamente, escapando valores peligrosos.
                                             </Box>
@@ -2467,38 +2467,38 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">En SQLAlchemy 2.x, <strong>ambas capas usan la misma función <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">select()</code></strong> — la diferencia es qué le pasas: una clase ORM o un objeto Table.</p>
 
                                             <CodeBlock title="demo_core_vs_orm.py" lang="python" code={`from sqlalchemy import create_engine, select, Table, MetaData, String
-                from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, Session
 
-                engine = create_engine("sqlite://")
+engine = create_engine("sqlite://")
 
-                class Base(DeclarativeBase):
-                    pass
+class Base(DeclarativeBase):
+    pass
 
-                class Producto(Base):
-                    __tablename__ = "productos"
-                    id: Mapped[int] = mapped_column(primary_key=True)
-                    nombre: Mapped[str] = mapped_column(String(100))
-                    precio: Mapped[float]
+class Producto(Base):
+    __tablename__ = "productos"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre: Mapped[str] = mapped_column(String(100))
+    precio: Mapped[float]
 
-                Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
-                # ═══ CORE: trabajas con Table y Connection, recibes Rows ═══
-                metadata = MetaData()
-                productos_table = Table("productos", metadata, autoload_with=engine)
+# ═══ CORE: trabajas con Table y Connection, recibes Rows ═══
+metadata = MetaData()
+productos_table = Table("productos", metadata, autoload_with=engine)
 
-                with engine.connect() as conn:
-                    stmt = select(productos_table).where(productos_table.c.precio > 100)
-                    for fila in conn.execute(stmt):
-                        print(f"Core → {fila.nombre}: \${fila.precio}")
+with engine.connect() as conn:
+    stmt = select(productos_table).where(productos_table.c.precio > 100)
+    for fila in conn.execute(stmt):
+        print(f"Core → {fila.nombre}: \${fila.precio}")
 
-                # ═══ ORM: trabajas con la clase y Session, recibes objetos ═══
-                with Session(engine) as session:
-                    stmt = select(Producto).where(Producto.precio > 100)
-                    for producto in session.scalars(stmt):
-                        print(f"ORM  → {producto.nombre}: \${producto.precio}")
+# ═══ ORM: trabajas con la clase y Session, recibes objetos ═══
+with Session(engine) as session:
+    stmt = select(Producto).where(Producto.precio > 100)
+    for producto in session.scalars(stmt):
+        print(f"ORM  → {producto.nombre}: \${producto.precio}")
 
-                # Observa: el select() es IDÉNTICO en estructura.
-                # Core recibe un Table, ORM recibe una clase mapeada.`} />
+# Observa: el select() es IDÉNTICO en estructura.
+# Core recibe un Table, ORM recibe una clase mapeada.`} />
 
                                             <Box type="warn" label="⚠️ Punto de Atención: execute() vs scalars()."><code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">session.execute(stmt)</code> devuelve objetos <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Row</code> (tuplas). <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">session.scalars(stmt)</code> devuelve directamente las instancias del modelo ORM. Usa <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">scalars()</code> el 90% del tiempo cuando trabajas con el ORM.
                                             </Box>
@@ -2538,41 +2538,41 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">SQLAlchemy 2.0 introdujo un sistema donde tus <strong>type hints de Python definen las columnas de la base de datos</strong>. <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Mapped[int]</code> genera <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">INTEGER NOT NULL</code>. <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Mapped[Optional[str]]</code> genera un <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">VARCHAR</code> nullable. La antigua función <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">declarative_base()</code> y el uso directo de <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Column()</code> se consideran <strong>legacy</strong> (heredados) y han sido reemplazados por este nuevo enfoque — aún funcionan, pero la documentación oficial recomienda la sintaxis moderna para proyectos nuevos.</p>
 
                                             <CodeBlock title="app/models.py — Modelos con relaciones" lang="python" code={`from typing import List, Optional
-                from datetime import datetime
-                from sqlalchemy import String, ForeignKey, DateTime, func
-                from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from datetime import datetime
+from sqlalchemy import String, ForeignKey, DateTime, func
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-                class Base(DeclarativeBase):
-                    pass
+class Base(DeclarativeBase):
+    pass
 
-                class Autor(Base):
-                    __tablename__ = "autores"
+class Autor(Base):
+    __tablename__ = "autores"
 
-                    # Mapped[int] + primary_key → INTEGER NOT NULL PRIMARY KEY
-                    id: Mapped[int] = mapped_column(primary_key=True)
-                    nombre: Mapped[str] = mapped_column(String(100))
-                    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
-                    # Mapped[Optional[str]] → VARCHAR, nullable
-                    bio: Mapped[Optional[str]]
-                    creado_en: Mapped[datetime] = mapped_column(
-                        DateTime(timezone=True), server_default=func.now()
-                    )
+    # Mapped[int] + primary_key → INTEGER NOT NULL PRIMARY KEY
+    id: Mapped[int] = mapped_column(primary_key=True)
+    nombre: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    # Mapped[Optional[str]] → VARCHAR, nullable
+    bio: Mapped[Optional[str]]
+    creado_en: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
 
-                    # Relación uno-a-muchos: un Autor tiene muchos Artículos
-                    articulos: Mapped[List["Articulo"]] = relationship(
-                        back_populates="autor", cascade="all, delete-orphan"
-                    )
+    # Relación uno-a-muchos: un Autor tiene muchos Artículos
+    articulos: Mapped[List["Articulo"]] = relationship(
+        back_populates="autor", cascade="all, delete-orphan"
+    )
 
-                class Articulo(Base):
-                    __tablename__ = "articulos"
+class Articulo(Base):
+    __tablename__ = "articulos"
 
-                    id: Mapped[int] = mapped_column(primary_key=True)
-                    titulo: Mapped[str] = mapped_column(String(200))
-                    contenido: Mapped[str]
-                    autor_id: Mapped[int] = mapped_column(ForeignKey("autores.id"))
+    id: Mapped[int] = mapped_column(primary_key=True)
+    titulo: Mapped[str] = mapped_column(String(200))
+    contenido: Mapped[str]
+    autor_id: Mapped[int] = mapped_column(ForeignKey("autores.id"))
 
-                    # Mapped["Autor"] (sin List) → relación escalar (un solo objeto)
-                    autor: Mapped["Autor"] = relationship(back_populates="articulos")`} />
+    # Mapped["Autor"] (sin List) → relación escalar (un solo objeto)
+    autor: Mapped["Autor"] = relationship(back_populates="articulos")`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 Referencia Rápida de Tipos</h3>
                                             <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
@@ -2598,20 +2598,20 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Alembic es como un "Git para tu esquema de BD": cada cambio genera un script con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">upgrade()</code> y <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">downgrade()</code>.</p>
 
                                             <CodeBlock title="Terminal — Comandos de Alembic" lang="shell" code={`# Inicializar Alembic
-                pip install alembic
-                alembic init alembic
+pip install alembic
+alembic init alembic
 
-                # Generar migración automática
-                alembic revision --autogenerate -m "crear tablas autores y articulos"
+# Generar migración automática
+alembic revision --autogenerate -m "crear tablas autores y articulos"
 
-                # Aplicar migraciones pendientes
-                alembic upgrade head
+# Aplicar migraciones pendientes
+alembic upgrade head
 
-                # Revertir la última
-                alembic downgrade -1
+# Revertir la última
+alembic downgrade -1
 
-                # CRÍTICO en alembic/env.py para SQLite:
-                # render_as_batch=True  ← Usa estrategia "copy and move"`} />
+# CRÍTICO en alembic/env.py para SQLite:
+# render_as_batch=True  ← Usa estrategia "copy and move"`} />
 
                                             <Box type="warn" label="⚠️ Punto de Atención: lo que autogenerate NO detecta.">Alembic detecta creación/eliminación de tablas y columnas, pero <strong>NO detecta renombrados</strong> — los interpreta como borrar + crear (¡pierdes datos!). Si renombras algo, edita manualmente el script generado.
                                             </Box>
@@ -2636,43 +2636,43 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Aquí conectamos con lo que ya sabes de <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends</code> y <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">python-dotenv</code>. El patrón <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">get_db()</code> usa <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">yield</code> para inyectar una sesión por request y garantizar su cierre en el <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">finally</code>.</p>
 
                                             <CodeBlock title="app/database.py" lang="python" code={`import os
-                from sqlalchemy import create_engine, event, Engine
-                from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy import create_engine, event, Engine
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-                # URL configurable — SQLite en dev, PostgreSQL en prod
-                DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
+# URL configurable — SQLite en dev, PostgreSQL en prod
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
-                # check_same_thread=False es necesario para SQLite con FastAPI.
-                # SQLite solo permite acceso desde el thread que creó la conexión,
-                # pero FastAPI despacha endpoints síncronos (def) a un threadpool.
-                # La seguridad se mantiene creando una sesión nueva por request (get_db).
-                connect_args = {}
-                if DATABASE_URL.startswith("sqlite"):
-                    connect_args["check_same_thread"] = False
+# check_same_thread=False es necesario para SQLite con FastAPI.
+# SQLite solo permite acceso desde el thread que creó la conexión,
+# pero FastAPI despacha endpoints síncronos (def) a un threadpool.
+# La seguridad se mantiene creando una sesión nueva por request (get_db).
+connect_args = {}
+if DATABASE_URL.startswith("sqlite"):
+    connect_args["check_same_thread"] = False
 
-                engine = create_engine(DATABASE_URL, connect_args=connect_args)
-                SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(DATABASE_URL, connect_args=connect_args)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-                class Base(DeclarativeBase):
-                    pass
+class Base(DeclarativeBase):
+    pass
 
-                # ═══ CRÍTICO: Activar foreign keys en SQLite ═══
-                # Sin esto, puedes insertar registros huérfanos sin error
-                @event.listens_for(Engine, "connect")
-                def activar_fk_sqlite(dbapi_conn, connection_record):
-                    import sqlite3
-                    if isinstance(dbapi_conn, sqlite3.Connection):
-                        cursor = dbapi_conn.cursor()
-                        cursor.execute("PRAGMA foreign_keys=ON")
-                        cursor.close()
+# ═══ CRÍTICO: Activar foreign keys en SQLite ═══
+# Sin esto, puedes insertar registros huérfanos sin error
+@event.listens_for(Engine, "connect")
+def activar_fk_sqlite(dbapi_conn, connection_record):
+    import sqlite3
+    if isinstance(dbapi_conn, sqlite3.Connection):
+        cursor = dbapi_conn.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON")
+        cursor.close()
 
-                def get_db():
-                    """Inyecta una sesión por request. yield + finally = limpieza garantizada."""
-                    db = SessionLocal()
-                    try:
-                        yield db
-                    finally:
-                        db.close()`} />
+def get_db():
+    """Inyecta una sesión por request. yield + finally = limpieza garantizada."""
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.2 Limitaciones de SQLite que Debes Conocer</h3>
                                             <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
@@ -2695,98 +2695,98 @@
                                             <p className="text-gray-700 leading-relaxed mb-5">Esta separación es fundamental. Los modelos SQLAlchemy definen <em>almacenamiento</em>; los schemas Pydantic controlan <em>qué cruza la frontera de la API</em>. El puente entre ambos es <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">ConfigDict(from_attributes=True)</code> — el reemplazo de <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">orm_mode</code> en Pydantic v2.</p>
 
                                             <CodeBlock title="app/schemas.py" lang="python" code={`from pydantic import BaseModel, ConfigDict, field_validator
-                from datetime import datetime
+from datetime import datetime
 
-                class ArticuloCreate(BaseModel):
-                    titulo: str
-                    contenido: str
+class ArticuloCreate(BaseModel):
+    titulo: str
+    contenido: str
 
-                    @field_validator("titulo")
-                    @classmethod
-                    def titulo_no_vacio(cls, v: str) -> str:
-                        if len(v.strip()) < 3:
-                            raise ValueError("El título debe tener al menos 3 caracteres")
-                        return v.strip()
+    @field_validator("titulo")
+    @classmethod
+    def titulo_no_vacio(cls, v: str) -> str:
+        if len(v.strip()) < 3:
+            raise ValueError("El título debe tener al menos 3 caracteres")
+        return v.strip()
 
-                class ArticuloResponse(BaseModel):
-                    id: int
-                    titulo: str
-                    contenido: str
-                    publicado: bool
-                    autor_id: int
-                    # from_attributes=True reemplaza a orm_mode de Pydantic v1
-                    model_config = ConfigDict(from_attributes=True)
+class ArticuloResponse(BaseModel):
+    id: int
+    titulo: str
+    contenido: str
+    publicado: bool
+    autor_id: int
+    # from_attributes=True reemplaza a orm_mode de Pydantic v1
+    model_config = ConfigDict(from_attributes=True)
 
-                class AutorBase(BaseModel):
-                    nombre: str
-                    email: str
+class AutorBase(BaseModel):
+    nombre: str
+    email: str
 
-                class AutorCreate(AutorBase):
-                    """Acepta nombre y email al crear. Sin id ni fecha."""
-                    pass
+class AutorCreate(AutorBase):
+    """Acepta nombre y email al crear. Sin id ni fecha."""
+    pass
 
-                class AutorResponse(AutorBase):
-                    id: int
-                    creado_en: datetime
-                    articulos: list[ArticuloResponse] = []
-                    model_config = ConfigDict(from_attributes=True)`} />
+class AutorResponse(AutorBase):
+    id: int
+    creado_en: datetime
+    articulos: list[ArticuloResponse] = []
+    model_config = ConfigDict(from_attributes=True)`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.4 Endpoint con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends(get_db)</code></h3>
 
                                             <CodeBlock title="app/routers/autores.py" lang="sql" code={`from typing import Annotated
-                from fastapi import APIRouter, Depends, HTTPException
-                from sqlalchemy.orm import Session, selectinload
-                from sqlalchemy import select
-                from app.database import get_db
-                from app import models, schemas
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session, selectinload
+from sqlalchemy import select
+from app.database import get_db
+from app import models, schemas
 
-                router = APIRouter(prefix="/autores", tags=["autores"])
-                DBSession = Annotated[Session, Depends(get_db)]
+router = APIRouter(prefix="/autores", tags=["autores"])
+DBSession = Annotated[Session, Depends(get_db)]
 
-                @router.post("/", response_model=schemas.AutorResponse, status_code=201)
-                def crear_autor(autor: schemas.AutorCreate, db: DBSession):
-                    """
-                    Flujo completo:
-                    1. FastAPI recibe JSON → 2. Pydantic valida →
-                    3. Depends inyecta sesión → 4. ORM persiste →
-                    5. response_model serializa con from_attributes=True
-                    """
-                    db_autor = models.Autor(nombre=autor.nombre, email=autor.email)
-                    db.add(db_autor)
-                    db.commit()
-                    db.refresh(db_autor)
-                    return db_autor
+@router.post("/", response_model=schemas.AutorResponse, status_code=201)
+def crear_autor(autor: schemas.AutorCreate, db: DBSession):
+    """
+    Flujo completo:
+    1. FastAPI recibe JSON → 2. Pydantic valida →
+    3. Depends inyecta sesión → 4. ORM persiste →
+    5. response_model serializa con from_attributes=True
+    """
+    db_autor = models.Autor(nombre=autor.nombre, email=autor.email)
+    db.add(db_autor)
+    db.commit()
+    db.refresh(db_autor)
+    return db_autor
 
-                @router.get("/{autor_id}", response_model=schemas.AutorResponse)
-                def obtener_autor(autor_id: int, db: DBSession):
-                    stmt = (
-                        select(models.Autor)
-                        .options(selectinload(models.Autor.articulos))  # ← Evita N+1
-                        .where(models.Autor.id == autor_id)
-                    )
-                    db_autor = db.scalars(stmt).first()
-                    if db_autor is None:
-                        raise HTTPException(status_code=404, detail="Autor no encontrado")
-                    return db_autor`} />
+@router.get("/{autor_id}", response_model=schemas.AutorResponse)
+def obtener_autor(autor_id: int, db: DBSession):
+    stmt = (
+        select(models.Autor)
+        .options(selectinload(models.Autor.articulos))  # ← Evita N+1
+        .where(models.Autor.id == autor_id)
+    )
+    db_autor = db.scalars(stmt).first()
+    if db_autor is None:
+        raise HTTPException(status_code=404, detail="Autor no encontrado")
+    return db_autor`} />
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.5 Estructura Final del Proyecto</h3>
                                             <div className="bg-gray-900 text-gray-100 rounded-xl p-5 font-mono text-sm leading-relaxed mt-4 shadow-lg">
                 <CodeBlock lang="text" code={`mi_proyecto/
-                ├── .env                 ← DATABASE_URL=sqlite:///./app.db
-                ├── requirements.txt     ← fastapi, uvicorn, sqlalchemy, alembic, python-dotenv
-                ├── app/
-                │   ├── __init__.py
-                │   ├── main.py          ← FastAPI app + lifespan
-                │   ├── database.py      ← Engine, SessionLocal, get_db, Base
-                │   ├── models.py        ← Modelos SQLAlchemy 2.x (Mapped, mapped_column)
-                │   ├── schemas.py       ← Schemas Pydantic (Create, Response)
-                │   ├── crud.py          ← Operaciones de BD
-                │   └── routers/
-                │       └── autores.py   ← Endpoints
-                ├── alembic/
-                │   ├── env.py           ← target_metadata + render_as_batch=True
-                │   └── versions/
-                └── alembic.ini`} />
+├── .env                 ← DATABASE_URL=sqlite:///./app.db
+├── requirements.txt     ← fastapi, uvicorn, sqlalchemy, alembic, python-dotenv
+├── app/
+│   ├── __init__.py
+│   ├── main.py          ← FastAPI app + lifespan
+│   ├── database.py      ← Engine, SessionLocal, get_db, Base
+│   ├── models.py        ← Modelos SQLAlchemy 2.x (Mapped, mapped_column)
+│   ├── schemas.py       ← Schemas Pydantic (Create, Response)
+│   ├── crud.py          ← Operaciones de BD
+│   └── routers/
+│       └── autores.py   ← Endpoints
+├── alembic/
+│   ├── env.py           ← target_metadata + render_as_batch=True
+│   └── versions/
+└── alembic.ini`} />
                                             </div>
 
                                             <Box type="warn" label="⚠️ Punto de Atención: Foreign Keys desactivadas por defecto.">Si no activas <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">PRAGMA foreign_keys=ON</code>, puedes insertar un artículo con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">autor_id=999</code> sin que exista el autor. Tu app "funciona" en SQLite, pero al migrar a PostgreSQL (que sí aplica FKs), todo explota.
@@ -2987,12 +2987,12 @@
                                             <Accordion items={[{ titulo: "¿Cómo instalar y usar Ruff? (herramienta gratuita)", contenido: (<><div className="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
                                                     <p><strong>Ruff</strong> reemplaza a Flake8, isort, Black y pyupgrade en una sola herramienta (open source, escrita en Rust, 10–100x más rápido). Instálalo con <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">pip install ruff</code> y agrega esto en tu <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">pyproject.toml</code>:</p>
                                                     <div className="bg-gray-900 text-gray-100 rounded-lg p-3 font-mono text-xs mt-2 overflow-x-auto"><CodeBlock lang="sql" code={`[tool.ruff]
-                line-length = 88
-                target-version = "py311"
+line-length = 88
+target-version = "py311"
 
-                [tool.ruff.lint]
-                select = ["E", "F", "I", "W", "N", "UP", "B", "SIM"]
-                ignore = ["B008"]  # Necesario para Depends() de FastAPI`} /></div>
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "N", "UP", "B", "SIM"]
+ignore = ["B008"]  # Necesario para Depends() de FastAPI`} /></div>
                                                     <p className="mt-2">Ejecuta <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">ruff check .</code> para verificar y <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">ruff format .</code> para formatear automáticamente.</p>
                                                 </div></>) }]} />
                                         </section>
@@ -3102,36 +3102,36 @@
                                             <div className="bg-gray-900 text-gray-100 rounded-xl p-5 font-mono text-sm leading-relaxed mt-4 shadow-lg overflow-x-auto">
                 <CodeBlock lang="text" code={`# Documentación de Uso de IA
 
-                ## 1. Herramientas utilizadas
-                - Herramienta: [ej: Claude 3.5 Sonnet, ChatGPT-4o, GitHub Copilot]
-                - Fechas de uso: [ej: 5–8 de abril de 2026]
+## 1. Herramientas utilizadas
+- Herramienta: [ej: Claude 3.5 Sonnet, ChatGPT-4o, GitHub Copilot]
+- Fechas de uso: [ej: 5–8 de abril de 2026]
 
-                ## 2. Tipo de uso
-                - [ ] Generación de código
-                - [ ] Depuración de errores
-                - [ ] Explicación de conceptos
-                - [ ] Generación de tests
-                - [ ] Documentación / README
+## 2. Tipo de uso
+- [ ] Generación de código
+- [ ] Depuración de errores
+- [ ] Explicación de conceptos
+- [ ] Generación de tests
+- [ ] Documentación / README
 
-                ## 3. Prompts principales (los 3–5 más importantes)
+## 3. Prompts principales (los 3–5 más importantes)
 
-                ### Prompt 1
-                - **Prompt exacto:** "..."
-                - **Qué generó la IA:** [resumen breve]
-                - **Qué aceptamos/modificamos/rechazamos:** [describir]
-                - **Por qué:** [justificación técnica]
+### Prompt 1
+- **Prompt exacto:** "..."
+- **Qué generó la IA:** [resumen breve]
+- **Qué aceptamos/modificamos/rechazamos:** [describir]
+- **Por qué:** [justificación técnica]
 
-                ## 4. Verificación
-                ¿Cómo comprobaron que el código generado era correcto?
-                - [ ] Ejecutamos tests
-                - [ ] Probamos manualmente en /docs
-                - [ ] Leímos documentación oficial
-                - [ ] Otro: ___
+## 4. Verificación
+¿Cómo comprobaron que el código generado era correcto?
+- [ ] Ejecutamos tests
+- [ ] Probamos manualmente en /docs
+- [ ] Leímos documentación oficial
+- [ ] Otro: ___
 
-                ## 5. Reflexión
-                - ¿Qué aprendimos del proceso?
-                - ¿Qué partes entendemos completamente?
-                - ¿Qué partes nos resultaron confusas?`} />  /* TODO revisar lang */
+## 5. Reflexión
+- ¿Qué aprendimos del proceso?
+- ¿Qué partes entendemos completamente?
+- ¿Qué partes nos resultaron confusas?`} />  /* TODO revisar lang */
                                             </div>
                                         </section>
 

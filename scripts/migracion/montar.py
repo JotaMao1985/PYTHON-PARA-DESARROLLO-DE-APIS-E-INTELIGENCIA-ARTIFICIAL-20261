@@ -32,6 +32,40 @@ import sys
 import textwrap
 from pathlib import Path
 
+# El JSX de una pieza sale a ras de margen y hay que encajarlo dentro de la
+# plantilla, que lo quiere sangrado. Pero `textwrap.indent` sangra TODAS las
+# líneas, y dentro de un `code={`…`}` las líneas no son JSX: son el programa
+# que el estudiante va a copiar. Sangrarlas le mete al código dieciséis
+# espacios que no escribió nadie —la primera línea no los lleva, porque va
+# pegada al acento de apertura—, y lo que queda no es Python válido:
+#
+#     class Coin:                    ← columna 0, la escribió el acento
+#                     def toss(self):    ← columna 16, la escribió montar.py
+#
+# No se puede arreglar al pintar: en tiempo de render ya no hay forma de saber
+# cuáles de esos espacios son del JSX y cuáles del programa. Cuando TODAS las
+# líneas de un bloque están dentro de una clase, la sangría común incluye el
+# nivel real del código y quitarla entera rompe el bloque. Aquí sí se sabe,
+# porque aquí es donde se añade: la respuesta es no añadirla.
+_LITERAL_CODIGO = re.compile(r"code=\{`(?:[^`\\]|\\.)*`\}", re.S)
+
+
+def indentar_jsx(cuerpo: str, ancho: int) -> str:
+    """Sangra el JSX `ancho` espacios sin tocar lo que va dentro de `code={`…`}`."""
+    guardados: list[str] = []
+
+    def guardar(m):
+        guardados.append(m.group(0))
+        return f"__LP_CODIGO_{len(guardados) - 1}__"
+
+    # El literal se colapsa a una marca de una sola línea, se sangra el JSX
+    # —que ya es sólo JSX— y se devuelve el literal intacto a su sitio.
+    protegido = _LITERAL_CODIGO.sub(guardar, cuerpo)
+    sangrado = textwrap.indent(textwrap.dedent(protegido), " " * ancho).rstrip()
+    return re.sub(r"__LP_CODIGO_(\d+)__",
+                  lambda m: guardados[int(m.group(1))], sangrado)
+
+
 INI_SEC = "        /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */"
 FIN_SEC = "        /* === SECCIONES FIN === */"
 INI_CSS = "        /* === ESTILOS DEL MÓDULO INICIO — del <style> del archivo heredado === */"
@@ -253,15 +287,14 @@ def main():
             print(f"ERROR: la receta declara componentes en {propio} y no está.",
                   file=sys.stderr)
             return 1
-        cuerpo = textwrap.indent(textwrap.dedent(propio.read_text(encoding="utf-8")),
-                                 " " * 8).rstrip()
+        cuerpo = indentar_jsx(propio.read_text(encoding="utf-8"), 8)
         texto = poner(texto, INI_COMP, FIN_COMP, cuerpo, "        const curriculum = [")
 
     # 6 · secciones
     comps, filas = [], []
     for s in receta["secciones"]:
         cuerpo = (piezas / "jsx" / f"{s['id']}.jsx").read_text(encoding="utf-8").rstrip()
-        cuerpo = textwrap.indent(textwrap.dedent(cuerpo), " " * 16).rstrip()
+        cuerpo = indentar_jsx(cuerpo, 16)
         comps.append(f"        const {s['componente']} = () => (\n"
                      f"            <div className=\"prose-lp\">\n{cuerpo}\n            </div>\n        );")
         filas.append(f"            {{ id: {s['id']!r}, title: {s['titulo']!r}, "

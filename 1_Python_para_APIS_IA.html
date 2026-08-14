@@ -2293,34 +2293,34 @@
                 <GraficaM1 caption="Tiempo de ejecución relativo, normalizado a Python 3.9 (menor es mejor). Son órdenes de magnitud, no una medición propia: la documentación oficial de CPython —«What's New In Python 3.11», sección Faster CPython— declara entre un 10 % y un 60 % de mejora frente a 3.10 según la carga, y ~1,25× de media en el conjunto de referencia pyperformance. Fíjate en la forma: el salto grande está entre 3.10 y 3.11, no entre 3.9 y 3.10." />
 
                 <CodeBlock title="Clasificación de Outliers con Pattern Matching" lang="python" code={`from typing import Literal, Union
-                import pandas as pd
+import pandas as pd
 
-                # Definimos tipos para claridad (Type Hinting moderno)
-                EstadoDato = Literal['valido', 'outlier_severo', 'outlier_leve', 'error']
+# Definimos tipos para claridad (Type Hinting moderno)
+EstadoDato = Literal['valido', 'outlier_severo', 'outlier_leve', 'error']
 
-                def clasificar_observacion(obs: dict) -> EstadoDato:
-                    """Clasifica una observación estadística usando pattern matching."""
-                    match obs:
-                        # Caso: Datos faltantes o estructura incorrecta
-                        case {'valor': None} | {}:
-                            return 'error'
+def clasificar_observacion(obs: dict) -> EstadoDato:
+    """Clasifica una observación estadística usando pattern matching."""
+    match obs:
+        # Caso: Datos faltantes o estructura incorrecta
+        case {'valor': None} | {}:
+            return 'error'
+        
+        # Caso: Outlier severo (> 3 desviaciones estándar)
+        case {'z_score': z} if abs(z) > 3:
+            return 'outlier_severo'
+            
+        # Caso: Outlier leve (> 2 desviaciones estándar)
+        case {'z_score': z} if abs(z) > 2:
+            return 'outlier_leve'
+            
+        # Caso por defecto (Catch-all)
+        case _:
+            return 'valido'
 
-                        # Caso: Outlier severo (> 3 desviaciones estándar)
-                        case {'z_score': z} if abs(z) > 3:
-                            return 'outlier_severo'
-
-                        # Caso: Outlier leve (> 2 desviaciones estándar)
-                        case {'z_score': z} if abs(z) > 2:
-                            return 'outlier_leve'
-
-                        # Caso por defecto (Catch-all)
-                        case _:
-                            return 'valido'
-
-                # Simulación de datos
-                data = [{'z_score': 0.5}, {'z_score': 3.2}, {'valor': None}, {'z_score': -2.1}]
-                resultados = [clasificar_observacion(d) for d in data]
-                print(f"Resultados: {resultados}")`} />
+# Simulación de datos
+data = [{'z_score': 0.5}, {'z_score': 3.2}, {'valor': None}, {'z_score': -2.1}]
+resultados = [clasificar_observacion(d) for d in data]
+print(f"Resultados: {resultados}")`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`Resultados: ['valido', 'outlier_severo', 'error', 'outlier_leve']`} /></>) }]} />
 
@@ -2335,85 +2335,85 @@
                                             • <strong>Un archivo por responsabilidad:</strong> <code>limpieza.py</code>, <code>validacion.py</code>, <code>transformaciones.py</code>.<br />
                                             • <strong>Documentación con docstrings:</strong> Explica qué hace cada función, qué recibe y qué retorna.<br />
                                             • <strong>Type hints:</strong> Declara tipos de entrada/salida para detectar errores antes de ejecutar.</p><CodeBlock title="limpieza.py - Módulo Reutilizable" lang="python" code={`# ═══════════════════════════════════════════════════════════
-                # ARCHIVO: limpieza.py
-                # Funciones puras para limpieza de DataFrames
-                # ═══════════════════════════════════════════════════════════
+# ARCHIVO: limpieza.py
+# Funciones puras para limpieza de DataFrames
+# ═══════════════════════════════════════════════════════════
 
-                import pandas as pd
-                import numpy as np
-                from typing import List, Optional
+import pandas as pd
+import numpy as np
+from typing import List, Optional
 
-                def eliminar_duplicados(df: pd.DataFrame, subset: Optional[List[str]] = None) -> pd.DataFrame:
-                    """
-                    Elimina filas duplicadas del DataFrame.
+def eliminar_duplicados(df: pd.DataFrame, subset: Optional[List[str]] = None) -> pd.DataFrame:
+    """
+    Elimina filas duplicadas del DataFrame.
+    
+    Args:
+        df: DataFrame de entrada
+        subset: Columnas a considerar para duplicados (None = todas)
+    
+    Returns:
+        DataFrame sin duplicados
+    """
+    n_antes = len(df)
+    df_limpio = df.drop_duplicates(subset=subset, keep='first')
+    n_despues = len(df_limpio)
+    print(f"✅ Eliminados {n_antes - n_despues} duplicados")
+    return df_limpio
 
-                    Args:
-                        df: DataFrame de entrada
-                        subset: Columnas a considerar para duplicados (None = todas)
+def imputar_nulos(df: pd.DataFrame, columnas: List[str], estrategia: str = 'mediana') -> pd.DataFrame:
+    """
+    Imputa valores nulos con la estrategia especificada.
+    
+    Args:
+        df: DataFrame de entrada
+        columnas: Lista de columnas numéricas a imputar
+        estrategia: 'media', 'mediana' o 'moda'
+    
+    Returns:
+        DataFrame con valores imputados
+    """
+    df_limpio = df.copy()
+    for col in columnas:
+        if estrategia == 'media':
+            valor = df_limpio[col].mean()
+        elif estrategia == 'mediana':
+            valor = df_limpio[col].median()
+        else:
+            valor = df_limpio[col].mode()[0]
+        
+        n_nulos = df_limpio[col].isna().sum()
+        df_limpio[col] = df_limpio[col].fillna(valor)
+        print(f"✅ {col}: {n_nulos} nulos imputados con {estrategia}={valor:.2f}")
+    
+    return df_limpio
 
-                    Returns:
-                        DataFrame sin duplicados
-                    """
-                    n_antes = len(df)
-                    df_limpio = df.drop_duplicates(subset=subset, keep='first')
-                    n_despues = len(df_limpio)
-                    print(f"✅ Eliminados {n_antes - n_despues} duplicados")
-                    return df_limpio
+def detectar_outliers_iqr(df: pd.DataFrame, columna: str, factor: float = 1.5) -> pd.Series:
+    """
+    Detecta outliers usando el método IQR.
+    
+    Returns:
+        Serie booleana (True = outlier)
+    """
+    Q1, Q3 = df[columna].quantile([0.25, 0.75])
+    IQR = Q3 - Q1
+    limite_inf = Q1 - factor * IQR
+    limite_sup = Q3 + factor * IQR
+    
+    outliers = (df[columna] < limite_inf) | (df[columna] > limite_sup)
+    print(f"⚠️ {columna}: {outliers.sum()} outliers detectados (IQR x{factor})")
+    return outliers
 
-                def imputar_nulos(df: pd.DataFrame, columnas: List[str], estrategia: str = 'mediana') -> pd.DataFrame:
-                    """
-                    Imputa valores nulos con la estrategia especificada.
+# ═══════════════════════════════════════════════════════════
+# USO EN TU ANÁLISIS PRINCIPAL
+# ═══════════════════════════════════════════════════════════
 
-                    Args:
-                        df: DataFrame de entrada
-                        columnas: Lista de columnas numéricas a imputar
-                        estrategia: 'media', 'mediana' o 'moda'
-
-                    Returns:
-                        DataFrame con valores imputados
-                    """
-                    df_limpio = df.copy()
-                    for col in columnas:
-                        if estrategia == 'media':
-                            valor = df_limpio[col].mean()
-                        elif estrategia == 'mediana':
-                            valor = df_limpio[col].median()
-                        else:
-                            valor = df_limpio[col].mode()[0]
-
-                        n_nulos = df_limpio[col].isna().sum()
-                        df_limpio[col] = df_limpio[col].fillna(valor)
-                        print(f"✅ {col}: {n_nulos} nulos imputados con {estrategia}={valor:.2f}")
-
-                    return df_limpio
-
-                def detectar_outliers_iqr(df: pd.DataFrame, columna: str, factor: float = 1.5) -> pd.Series:
-                    """
-                    Detecta outliers usando el método IQR.
-
-                    Returns:
-                        Serie booleana (True = outlier)
-                    """
-                    Q1, Q3 = df[columna].quantile([0.25, 0.75])
-                    IQR = Q3 - Q1
-                    limite_inf = Q1 - factor * IQR
-                    limite_sup = Q3 + factor * IQR
-
-                    outliers = (df[columna] < limite_inf) | (df[columna] > limite_sup)
-                    print(f"⚠️ {columna}: {outliers.sum()} outliers detectados (IQR x{factor})")
-                    return outliers
-
-                # ═══════════════════════════════════════════════════════════
-                # USO EN TU ANÁLISIS PRINCIPAL
-                # ═══════════════════════════════════════════════════════════
-
-                # En analisis_principal.py:
-                # from limpieza import eliminar_duplicados, imputar_nulos, detectar_outliers_iqr
-                #
-                # df = pd.read_csv("datos.csv")
-                # df = eliminar_duplicados(df)
-                # df = imputar_nulos(df, ['edad', 'ingreso'], estrategia='mediana')
-                # outliers = detectar_outliers_iqr(df, 'ingreso')`} /></>) }]} />
+# En analisis_principal.py:
+# from limpieza import eliminar_duplicados, imputar_nulos, detectar_outliers_iqr
+#
+# df = pd.read_csv("datos.csv")
+# df = eliminar_duplicados(df)
+# df = imputar_nulos(df, ['edad', 'ingreso'], estrategia='mediana')
+# outliers = detectar_outliers_iqr(df, 'ingreso')`} /></>) }]} />
             </div>
         );
 
@@ -2437,48 +2437,48 @@
                 <table><thead><tr><th>Herramienta</th><th>Para qué</th><th>Detalle</th></tr></thead><tbody><tr><td>🐍 venv + pip</td><td>Proyectos Puros Python</td><td>✅ Nativo, sin instalación extra. ✅ Entornos ultra-ligeros (~10MB). ✅ Compatible con cualquier servidor/CI. ❌ No resuelve dependencias de sistema (compiladores). ❌ Puede fallar con librerías que requieren compilación (ej: lxml, psycopg2).</td></tr><tr><td>🐼 conda/mamba</td><td>Ciencia de Datos Pesada</td><td>✅ Gestiona Python + binarios + CUDA. ✅ Resuelve conflictos de versiones automáticamente. ✅ Instalación precompilada (sin compilar nada). ❌ Entornos más pesados (~500MB+). ❌ Puede ser lento (usa <code>mamba</code> como alternativa rápida).</td></tr></tbody></table>
 
                 <CodeBlock title="Workflow Completo: Crear, Compartir y Activar Entornos" lang="shell" code={`# ═══════════════════════════════════════════════════════════
-                # PASO 1: CREAR UN ENTORNO VIRTUAL
-                # ═══════════════════════════════════════════════════════════
+# PASO 1: CREAR UN ENTORNO VIRTUAL
+# ═══════════════════════════════════════════════════════════
 
-                # Crear el entorno (carpeta aislada con Python limpio)
-                python -m venv mi_proyecto_env
+# Crear el entorno (carpeta aislada con Python limpio)
+python -m venv mi_proyecto_env
 
-                # Activar el entorno:
-                # Windows:
-                mi_proyecto_env\\Scripts\\activate
-                # Mac/Linux:
-                # source mi_proyecto_env/bin/activate
+# Activar el entorno:
+# Windows:
+mi_proyecto_env\\Scripts\\activate
+# Mac/Linux:
+# source mi_proyecto_env/bin/activate
 
-                # Verificar que estás en el entorno (aparece el nombre al inicio)
-                (mi_proyecto_env) $ which python  # Debe mostrar ruta del entorno
+# Verificar que estás en el entorno (aparece el nombre al inicio)
+(mi_proyecto_env) $ which python  # Debe mostrar ruta del entorno
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 2: INSTALAR DEPENDENCIAS Y GUARDAR "RECETA"
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 2: INSTALAR DEPENDENCIAS Y GUARDAR "RECETA"
+# ═══════════════════════════════════════════════════════════
 
-                # Instalar librerías con versiones específicas
-                pip install pandas==2.0.3 scipy==1.10.1 matplotlib==3.7.1
+# Instalar librerías con versiones específicas
+pip install pandas==2.0.3 scipy==1.10.1 matplotlib==3.7.1
 
-                # Guardar la lista exacta de dependencias
-                pip freeze > requirements.txt
+# Guardar la lista exacta de dependencias
+pip freeze > requirements.txt
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 3: COMPARTIR EL ENTORNO (enviar requirements.txt)
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 3: COMPARTIR EL ENTORNO (enviar requirements.txt)
+# ═══════════════════════════════════════════════════════════
 
-                # Solo compartes el archivo requirements.txt (NO la carpeta del env)
-                # Tu colega recibe: tu código + requirements.txt
+# Solo compartes el archivo requirements.txt (NO la carpeta del env)
+# Tu colega recibe: tu código + requirements.txt
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 4: RECREAR ENTORNO DESDE ARCHIVO COMPARTIDO
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 4: RECREAR ENTORNO DESDE ARCHIVO COMPARTIDO
+# ═══════════════════════════════════════════════════════════
 
-                # Tu colega ejecuta:
-                python -m venv env_compartido
-                source env_compartido/bin/activate  # o Scripts\\activate en Windows
-                pip install -r requirements.txt  # Instala EXACTAMENTE las mismas versiones
+# Tu colega ejecuta:
+python -m venv env_compartido
+source env_compartido/bin/activate  # o Scripts\\activate en Windows
+pip install -r requirements.txt  # Instala EXACTAMENTE las mismas versiones
 
-                # ¡El colaborador ahora tiene el mismo entorno!`} />
+# ¡El colaborador ahora tiene el mismo entorno!`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ Entorno recreado exitosamente. 15 paquetes instalados desde requirements.txt`} /></>) }]} />
 
@@ -2508,43 +2508,43 @@
                 <table><thead><tr><th>Herramienta</th><th>Para qué</th><th>Detalle</th></tr></thead><tbody><tr><td>🐍 venv/conda</td><td>Desarrollo Ágil</td><td>✅ Rápido de crear (~segundos). ✅ Bajo consumo de recursos. ✅ Fácil de entender. ❌ Solo aísla Python/librerías. ❌ Depende del SO del usuario. ❌ 'En mi máquina funciona'.</td></tr><tr><td>🐳 Docker</td><td>Reproducibilidad Total</td><td>✅ Aísla TODO (SO, config, libs). ✅ Mismo resultado en cualquier máquina. ✅ Ideal para CI/CD y papers. ❌ Mayor curva de aprendizaje. ❌ Imágenes pesadas (GB). ❌ Requiere Docker instalado.</td></tr></tbody></table>
 
                 <CodeBlock title="Dockerfile Básico para Análisis Estadístico" lang="dockerfile" code={`# ═══════════════════════════════════════════════════════════
-                # DOCKERFILE: Imagen reproducible para análisis
-                # ═══════════════════════════════════════════════════════════
+# DOCKERFILE: Imagen reproducible para análisis
+# ═══════════════════════════════════════════════════════════
 
-                # Usar imagen base oficial de Python 3.11
-                FROM python:3.11.9-slim
+# Usar imagen base oficial de Python 3.11
+FROM python:3.11.9-slim
 
-                # Establecer directorio de trabajo
-                WORKDIR /app
+# Establecer directorio de trabajo
+WORKDIR /app
 
-                # Copiar archivo de dependencias
-                COPY requirements.txt .
+# Copiar archivo de dependencias
+COPY requirements.txt .
 
-                # Instalar dependencias
-                RUN pip install --no-cache-dir -r requirements.txt
+# Instalar dependencias
+RUN pip install --no-cache-dir -r requirements.txt
 
-                # Copiar el código del análisis
-                COPY . .
+# Copiar el código del análisis
+COPY . .
 
-                # Comando por defecto al ejecutar el contenedor
-                CMD ["python", "analisis.py"]
+# Comando por defecto al ejecutar el contenedor
+CMD ["python", "analisis.py"]
 
-                # ═══════════════════════════════════════════════════════════
-                # COMANDOS PARA USAR EL DOCKERFILE
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# COMANDOS PARA USAR EL DOCKERFILE
+# ═══════════════════════════════════════════════════════════
 
-                # 1. Construir la imagen
-                # docker build -t mi-analisis:v1.0 .
+# 1. Construir la imagen
+# docker build -t mi-analisis:v1.0 .
 
-                # 2. Ejecutar el contenedor
-                # docker run mi-analisis:v1.0
+# 2. Ejecutar el contenedor
+# docker run mi-analisis:v1.0
 
-                # 3. Compartir la imagen (subir a Docker Hub)
-                # docker push usuario/mi-analisis:v1.0
+# 3. Compartir la imagen (subir a Docker Hub)
+# docker push usuario/mi-analisis:v1.0
 
-                # 4. Tu colega descarga y ejecuta (¡mismo resultado garantizado!)
-                # docker pull usuario/mi-analisis:v1.0
-                # docker run usuario/mi-analisis:v1.0`} />
+# 4. Tu colega descarga y ejecuta (¡mismo resultado garantizado!)
+# docker pull usuario/mi-analisis:v1.0
+# docker run usuario/mi-analisis:v1.0`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ Imagen construida: mi-analisis:v1.0 (245MB)\\n🚀 Contenedor ejecutado: Análisis completado en 3.2s`} /></>) }]} />
 
@@ -2575,73 +2575,73 @@
                 <table><thead><tr><th>Herramienta</th><th>Para qué</th><th>Detalle</th></tr></thead><tbody><tr><td>🔧 Git</td><td>Control Local</td><td>✅ Funciona offline. ✅ Historial completo de cambios. ✅ Viajar en el tiempo (revert). ✅ Gratis y open source. ❌ Solo en la máquina local. ❌ Sin respaldo automático.</td></tr><tr><td>☁️ GitHub</td><td>Colaboración y Respaldo</td><td>✅ Respaldo en la nube. ✅ Compartir con colegas/público. ✅ Issues para tracking. ✅ GitHub Pages (web gratis). ❌ Requiere internet. ❌ Repos privados limitados (plan free).</td></tr></tbody></table>
 
                 <CodeBlock title="Workflow Completo: Desde Cero hasta GitHub" lang="shell" code={`# ═══════════════════════════════════════════════════════════
-                # PASO 1: CONFIGURACIÓN INICIAL (solo una vez)
-                # ═══════════════════════════════════════════════════════════
+# PASO 1: CONFIGURACIÓN INICIAL (solo una vez)
+# ═══════════════════════════════════════════════════════════
 
-                git config --global user.name "Tu Nombre"
-                git config --global user.email "tu@email.com"
+git config --global user.name "Tu Nombre"
+git config --global user.email "tu@email.com"
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 2: CREAR REPOSITORIO LOCAL
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 2: CREAR REPOSITORIO LOCAL
+# ═══════════════════════════════════════════════════════════
 
-                cd mi_proyecto_tesis
-                git init  # Convierte la carpeta en un repositorio Git
+cd mi_proyecto_tesis
+git init  # Convierte la carpeta en un repositorio Git
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 3: CREAR .gitignore (¡MUY IMPORTANTE!)
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 3: CREAR .gitignore (¡MUY IMPORTANTE!)
+# ═══════════════════════════════════════════════════════════
 
-                # Crear archivo .gitignore con contenido:
-                echo "# Datos (muy grandes para GitHub)
-                datos/*.csv
-                datos/*.xlsx
-                *.parquet
+# Crear archivo .gitignore con contenido:
+echo "# Datos (muy grandes para GitHub)
+datos/*.csv
+datos/*.xlsx
+*.parquet
 
-                # Outputs regenerables
-                outputs/
-                figuras/
+# Outputs regenerables
+outputs/
+figuras/
 
-                # Entornos virtuales
-                venv/
-                .env
+# Entornos virtuales
+venv/
+.env
 
-                # Archivos del sistema
-                .DS_Store
-                __pycache__/" > .gitignore
+# Archivos del sistema
+.DS_Store
+__pycache__/" > .gitignore
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 4: PRIMER COMMIT
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 4: PRIMER COMMIT
+# ═══════════════════════════════════════════════════════════
 
-                git add .                    # Añadir todos los archivos al staging
-                git status                   # Verificar qué se va a commitear
-                git commit -m "Estructura inicial del proyecto de tesis"
+git add .                    # Añadir todos los archivos al staging
+git status                   # Verificar qué se va a commitear
+git commit -m "Estructura inicial del proyecto de tesis"
 
-                # ═══════════════════════════════════════════════════════════
-                # PASO 5: CONECTAR CON GITHUB (respaldo en la nube)
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# PASO 5: CONECTAR CON GITHUB (respaldo en la nube)
+# ═══════════════════════════════════════════════════════════
 
-                # 1. Crear repositorio vacío en github.com
-                # 2. Conectar tu repo local con el remoto:
-                git remote add origin https://github.com/usuario/mi-tesis.git
-                git push -u origin main      # Subir todo al servidor
+# 1. Crear repositorio vacío en github.com
+# 2. Conectar tu repo local con el remoto:
+git remote add origin https://github.com/usuario/mi-tesis.git
+git push -u origin main      # Subir todo al servidor
 
-                # ═══════════════════════════════════════════════════════════
-                # FLUJO DIARIO DE TRABAJO
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# FLUJO DIARIO DE TRABAJO
+# ═══════════════════════════════════════════════════════════
 
-                # Haces cambios en tu código...
-                git add analisis_cap2.py     # Preparar archivo específico
-                git commit -m "Implementado test de normalidad Shapiro-Wilk"
-                git push                     # Sincronizar con GitHub
+# Haces cambios en tu código...
+git add analisis_cap2.py     # Preparar archivo específico
+git commit -m "Implementado test de normalidad Shapiro-Wilk"
+git push                     # Sincronizar con GitHub
 
-                # Ver historial de cambios
-                git log --oneline -5         # Últimos 5 commits
+# Ver historial de cambios
+git log --oneline -5         # Últimos 5 commits
 
-                # Crear versión estable (ej: entregas)
-                git tag -a v1.0 -m "Entrega capítulo 2 al tutor"
-                git push --tags              # Subir tags a GitHub`} />
+# Crear versión estable (ej: entregas)
+git tag -a v1.0 -m "Entrega capítulo 2 al tutor"
+git push --tags              # Subir tags a GitHub`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ [main a1b2c3d] Estructura inicial del proyecto\\n🚀 Pushed to origin/main\\n🏷️ Tag v1.0 created`} /></>) }]} />
 
@@ -2672,80 +2672,80 @@
                 <table><thead><tr><th>Herramienta</th><th>Para qué</th><th>Detalle</th></tr></thead><tbody><tr><td>✍️ Validación Manual</td><td>Ad-hoc</td><td>❌ Repetir código en cada test. ❌ Fácil olvidarse. ❌ Código difícil de mantener. ✅ Simple para casos únicos.</td></tr><tr><td>🛡️ Decoradores</td><td>Automatización</td><td>✅ Escribes la lógica UNA vez. ✅ Aplicas con una línea (@decorador). ✅ Código limpio y DRY. ✅ Fácil de testear. ❌ Curva de aprendizaje inicial.</td></tr></tbody></table>
 
                 <CodeBlock title="Decoradores para Validación Estadística" lang="python" code={`from scipy import stats
-                import numpy as np
-                import functools
+import numpy as np
+import functools
 
-                # ═══════════════════════════════════════════════════════════
-                # DECORADOR 1: VALIDAR NORMALIDAD (Shapiro-Wilk)
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# DECORADOR 1: VALIDAR NORMALIDAD (Shapiro-Wilk)
+# ═══════════════════════════════════════════════════════════
 
-                def validar_normalidad(alpha=0.05):
-                    """Decorador configurable que verifica normalidad."""
-                    def decorator(func):
-                        @functools.wraps(func)  # Preserva nombre y docstring
-                        def wrapper(data, *args, **kwargs):
-                            stat, p_value = stats.shapiro(data)
+def validar_normalidad(alpha=0.05):
+    """Decorador configurable que verifica normalidad."""
+    def decorator(func):
+        @functools.wraps(func)  # Preserva nombre y docstring
+        def wrapper(data, *args, **kwargs):
+            stat, p_value = stats.shapiro(data)
+            
+            if p_value < alpha:
+                print(f"⚠️ ALERTA: Datos NO normales (p={p_value:.4f})")
+                print(f"   Test de Shapiro-Wilk: W={stat:.4f}")
+                print("💡 Sugerencia: Use Mann-Whitney U o Kruskal-Wallis")
+                return None  # Bloquea ejecución
+            
+            print(f"✅ Normalidad OK (p={p_value:.4f}). Ejecutando {func.__name__}...")
+            return func(data, *args, **kwargs)
+        return wrapper
+    return decorator
 
-                            if p_value < alpha:
-                                print(f"⚠️ ALERTA: Datos NO normales (p={p_value:.4f})")
-                                print(f"   Test de Shapiro-Wilk: W={stat:.4f}")
-                                print("💡 Sugerencia: Use Mann-Whitney U o Kruskal-Wallis")
-                                return None  # Bloquea ejecución
+# ═══════════════════════════════════════════════════════════
+# DECORADOR 2: VALIDAR HOMOCEDASTICIDAD (Levene)
+# ═══════════════════════════════════════════════════════════
 
-                            print(f"✅ Normalidad OK (p={p_value:.4f}). Ejecutando {func.__name__}...")
-                            return func(data, *args, **kwargs)
-                        return wrapper
-                    return decorator
+def validar_homocedasticidad(alpha=0.05):
+    """Verifica igualdad de varianzas antes de ANOVA."""
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*groups, **kwargs):
+            stat, p_value = stats.levene(*groups)
+            
+            if p_value < alpha:
+                print(f"⚠️ Varianzas NO homogéneas (p={p_value:.4f})")
+                print("💡 Sugerencia: Use Welch ANOVA o Kruskal-Wallis")
+                return None
+            
+            print(f"✅ Homocedasticidad OK (p={p_value:.4f})")
+            return func(*groups, **kwargs)
+        return wrapper
+    return decorator
 
-                # ═══════════════════════════════════════════════════════════
-                # DECORADOR 2: VALIDAR HOMOCEDASTICIDAD (Levene)
-                # ═══════════════════════════════════════════════════════════
+# ═══════════════════════════════════════════════════════════
+# APLICACIÓN DE LOS DECORADORES
+# ═══════════════════════════════════════════════════════════
 
-                def validar_homocedasticidad(alpha=0.05):
-                    """Verifica igualdad de varianzas antes de ANOVA."""
-                    def decorator(func):
-                        @functools.wraps(func)
-                        def wrapper(*groups, **kwargs):
-                            stat, p_value = stats.levene(*groups)
+@validar_normalidad(alpha=0.05)
+def ttest_una_muestra(data, mu=0):
+    """T-test protegido por validación de normalidad."""
+    t_stat, p_val = stats.ttest_1samp(data, popmean=mu)
+    return {"t_statistic": t_stat, "p_value": p_val}
 
-                            if p_value < alpha:
-                                print(f"⚠️ Varianzas NO homogéneas (p={p_value:.4f})")
-                                print("💡 Sugerencia: Use Welch ANOVA o Kruskal-Wallis")
-                                return None
+@validar_homocedasticidad(alpha=0.05)
+def anova_grupos(*groups):
+    """ANOVA protegido por validación de homocedasticidad."""
+    f_stat, p_val = stats.f_oneway(*groups)
+    return {"F_statistic": f_stat, "p_value": p_val}
 
-                            print(f"✅ Homocedasticidad OK (p={p_value:.4f})")
-                            return func(*groups, **kwargs)
-                        return wrapper
-                    return decorator
+# ═══════════════════════════════════════════════════════════
+# EJEMPLO DE USO
+# ═══════════════════════════════════════════════════════════
 
-                # ═══════════════════════════════════════════════════════════
-                # APLICACIÓN DE LOS DECORADORES
-                # ═══════════════════════════════════════════════════════════
+# Datos que violan normalidad
+datos_sesgados = np.random.exponential(scale=2.0, size=100)
+resultado = ttest_una_muestra(datos_sesgados, mu=1.5)
 
-                @validar_normalidad(alpha=0.05)
-                def ttest_una_muestra(data, mu=0):
-                    """T-test protegido por validación de normalidad."""
-                    t_stat, p_val = stats.ttest_1samp(data, popmean=mu)
-                    return {"t_statistic": t_stat, "p_value": p_val}
-
-                @validar_homocedasticidad(alpha=0.05)
-                def anova_grupos(*groups):
-                    """ANOVA protegido por validación de homocedasticidad."""
-                    f_stat, p_val = stats.f_oneway(*groups)
-                    return {"F_statistic": f_stat, "p_value": p_val}
-
-                # ═══════════════════════════════════════════════════════════
-                # EJEMPLO DE USO
-                # ═══════════════════════════════════════════════════════════
-
-                # Datos que violan normalidad
-                datos_sesgados = np.random.exponential(scale=2.0, size=100)
-                resultado = ttest_una_muestra(datos_sesgados, mu=1.5)
-
-                # Grupos con varianzas diferentes
-                grupo_a = np.random.normal(0, 1, 50)   # σ = 1
-                grupo_b = np.random.normal(0, 5, 50)   # σ = 5 (¡diferente!)
-                resultado_anova = anova_grupos(grupo_a, grupo_b)`} />
+# Grupos con varianzas diferentes
+grupo_a = np.random.normal(0, 1, 50)   # σ = 1
+grupo_b = np.random.normal(0, 5, 50)   # σ = 5 (¡diferente!)
+resultado_anova = anova_grupos(grupo_a, grupo_b)`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`⚠️ ALERTA: Datos NO normales (p=0.0001)\\n   Test de Shapiro-Wilk: W=0.8234\\n💡 Sugerencia: Use Mann-Whitney U o Kruskal-Wallis`} /></>) }]} />
 
@@ -2777,80 +2777,80 @@
                 <table><thead><tr><th>Herramienta</th><th>Para qué</th><th>Detalle</th></tr></thead><tbody><tr><td>🐍 Python 3.11+</td><td>Rendimiento</td><td>Pattern matching, mejor velocidad, mensajes de error claros. Base sólida para análisis modernos.</td></tr><tr><td>📦 venv/conda</td><td>Aislamiento</td><td>Entornos reproducibles. requirements.txt para compartir. Evita conflictos de dependencias.</td></tr><tr><td>🐳 Docker</td><td>Reproducibilidad Total</td><td>Empaqueta SO + Python + libs. Ideal para papers y producción.</td></tr><tr><td>📋 Git + GitHub</td><td>Versionado y Respaldo</td><td>Historial de cambios, colaboración, respaldo en nube. Esencial para cualquier proyecto.</td></tr><tr><td>🛡️ Decoradores</td><td>Validación Automática</td><td>Verifican supuestos antes de ejecutar tests. Código DRY y robusto.</td></tr></tbody></table>
 
                 <CodeBlock title="Plantilla: Inicio de Proyecto de Análisis" lang="python" code={`# ═══════════════════════════════════════════════════════════
-                # SCRIPT DE INICIO RÁPIDO PARA NUEVO PROYECTO
-                # Copia y ejecuta estos comandos en tu terminal
-                # ═══════════════════════════════════════════════════════════
+# SCRIPT DE INICIO RÁPIDO PARA NUEVO PROYECTO
+# Copia y ejecuta estos comandos en tu terminal
+# ═══════════════════════════════════════════════════════════
 
-                # 1. Crear estructura de carpetas
-                mkdir mi_proyecto_tesis
-                cd mi_proyecto_tesis
-                mkdir datos scripts outputs figuras
+# 1. Crear estructura de carpetas
+mkdir mi_proyecto_tesis
+cd mi_proyecto_tesis
+mkdir datos scripts outputs figuras
 
-                # 2. Inicializar Git
-                git init
+# 2. Inicializar Git
+git init
 
-                # 3. Crear .gitignore
-                cat > .gitignore << 'EOF'
-                # Datos (no subir a GitHub)
-                datos/
-                *.csv
-                *.xlsx
-                *.parquet
+# 3. Crear .gitignore
+cat > .gitignore << 'EOF'
+# Datos (no subir a GitHub)
+datos/
+*.csv
+*.xlsx
+*.parquet
 
-                # Outputs regenerables
-                outputs/
-                figuras/
-                *.png
-                *.pdf
+# Outputs regenerables
+outputs/
+figuras/
+*.png
+*.pdf
 
-                # Entornos
-                venv/
-                env/
-                .env
-                *.pyc
-                __pycache__/
+# Entornos
+venv/
+env/
+.env
+*.pyc
+__pycache__/
 
-                # Sistema
-                .DS_Store
-                Thumbs.db
-                EOF
+# Sistema
+.DS_Store
+Thumbs.db
+EOF
 
-                # 4. Crear entorno virtual
-                python -m venv env
-                source env/bin/activate  # Windows: env\\Scripts\\activate
+# 4. Crear entorno virtual
+python -m venv env
+source env/bin/activate  # Windows: env\\Scripts\\activate
 
-                # 5. Instalar dependencias base
-                pip install pandas numpy scipy matplotlib statsmodels
-                pip freeze > requirements.txt
+# 5. Instalar dependencias base
+pip install pandas numpy scipy matplotlib statsmodels
+pip freeze > requirements.txt
 
-                # 6. Crear archivo principal
-                cat > scripts/analisis_principal.py << 'EOF'
-                """
-                Análisis Principal - Mi Proyecto
-                Autor: Tu Nombre
-                Fecha: $(date +%Y-%m-%d)
-                """
-                import pandas as pd
-                import numpy as np
-                from scipy import stats
+# 6. Crear archivo principal
+cat > scripts/analisis_principal.py << 'EOF'
+"""
+Análisis Principal - Mi Proyecto
+Autor: Tu Nombre
+Fecha: $(date +%Y-%m-%d)
+"""
+import pandas as pd
+import numpy as np
+from scipy import stats
 
-                def main():
-                    # Tu código aquí
-                    print("Proyecto iniciado correctamente")
+def main():
+    # Tu código aquí
+    print("Proyecto iniciado correctamente")
 
-                if __name__ == "__main__":
-                    main()
-                EOF
+if __name__ == "__main__":
+    main()
+EOF
 
-                # 7. Primer commit
-                git add .
-                git commit -m "Estructura inicial del proyecto"
+# 7. Primer commit
+git add .
+git commit -m "Estructura inicial del proyecto"
 
-                # 8. Conectar con GitHub (reemplaza URL)
-                # git remote add origin https://github.com/usuario/mi_proyecto.git
-                # git push -u origin main
+# 8. Conectar con GitHub (reemplaza URL)
+# git remote add origin https://github.com/usuario/mi_proyecto.git
+# git push -u origin main
 
-                echo "✅ Proyecto listo para trabajar"`} />
+echo "✅ Proyecto listo para trabajar"`} />
 
                 <Accordion items={[{ titulo: 'Ver salida', contenido: (<><CodeBlock lang="text" code={`✅ Proyecto listo para trabajar\\n📁 Estructura: datos/ scripts/ outputs/ figuras/\\n🐍 Entorno: env/ activado\\n📋 Git: Repositorio inicializado`} /></>) }]} />
 

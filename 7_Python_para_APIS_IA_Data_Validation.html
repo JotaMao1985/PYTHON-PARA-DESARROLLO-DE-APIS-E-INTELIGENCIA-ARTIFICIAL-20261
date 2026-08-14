@@ -3039,106 +3039,106 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Generación de Datos Simulados
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`import pandas as pd
-                import numpy as np
-                from typing import List, Union, Optional
-                from typing_extensions import Annotated
-                from pydantic import BaseModel, Field
+import numpy as np
+from typing import List, Union, Optional
+from typing_extensions import Annotated
+from pydantic import BaseModel, Field
 
-                # Simulación de datos del dataset mtcars con estructura tipada
-                np.random.seed(42)
+# Simulación de datos del dataset mtcars con estructura tipada
+np.random.seed(42)
 
-                # Generación de muestra simulada de vehículos
-                n_vehiculos = 10
-                datos_simulados = {
-                    'modelo': [f'Auto_{i}' for i in range(n_vehiculos)],
-                    'mpg': np.random.uniform(10.4, 33.9, n_vehiculos).round(1),
-                    'cyl': np.random.choice([4, 6, 8], n_vehiculos),
-                    'hp': np.random.randint(52, 335, n_vehiculos),
-                    'wt': np.random.uniform(1.5, 5.4, n_vehiculos).round(2)
-                }
+# Generación de muestra simulada de vehículos
+n_vehiculos = 10
+datos_simulados = {
+    'modelo': [f'Auto_{i}' for i in range(n_vehiculos)],
+    'mpg': np.random.uniform(10.4, 33.9, n_vehiculos).round(1),
+    'cyl': np.random.choice([4, 6, 8], n_vehiculos),
+    'hp': np.random.randint(52, 335, n_vehiculos),
+    'wt': np.random.uniform(1.5, 5.4, n_vehiculos).round(2)
+}
 
-                print("Datos simulados generados:")
-                for clave, valores in datos_simulados.items():
-                    print(f"  {clave}: {valores[:5]}...")`} />
+print("Datos simulados generados:")
+for clave, valores in datos_simulados.items():
+    print(f"  {clave}: {valores[:5]}...")`} />
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`# 1. Definición del tipo para matriz de covariables continuas
-                import numpy.typing as npt
+import numpy.typing as npt
 
-                # Anotación de arreglos multidimensionales con precisión especificada
-                MatrizDisenoCovariables = npt.NDArray[np.float64]
+# Anotación de arreglos multidimensionales con precisión especificada
+MatrizDisenoCovariables = npt.NDArray[np.float64]
 
-                # 2. Definición del modelo de observación tipado
-                class EspecificacionCoche(BaseModel):
-                    """
-                    Modelo de validación para una observación individual del dataset mtcars.
-                    Cada campo representa una variable del diseño experimental.
-                    """
-                    # Identificador nominal del sujeto (puede estar perdido)
-                    modelo_vehiculo: Optional[str] = Field(
-                        default=None, 
-                        description="Identificador nominal del sujeto experimental"
-                    )
+# 2. Definición del modelo de observación tipado
+class EspecificacionCoche(BaseModel):
+    """
+    Modelo de validación para una observación individual del dataset mtcars.
+    Cada campo representa una variable del diseño experimental.
+    """
+    # Identificador nominal del sujeto (puede estar perdido)
+    modelo_vehiculo: Optional[str] = Field(
+        default=None, 
+        description="Identificador nominal del sujeto experimental"
+    )
+    
+    # Caballos de fuerza: permite polimorfismo int/float
+    caballos_fuerza_hp: int | float = Field(
+        ..., 
+        description="Medición de potencia bruta del motor",
+        gt=0  # Restricción: debe ser positivo
+    )
+    
+    # Vector de mediciones repetidas del cuarto de milla
+    qsec_mediciones_repetidas: List[float] = Field(
+        default_factory=list,
+        description="Tiempos en cuarto de milla (medidas repetidas)"
+    )
+    
+    # Variable indicadora con restricciones embebidas
+    transmision_am_dummy: Annotated[int, Field(
+        ge=0, le=1, 
+        description="Variable dummy: 0 = Automático, 1 = Manual"
+    )]
 
-                    # Caballos de fuerza: permite polimorfismo int/float
-                    caballos_fuerza_hp: int | float = Field(
-                        ..., 
-                        description="Medición de potencia bruta del motor",
-                        gt=0  # Restricción: debe ser positivo
-                    )
+# 3. Función con firma tipada para ajuste de modelo
+def ajustar_modelo_lineal(
+    X: MatrizDisenoCovariables,
+    y: npt.NDArray[np.float64],
+    datos_completos: pd.DataFrame
+) -> dict:
+    """
+    Función que exige matriz de diseño estrictamente numérica flotante.
+    Calcula estimadores básicos de regresión lineal.
+    """
+    n, p = X.shape
+    
+    # Cálculo de estimadores por mínimos cuadrados ordinarios
+# \\( \\hat{\\beta} = (X'X)^{-1}X'y \\)
+    XtX_inv = np.linalg.inv(X.T @ X)
+    beta_hat = XtX_inv @ (X.T @ y)
+    
+    # Residuales y estimación de varianza
+    y_pred = X @ beta_hat
+    residuales = y - y_pred
+    sigma2_hat = np.sum(residuales**2) / (n - p)
+    
+    return {
+        'coeficientes': beta_hat,
+        'varianza_residual': sigma2_hat,
+        'n_observaciones': n,
+        'p_parametros': p
+    }
 
-                    # Vector de mediciones repetidas del cuarto de milla
-                    qsec_mediciones_repetidas: List[float] = Field(
-                        default_factory=list,
-                        description="Tiempos en cuarto de milla (medidas repetidas)"
-                    )
+# 4. Instanciación y validación de una observación
+coche_valido = EspecificacionCoche(
+    modelo_vehiculo="Mazda RX4",
+    caballos_fuerza_hp=110.0,
+    qsec_mediciones_repetidas=[16.46, 16.50, 16.48],
+    transmision_am_dummy=1
+)
 
-                    # Variable indicadora con restricciones embebidas
-                    transmision_am_dummy: Annotated[int, Field(
-                        ge=0, le=1, 
-                        description="Variable dummy: 0 = Automático, 1 = Manual"
-                    )]
-
-                # 3. Función con firma tipada para ajuste de modelo
-                def ajustar_modelo_lineal(
-                    X: MatrizDisenoCovariables,
-                    y: npt.NDArray[np.float64],
-                    datos_completos: pd.DataFrame
-                ) -> dict:
-                    """
-                    Función que exige matriz de diseño estrictamente numérica flotante.
-                    Calcula estimadores básicos de regresión lineal.
-                    """
-                    n, p = X.shape
-
-                    # Cálculo de estimadores por mínimos cuadrados ordinarios
-                # \\( \\hat{\\beta} = (X'X)^{-1}X'y \\)
-                    XtX_inv = np.linalg.inv(X.T @ X)
-                    beta_hat = XtX_inv @ (X.T @ y)
-
-                    # Residuales y estimación de varianza
-                    y_pred = X @ beta_hat
-                    residuales = y - y_pred
-                    sigma2_hat = np.sum(residuales**2) / (n - p)
-
-                    return {
-                        'coeficientes': beta_hat,
-                        'varianza_residual': sigma2_hat,
-                        'n_observaciones': n,
-                        'p_parametros': p
-                    }
-
-                # 4. Instanciación y validación de una observación
-                coche_valido = EspecificacionCoche(
-                    modelo_vehiculo="Mazda RX4",
-                    caballos_fuerza_hp=110.0,
-                    qsec_mediciones_repetidas=[16.46, 16.50, 16.48],
-                    transmision_am_dummy=1
-                )
-
-                print(f"✅ Vehículo validado: {coche_valido.modelo_vehiculo}")
-                print(f"   HP: {coche_valido.caballos_fuerza_hp}")
-                print(f"   Transmisión: {'Manual' if coche_valido.transmision_am_dummy else 'Automático'}")`} />
+print(f"✅ Vehículo validado: {coche_valido.modelo_vehiculo}")
+print(f"   HP: {coche_valido.caballos_fuerza_hp}")
+print(f"   Transmisión: {'Manual' if coche_valido.transmision_am_dummy else 'Automático'}")`} />
                                             <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                 <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Interpretación de
                                                     Resultados</h4>
@@ -3274,22 +3274,22 @@
                                                     "dosis_alta". Implementar el modelo con las restricciones apropiadas.</p>
                                                 <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                     <strong>Solución Parcial:</strong> <CodeBlock title="Python" lang="python" code={`from pydantic import BaseModel, Field
-                from typing import Literal
-                from typing_extensions import Annotated
+from typing import Literal
+from typing_extensions import Annotated
 
-                class ObservacionClinica(BaseModel):
-                    edad: Annotated[int, Field(ge=0, le=120, description="Edad en años")]
+class ObservacionClinica(BaseModel):
+    edad: Annotated[int, Field(ge=0, le=120, description="Edad en años")]
+    
+    presion_sistolica: Annotated[float, Field(
+        ge=60.0, le=250.0, 
+        description="Presión arterial sistólica en mmHg"
+    )]
+    
+    tratamiento: Literal["placebo", "dosis_baja", "dosis_alta"]
 
-                    presion_sistolica: Annotated[float, Field(
-                        ge=60.0, le=250.0, 
-                        description="Presión arterial sistólica en mmHg"
-                    )]
-
-                    tratamiento: Literal["placebo", "dosis_baja", "dosis_alta"]
-
-                # Completar: Agregar un field_validator que detecte si la presión 
-                # sistólica es menor a 90 (hipotensión) y genere una advertencia 
-                # sin rechazar la observación.`} />
+# Completar: Agregar un field_validator que detecte si la presión 
+# sistólica es menor a 90 (hipotensión) y genere una advertencia 
+# sin rechazar la observación.`} />
                                                 </div>
                                             </div>
                                         </section>
@@ -3912,36 +3912,36 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Generación de Datos Simulados
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`import numpy as np
-                import pandas as pd
+import pandas as pd
 
-                # Simulación de datos del dataset iris con valores anómalos intencionales
-                np.random.seed(42)
+# Simulación de datos del dataset iris con valores anómalos intencionales
+np.random.seed(42)
 
-                n_muestras = 15
-                especies = ['setosa', 'versicolor', 'virginica']
+n_muestras = 15
+especies = ['setosa', 'versicolor', 'virginica']
 
-                # Generación de datos mayormente válidos con algunos errores
-                datos_iris_simulados = []
-                for i in range(n_muestras):
-                    observacion = {
-                        'especie': np.random.choice(especies),
-                        'sepal_length': np.random.uniform(4.3, 7.9),
-                        'sepal_width': np.random.uniform(2.0, 4.4),
-                        'petal_length': np.random.uniform(1.0, 6.9),
-                        'petal_width': np.random.uniform(0.1, 2.5)
-                    }
+# Generación de datos mayormente válidos con algunos errores
+datos_iris_simulados = []
+for i in range(n_muestras):
+    observacion = {
+        'especie': np.random.choice(especies),
+        'sepal_length': np.random.uniform(4.3, 7.9),
+        'sepal_width': np.random.uniform(2.0, 4.4),
+        'petal_length': np.random.uniform(1.0, 6.9),
+        'petal_width': np.random.uniform(0.1, 2.5)
+    }
+    
+    # Introducir errores deliberados en algunas observaciones
+    if i == 3:  # Valor negativo imposible
+        observacion['sepal_length'] = -5.1
+    if i == 7:  # Valor excesivamente grande (error de escala)
+        observacion['petal_length'] = 85.0
+    if i == 11:  # Especie no válida
+        observacion['especie'] = 'rosa'
+    
+    datos_iris_simulados.append(observacion)
 
-                    # Introducir errores deliberados en algunas observaciones
-                    if i == 3:  # Valor negativo imposible
-                        observacion['sepal_length'] = -5.1
-                    if i == 7:  # Valor excesivamente grande (error de escala)
-                        observacion['petal_length'] = 85.0
-                    if i == 11:  # Especie no válida
-                        observacion['especie'] = 'rosa'
-
-                    datos_iris_simulados.append(observacion)
-
-                print(f"Simuladas {n_muestras} observaciones con errores en índices 3, 7 y 11")`} />
+print(f"Simuladas {n_muestras} observaciones con errores en índices 3, 7 y 11")`} />
 
                                             <Accordion items={[{ titulo: "¿Qué es el Bootstrapping y por qué se aplica en este ejemplo?", contenido: (<><div
                                                     className="mt-4 text-sm text-amber-900 border-t border-amber-200 pt-4 leading-relaxed space-y-3">
@@ -3980,130 +3980,130 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`import time
-                import functools
-                import logging
-                from typing import ClassVar, List
-                from pydantic import BaseModel, field_validator, ValidationError
+import functools
+import logging
+from typing import ClassVar, List
+from pydantic import BaseModel, field_validator, ValidationError
 
-                # 1. Decorador para cronometrar rutinas de validación masiva
+# 1. Decorador para cronometrar rutinas de validación masiva
 
-                logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-                logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-                # 1. Decorador mejorado
-                def cronometrar_bootstrap(func):
-                    """
-                    Decorador que mide el tiempo de ejecución de rutinas iterativas
-                    como validaciones masivas o remuestreos de Bootstrap.
-                    """
-                    @functools.wraps(func)
-                    def envoltorio_tiempo(*args, **kwargs):
-                        tiempo_inicio = time.perf_counter()
-                        try:
-                            resultado = func(*args, **kwargs)
-                            return resultado
-                        finally:
-                            tiempo_fin = time.perf_counter()
-                            duracion = tiempo_fin - tiempo_inicio
-                            # Usamos logger en lugar de print
-                            logger.info(f"La rutina '{func.__name__}' ejecutó en {duracion:.5f} segundos.")
-                    return envoltorio_tiempo
+# 1. Decorador mejorado
+def cronometrar_bootstrap(func):
+    """
+    Decorador que mide el tiempo de ejecución de rutinas iterativas
+    como validaciones masivas o remuestreos de Bootstrap.
+    """
+    @functools.wraps(func)
+    def envoltorio_tiempo(*args, **kwargs):
+        tiempo_inicio = time.perf_counter()
+        try:
+            resultado = func(*args, **kwargs)
+            return resultado
+        finally:
+            tiempo_fin = time.perf_counter()
+            duracion = tiempo_fin - tiempo_inicio
+            # Usamos logger en lugar de print
+            logger.info(f"La rutina '{func.__name__}' ejecutó en {duracion:.5f} segundos.")
+    return envoltorio_tiempo
 
-                # 2. Modelo de validación para observaciones del dataset iris
-                class ObservacionIris(BaseModel):
-                    """
-                    Modelo estadístico para validación de observaciones florales.
-                    Incluye validadores para garantizar axiomas biológicos.
-                    """
-                    # Variable dependiente (factor categórico)
-                    especie_taxonomica: str
+# 2. Modelo de validación para observaciones del dataset iris
+class ObservacionIris(BaseModel):
+    """
+    Modelo estadístico para validación de observaciones florales.
+    Incluye validadores para garantizar axiomas biológicos.
+    """
+    # Variable dependiente (factor categórico)
+    especie_taxonomica: str
+    
+    # Vector de variables predictoras continuas
+    sepal_length: float
+    sepal_width: float
+    petal_length: float
+    petal_width: float
+    
+    # Constantes de clase: niveles permitidos del factor
+    ESPECIES_PERMITIDAS: ClassVar[List[str]] = ["setosa", "versicolor", "virginica"]
+    
+    @field_validator('especie_taxonomica')
+    @classmethod
+    def validar_factor_categorico(cls, valor: str) -> str:
+        """
+        Garantiza que el factor categórico solo contenga niveles
+        poblacionales conocidos. Previene 'niveles fantasma' que
+        destruirían los grados de libertad en análisis posteriores.
+        """
+        valor_limpio = valor.strip().lower()
+        if valor_limpio not in cls.ESPECIES_PERMITIDAS:
+            raise ValueError(
+                f"Anomalía Taxonómica. Especie no reconocida: '{valor}'. "
+                f"El hiperespacio poblacional permite: {cls.ESPECIES_PERMITIDAS}"
+            )
+        return valor_limpio
+    
+    @field_validator('sepal_length', 'sepal_width', 'petal_length', 'petal_width', mode='after')
+    @classmethod
+    def auditar_axiomas_biologicos(cls, valor: float) -> float:
+        """
+        Comprueba axiomas del dominio del proceso generador de datos:
+        las medidas morfológicas deben ser estrictamente positivas.
+        """
+        # Restricción teórica: valores positivos
+        if valor <= 0:
+            raise ValueError(
+                "Violación Axiomática: Las mediciones biológicas deben "
+                "residir en la región topológica \\\\(0, +\\\\infty\\\\)."
+            )
 
-                    # Vector de variables predictoras continuas
-                    sepal_length: float
-                    sepal_width: float
-                    petal_length: float
-                    petal_width: float
+        # Heurística de control de calidad: detectar errores de escala
+        if valor > 50.0:
+            raise ValueError(
+                f"Medición atípica sospechosa ({valor} cm); posible error "
+                "de transcripción de milímetros a centímetros."
+            )
+        return valor
 
-                    # Constantes de clase: niveles permitidos del factor
-                    ESPECIES_PERMITIDAS: ClassVar[List[str]] = ["setosa", "versicolor", "virginica"]
+# 3. Simulación de ingesta muestral masiva con manejo de errores
+@cronometrar_bootstrap
+def simular_ingesta_bootstrap(lista_datos: list) -> dict:
+    """
+    Procesa una lista de observaciones simulando un pipeline de ingesta
+    con validación automatizada y registro de exclusiones.
+    """
+    observaciones_validas = []
+    errores_detectados = []
+    total_registros = len(lista_datos)
+    
+    for i, dato in enumerate(lista_datos):
+        try:
+            medicion = ObservacionIris(**dato)
+            observaciones_validas.append(medicion)
+        except ValidationError as error:
+            errores_detectados.append({
+                'indice': i,
+                'dato_original': dato,
+                'error': str(error)
+            })
+            logger.warning(f"⚠️ [Rechazo #{len(errores_detectados)}] Observación índice {i}: {error.errors()[0]['msg'][:50]}...")
+    
+    return {
+        'validas': observaciones_validas,
+        'rechazadas': errores_detectados,
+        'tasa_exclusion': len(errores_detectados) / len(lista_datos) * 100
+    }
 
-                    @field_validator('especie_taxonomica')
-                    @classmethod
-                    def validar_factor_categorico(cls, valor: str) -> str:
-                        """
-                        Garantiza que el factor categórico solo contenga niveles
-                        poblacionales conocidos. Previene 'niveles fantasma' que
-                        destruirían los grados de libertad en análisis posteriores.
-                        """
-                        valor_limpio = valor.strip().lower()
-                        if valor_limpio not in cls.ESPECIES_PERMITIDAS:
-                            raise ValueError(
-                                f"Anomalía Taxonómica. Especie no reconocida: '{valor}'. "
-                                f"El hiperespacio poblacional permite: {cls.ESPECIES_PERMITIDAS}"
-                            )
-                        return valor_limpio
-
-                    @field_validator('sepal_length', 'sepal_width', 'petal_length', 'petal_width', mode='after')
-                    @classmethod
-                    def auditar_axiomas_biologicos(cls, valor: float) -> float:
-                        """
-                        Comprueba axiomas del dominio del proceso generador de datos:
-                        las medidas morfológicas deben ser estrictamente positivas.
-                        """
-                        # Restricción teórica: valores positivos
-                        if valor <= 0:
-                            raise ValueError(
-                                "Violación Axiomática: Las mediciones biológicas deben "
-                                "residir en la región topológica \\\\(0, +\\\\infty\\\\)."
-                            )
-
-                        # Heurística de control de calidad: detectar errores de escala
-                        if valor > 50.0:
-                            raise ValueError(
-                                f"Medición atípica sospechosa ({valor} cm); posible error "
-                                "de transcripción de milímetros a centímetros."
-                            )
-                        return valor
-
-                # 3. Simulación de ingesta muestral masiva con manejo de errores
-                @cronometrar_bootstrap
-                def simular_ingesta_bootstrap(lista_datos: list) -> dict:
-                    """
-                    Procesa una lista de observaciones simulando un pipeline de ingesta
-                    con validación automatizada y registro de exclusiones.
-                    """
-                    observaciones_validas = []
-                    errores_detectados = []
-                    total_registros = len(lista_datos)
-
-                    for i, dato in enumerate(lista_datos):
-                        try:
-                            medicion = ObservacionIris(**dato)
-                            observaciones_validas.append(medicion)
-                        except ValidationError as error:
-                            errores_detectados.append({
-                                'indice': i,
-                                'dato_original': dato,
-                                'error': str(error)
-                            })
-                            logger.warning(f"⚠️ [Rechazo #{len(errores_detectados)}] Observación índice {i}: {error.errors()[0]['msg'][:50]}...")
-
-                    return {
-                        'validas': observaciones_validas,
-                        'rechazadas': errores_detectados,
-                        'tasa_exclusion': len(errores_detectados) / len(lista_datos) * 100
-                    }
-
-                # 4. Ejecución de la simulación
-                if __name__ == "__main__":
-                    try:
-                        resultado = simular_ingesta_bootstrap(datos_iris_simulados)
-                        logger.info(f"\\n📊 Resumen de Validación:")
-                        logger.info(f"   Aceptadas: {len(resultado['validas'])}")
-                        logger.info(f"   Rechazadas: {len(resultado['rechazadas'])}")
-                        logger.info(f"   Tasa de exclusión: {resultado['tasa_exclusion']:.1f}%")
-                    except Exception as e:
-                        logger.error(f"Fallo crítico en el pipeline: {e}")`} />
+# 4. Ejecución de la simulación
+if __name__ == "__main__":
+    try:
+        resultado = simular_ingesta_bootstrap(datos_iris_simulados)
+        logger.info(f"\\n📊 Resumen de Validación:")
+        logger.info(f"   Aceptadas: {len(resultado['validas'])}")
+        logger.info(f"   Rechazadas: {len(resultado['rechazadas'])}")
+        logger.info(f"   Tasa de exclusión: {resultado['tasa_exclusion']:.1f}%")
+    except Exception as e:
+        logger.error(f"Fallo crítico en el pipeline: {e}")`} />
                                             <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                 <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Interpretación de
                                                     Resultados</h4>
@@ -4343,13 +4343,13 @@
                                                     error metodológico en el siguiente código y proponer una implementación correcta:
                                                 </p>
                                                 <CodeBlock title="Python" lang="python" code={`# CÓDIGO CON ERROR METODOLÓGICO
-                @field_validator('edad')
-                @classmethod
-                def validar_edad(cls, v: int) -> int:
-                    # "Corregir" edades negativas aplicando valor absoluto
-                    if v < 0:
-                        return abs(v)  # SILENCIOSAMENTE convierte -25 en 25
-                    return v`} />
+@field_validator('edad')
+@classmethod
+def validar_edad(cls, v: int) -> int:
+    # "Corregir" edades negativas aplicando valor absoluto
+    if v < 0:
+        return abs(v)  # SILENCIOSAMENTE convierte -25 en 25
+    return v`} />
                                                 <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                     <strong>Solución Parcial:</strong>
                                                     <p className="text-gray-700 leading-relaxed mb-5">El código presenta un anti-patrón
@@ -4360,15 +4360,15 @@
                                                     <p className="text-gray-700 leading-relaxed mb-5">La implementación correcta debe
                                                         levantar una excepción explícita:</p>
                                                     <CodeBlock title="Python" lang="python" code={`# IMPLEMENTACIÓN CORRECTA
-                @field_validator('edad')
-                @classmethod
-                def validar_edad(cls, v: int) -> int:
-                    if v < 0:
-                        raise ValueError(
-                            f"Edad con valor negativo detectado: {v}. "
-                            "Este dato debe ser revisado manualmente."
-                        )
-                    return v`} />
+@field_validator('edad')
+@classmethod
+def validar_edad(cls, v: int) -> int:
+    if v < 0:
+        raise ValueError(
+            f"Edad con valor negativo detectado: {v}. "
+            "Este dato debe ser revisado manualmente."
+        )
+    return v`} />
                                                     <p className="text-gray-700 leading-relaxed mb-5"><em>Completar:</em> Proponer un
                                                         mecanismo para registrar las edades negativas en una base de datos paralela de
                                                         anomalías sin rechazar toda la transacción. El patrón se llama <em>dead letter queue</em>: en vez de descartar lo que no valida, se aparta para revisarlo después. Aquí basta con una tabla; montarlo con una cola de mensajes real es infraestructura que este curso no cubre.</p>
@@ -5301,188 +5301,188 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Generación de Datos Simulados
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`import numpy as np
-                from datetime import datetime, timedelta
-                import random
+from datetime import datetime, timedelta
+import random
 
-                # Configuración de semilla para reproducibilidad
-                np.random.seed(2024)
-                random.seed(2024)
+# Configuración de semilla para reproducibilidad
+np.random.seed(2024)
+random.seed(2024)
 
-                # Generación de datos simulados para múltiples sesiones de prueba
-                def generar_sesion_prueba(id_sesion: str, n_vehiculos: int) -> dict:
-                    """Genera una sesión completa con múltiples ensayos de vehículos."""
-                    marcas = ['Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Mazda', 'BMW', 'Audi']
-                    modelos = ['Sedan', 'SUV', 'Coupe', 'Hatchback']
+# Generación de datos simulados para múltiples sesiones de prueba
+def generar_sesion_prueba(id_sesion: str, n_vehiculos: int) -> dict:
+    """Genera una sesión completa con múltiples ensayos de vehículos."""
+    marcas = ['Toyota', 'Honda', 'Ford', 'Chevrolet', 'Nissan', 'Mazda', 'BMW', 'Audi']
+    modelos = ['Sedan', 'SUV', 'Coupe', 'Hatchback']
+    
+    vehiculos = []
+    for i in range(n_vehiculos):
+        vehiculo = {
+            'id_vehiculo': f"{random.choice(marcas)}_{i+1}",
+            'millas_por_galon_mpg': round(np.random.uniform(15, 35), 1),
+            'cilindros_motor_cyl': random.choice([4, 6, 8]),
+            'caballos_fuerza_hp': random.randint(100, 350),
+            'peso_wt': round(np.random.uniform(2.0, 5.0), 2)
+        }
+        vehiculos.append(vehiculo)
+    
+    return {
+        'id_sesion_laboratorio': id_sesion,
+        'marca_tiempo_prueba': (datetime.now() - timedelta(days=random.randint(0, 30))).isoformat(),
+        'investigador_responsable': random.choice(['Dr. Fisher', 'Dra. Pearson', 'Dr. Tukey']),
+        'ensayos_experimentales': vehiculos
+    }
 
-                    vehiculos = []
-                    for i in range(n_vehiculos):
-                        vehiculo = {
-                            'id_vehiculo': f"{random.choice(marcas)}_{i+1}",
-                            'millas_por_galon_mpg': round(np.random.uniform(15, 35), 1),
-                            'cilindros_motor_cyl': random.choice([4, 6, 8]),
-                            'caballos_fuerza_hp': random.randint(100, 350),
-                            'peso_wt': round(np.random.uniform(2.0, 5.0), 2)
-                        }
-                        vehiculos.append(vehiculo)
+# Generar 3 sesiones con diferentes números de vehículos
+sesiones_simuladas = [
+    generar_sesion_prueba('SES-2024-AA', 5),
+    generar_sesion_prueba('SES-2024-BB', 3),  # Mínimo permitido
+    generar_sesion_prueba('SES-2024-CC', 2),  # Debería fallar por tamaño insuficiente
+]
 
-                    return {
-                        'id_sesion_laboratorio': id_sesion,
-                        'marca_tiempo_prueba': (datetime.now() - timedelta(days=random.randint(0, 30))).isoformat(),
-                        'investigador_responsable': random.choice(['Dr. Fisher', 'Dra. Pearson', 'Dr. Tukey']),
-                        'ensayos_experimentales': vehiculos
-                    }
-
-                # Generar 3 sesiones con diferentes números de vehículos
-                sesiones_simuladas = [
-                    generar_sesion_prueba('SES-2024-AA', 5),
-                    generar_sesion_prueba('SES-2024-BB', 3),  # Mínimo permitido
-                    generar_sesion_prueba('SES-2024-CC', 2),  # Debería fallar por tamaño insuficiente
-                ]
-
-                print(f"Generadas {len(sesiones_simuladas)} sesiones de prueba simuladas")
-                for s in sesiones_simuladas:
-                    print(f"  {s['id_sesion_laboratorio']}: {len(s['ensayos_experimentales'])} vehículos")`} />
+print(f"Generadas {len(sesiones_simuladas)} sesiones de prueba simuladas")
+for s in sesiones_simuladas:
+    print(f"  {s['id_sesion_laboratorio']}: {len(s['ensayos_experimentales'])} vehículos")`} />
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`from pydantic import BaseModel, Field, field_validator, ValidationError
-                from typing import List, Dict, Any
-                from datetime import datetime
+from typing import List, Dict, Any
+from datetime import datetime
 
-                # 1. NIVEL MICRO: Sub-modelo dependiente (Unidad observacional)
-                class EnsayoVehiculo(BaseModel):
-                    """
-                    Modelo para una unidad observacional individual (Nivel 1).
-                    Equivalente al sujeto muestral base en un diseño jerárquico.
-                    """
-                    id_vehiculo: str = Field(
-                        min_length=2, 
-                        description="Nomenclatura única del automotor"
-                    )
-                    millas_por_galon_mpg: float = Field(
-                        ..., 
-                        gt=0.0,
-                        description="Eficiencia termodinámica del combustible"
-                    )
-                    cilindros_motor_cyl: int = Field(
-                        ..., 
-                        description="Topología geométrica de la cámara de combustión"
-                    )
-                    caballos_fuerza_hp: int = Field(
-                        ..., 
-                        gt=0,
-                        description="Potencia bruta del motor"
-                    )
-                    peso_wt: float = Field(
-                        ..., 
-                        gt=0.0, le=10.0,
-                        description="Peso del vehículo en miles de libras"
-                    )
+# 1. NIVEL MICRO: Sub-modelo dependiente (Unidad observacional)
+class EnsayoVehiculo(BaseModel):
+    """
+    Modelo para una unidad observacional individual (Nivel 1).
+    Equivalente al sujeto muestral base en un diseño jerárquico.
+    """
+    id_vehiculo: str = Field(
+        min_length=2, 
+        description="Nomenclatura única del automotor"
+    )
+    millas_por_galon_mpg: float = Field(
+        ..., 
+        gt=0.0,
+        description="Eficiencia termodinámica del combustible"
+    )
+    cilindros_motor_cyl: int = Field(
+        ..., 
+        description="Topología geométrica de la cámara de combustión"
+    )
+    caballos_fuerza_hp: int = Field(
+        ..., 
+        gt=0,
+        description="Potencia bruta del motor"
+    )
+    peso_wt: float = Field(
+        ..., 
+        gt=0.0, le=10.0,
+        description="Peso del vehículo en miles de libras"
+    )
+    
+    @field_validator('cilindros_motor_cyl')
+    @classmethod
+    def auditar_arquitectura_motor(cls, v: int) -> int:
+        """
+        Filtro axiomático: Solo permite arquitecturas de motores
+        de combustión interna empíricamente fabricadas.
+        """
+        arquitecturas_validas = {4, 6, 8}
+        if v not in arquitecturas_validas:
+            raise ValueError(
+                f"Fallo Paramétrico. Arquitectura geométrica atípica: "
+                f"{v} cilindros. Valores permitidos: {arquitecturas_validas}"
+            )
+        return v
 
-                    @field_validator('cilindros_motor_cyl')
-                    @classmethod
-                    def auditar_arquitectura_motor(cls, v: int) -> int:
-                        """
-                        Filtro axiomático: Solo permite arquitecturas de motores
-                        de combustión interna empíricamente fabricadas.
-                        """
-                        arquitecturas_validas = {4, 6, 8}
-                        if v not in arquitecturas_validas:
-                            raise ValueError(
-                                f"Fallo Paramétrico. Arquitectura geométrica atípica: "
-                                f"{v} cilindros. Valores permitidos: {arquitecturas_validas}"
-                            )
-                        return v
+# 2. NIVEL MACRO: Modelo Principal Contenedor (Bloque experimental)
+class SesionDinamometro(BaseModel):
+    """
+    Modelo para el bloque experimental completo (Nivel 2).
+    Representa la parcela entera en un diseño de parcelas divididas.
+    """
+    # Identificador con patrón estandarizado riguroso
+    id_sesion_laboratorio: str = Field(
+        pattern=r'^SES-\\d{4}-[A-Z]{2}$',
+        description="Formato: SES-AAAA-XX"
+    )
+    
+    marca_tiempo_prueba: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="Sello temporal GMT de calibración"
+    )
+    
+    investigador_responsable: str = Field(
+        min_length=3,
+        description="Nombre del investigador a cargo"
+    )
+    
+    # ESTRUCTURA DE ANIDAMIENTO CORE:
+# Lista tipada que alberga múltiples objetos de la clase dependiente
+    ensayos_experimentales: List[EnsayoVehiculo]
+    
+    @field_validator('ensayos_experimentales')
+    @classmethod
+    def validar_potencia_muestral_del_bloque(
+        cls, 
+        ensayos_vector: List[EnsayoVehiculo]
+    ) -> List[EnsayoVehiculo]:
+        """
+        Comprobación estadística macroscópica de los requerimientos
+        de tamaño de muestra (Power Analysis) a nivel del bloque completo.
+        
+        Requiere mínimo 3 unidades para estimar varianza residual
+        intra-bloque con fiabilidad asintótica.
+        """
+        if len(ensayos_vector) < 3:
+            raise ValueError(
+                f"Insuficiencia de Grados de Libertad: El diseño estadístico "
+                f"exige al menos 3 vehículos por sesión. Recibidos: {len(ensayos_vector)}"
+            )
+        return ensayos_vector
 
-                # 2. NIVEL MACRO: Modelo Principal Contenedor (Bloque experimental)
-                class SesionDinamometro(BaseModel):
-                    """
-                    Modelo para el bloque experimental completo (Nivel 2).
-                    Representa la parcela entera en un diseño de parcelas divididas.
-                    """
-                    # Identificador con patrón estandarizado riguroso
-                    id_sesion_laboratorio: str = Field(
-                        pattern=r'^SES-\\d{4}-[A-Z]{2}$',
-                        description="Formato: SES-AAAA-XX"
-                    )
+# 3. Función para procesar sesiones con manejo de errores jerárquico
+def procesar_sesion_experimento(datos_crudos: Dict[str, Any]) -> dict:
+    """
+    Procesa una sesión experimental completa, validando tanto
+    el nivel macro (sesión) como el nivel micro (vehículos anidados).
+    """
+    try:
+        sesion_certificada = SesionDinamometro.model_validate(datos_crudos)
+        return {
+            'estado': 'VALIDADO',
+            'sesion': sesion_certificada,
+            'n_vehiculos': len(sesion_certificada.ensayos_experimentales)
+        }
+    except ValidationError as e:
+        errores = e.errors()
+        return {
+            'estado': 'RECHAZADO',
+            'errores': [
+                {
+                    'campo': ' -> '.join(str(x) for x in err['loc']),
+                    'mensaje': err['msg'],
+                    'tipo': err['type']
+                }
+                for err in errores
+            ]
+        }
 
-                    marca_tiempo_prueba: datetime = Field(
-                        default_factory=datetime.utcnow,
-                        description="Sello temporal GMT de calibración"
-                    )
+# 4. Procesamiento de las sesiones simuladas
+print("\\n" + "="*60)
+print("RESULTADOS DE VALIDACIÓN JERÁRQUICA")
+print("="*60)
 
-                    investigador_responsable: str = Field(
-                        min_length=3,
-                        description="Nombre del investigador a cargo"
-                    )
-
-                    # ESTRUCTURA DE ANIDAMIENTO CORE:
-                # Lista tipada que alberga múltiples objetos de la clase dependiente
-                    ensayos_experimentales: List[EnsayoVehiculo]
-
-                    @field_validator('ensayos_experimentales')
-                    @classmethod
-                    def validar_potencia_muestral_del_bloque(
-                        cls, 
-                        ensayos_vector: List[EnsayoVehiculo]
-                    ) -> List[EnsayoVehiculo]:
-                        """
-                        Comprobación estadística macroscópica de los requerimientos
-                        de tamaño de muestra (Power Analysis) a nivel del bloque completo.
-
-                        Requiere mínimo 3 unidades para estimar varianza residual
-                        intra-bloque con fiabilidad asintótica.
-                        """
-                        if len(ensayos_vector) < 3:
-                            raise ValueError(
-                                f"Insuficiencia de Grados de Libertad: El diseño estadístico "
-                                f"exige al menos 3 vehículos por sesión. Recibidos: {len(ensayos_vector)}"
-                            )
-                        return ensayos_vector
-
-                # 3. Función para procesar sesiones con manejo de errores jerárquico
-                def procesar_sesion_experimento(datos_crudos: Dict[str, Any]) -> dict:
-                    """
-                    Procesa una sesión experimental completa, validando tanto
-                    el nivel macro (sesión) como el nivel micro (vehículos anidados).
-                    """
-                    try:
-                        sesion_certificada = SesionDinamometro.model_validate(datos_crudos)
-                        return {
-                            'estado': 'VALIDADO',
-                            'sesion': sesion_certificada,
-                            'n_vehiculos': len(sesion_certificada.ensayos_experimentales)
-                        }
-                    except ValidationError as e:
-                        errores = e.errors()
-                        return {
-                            'estado': 'RECHAZADO',
-                            'errores': [
-                                {
-                                    'campo': ' -> '.join(str(x) for x in err['loc']),
-                                    'mensaje': err['msg'],
-                                    'tipo': err['type']
-                                }
-                                for err in errores
-                            ]
-                        }
-
-                # 4. Procesamiento de las sesiones simuladas
-                print("\\n" + "="*60)
-                print("RESULTADOS DE VALIDACIÓN JERÁRQUICA")
-                print("="*60)
-
-                for sesion_data in sesiones_simuladas:
-                    resultado = procesar_sesion_experimento(sesion_data)
-                    print(f"\\n📋 Sesión: {sesion_data['id_sesion_laboratorio']}")
-
-                    if resultado['estado'] == 'VALIDADO':
-                        print(f"   ✅ VALIDADA")
-                        print(f"   Vehículos procesados: {resultado['n_vehiculos']}")
-                    else:
-                        print(f"   ❌ RECHAZADA")
-                        for error in resultado['errores']:
-                            print(f"   • Campo: {error['campo']}")
-                            print(f"     Error: {error['mensaje'][:60]}...")`} />
+for sesion_data in sesiones_simuladas:
+    resultado = procesar_sesion_experimento(sesion_data)
+    print(f"\\n📋 Sesión: {sesion_data['id_sesion_laboratorio']}")
+    
+    if resultado['estado'] == 'VALIDADO':
+        print(f"   ✅ VALIDADA")
+        print(f"   Vehículos procesados: {resultado['n_vehiculos']}")
+    else:
+        print(f"   ❌ RECHAZADA")
+        for error in resultado['errores']:
+            print(f"   • Campo: {error['campo']}")
+            print(f"     Error: {error['mensaje'][:60]}...")`} />
                                             <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                 <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Interpretación de
                                                     Resultados</h4>
@@ -5523,224 +5523,224 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación: Pipeline de
                                                 Validación Epidemiológica</h4>
                                             <CodeBlock title="Python" lang="python" code={`from pydantic import BaseModel, Field, field_validator, model_validator, ValidationError
-                from typing import List, Optional
-                from datetime import date
-                from enum import Enum
-                import numpy as np
+from typing import List, Optional
+from datetime import date
+from enum import Enum
+import numpy as np
 
-                # ══════════════════════════════════════════════════════════════
-                # NIVEL 1 (MICRO): Observación Epidemiológica Individual
-                # Equivalente: Unidad observacional en diseño de parcelas divididas
-                # Referencia: Dhada & Labra Montes (2024) - Admisiones diarias
-                # ══════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════
+# NIVEL 1 (MICRO): Observación Epidemiológica Individual
+# Equivalente: Unidad observacional en diseño de parcelas divididas
+# Referencia: Dhada & Labra Montes (2024) - Admisiones diarias
+# ══════════════════════════════════════════════════════════════
 
-                class VariantePatogeno(str, Enum):
-                    """Variantes epidemiológicas reconocidas por la OMS."""
-                    ALPHA = "alpha"
-                    DELTA = "delta"
-                    OMICRON = "omicron"
-                    ORIGINAL = "original"
+class VariantePatogeno(str, Enum):
+    """Variantes epidemiológicas reconocidas por la OMS."""
+    ALPHA = "alpha"
+    DELTA = "delta"
+    OMICRON = "omicron"
+    ORIGINAL = "original"
 
-                class AdmisionDiaria(BaseModel):
-                    """
-                    Nivel 1 (Micro): Registro individual de admisiones hospitalarias.
-                    Análogo a la observación unitaria Y_ijk en el modelo jerárquico.
-                    """
-                    fecha: date
-                    admisiones_nuevas: int = Field(
-                        ..., ge=0,
-                        description="Número de admisiones nuevas (no puede ser negativo)"
-                    )
-                    admisiones_uci: int = Field(
-                        default=0, ge=0,
-                        description="Admisiones a UCI (subconjunto de admisiones nuevas)"
-                    )
-                    tasa_ocupacion_camas: float = Field(
-                        ..., ge=0.0, le=1.0,
-                        description="Proporción de camas ocupadas [0, 1]"
-                    )
-                    variante_dominante: VariantePatogeno = Field(
-                        default=VariantePatogeno.OMICRON,
-                        description="Variante predominante del patógeno"
-                    )
+class AdmisionDiaria(BaseModel):
+    """
+    Nivel 1 (Micro): Registro individual de admisiones hospitalarias.
+    Análogo a la observación unitaria Y_ijk en el modelo jerárquico.
+    """
+    fecha: date
+    admisiones_nuevas: int = Field(
+        ..., ge=0,
+        description="Número de admisiones nuevas (no puede ser negativo)"
+    )
+    admisiones_uci: int = Field(
+        default=0, ge=0,
+        description="Admisiones a UCI (subconjunto de admisiones nuevas)"
+    )
+    tasa_ocupacion_camas: float = Field(
+        ..., ge=0.0, le=1.0,
+        description="Proporción de camas ocupadas [0, 1]"
+    )
+    variante_dominante: VariantePatogeno = Field(
+        default=VariantePatogeno.OMICRON,
+        description="Variante predominante del patógeno"
+    )
 
-                    @model_validator(mode='after')
-                    def validar_coherencia_admisiones(self):
-                        """
-                        Las admisiones UCI no pueden superar las admisiones totales.
-                        Restricción lógica: UCI ⊆ Admisiones Nuevas.
-                        """
-                        if self.admisiones_uci > self.admisiones_nuevas:
-                            raise ValueError(
-                                f"Incoherencia lógica: admisiones UCI ({self.admisiones_uci}) "
-                                f"no puede superar admisiones totales ({self.admisiones_nuevas})"
-                            )
-                        return self
-
-
-                # ══════════════════════════════════════════════════════════════
-                # NIVEL 2 (MESO): Hospital dentro de una Región NHS
-                # Equivalente: Sub-parcela en diseño de parcelas divididas
-                # ══════════════════════════════════════════════════════════════
-
-                class HospitalNHS(BaseModel):
-                    """
-                    Nivel 2 (Meso): Hospital individual perteneciente a una región.
-                    Contiene series temporales de admisiones diarias.
-                    Análogo al efecto β_j(i) anidado en el bloque i.
-                    """
-                    codigo_hospital: str = Field(
-                        pattern=r'^NHS-[A-Z]{2,4}-\\d{3}$',
-                        description="Código estandarizado: NHS-XXXX-000"
-                    )
-                    nombre_hospital: str = Field(min_length=3)
-                    capacidad_camas: int = Field(
-                        ..., gt=0, le=5000,
-                        description="Capacidad total de camas del hospital"
-                    )
-                    registros_diarios: List[AdmisionDiaria] = Field(
-                        ..., min_length=7,
-                        description="Mínimo 7 días de datos para estimación polinomial"
-                    )
-
-                    @field_validator('registros_diarios')
-                    @classmethod
-                    def validar_serie_temporal(
-                        cls, registros: List[AdmisionDiaria]
-                    ) -> List[AdmisionDiaria]:
-                        """
-                        Verifica que la serie temporal sea cronológicamente consistente.
-                        En modelado jerárquico (Dhada & Labra Montes, 2024),
-                        se usaron polinomios de tercer grado para modelar segmentos
-                        temporales, requiriendo datos ordenados y sin duplicados.
-                        """
-                        fechas = [r.fecha for r in registros]
-                        if len(set(fechas)) != len(fechas):
-                            raise ValueError(
-                                "Fechas duplicadas detectadas en la serie temporal. "
-                                "Cada registro debe corresponder a un día único."
-                            )
-                        if fechas != sorted(fechas):
-                            raise ValueError(
-                                "La serie temporal debe estar ordenada cronológicamente "
-                                "para permitir ajuste polinomial secuencial."
-                            )
-                        return registros
+    @model_validator(mode='after')
+    def validar_coherencia_admisiones(self):
+        """
+        Las admisiones UCI no pueden superar las admisiones totales.
+        Restricción lógica: UCI ⊆ Admisiones Nuevas.
+        """
+        if self.admisiones_uci > self.admisiones_nuevas:
+            raise ValueError(
+                f"Incoherencia lógica: admisiones UCI ({self.admisiones_uci}) "
+                f"no puede superar admisiones totales ({self.admisiones_nuevas})"
+            )
+        return self
 
 
-                # ══════════════════════════════════════════════════════════════
-                # NIVEL 3 (MACRO): Región Sanitaria del NHS
-                # Equivalente: Parcela entera (Whole-Plot) / Bloque experimental
-                # Referencia: 7 regiones NHS analizadas por Dhada & Labra Montes
-                # ══════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════
+# NIVEL 2 (MESO): Hospital dentro de una Región NHS
+# Equivalente: Sub-parcela en diseño de parcelas divididas
+# ══════════════════════════════════════════════════════════════
 
-                class RegionNHS(BaseModel):
-                    """
-                    Nivel 3 (Macro): Región sanitaria que contiene múltiples hospitales.
-                    Análogo al efecto α_i del nivel superior en Y_ijk = μ + α_i + β_j(i) + ε_k(ij)
+class HospitalNHS(BaseModel):
+    """
+    Nivel 2 (Meso): Hospital individual perteneciente a una región.
+    Contiene series temporales de admisiones diarias.
+    Análogo al efecto β_j(i) anidado en el bloque i.
+    """
+    codigo_hospital: str = Field(
+        pattern=r'^NHS-[A-Z]{2,4}-\\d{3}$',
+        description="Código estandarizado: NHS-XXXX-000"
+    )
+    nombre_hospital: str = Field(min_length=3)
+    capacidad_camas: int = Field(
+        ..., gt=0, le=5000,
+        description="Capacidad total de camas del hospital"
+    )
+    registros_diarios: List[AdmisionDiaria] = Field(
+        ..., min_length=7,
+        description="Mínimo 7 días de datos para estimación polinomial"
+    )
 
-                    En el modelo jerárquico de Dhada & Labra Montes (2024), cada región
-                    NHS comparte parámetros de una distribución Gaussiana de nivel superior,
-                    implementando el concepto de 'borrowing strength'.
-                    """
-                    codigo_region: str = Field(
-                        pattern=r'^REG-[A-Z]{2,6}$',
-                        description="Código de región: REG-XXXXXX"
-                    )
-                    nombre_region: str = Field(min_length=3)
-                    poblacion_total: int = Field(
-                        ..., gt=0,
-                        description="Población total de la región para normalización"
-                    )
-                    hospitales: List[HospitalNHS] = Field(
-                        ..., min_length=2,
-                        description="Mínimo 2 hospitales para estimar varianza intra-región"
-                    )
-                    es_datos_escasos: bool = Field(
-                        default=False,
-                        description="Indica si la región tiene datos limitados (sparse data)"
-                    )
-
-                    @model_validator(mode='after')
-                    def validar_estructura_regional(self):
-                        """
-                        Validaciones a nivel macro que verifican la coherencia
-                        del bloque experimental completo.
-                        """
-                        # Verificar unicidad de códigos hospitalarios
-                        codigos = [h.codigo_hospital for h in self.hospitales]
-                        if len(set(codigos)) != len(codigos):
-                            raise ValueError(
-                                "Códigos hospitalarios duplicados en la región. "
-                                "Cada hospital debe tener un identificador único."
-                            )
-
-                        # Calcular total de observaciones para Power Analysis
-                        total_obs = sum(
-                            len(h.registros_diarios) for h in self.hospitales
-                        )
-                        if total_obs < 30:
-                            raise ValueError(
-                                f"Insuficientes observaciones regionales ({total_obs}). "
-                                f"Se requieren mínimo 30 para estimación robusta del ICC."
-                            )
-
-                        return self
-
-                    def calcular_tasa_normalizada(self) -> float:
-                        """
-                        Calcula la tasa de admisión normalizada por población,
-                        como en la Figura 2 de Dhada & Labra Montes (2024).
-                        """
-                        total_admisiones = sum(
-                            r.admisiones_nuevas
-                            for h in self.hospitales
-                            for r in h.registros_diarios
-                        )
-                        return (total_admisiones / self.poblacion_total) * 100_000
+    @field_validator('registros_diarios')
+    @classmethod
+    def validar_serie_temporal(
+        cls, registros: List[AdmisionDiaria]
+    ) -> List[AdmisionDiaria]:
+        """
+        Verifica que la serie temporal sea cronológicamente consistente.
+        En modelado jerárquico (Dhada & Labra Montes, 2024),
+        se usaron polinomios de tercer grado para modelar segmentos
+        temporales, requiriendo datos ordenados y sin duplicados.
+        """
+        fechas = [r.fecha for r in registros]
+        if len(set(fechas)) != len(fechas):
+            raise ValueError(
+                "Fechas duplicadas detectadas en la serie temporal. "
+                "Cada registro debe corresponder a un día único."
+            )
+        if fechas != sorted(fechas):
+            raise ValueError(
+                "La serie temporal debe estar ordenada cronológicamente "
+                "para permitir ajuste polinomial secuencial."
+            )
+        return registros
 
 
-                # ══════════════════════════════════════════════════════════════
-                # NIVEL 4 (SUPER-MACRO): Sistema Nacional de Salud Completo
-                # Encapsula todas las regiones para análisis jerárquico global
-                # ══════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════
+# NIVEL 3 (MACRO): Región Sanitaria del NHS
+# Equivalente: Parcela entera (Whole-Plot) / Bloque experimental
+# Referencia: 7 regiones NHS analizadas por Dhada & Labra Montes
+# ══════════════════════════════════════════════════════════════
 
-                class SistemaNacionalSalud(BaseModel):
-                    """
-                    Nivel Superior: Contenedor de todas las regiones sanitarias.
-                    Permite comparaciones inter-regionales y la implementación
-                    del 'borrowing strength' descrito en el artículo.
-                    """
-                    pais: str = Field(default="England")
-                    fecha_corte: date
-                    regiones: List[RegionNHS] = Field(
-                        ..., min_length=2,
-                        description="Mínimo 2 regiones para modelo jerárquico"
-                    )
+class RegionNHS(BaseModel):
+    """
+    Nivel 3 (Macro): Región sanitaria que contiene múltiples hospitales.
+    Análogo al efecto α_i del nivel superior en Y_ijk = μ + α_i + β_j(i) + ε_k(ij)
 
-                    @model_validator(mode='after')
-                    def validar_sistema_completo(self):
-                        """
-                        Validaciones sistémicas para garantizar que el dataset
-                        cumple los requisitos del modelado jerárquico multinivel.
-                        """
-                        # Verificar unicidad de regiones
-                        codigos_region = [r.codigo_region for r in self.regiones]
-                        if len(set(codigos_region)) != len(codigos_region):
-                            raise ValueError("Regiones duplicadas en el sistema.")
+    En el modelo jerárquico de Dhada & Labra Montes (2024), cada región
+    NHS comparte parámetros de una distribución Gaussiana de nivel superior,
+    implementando el concepto de 'borrowing strength'.
+    """
+    codigo_region: str = Field(
+        pattern=r'^REG-[A-Z]{2,6}$',
+        description="Código de región: REG-XXXXXX"
+    )
+    nombre_region: str = Field(min_length=3)
+    poblacion_total: int = Field(
+        ..., gt=0,
+        description="Población total de la región para normalización"
+    )
+    hospitales: List[HospitalNHS] = Field(
+        ..., min_length=2,
+        description="Mínimo 2 hospitales para estimar varianza intra-región"
+    )
+    es_datos_escasos: bool = Field(
+        default=False,
+        description="Indica si la región tiene datos limitados (sparse data)"
+    )
 
-                        # Alertar sobre regiones con datos escasos
-                        regiones_escasas = [
-                            r.nombre_region for r in self.regiones if r.es_datos_escasos
-                        ]
-                        if regiones_escasas:
-                            print(
-                                f"⚠ Regiones con datos escasos detectadas: "
-                                f"{regiones_escasas}. El modelo jerárquico aplicará "
-                                f"'borrowing strength' desde regiones con datos completos."
-                            )
+    @model_validator(mode='after')
+    def validar_estructura_regional(self):
+        """
+        Validaciones a nivel macro que verifican la coherencia
+        del bloque experimental completo.
+        """
+        # Verificar unicidad de códigos hospitalarios
+        codigos = [h.codigo_hospital for h in self.hospitales]
+        if len(set(codigos)) != len(codigos):
+            raise ValueError(
+                "Códigos hospitalarios duplicados en la región. "
+                "Cada hospital debe tener un identificador único."
+            )
 
-                        return self`} />
+        # Calcular total de observaciones para Power Analysis
+        total_obs = sum(
+            len(h.registros_diarios) for h in self.hospitales
+        )
+        if total_obs < 30:
+            raise ValueError(
+                f"Insuficientes observaciones regionales ({total_obs}). "
+                f"Se requieren mínimo 30 para estimación robusta del ICC."
+            )
+
+        return self
+
+    def calcular_tasa_normalizada(self) -> float:
+        """
+        Calcula la tasa de admisión normalizada por población,
+        como en la Figura 2 de Dhada & Labra Montes (2024).
+        """
+        total_admisiones = sum(
+            r.admisiones_nuevas
+            for h in self.hospitales
+            for r in h.registros_diarios
+        )
+        return (total_admisiones / self.poblacion_total) * 100_000
+
+
+# ══════════════════════════════════════════════════════════════
+# NIVEL 4 (SUPER-MACRO): Sistema Nacional de Salud Completo
+# Encapsula todas las regiones para análisis jerárquico global
+# ══════════════════════════════════════════════════════════════
+
+class SistemaNacionalSalud(BaseModel):
+    """
+    Nivel Superior: Contenedor de todas las regiones sanitarias.
+    Permite comparaciones inter-regionales y la implementación
+    del 'borrowing strength' descrito en el artículo.
+    """
+    pais: str = Field(default="England")
+    fecha_corte: date
+    regiones: List[RegionNHS] = Field(
+        ..., min_length=2,
+        description="Mínimo 2 regiones para modelo jerárquico"
+    )
+
+    @model_validator(mode='after')
+    def validar_sistema_completo(self):
+        """
+        Validaciones sistémicas para garantizar que el dataset
+        cumple los requisitos del modelado jerárquico multinivel.
+        """
+        # Verificar unicidad de regiones
+        codigos_region = [r.codigo_region for r in self.regiones]
+        if len(set(codigos_region)) != len(codigos_region):
+            raise ValueError("Regiones duplicadas en el sistema.")
+
+        # Alertar sobre regiones con datos escasos
+        regiones_escasas = [
+            r.nombre_region for r in self.regiones if r.es_datos_escasos
+        ]
+        if regiones_escasas:
+            print(
+                f"⚠ Regiones con datos escasos detectadas: "
+                f"{regiones_escasas}. El modelo jerárquico aplicará "
+                f"'borrowing strength' desde regiones con datos completos."
+            )
+
+        return self`} />
 
                                             <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                 <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Interpretación
@@ -6259,28 +6259,28 @@
                                                     Implementar validadores apropiados para cada nivel.</p>
                                                 <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                     <strong>Solución Parcial:</strong> <CodeBlock title="Python" lang="python" code={`class CentroInvestigacion(BaseModel):
-                    """
-                    Nivel 3: Centro de Investigación (super-bloque)
-                    Contiene múltiples sesiones de prueba.
-                    """
-                    id_centro: str = Field(pattern=r'^CTR-\\d{3}$')
-                    nombre_centro: str = Field(min_length=3)
-                    ubicacion: str
+    """
+    Nivel 3: Centro de Investigación (super-bloque)
+    Contiene múltiples sesiones de prueba.
+    """
+    id_centro: str = Field(pattern=r'^CTR-\\d{3}$')
+    nombre_centro: str = Field(min_length=3)
+    ubicacion: str
+    
+    # Anidamiento de segundo nivel
+    sesiones_realizadas: List[SesionDinamometro]
+    
+    @field_validator('sesiones_realizadas')
+    @classmethod
+    def validar_minimo_sesiones(cls, sesiones: List) -> List:
+        if len(sesiones) < 1:
+            raise ValueError("El centro debe tener al menos una sesión")
+        return sesiones
 
-                    # Anidamiento de segundo nivel
-                    sesiones_realizadas: List[SesionDinamometro]
-
-                    @field_validator('sesiones_realizadas')
-                    @classmethod
-                    def validar_minimo_sesiones(cls, sesiones: List) -> List:
-                        if len(sesiones) < 1:
-                            raise ValueError("El centro debe tener al menos una sesión")
-                        return sesiones
-
-                # Completar: Agregar validadores que verifiquen:
-                # 1. Que no haya sesiones duplicadas (por id_sesion_laboratorio)
-                # 2. Que las fechas de las sesiones sean cronológicas
-                # 3. Que el total de vehículos en todas las sesiones >= 10`} />
+# Completar: Agregar validadores que verifiquen:
+# 1. Que no haya sesiones duplicadas (por id_sesion_laboratorio)
+# 2. Que las fechas de las sesiones sean cronológicas
+# 3. Que el total de vehículos en todas las sesiones >= 10`} />
                                                 </div>
                                             </div>
                                         </section>
@@ -6823,198 +6823,198 @@
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Generación de Datos Simulados
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`import json
-                import numpy as np
-                from datetime import datetime
+import numpy as np
+from datetime import datetime
 
-                # Simulación de datos demográficos con diversos tipos de errores
-                np.random.seed(2024)
+# Simulación de datos demográficos con diversos tipos de errores
+np.random.seed(2024)
 
-                datos_demograficos_simulados = [
-                    # Caso 1: Válido
-                    {
-                        'id_sujeto': 1001,
-                        'edad_biologica': 45,
-                        'ingreso_anual_usd': 75000.0,
-                        'nivel_educativo': 'universitario'
-                    },
-                    # Caso 2: Edad negativa (violación de rango)
-                    {
-                        'id_sujeto': 1002,
-                        'edad_biologica': -15,
-                        'ingreso_anual_usd': 45000.0,
-                        'nivel_educativo': 'secundario'
-                    },
-                    # Caso 3: Edad excesiva (viola límite biológico)
-                    {
-                        'id_sujeto': 1003,
-                        'edad_biologica': 250,
-                        'ingreso_anual_usd': 120000.0,
-                        'nivel_educativo': 'posgrado'
-                    },
-                    # Caso 4: Ingreso negativo (imposible)
-                    {
-                        'id_sujeto': 1004,
-                        'edad_biologica': 32,
-                        'ingreso_anual_usd': -50000.0,
-                        'nivel_educativo': 'universitario'
-                    },
-                    # Caso 5: Nivel educativo no válido
-                    {
-                        'id_sujeto': 1005,
-                        'edad_biologica': 28,
-                        'ingreso_anual_usd': 55000.0,
-                        'nivel_educativo': 'preescolar'  # No está en la lista permitida
-                    }
-                ]
+datos_demograficos_simulados = [
+    # Caso 1: Válido
+    {
+        'id_sujeto': 1001,
+        'edad_biologica': 45,
+        'ingreso_anual_usd': 75000.0,
+        'nivel_educativo': 'universitario'
+    },
+    # Caso 2: Edad negativa (violación de rango)
+    {
+        'id_sujeto': 1002,
+        'edad_biologica': -15,
+        'ingreso_anual_usd': 45000.0,
+        'nivel_educativo': 'secundario'
+    },
+    # Caso 3: Edad excesiva (viola límite biológico)
+    {
+        'id_sujeto': 1003,
+        'edad_biologica': 250,
+        'ingreso_anual_usd': 120000.0,
+        'nivel_educativo': 'posgrado'
+    },
+    # Caso 4: Ingreso negativo (imposible)
+    {
+        'id_sujeto': 1004,
+        'edad_biologica': 32,
+        'ingreso_anual_usd': -50000.0,
+        'nivel_educativo': 'universitario'
+    },
+    # Caso 5: Nivel educativo no válido
+    {
+        'id_sujeto': 1005,
+        'edad_biologica': 28,
+        'ingreso_anual_usd': 55000.0,
+        'nivel_educativo': 'preescolar'  # No está en la lista permitida
+    }
+]
 
-                print(f"Simulados {len(datos_demograficos_simulados)} registros demográficos")
-                print("  Casos con error: índices 1, 2, 3, 4")`} />
+print(f"Simulados {len(datos_demograficos_simulados)} registros demográficos")
+print("  Casos con error: índices 1, 2, 3, 4")`} />
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
                                             <CodeBlock title="Python" lang="python" code={`from pydantic import BaseModel, Field, ValidationError
-                from typing import Literal, List, Dict, Any
-                from typing_extensions import Annotated
-                from datetime import datetime
+from typing import Literal, List, Dict, Any
+from typing_extensions import Annotated
+from datetime import datetime
 
-                # 1. Definición del Modelo Paramétrico
-                class ObservacionDemografica(BaseModel):
-                    """
-                    Modelo de validación para observaciones demográficas continuas.
-                    Incluye restricciones axiomáticas basadas en límites biológicos
-                    y lógicos del dominio poblacional.
-                    """
-                    id_sujeto: int = Field(
-                        ..., 
-                        description="Llave primaria única y anónima del participante"
-                    )
+# 1. Definición del Modelo Paramétrico
+class ObservacionDemografica(BaseModel):
+    """
+    Modelo de validación para observaciones demográficas continuas.
+    Incluye restricciones axiomáticas basadas en límites biológicos
+    y lógicos del dominio poblacional.
+    """
+    id_sujeto: int = Field(
+        ..., 
+        description="Llave primaria única y anónima del participante"
+    )
+    
+    edad_biologica: Annotated[int, Field(
+        ge=0, le=120,
+        description="Edad fisiológicamente comprobable en especie humana"
+    )]
+    
+    ingreso_anual_usd: Annotated[float, Field(
+        ge=0.0,
+        description="Flujo de ingresos brutos anualizados en USD (no negativo)"
+    )]
+    
+    nivel_educativo: Literal['primario', 'secundario', 'universitario', 'posgrado']
 
-                    edad_biologica: Annotated[int, Field(
-                        ge=0, le=120,
-                        description="Edad fisiológicamente comprobable en especie humana"
-                    )]
+# 2. Clase para gestionar la bitácora de auditoría
+class BitacoraAuditoria:
+    """
+    Sistema de registro de exclusiones para cumplimiento
+    con protocolos CONSORT/STROBE.
+    """
+    def __init__(self):
+        self.exclusiones: List[Dict[str, Any]] = []
+        self.validaciones_exitosas: List[int] = []
+    
+    def registrar_exclusion(
+        self, 
+        payload_original: dict, 
+        errores: list,
+        timestamp: str
+    ):
+        """Registra una exclusión con metadatos forenses completos."""
+        for error in errores:
+            registro = {
+                'timestamp': timestamp,
+                'id_sujeto': payload_original.get('id_sujeto', 'DESCONOCIDO'),
+                'campo_afectado': ' -> '.join(str(x) for x in error['loc']),
+                'tipo_error': error['type'],
+                'mensaje': error['msg'],
+                'valor_input': error.get('input', 'N/A'),
+                'payload_completo': payload_original
+            }
+            self.exclusiones.append(registro)
+    
+    def registrar_exito(self, id_sujeto: int):
+        self.validaciones_exitosas.append(id_sujeto)
+    
+    def generar_reporte_consolidado(self) -> dict:
+        """Genera resumen estadístico de las exclusiones."""
+        if not self.exclusiones:
+            return {'total_exclusiones': 0, 'tasa_exclusion': 0.0}
+        
+        # Conteo por tipo de error
+        conteo_tipos = {}
+        conteo_campos = {}
+        for exc in self.exclusiones:
+            tipo = exc['tipo_error']
+            campo = exc['campo_afectado']
+            conteo_tipos[tipo] = conteo_tipos.get(tipo, 0) + 1
+            conteo_campos[campo] = conteo_campos.get(campo, 0) + 1
+        
+        total_procesados = len(self.validaciones_exitosas) + len(set(
+            e['id_sujeto'] for e in self.exclusiones
+        ))
+        
+        return {
+            'total_procesados': total_procesados,
+            'validaciones_exitosas': len(self.validaciones_exitosas),
+            'total_exclusiones': len(self.exclusiones),
+            'tasa_exclusion': len(self.exclusiones) / max(total_procesados, 1) * 100,
+            'desglose_por_tipo_error': conteo_tipos,
+            'desglose_por_campo': conteo_campos
+        }
 
-                    ingreso_anual_usd: Annotated[float, Field(
-                        ge=0.0,
-                        description="Flujo de ingresos brutos anualizados en USD (no negativo)"
-                    )]
+# 3. Función de procesamiento con captura forense
+def procesar_lote_muestral(
+    carga_cruda: List[Dict], 
+    bitacora: BitacoraAuditoria
+) -> List[ObservacionDemografica]:
+    """
+    Procesa un lote de observaciones demográficas con captura
+    forense de errores y registro en bitácora de auditoría.
+    """
+    sujetos_validados = []
+    
+    for i, registro in enumerate(carga_cruda):
+        timestamp = datetime.now().isoformat()
+        
+        try:
+# Intento de validación
+            sujeto = ObservacionDemografica.model_validate(registro)
+            sujetos_validados.append(sujeto)
+            bitacora.registrar_exito(sujeto.id_sujeto)
+            
+        except ValidationError as error_auditoria:
+            # Captura y análisis forense del fallo
+            errores = error_auditoria.errors()
+            
+            print(f"\\n⚠️ EXCLUSIÓN REGISTRADA - Sujeto ID: {registro.get('id_sujeto')}")
+            for fallo in errores:
+                campo = ' -> '.join(str(x) for x in fallo['loc'])
+                print(f"   Campo: {campo}")
+                print(f"   Tipo:  {fallo['type']}")
+                print(f"   Msg:   {fallo['msg'][:60]}...")
+            
+            # Registrar en bitácora
+            bitacora.registrar_exclusion(registro, errores, timestamp)
+    
+    return sujetos_validados
 
-                    nivel_educativo: Literal['primario', 'secundario', 'universitario', 'posgrado']
+# 4. Ejecución del procesamiento
+bitacora = BitacoraAuditoria()
+sujetos_validos = procesar_lote_muestral(datos_demograficos_simulados, bitacora)
 
-                # 2. Clase para gestionar la bitácora de auditoría
-                class BitacoraAuditoria:
-                    """
-                    Sistema de registro de exclusiones para cumplimiento
-                    con protocolos CONSORT/STROBE.
-                    """
-                    def __init__(self):
-                        self.exclusiones: List[Dict[str, Any]] = []
-                        self.validaciones_exitosas: List[int] = []
+# 5. Generación de reporte consolidado
+reporte = bitacora.generar_reporte_consolidado()
 
-                    def registrar_exclusion(
-                        self, 
-                        payload_original: dict, 
-                        errores: list,
-                        timestamp: str
-                    ):
-                        """Registra una exclusión con metadatos forenses completos."""
-                        for error in errores:
-                            registro = {
-                                'timestamp': timestamp,
-                                'id_sujeto': payload_original.get('id_sujeto', 'DESCONOCIDO'),
-                                'campo_afectado': ' -> '.join(str(x) for x in error['loc']),
-                                'tipo_error': error['type'],
-                                'mensaje': error['msg'],
-                                'valor_input': error.get('input', 'N/A'),
-                                'payload_completo': payload_original
-                            }
-                            self.exclusiones.append(registro)
-
-                    def registrar_exito(self, id_sujeto: int):
-                        self.validaciones_exitosas.append(id_sujeto)
-
-                    def generar_reporte_consolidado(self) -> dict:
-                        """Genera resumen estadístico de las exclusiones."""
-                        if not self.exclusiones:
-                            return {'total_exclusiones': 0, 'tasa_exclusion': 0.0}
-
-                        # Conteo por tipo de error
-                        conteo_tipos = {}
-                        conteo_campos = {}
-                        for exc in self.exclusiones:
-                            tipo = exc['tipo_error']
-                            campo = exc['campo_afectado']
-                            conteo_tipos[tipo] = conteo_tipos.get(tipo, 0) + 1
-                            conteo_campos[campo] = conteo_campos.get(campo, 0) + 1
-
-                        total_procesados = len(self.validaciones_exitosas) + len(set(
-                            e['id_sujeto'] for e in self.exclusiones
-                        ))
-
-                        return {
-                            'total_procesados': total_procesados,
-                            'validaciones_exitosas': len(self.validaciones_exitosas),
-                            'total_exclusiones': len(self.exclusiones),
-                            'tasa_exclusion': len(self.exclusiones) / max(total_procesados, 1) * 100,
-                            'desglose_por_tipo_error': conteo_tipos,
-                            'desglose_por_campo': conteo_campos
-                        }
-
-                # 3. Función de procesamiento con captura forense
-                def procesar_lote_muestral(
-                    carga_cruda: List[Dict], 
-                    bitacora: BitacoraAuditoria
-                ) -> List[ObservacionDemografica]:
-                    """
-                    Procesa un lote de observaciones demográficas con captura
-                    forense de errores y registro en bitácora de auditoría.
-                    """
-                    sujetos_validados = []
-
-                    for i, registro in enumerate(carga_cruda):
-                        timestamp = datetime.now().isoformat()
-
-                        try:
-                # Intento de validación
-                            sujeto = ObservacionDemografica.model_validate(registro)
-                            sujetos_validados.append(sujeto)
-                            bitacora.registrar_exito(sujeto.id_sujeto)
-
-                        except ValidationError as error_auditoria:
-                            # Captura y análisis forense del fallo
-                            errores = error_auditoria.errors()
-
-                            print(f"\\n⚠️ EXCLUSIÓN REGISTRADA - Sujeto ID: {registro.get('id_sujeto')}")
-                            for fallo in errores:
-                                campo = ' -> '.join(str(x) for x in fallo['loc'])
-                                print(f"   Campo: {campo}")
-                                print(f"   Tipo:  {fallo['type']}")
-                                print(f"   Msg:   {fallo['msg'][:60]}...")
-
-                            # Registrar en bitácora
-                            bitacora.registrar_exclusion(registro, errores, timestamp)
-
-                    return sujetos_validados
-
-                # 4. Ejecución del procesamiento
-                bitacora = BitacoraAuditoria()
-                sujetos_validos = procesar_lote_muestral(datos_demograficos_simulados, bitacora)
-
-                # 5. Generación de reporte consolidado
-                reporte = bitacora.generar_reporte_consolidado()
-
-                print("\\n" + "="*60)
-                print("📊 REPORTE CONSOLIDADO DE AUDITORÍA")
-                print("="*60)
-                print(f"Total procesados:        {reporte['total_procesados']}")
-                print(f"Validaciones exitosas:   {reporte['validaciones_exitosas']}")
-                print(f"Total exclusiones:       {reporte['total_exclusiones']}")
-                print(f"Tasa de exclusión:       {reporte['tasa_exclusion']:.1f}%")
-                print(f"\\nDesglose por tipo de error:")
-                for tipo, cuenta in reporte['desglose_por_tipo_error'].items():
-                    print(f"  • {tipo}: {cuenta}")
-                print(f"\\nDesglose por campo afectado:")
-                for campo, cuenta in reporte['desglose_por_campo'].items():
-                    print(f"  • {campo}: {cuenta}")`} />
+print("\\n" + "="*60)
+print("📊 REPORTE CONSOLIDADO DE AUDITORÍA")
+print("="*60)
+print(f"Total procesados:        {reporte['total_procesados']}")
+print(f"Validaciones exitosas:   {reporte['validaciones_exitosas']}")
+print(f"Total exclusiones:       {reporte['total_exclusiones']}")
+print(f"Tasa de exclusión:       {reporte['tasa_exclusion']:.1f}%")
+print(f"\\nDesglose por tipo de error:")
+for tipo, cuenta in reporte['desglose_por_tipo_error'].items():
+    print(f"  • {tipo}: {cuenta}")
+print(f"\\nDesglose por campo afectado:")
+for campo, cuenta in reporte['desglose_por_campo'].items():
+    print(f"  • {campo}: {cuenta}")`} />
                                             <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                 <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Interpretación de
                                                     Resultados</h4>
@@ -7072,15 +7072,15 @@
                                                 <p className="text-gray-700 leading-relaxed mb-5"><strong>Problema:</strong> Identificar el
                                                     error metodológico en el siguiente código:</p>
                                                 <CodeBlock title="Python" lang="python" code={`# CÓDIGO CON ERROR GRAVE
-                def procesar_datos(lista_datos):
-                    resultados = []
-                    for dato in lista_datos:
-                        try:
-                            resultado = Modelo.model_validate(dato)
-                            resultados.append(resultado)
-                        except Exception:
-                            pass  # Ignorar silenciosamente todos los errores
-                return resultados`} />
+def procesar_datos(lista_datos):
+    resultados = []
+    for dato in lista_datos:
+        try:
+            resultado = Modelo.model_validate(dato)
+            resultados.append(resultado)
+        except Exception:
+            pass  # Ignorar silenciosamente todos los errores
+return resultados`} />
                                                 <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                     <strong>Solución Parcial:</strong>
                                                     <p className="text-gray-700 leading-relaxed mb-5">Este código presenta un anti-patrón
@@ -7687,15 +7687,15 @@
                                                 <div
                                                     className="bg-gray-900 text-gray-100 rounded-lg p-4 font-mono text-xs leading-relaxed mt-2">
                                                     <CodeBlock lang="text" code={`encuesta-api/
-                +-- main.py              # Punto de entrada FastAPI + endpoints
-                +-- models.py            # Modelos Pydantic (Encuestado, Respuesta, Encuesta)
-                +-- validators.py        # Validadores auxiliares (listas de departamentos, etc.)
-                +-- requirements.txt     # Dependencias del proyecto
-                +-- README.md            # Instrucciones de instalación y ejecución
-                +-- .gitignore           # Archivos excluidos del control de versiones
-                +-- tests/               # (Opcional/Bonus) Tests con pytest
-                    +-- test_models.py
-                    +-- test_endpoints.py`} />  /* TODO revisar lang */
++-- main.py              # Punto de entrada FastAPI + endpoints
++-- models.py            # Modelos Pydantic (Encuestado, Respuesta, Encuesta)
++-- validators.py        # Validadores auxiliares (listas de departamentos, etc.)
++-- requirements.txt     # Dependencias del proyecto
++-- README.md            # Instrucciones de instalación y ejecución
++-- .gitignore           # Archivos excluidos del control de versiones
++-- tests/               # (Opcional/Bonus) Tests con pytest
+    +-- test_models.py
+    +-- test_endpoints.py`} />  /* TODO revisar lang */
                                                 </div>
                                             </div>
 
