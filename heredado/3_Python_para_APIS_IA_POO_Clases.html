@@ -1245,13 +1245,19 @@ Incluye:
 # --- Uso del generador ---
 if __name__ == "__main__":
     concepto = input("¿Qué clase quieres generar? ")
-    print(f"\\nGenerando clase para '{concepto}'...\\n")
+
+    # El aviso de progreso va por stderr, no por stdout. Por stdout sale SÓLO
+    # la clase generada, y así se puede encadenar sin que el archivo resultante
+    # se llene de mensajes:
+    #     python Constructor_Clases_IA.py > Cuenta.py
+    print(f"\\nGenerando clase para '{concepto}'...\\n", file=sys.stderr)
 
     try:
         print(GeneradorClases().generar(concepto))
     except (ValueError, ErrorDeGeneracion) as e:
-        # El fallo sale por stderr y con código de salida 1. Así el estudiante
-        # —y cualquier script que llame a éste— distingue un error de una clase.
+        # El fallo también sale por stderr, y con código de salida 1. Así el
+        # estudiante —y cualquier script que llame a éste— distingue un error
+        # de una clase.
         sys.exit(f"ERROR: {e}")`,
                 interactiveType: 'concept'
             },
