@@ -43,8 +43,13 @@ class GeneradorClases:
                 "Configúrala con: export GEMINI_API_KEY='tu_clave'"
             )
 
-        # Un único cliente para toda la sesión
+        # El cliente es el objeto que habla con Google. Se crea UNA sola vez y
+        # queda como atributo para reutilizarlo en cada llamada.
         self.cliente = genai.Client(api_key=api_key)
+
+        # A diferencia de la librería antigua, el modelo NO se fija al construir:
+        # se elige en cada petición. Por eso se guarda como atributo y no como
+        # parte del cliente —cambiar de modelo no obliga a rehacer la conexión—.
         self.modelo = modelo
         self.intentos_max = intentos_max
 

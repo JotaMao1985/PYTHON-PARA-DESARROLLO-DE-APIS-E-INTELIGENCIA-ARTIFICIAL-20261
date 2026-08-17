@@ -10,7 +10,7 @@ Esta carpeta contiene scripts cortos que se usan como **demos en vivo** durante 
 | [`Bernoulli_1.py`](Bernoulli_1.py) | 19 | M5 / M6 | Endpoint que ejecuta un experimento Bernoulli con NumPy |
 | [`Experimentos_essay.py`](Experimentos_essay.py) | 44 | M6 — FastAPI | API de registro de experimentos (POST + GET con Pydantic) |
 | [`A_Full_CRUD.py`](A_Full_CRUD.py) | 38 | M6 — FastAPI | CRUD completo (Movie Review API): POST / GET / PUT / DELETE con Pydantic + "DB" en dict |
-| [`Constructor_Clases_IA.py`](Constructor_Clases_IA.py) | 141 | M3 — POO | Clase `GeneradorClases` que usa Gemini 3.6 Flash para generar código Python; muestra POO real, `system_instruction`, y reintentos **selectivos** (sólo 429 y 5xx) |
+| [`Constructor_Clases_IA.py`](Constructor_Clases_IA.py) | 146 | M3 — POO | Clase `GeneradorClases` que usa Gemini 3.6 Flash para generar código Python; muestra POO real, `system_instruction`, y reintentos **selectivos** (sólo 429 y 5xx) |
 | [`convert_math.py`](convert_math.py) | 121 | (utilidad docente) | Limpieza de LaTeX en HTML — ⚠️ contiene ruta absoluta dura, no portable |
 | [`Dockerfile`](Dockerfile) | 16 | M11 — Docker | Imagen Python 3.11-slim — ⚠️ espera `requirements.txt` en el build context |
 | [`docker-compose.yml`](docker-compose.yml) | 12 | M11 — Docker | Servicio que monta `./app` y `./data` y se conecta a Ollama — ⚠️ pensado para ejecutarse desde la raíz del repo, no desde aquí |
