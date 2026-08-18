@@ -113,6 +113,50 @@ def iconos_de(texto):
     return nombres
 
 
+def gramaticas_de(texto):
+    """Las claves de lenguaje que `CodeBlock` sabe resolver.
+
+    Salen del `const GRAMATICA = {…}` de la plantilla, que es la lista de
+    verdad, y no de una copia aquí: una copia se separa el día que LP-CORE
+    añada un lenguaje, y entonces esta comprobación empezaría a rechazar
+    bloques buenos, que es peor que no comprobar nada.
+
+    Ojo con la distinción que se cobró una: la clave NO es el nombre de la
+    gramática de Prism. El intérprete de shell se declara `shell` y se resuelve
+    a `bash`; pedir `lang="bash"` no da error, deja el bloque sin resaltar.
+    """
+    m = re.search(r"const GRAMATICA = \{(.*?)\};", texto, re.S)
+    return set(re.findall(r"(\w+):", m.group(1))) if m else set()
+
+
+def lenguajes_de(jsx):
+    """Los `lang` que declara cada `<CodeBlock>` de una pieza.
+
+    Parece un `re.findall` de una línea y no lo es, por el orden de los
+    atributos. `convertir_react.py` emite `title, lang, code`, pero
+    `deduplicar.py` —el del módulo 13— emite `title, code, …, lang`, y el
+    `code` lleva dentro un literal de plantilla con el programa entero.
+    Cualquier patrón que vaya de `<CodeBlock` a `lang` cruzando ese literal o
+    se pierde dentro del programa o se para en el primer acento grave.
+
+    La primera versión de esto se paraba en el acento, y en el módulo 13
+    —26 bloques, todos con su `lang` después del `code`— leía **cero**. No
+    daba error: daba por buenos 26 bloques sin haber mirado ninguno, que es la
+    forma más cara de equivocarse en una comprobación.
+
+    Por eso primero se quita el literal y sólo después se leen los atributos.
+    """
+    limpio = re.sub(r"code=\{`(?:[^`\\]|\\[\s\S])*`\}", "code={}", jsx)
+    langs = set()
+    for m in re.finditer(r"<CodeBlock\b", limpio):
+        fin = limpio.find("/>", m.end())
+        etiqueta = limpio[m.end():fin if fin != -1 else len(limpio)]
+        v = re.search(r'\blang="([\w-]+)"', etiqueta)
+        if v:
+            langs.add(v.group(1))
+    return langs
+
+
 def poner(texto, ini, fin, bloque, ancla):
     """Reemplaza entre centinelas, o inserta antes del ancla la primera vez."""
     t = entre(texto, ini, fin)
@@ -242,6 +286,40 @@ def main():
               f"       la página entera, con un error de React que no dice de dónde viene.\n"
               f"       Los {len(iconos)} que hay son: {', '.join(sorted(iconos))}",
               file=sys.stderr)
+        return 1
+
+    # Y una tercera vez el mismo defecto, con el tercer vocabulario: el
+    # lenguaje del bloque. `CodeBlock` resuelve `GRAMATICA[lang]`, y una clave
+    # que no existe no da error —devuelve `undefined`, Prism no se llama y el
+    # bloque sale en gris—. Es el más callado de los tres: el texto está bien,
+    # sólo pierde el color, así que nadie lo nota leyendo.
+    #
+    # Pasó en agosto de 2026 con la bibliografía del módulo 4. Estaba marcada
+    # `python` y contenía `pip install`; al corregirla se puso `lang="bash"`,
+    # que es el nombre de la gramática de Prism y NO la clave: la clave es
+    # `shell`. Se vio contando los tokens en el DOM, que es una forma cara de
+    # enterarse de algo que aquí se sabe.
+    conocidas = gramaticas_de(texto)
+    if not conocidas:
+        print("ERROR: no se encuentra `const GRAMATICA = {…}` en la plantilla.\n"
+              "       Si LP-CORE lo renombró, hay que actualizar `gramaticas_de`; sin\n"
+              "       esa lista no se puede comprobar el lenguaje de los bloques.",
+              file=sys.stderr)
+        return 1
+
+    fuentes = sorted((piezas / "jsx").glob("*.jsx"))
+    if receta.get("componentes") and ruta("componentes").exists():
+        fuentes.append(ruta("componentes"))
+    declaradas = set()
+    for f in fuentes:
+        declaradas |= lenguajes_de(f.read_text(encoding="utf-8"))
+    ignotas = sorted(declaradas - conocidas)
+    if ignotas:
+        print(f"ERROR: hay bloques con lang={', '.join(repr(i) for i in ignotas)} y "
+              f"`GRAMATICA` no\n"
+              f"       conoce esa clave. Saldrían sin resaltar y sin avisar. Las "
+              f"{len(conocidas)} que hay\n"
+              f"       son: {', '.join(sorted(conocidas))}", file=sys.stderr)
         return 1
 
     # Un componente que se llame como algo que la plantilla ya declara sale
