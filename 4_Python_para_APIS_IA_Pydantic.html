@@ -2159,15 +2159,139 @@
         };
 
         /* ============================================================
-           EJEMPLOS DE CÓDIGO — hilo financiero del curso:
-           crédito de libre inversión de un banco colombiano
+           EJEMPLOS DE CÓDIGO DEL CAPÍTULO
+
+           Esto es contenido, no librería: los ejemplos que el capítulo repite,
+           escritos en los cuatro lenguajes, con el hilo que haya elegido el
+           curso. En Lógica de Programación Financiera es un crédito de libre
+           inversión de un banco colombiano; otro curso pondrá el suyo.
+
+           Y puede no quedar ninguno. Los capítulos que se montan desde un
+           material heredado traen sus propios ejemplos ya escritos, y la poda
+           se lleva estas constantes por no referenciarlas nadie: entonces este
+           encabezado queda solo, y sigue diciendo la verdad —aquí es donde
+           irían— en vez de anunciar un hilo que ese capítulo no sigue.
         ============================================================ */
+        /* === COMPONENTES DEL MÓDULO INICIO — escritos a mano, ver la receta === */
+        /* ============================================================
+           COMPONENTES PROPIOS DEL MÓDULO 4
+
+           Dos figuras. No salen de ningún conversor porque en el heredado no hay nada
+           que convertir: el módulo 4 llegó **sin una sola imagen**. Ni diagrama, ni
+           gráfica, ni esquema; lo único visual eran los iconos de sección y unas
+           tarjetas de colores.
+
+           Viven aquí, y no en `build/migracion/m4/graficas.jsx`, porque `build/` no se
+           versiona: lo rehace `graficas.py` a partir del Plotly del heredado, y el
+           heredado del 4 no tiene ninguno. Lo que se escribe a mano va en
+           `componentes/`, que sí se versiona, y lo nombra la receta.
+
+           Las dos se enganchan por `interactiveType` en el heredado —`flujo_422` en la
+           sección 7 y `sesgo_cero` en la 5—, que `ACOMPANANTES` traduce a la etiqueta
+           correspondiente. El mecanismo las coloca **antes del bloque de código**
+           —`seccion_jsx` añade el acompañante y después el `CodeBlock`—, y en las dos
+           es donde deben ir: la figura resume lo que el texto acaba de explicar y el
+           código lo demuestra a continuación.
+        ============================================================ */
+
+        /* La sección 7 explica con palabras el camino que recorre un dato malo desde
+           que entra hasta que el cliente lee el error. Esto es ese camino. Los cuatro
+           rótulos son los mismos términos que usa el texto, en el mismo orden, para
+           que el dibujo y la prosa no se contradigan. */
+        const FlujoValidacion422 = () => (
+            <Pipeline steps={[
+                {
+                    num: 1,
+                    title: 'Llega el JSON',
+                    desc: 'El cuerpo de la petición entra tal cual. Si estuviera roto, ni habría llegado aquí: eso sería un 400.'
+                },
+                {
+                    num: 2,
+                    title: 'El modelo comprueba',
+                    desc: 'Pydantic contrasta cada campo contra el contrato: tipos, rangos, patrones y tus validadores.'
+                },
+                {
+                    num: 3,
+                    title: 'ValidationError',
+                    desc: 'Si algo no cuadra, .errors() reúne TODOS los fallos, no se para en el primero.'
+                },
+                {
+                    num: 4,
+                    title: 'Respuesta 422',
+                    desc: 'FastAPI vuelca esa lista en {"detail": [...]} y es lo que lee quien consume tu API.'
+                },
+            ]} />
+        );
+
+        /* El lema del capítulo —«Poner 0 donde faltaba el dato no rellena el hueco:
+           mueve la media»— no se demostraba en ninguna parte. Aquí se demuestra, y con
+           el mismo ejemplo que ya usa la justificación 3 del cuestionario: los
+           cigarrillos que dice fumar un encuestado.
+
+           El ejemplo se eligió porque tiene la trampa dentro: dos de los que SÍ
+           contestaron respondieron 0, y ese 0 es un dato —no fuman—. Confundirlo con
+           el hueco de los que no contestaron es exactamente el error que la sección
+           enseña a evitar. */
+        const SesgoPorCero = () => {
+            const observados = [20, 0, 15, 0, 30, 10, 25, 5];   // los que contestaron
+            const sinRespuesta = 4;                              // los que no
+
+            const suma = observados.reduce((a, b) => a + b, 0);
+            const mediaReal = suma / observados.length;
+            const mediaConCeros = suma / (observados.length + sinRespuesta);
+            const caida = Math.round((1 - mediaConCeros / mediaReal) * 100);
+
+            usePlotly('chart-m4-sesgo',
+                () => [
+                    {
+                        type: "bar",
+                        x: ["Solo los que contestaron", "Rellenando con 0 los que no"],
+                        y: [mediaReal, mediaConCeros],
+                        text: [mediaReal.toFixed(2), mediaConCeros.toFixed(2)],
+                        textposition: "outside",
+                        cliponaxis: false,
+                        marker: {
+                            color: ["#3D008D", "#ED1E79"],
+                            line: { color: "#3D008D", width: 1 }
+                        },
+                        hovertemplate: "<b>%{x}</b><br>media = %{y:.2f} cigarrillos/día<extra></extra>"
+                    }
+                ],
+                () => ({
+                    xaxis: {
+                        automargin: true
+                    },
+                    yaxis: {
+                        title: { text: "Cigarrillos al día (media)" },
+                        rangemode: "tozero",
+                        automargin: true
+                    },
+                    showlegend: false,
+                    font: {
+                        family: "Montserrat, Helvetica Neue, Arial, sans-serif",
+                        size: 12,
+                        color: "#1E293B"
+                    },
+                    margin: { l: 60, r: 40, t: 30, b: 50 },
+                    paper_bgcolor: "rgba(0,0,0,0)",
+                    plot_bgcolor: "rgba(0,0,0,0)"
+                }), []);
+
+            return (
+                <ChartFrame
+                    id="chart-m4-sesgo"
+                    height="chart-h-320"
+                    caption={`Doce encuestados, ocho contestaron. Rellenar con 0 los cuatro huecos baja la media de ${mediaReal.toFixed(2)} a ${mediaConCeros.toFixed(2)} cigarrillos al día: un ${caida} % menos, y sin que falte un solo dato en la tabla.`} />
+            );
+        };
+        /* === COMPONENTES DEL MÓDULO FIN === */
+
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
         const IntroSection = () => (
             <div className="prose-lp">
                                     <div className="space-y-4">
                                         <p className="text-lg leading-relaxed">
-                                            En estadística, existe un dicho famoso: <strong>"Garbage In, Garbage Out"</strong> (Entra basura, sale basura).
+                                            En estadística, existe un dicho famoso: <strong>«Garbage In, Garbage Out»</strong> (Entra basura, sale basura).
                                             Si alimentas tu modelo estadístico con datos corruptos, tus conclusiones serán erróneas, sin importar qué tan sofisticado sea tu algoritmo.
                                         </p>
                                         <div className="usta-card p-4">
@@ -2183,19 +2307,30 @@
                                         </p>
                                     </div>
 
-                <CodeBlock title="Ejemplo de Datos Corruptos" lang="python" code={`# Ejemplo de datos corruptos que pueden arruinar un análisis
+                <CodeBlock title="Ejemplo de datos corruptos" lang="python" code={`# Hay dos maneras de que unos datos crudos arruinen un análisis.
+# Una avisa a gritos. La otra no avisa, y por eso es la peligrosa.
 
-# Problema: Tipos inconsistentes
 datos_crudos = [
     {"edad": 25, "peso": 70.5, "altura": 1.75},
-    {"edad": "30", "peso": "80.2", "altura": "1.80"},  # Strings en lugar de números
-    {"edad": None, "peso": -5, "altura": 3.5},  # Valores imposibles
+    {"edad": 31, "peso": 80.2, "altura": 1.80},
+    {"edad": None, "peso": -5, "altura": 3.5},   # Un peso negativo: imposible
 ]
 
-# Sin validación, estos datos pasan desapercibidos
-# y arruinan tus cálculos estadísticos
-promedio_peso = sum(d["peso"] for d in datos_crudos) / len(datos_crudos)
-print(f"Promedio calculado: {promedio_peso}")  # ¡Incorrecto!`} />
+# FALLO SILENCIOSO — nadie comprobó que un peso no puede ser negativo.
+# El promedio se calcula sin protestar, sale un número creíble, y es falso.
+promedio = sum(d["peso"] for d in datos_crudos) / len(datos_crudos)
+print(f"Promedio con el dato imposible: {promedio:.2f} kg")
+print(f"Promedio sin el dato imposible: {(70.5 + 80.2) / 2:.2f} kg")
+
+# FALLO RUIDOSO — otra fila trae los números escritos como texto.
+fila_de_texto = {"edad": "30", "peso": "80.2", "altura": "1.80"}
+try:
+    sum([70.5, fila_de_texto["peso"]])
+except TypeError as e:
+    print(f"Este al menos avisa: {e}")
+
+# El ruidoso lo arreglas hoy, porque el programa se para.
+# El silencioso viaja hasta el informe final sin que nadie lo mire.`} />
             </div>
         );
 
@@ -2208,13 +2343,20 @@ print(f"Promedio calculado: {promedio_peso}")  # ¡Incorrecto!`} />
                                         <Box type="info">
                                             <p className="text-primary font-medium">
                                                 <i className="fas fa-lightbulb text-secondary mr-2"></i>
-                                                A diferencia de otras librerías, Pydantic no solo valida, sino que intenta <em>parsear</em> (convertir) los datos al tipo correcto si es posible.
+                                                A diferencia de otras librerías, Pydantic no solo valida, sino que intenta <em>convertir</em> los datos al tipo correcto si es posible.
                                             </p>
                                         </Box>
+                                        <p>
+                                            Ahora bien, conviene ver desde el principio hasta dónde llega eso. Un tipo dice
+                                            de <em>qué clase</em> es un dato, no si su contenido tiene sentido. En el ejemplo
+                                            de abajo, <code>email: str</code> acepta <code>"esto-no-es-un-correo"</code> sin
+                                            una queja: es texto, y texto era todo lo que se le pidió. Cerrar ese hueco es el
+                                            trabajo de <code>Field</code>, en la sección 4.
+                                        </p>
                                         <p className="text-sm text-gray-500">Para instalarlo: <code className="bg-gray-100 px-2 py-1 rounded text-primary font-semibold">pip install pydantic</code></p>
                                     </div>
 
-                <CodeBlock title="Instalación y Concepto Básico" lang="python" code={`# Instalación de pydantic
+                <CodeBlock title="Instalación y concepto básico" lang="python" code={`# Instalación de pydantic
 # pip install pydantic
 
 from pydantic import BaseModel
@@ -2229,11 +2371,19 @@ class Persona(BaseModel):
 p = Persona(nombre="Ana", edad=25, email="ana@ejemplo.com")
 print(p)
 
-# Intentar crear con datos inválidos lanza error
+# "veinte" no es un entero, y no hay forma de convertirlo: Pydantic protesta.
 try:
-    p_invalida = Persona(nombre="Ana", edad="veinte", email="correo-invalido")
+    Persona(nombre="Ana", edad="veinte", email="ana@ejemplo.com")
 except Exception as e:
-    print(f"Error capturado: {e}")`} />
+    print(f"Error capturado: {type(e).__name__}")
+
+# Pero atención a esto, que es la otra mitad de la lección:
+colada = Persona(nombre="Ana", edad=25, email="esto-no-es-un-correo")
+print(f"Correo aceptado sin rechistar: {colada.email}")
+
+# El tipo "email: str" solo exige que el dato sea texto, y lo es. Un tipo dice
+# de qué CLASE es un dato, no si su contenido tiene sentido. Cerrar ese hueco
+# es el trabajo de Field, en la sección 4.`} />
             </div>
         );
 
@@ -2244,15 +2394,15 @@ except Exception as e:
                                             Un <strong>Modelo</strong> en Pydantic es una clase que define la <em>forma</em> y los <em>tipos</em> de tus datos. Funciona como un contrato estricto.
                                         </p>
                                         <div className="usta-card p-4">
-                                            <h4 className="font-bold text-gray-700 mb-2">Conceptos Clave:</h4>
+                                            <h4 className="font-bold text-gray-700 mb-2">Conceptos clave:</h4>
                                             <ul className="list-disc pl-5 space-y-3 text-gray-600">
                                                 <li className="tip-box p-3 rounded-md -ml-2 list-none">
                                                     <div className="flex gap-2 items-start">
                                                         <div className="mt-1 text-primary"><Icons.Grid size={18} /></div>
                                                         <div>
-                                                            <strong className="text-primary">BaseModel (El Núcleo):</strong>
+                                                            <strong className="text-primary">BaseModel (el núcleo):</strong>
                                                             <p className="text-sm mt-1 mb-2">
-                                                                No es una herencia decorativa. Al heredar de <code>BaseModel</code>, tu clase gana "superpoderes" automáticos sin que escribas código extra:
+                                                                No es una herencia decorativa. Al heredar de <code>BaseModel</code>, tu clase gana «superpoderes» automáticos sin que escribas código extra:
                                                             </p>
                                                             <ul className="list-disc pl-4 text-sm text-gray-700 space-y-1">
                                                                 <li><strong>Constructor automático:</strong> No necesitas escribir <code>__init__</code>. Pydantic lo crea basándose en tus campos.</li>
@@ -2263,10 +2413,10 @@ except Exception as e:
                                                     </div>
                                                 </li>
                                                 <li>
-                                                    <strong>Type Hints (<code>: tipo</code>):</strong> Usamos la sintaxis estándar de Python. No solo sirve para documentar, Pydantic la usa para <em>forzar</em> ese tipo de dato.
+                                                    <strong>Anotaciones de tipo (<code>: tipo</code>):</strong> Usamos la sintaxis estándar de Python. No solo sirve para documentar, Pydantic la usa para <em>forzar</em> ese tipo de dato.
                                                 </li>
                                                 <li>
-                                                    <strong>Campos Opcionales:</strong> En estadística, a menudo tenemos datos faltantes. Usar <code>Optional[float] = None</code> permite explícitamente que un valor sea nulo sin romper el código.
+                                                    <strong>Campos opcionales:</strong> En estadística, a menudo tenemos datos faltantes. Usar <code>Optional[float] = None</code> permite explícitamente que un valor sea nulo sin romper el código.
                                                 </li>
                                                 <li>
                                                     <strong>Colecciones (<code>List[float]</code>):</strong> Puedes validar estructuras complejas. Pydantic validará cada uno de los elementos dentro de la lista.
@@ -2275,7 +2425,7 @@ except Exception as e:
                                         </div>
                                     </div>
 
-                <CodeBlock title="Anatomía de un Modelo Estadístico" lang="python" code={`from pydantic import BaseModel
+                <CodeBlock title="Anatomía de un modelo estadístico" lang="python" code={`from pydantic import BaseModel
 from typing import List, Optional
 
 # Un Modelo es el "plano" o contrato de tus datos
@@ -2318,7 +2468,7 @@ print(data_dict)
                                         </p>
                                         <div className="grid md:grid-cols-2 gap-4">
                                             <div className="tip-box p-4 rounded-lg">
-                                                <h4 className="font-bold text-primary mb-2">1. Restricciones de Validación</h4>
+                                                <h4 className="font-bold text-primary mb-2">1. Restricciones de validación</h4>
                                                 <p className="text-sm text-gray-700 mb-3">
                                                     En lugar de escribir funciones complejas, puedes usar argumentos como <code>gt</code> (mayor que), <code>lt</code> (menor que), <code>ge</code> (mayor o igual), <code>max_length</code>, etc.
                                                 </p>
@@ -2331,7 +2481,7 @@ print(data_dict)
                                                         <li><code>le</code> = less/equal (≤)</li>
                                                         <li><code>multiple_of</code> = múltiplo de</li>
                                                     </ul>
-                                                    <p className="mt-2"><strong>Strings:</strong></p>
+                                                    <p className="mt-2"><strong>Cadenas de texto:</strong></p>
                                                     <ul className="list-disc pl-4 space-y-0.5 text-gray-600">
                                                         <li><code>min_length</code> / <code>max_length</code></li>
                                                         <li><code>pattern</code> = regex (ej: <code>r"^[A-Z]+$"</code>)</li>
@@ -2344,7 +2494,7 @@ print(data_dict)
                                                 </div>
                                             </div>
                                             <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border border-emerald-200">
-                                                <h4 className="font-bold text-emerald-700 mb-2">2. Documentación (Metadatos)</h4>
+                                                <h4 className="font-bold text-emerald-700 mb-2">2. Documentación (metadatos)</h4>
                                                 <p className="text-sm text-emerald-900">
                                                     El argumento <code>description</code> es crucial para generar diccionarios de datos automáticos. Permite que otros entiendan qué significa esa variable.
                                                 </p>
@@ -2363,7 +2513,7 @@ print(data_dict)
                                         <div className="usta-card p-5 mt-4">
                                             <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
                                                 <i className="fas fa-calculator text-primary"></i>
-                                                Ejemplos Prácticos de Restricciones
+                                                Ejemplos prácticos de restricciones
                                             </h4>
                                             <div className="grid md:grid-cols-2 gap-4 text-sm">
                                                 <div className="bg-gray-50 p-3 rounded-lg">
@@ -2379,7 +2529,7 @@ print(data_dict)
                                                     <code className="text-xs text-primary">cp: str = Field(..., min_length=5, max_length=5)</code>
                                                 </div>
                                                 <div className="bg-gray-50 p-3 rounded-lg">
-                                                    <p className="font-semibold text-gray-700 mb-1">Email válido</p>
+                                                    <p className="font-semibold text-gray-700 mb-1">Correo electrónico válido</p>
                                                     <code className="text-xs text-primary">email: str = Field(..., pattern=r"^\S+@\S+\.\S+$")</code>
                                                 </div>
                                                 <div className="bg-gray-50 p-3 rounded-lg">
@@ -2393,12 +2543,37 @@ print(data_dict)
                                             </div>
                                         </div>
                                         <p className="text-sm text-gray-500 italic">
-                                            Nota: Cuando usas <code>Field(...)</code> (con tres puntos), le estás diciendo a Pydantic que el campo es <strong>requerido</strong>.
+                                            Nota: Cuando usas <code>Field(...)</code> (con tres puntos), le estás diciendo a Pydantic que el campo es <strong>obligatorio</strong>.
                                         </p>
+
+                                        <Box type="info" label="Las dos formas de escribirlo"><p className="mb-3">
+                                                Lo que acabas de ver —<code>Field</code> puesto en el sitio del valor por
+                                                defecto— funciona, y es el estilo con el que está escrito este material. Pero
+                                                la documentación de Pydantic v2 recomienda hoy otra forma,
+                                                con <code>Annotated</code>, y te la vas a encontrar en cuanto leas código ajeno:
+                                            </p>
+                                            <div className="grid md:grid-cols-2 gap-3 text-xs">
+                                                <div className="bg-white/60 p-3 rounded">
+                                                    <p className="font-semibold mb-1">Como valor por defecto</p>
+                                                    <code className="text-primary">edad: int = Field(..., ge=0, le=120)</code>
+                                                </div>
+                                                <div className="bg-white/60 p-3 rounded">
+                                                    <p className="font-semibold mb-1">Con <code>Annotated</code> — la recomendada</p>
+                                                    <code className="text-primary">edad: Annotated[int, Field(ge=0, le=120)]</code>
+                                                </div>
+                                            </div>
+                                            <p className="mt-3">
+                                                Validan exactamente lo mismo. La diferencia está en el sitio del valor por
+                                                defecto: la primera forma lo gasta en las restricciones, y por eso hay que
+                                                escribir <code>...</code> para decir «aquí no hay valor por defecto».
+                                                Con <code>Annotated</code> ese sitio queda libre para lo que es, de modo
+                                                que <code>= 30</code> significa 30 y nada más.
+                                            </p>
+                                        </Box>
                                     </div>
 
-                <CodeBlock title="Metadatos y Restricciones Numéricas" lang="python" code={`from pydantic import BaseModel, Field
-from typing import Optional
+                <CodeBlock title="Metadatos y restricciones numéricas" lang="python" code={`from pydantic import BaseModel, Field
+from typing import Annotated
 
 class VariableEstadistica(BaseModel):
     # Field(...) indica que el campo es obligatorio aunque no tenga valor por defecto
@@ -2434,7 +2609,7 @@ class VariableEstadistica(BaseModel):
         description="Tamaño de muestra (mínimo 1, máximo 10000)"
     )
     
-    # Ejemplo con múltiple_of (múltiplo de)
+    # Ejemplo con multiple_of (múltiplo de)
     nivel_confianza: int = Field(
         default=95,
         ge=90,
@@ -2447,7 +2622,7 @@ class Paciente(BaseModel):
     # Validación de strings con pattern (expresión regular)
     email: str = Field(
         ...,
-        pattern=r"^[\w\.-]+@[\w\.-]+\.\w+$",
+        pattern=r"^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$",
         description="Correo electrónico válido"
     )
     
@@ -2464,9 +2639,21 @@ class Paciente(BaseModel):
         ...,
         min_length=5,
         max_length=5,
-        pattern=r"^\d{5}$",     # Exactamente 5 dígitos
+        pattern=r"^\\d{5}$",     # Exactamente 5 dígitos
         description="Código postal de 5 dígitos"
     )
+
+
+# La MISMA validación, escrita como la recomienda hoy la documentación de
+# Pydantic v2. No valida ni más ni menos: cambia dónde se escribe.
+class PacienteModerno(BaseModel):
+    email: Annotated[str, Field(pattern=r"^[\\w\\.-]+@[\\w\\.-]+\\.\\w+$")]
+    edad: Annotated[int, Field(ge=0, le=120)]
+
+    # Y aquí se ve la ventaja: el sitio del valor por defecto queda libre,
+    # así que "= 0" significa 0, sin tener que escribir Field(default=0).
+    n_visitas: Annotated[int, Field(ge=0)] = 0
+
 
 # --- Ejemplos de uso ---
 
@@ -2514,7 +2701,17 @@ try:
         codigo_postal="ABC12"   # Error: debe ser 5 dígitos
     )
 except Exception as e:
-    print(f"✗ Error: {e}")`} />
+    print(f"✗ Error: {e}")
+
+# 5. Las dos formas validan lo mismo
+print("\\n=== Ejemplo 5: Annotated valida igual ===")
+try:
+    PacienteModerno(email="no-es-un-correo", edad=25)
+except Exception as e:
+    print("✗ El correo tampoco pasa aquí:", type(e).__name__)
+
+p_ok = PacienteModerno(email="paciente@hospital.com", edad=25)
+print(f"✓ Correcto: {p_ok.email}, con n_visitas={p_ok.n_visitas} por defecto")`} />
             </div>
         );
 
@@ -2527,32 +2724,44 @@ except Exception as e:
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                                             <div className="usta-card p-4">
                                                 <div className="flex items-center gap-2 mb-2 text-secondary font-bold">
-                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#ED1E79' }}></div> Required
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#ED1E79' }}></div> Obligatorio <em>(required)</em>
                                                 </div>
-                                                <p className="text-sm text-gray-600 mb-2">El dato <strong>debe</strong> venir en el input y tener valor.</p>
+                                                <p className="text-sm text-gray-600 mb-2">El dato <strong>debe</strong> venir en la entrada y traer valor.</p>
                                                 <code className="text-xs bg-gray-100 px-1 py-0.5 rounded text-primary">a: int</code>
                                             </div>
                                             <div className="usta-card p-4">
                                                 <div className="flex items-center gap-2 mb-2 text-primary font-bold">
-                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#3D008D' }}></div> Optional (Default)
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#3D008D' }}></div> Con valor por defecto <em>(optional)</em>
                                                 </div>
                                                 <p className="text-sm text-gray-600 mb-2">Si no viene, usa un valor por defecto. No es None.</p>
                                                 <code className="text-xs bg-gray-100 px-1 py-0.5 rounded text-primary">a: int = 0</code>
                                             </div>
                                             <div className="usta-card p-4">
                                                 <div className="flex items-center gap-2 mb-2 font-bold" style={{ color: '#FDB913' }}>
-                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#FDB913' }}></div> Nullable
+                                                    <div className="w-2 h-2 rounded-full" style={{ background: '#FDB913' }}></div> Anulable <em>(nullable)</em>
                                                 </div>
-                                                <p className="text-sm text-gray-600 mb-2">El dato puede ser explícitamente <code>None</code> (NaN).</p>
+                                                <p className="text-sm text-gray-600 mb-2">El dato puede venir explícitamente vacío: <code>None</code>.</p>
                                                 <code className="text-xs bg-gray-100 px-1 py-0.5 rounded text-primary">a: int | None</code>
                                             </div>
                                         </div>
-                                        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-3 text-sm text-yellow-800 rounded-r">
-                                            <strong>Nota Estadística:</strong> Diferenciar entre <code>0</code> (valor observado) y <code>None</code> (valor perdido) es vital para no sesgar promedios.
-                                        </div>
+                                        <Box type="warn" label="Cuidado con el 0">Diferenciar entre <code>0</code> (valor observado) y <code>None</code> (valor perdido) es vital para no sesgar promedios.
+                                        </Box>
+                                        <Box type="info" label="None no es NaN">Se confunden porque acaban en el
+                                            mismo sitio, pero no son lo mismo. <code>None</code> es el objeto de Python que
+                                            representa la ausencia: no es un número y no se puede
+                                            operar con él. <code>NaN</code> —<em>not a number</em>— sí es
+                                            un <code>float</code>, definido por el estándar IEEE 754,
+                                            y por eso se contagia: <code>NaN + 1</code> da <code>NaN</code>. La confusión
+                                            viene de pandas: al meter tus datos en una columna numérica, convierte
+                                            los <code>None</code> en <code>NaN</code>, porque una columna
+                                            de <code>float</code> necesita un <code>float</code> para el hueco. Pydantic
+                                            trabaja del lado de Python, así que aquí lo que verás es <code>None</code>.
+                                        </Box>
                                     </div>
 
-                <CodeBlock title="Manejando la Ausencia de Datos" lang="python" code={`from pydantic import BaseModel, Field
+                <SesgoPorCero />
+
+                <CodeBlock title="Manejando la ausencia de datos" lang="python" code={`from pydantic import BaseModel, Field
 from typing import Optional
 
 class RegistroPaciente(BaseModel):
@@ -2600,11 +2809,11 @@ print(p1)
                                             <div className="tip-box p-4 rounded-lg">
                                                 <h4 className="font-bold text-primary mb-2"><i className="fas fa-broom mr-1"></i> Limpieza (mode='before')</h4>
                                                 <p className="text-sm text-gray-700">
-                                                    Crucial en estadística. Permite recibir datos "sucios" (como formatos de fecha exóticos o decimales europeos) y transformarlos antes de que Pydantic lance un error de tipo.
+                                                    Crucial en estadística. Permite recibir datos «sucios» (como formatos de fecha exóticos o decimales europeos) y transformarlos antes de que Pydantic lance un error de tipo.
                                                 </p>
                                             </div>
                                             <div className="bg-gradient-to-br from-orange-50 to-amber-50 p-4 rounded-lg border border-orange-200">
-                                                <h4 className="font-bold text-orange-700 mb-2"><i className="fas fa-clipboard-check mr-1"></i> Reglas de Negocio (mode='after')</h4>
+                                                <h4 className="font-bold text-orange-700 mb-2"><i className="fas fa-clipboard-check mr-1"></i> Reglas de negocio (mode='after')</h4>
                                                 <p className="text-sm text-orange-900">
                                                     Verifica lógica que Pydantic no conoce, como comprobar si un valor existe en una lista específica o si cumple una fórmula matemática compleja.
                                                 </p>
@@ -2615,7 +2824,7 @@ print(p1)
                                         </p>
                                     </div>
 
-                <CodeBlock title="Limpieza y Lógica Personalizada" lang="python" code={`from pydantic import BaseModel, field_validator
+                <CodeBlock title="Limpieza y lógica personalizada" lang="python" code={`from pydantic import BaseModel, field_validator
 
 class MedicionLab(BaseModel):
     concentracion: float
@@ -2654,8 +2863,8 @@ print(dato)
             <div className="prose-lp">
                                     <div>
                                         <p className="mb-4">
-                                            Hasta aquí, cuando la validación falla, Pydantic lanza un
-                                            <code> ValidationError</code> y tu programa se detiene. Eso está bien en un script.
+                                            Hasta aquí, cuando la validación falla, Pydantic lanza
+                                            un <code>ValidationError</code> y tu programa se detiene. Eso está bien en un script.
                                             Pero a partir de la semana 6 tus modelos no los vas a instanciar tú: los va a
                                             instanciar <strong>FastAPI</strong> cuando llegue una petición de alguien a quien no
                                             puedes explicarle nada. <strong>Esta sección es sobre qué ve esa persona.</strong>
@@ -2694,7 +2903,7 @@ print(dato)
                                             </h4>
                                             <p className="text-sm mb-3">
                                                 La respuesta trae una lista <code>detail</code> con <strong>un elemento por cada
-                                                error</strong>, no sólo por el primero. Cada elemento tiene:
+                                                error</strong>, no solo por el primero. Cada elemento tiene:
                                             </p>
                                             <ul className="list-disc pl-5 space-y-1 text-sm">
                                                 <li><code>loc</code> — dónde está el problema, como una ruta: <code>["body", "edad"]</code>.</li>
@@ -2709,6 +2918,8 @@ print(dato)
                                         </div>
                                     </div>
 
+                <FlujoValidacion422 />
+
                 <CodeBlock title="Qué le llega a quien consume tu API cuando la validación falla" lang="python" code={`# ═══════════════════════════════════════════════════════════
 # DEL ValidationError DE PYDANTIC AL 422 DE HTTP
 # Este bloque se ejecuta sin FastAPI: muestra la MISMA estructura
@@ -2721,22 +2932,22 @@ from pydantic import BaseModel, Field, ValidationError
 class Encuestado(BaseModel):
     """El contrato: esto es lo que la API acepta."""
     id_encuestado: int
-    edad: int = Field(ge=0, le=120, description="Edad en anios cumplidos")
+    edad: int = Field(ge=0, le=120, description="Edad en años cumplidos")
     ingreso: float = Field(gt=0)
 
 
-# --- Peticion con TRES cosas mal a la vez ---
+# --- Petición con TRES cosas mal a la vez ---
 payload_malo = {"id_encuestado": "abc", "edad": -5, "ingreso": 0}
 
 try:
     Encuestado(**payload_malo)
 except ValidationError as e:
     # .errors() es la lista que FastAPI pone tal cual en {"detail": [...]}
-    print("Numero de errores:", len(e.errors()))
+    print("Número de errores:", len(e.errors()))
     for err in e.errors():
         print(f"  loc={list(err['loc'])}  type={err['type']}")
 
-    # Asi se ve el cuerpo de la respuesta HTTP 422 que recibe el cliente:
+    # Así se ve el cuerpo de la respuesta HTTP 422 que recibe el cliente:
     cuerpo_422 = {"detail": [
         {"loc": ["body", *err["loc"]], "msg": err["msg"], "type": err["type"]}
         for err in e.errors()
@@ -2762,14 +2973,31 @@ except ValidationError as e:
                                         <div className="usta-card p-4 border-l-4" style={{ borderLeftColor: '#ED1E79' }}>
                                             <h4 className="font-bold text-gray-700 mb-2"><i className="fas fa-check-double text-secondary mr-2"></i>Ventajas de este enfoque:</h4>
                                             <ul className="list-disc pl-5 space-y-1 text-gray-600 text-sm">
-                                                <li><strong>Reporte de Errores Detallado:</strong> Sabes exactamente en qué fila y columna falló el dato.</li>
+                                                <li><strong>Reporte de errores detallado:</strong> Sabes exactamente en qué fila y columna falló el dato.</li>
                                                 <li><strong>No detiene la ejecución:</strong> Usando <code>try/except</code>, puedes descartar las filas malas y seguir procesando las buenas.</li>
-                                                <li><strong>Coerción de Tipos:</strong> Pydantic arreglará automáticamente los tipos de datos compatibles (ej. "200" -&gt; 200) antes de guardarlos en el nuevo DataFrame.</li>
+                                                <li><strong>Coerción de tipos:</strong> Pydantic arreglará automáticamente los tipos de datos compatibles (ej. "200" -&gt; 200) antes de guardarlos en el nuevo DataFrame.</li>
                                             </ul>
                                         </div>
+
+                                        <Box type="warn" label="Cuidado con el volumen"><p>
+                                                Este bucle es la forma clara de aprender el patrón, y sirve de sobra para un
+                                                archivo de unos miles de filas. No es lo que se usa cuando el volumen es de
+                                                verdad: <code>iterrows()</code> construye un objeto <code>Series</code> nuevo
+                                                por cada fila, y eso lo convierte en una de las formas más lentas de recorrer
+                                                un DataFrame.
+                                            </p>
+                                            <p className="mt-2">
+                                                Dos salidas, por orden de esfuerzo. La barata es
+                                                recorrer <code>df.to_dict("records")</code> en lugar de <code>iterrows()</code>: valida
+                                                exactamente igual y se ahorra ese coste —medido sobre 20 000 filas, más de diez
+                                                veces más rápido—. La otra es cambiar de herramienta y usar una pensada para
+                                                validar el DataFrame entero, que aplica las reglas por columna en vez de fila a
+                                                fila.
+                                            </p>
+                                        </Box>
                                     </div>
 
-                <CodeBlock title="Integración con Pandas para Big Data" lang="python" code={`import pandas as pd
+                <CodeBlock title="Pydantic como filtro de calidad de un DataFrame" lang="python" code={`import pandas as pd
 from pydantic import BaseModel, ValidationError
 
 # 1. Definimos el Modelo de Calidad
@@ -2812,11 +3040,11 @@ print(df_final)`} />
         const AutoevalSection = () => (
             <div className="prose-lp">
                 <Quiz titulo="Pon a prueba tus conocimientos" preguntas={[
-                            { pregunta: "¿Qué sucede si pasas el string '10' a un campo definido como int en Pydantic?", opciones: [{ texto: "Lanza un error inmediatamente.", correcta: false }, { texto: "Convierte el string '10' al número entero 10.", correcta: true }, { texto: "Ignora el campo y lo deja vacío.", correcta: false }, { texto: "Convierte el campo a string.", correcta: false }], justificacion: "Pydantic intenta 'coaccionar' (convertir) los tipos. Como '10' es un string numérico válido, lo transforma automáticamente a entero." },
-                            { pregunta: "¿Para qué sirve la función 'Field' en Pydantic?", opciones: [{ texto: "Solo para añadir documentación.", correcta: false }, { texto: "Para convertir tipos de datos.", correcta: false }, { texto: "Para añadir metadatos (descripción) y validaciones numéricas (rangos).", correcta: true }, { texto: "Para conectar con bases de datos.", correcta: false }], justificacion: "Field es una herramienta poderosa que combina documentación (description) con validación declarativa (gt, le, etc.)." },
-                            { pregunta: "En estadística, ¿por qué preferimos `int | None = None` sobre `int = 0` para datos faltantes?", opciones: [{ texto: "Porque `None` ocupa menos memoria.", correcta: false }, { texto: "Porque 0 es un valor numérico real y puede sesgar el promedio si el dato en realidad faltaba.", correcta: true }, { texto: "Porque Python prefiere None.", correcta: false }, { texto: "No hay diferencia.", correcta: false }], justificacion: "Si un paciente no responde cuántos cigarrillos fuma y ponemos 0 (default), bajamos el promedio falsamente. Si ponemos None, podemos excluirlo del cálculo." },
-                            { pregunta: "¿Cuál es la utilidad de `@field_validator(..., mode='before')`?", opciones: [{ texto: "Validar datos después de crearlos.", correcta: false }, { texto: "Limpiar o transformar datos crudos antes de que Pydantic verifique su tipo.", correcta: true }, { texto: "Hacer que la validación sea más rápida.", correcta: false }, { texto: "Ignorar los errores de validación.", correcta: false }], justificacion: "Es ideal para 'Data Cleaning'. Puedes convertir formatos extraños (ej. '1,000') a tipos nativos antes de que Pydantic lance un error." },
-                            { pregunta: "¿Cuál es la mejor estrategia para validar un DataFrame de Pandas con Pydantic?", opciones: [{ texto: "Convertir todo el DataFrame a un solo objeto Pydantic.", correcta: false }, { texto: "No se puede usar Pydantic con Pandas.", correcta: false }, { texto: "Iterar sobre las filas, validar cada una con try/except y separar los registros válidos de los errores.", correcta: true }, { texto: "Usar Pandas para validar tipos.", correcta: false }], justificacion: "Iterar permite capturar errores fila por fila sin detener todo el proceso, creando un pipeline de datos robusto." }
+                            { pregunta: "¿Qué sucede si pasas la cadena '10' a un campo definido como int en Pydantic?", opciones: [{ texto: "Lanza un error inmediatamente.", correcta: false }, { texto: "Convierte la cadena '10' al número entero 10.", correcta: true }, { texto: "Ignora el campo y lo deja vacío.", correcta: false }, { texto: "Convierte el campo a texto.", correcta: false }], justificacion: "Pydantic intenta convertir los tipos. Como '10' es una cadena numérica válida, lo transforma automáticamente a entero." },
+                            { pregunta: "¿Para qué sirve la función Field en Pydantic?", opciones: [{ texto: "Solo para añadir documentación.", correcta: false }, { texto: "Para convertir tipos de datos.", correcta: false }, { texto: "Para añadir metadatos (descripción) y validaciones numéricas (rangos).", correcta: true }, { texto: "Para conectar con bases de datos.", correcta: false }], justificacion: "Field es una herramienta poderosa que combina documentación (description) con validación declarativa (gt, le, etc.)." },
+                            { pregunta: "En estadística, ¿por qué preferimos int | None = None sobre int = 0 para datos faltantes?", opciones: [{ texto: "Porque None ocupa menos memoria.", correcta: false }, { texto: "Porque 0 es un valor numérico real y puede sesgar el promedio si el dato en realidad faltaba.", correcta: true }, { texto: "Porque Python prefiere None.", correcta: false }, { texto: "No hay diferencia.", correcta: false }], justificacion: "Si un paciente no responde cuántos cigarrillos fuma y ponemos 0 por defecto, bajamos el promedio falsamente. Si ponemos None, podemos excluirlo del cálculo." },
+                            { pregunta: "¿Cuál es la utilidad de @field_validator(..., mode='before')?", opciones: [{ texto: "Validar datos después de crearlos.", correcta: false }, { texto: "Limpiar o transformar datos crudos antes de que Pydantic verifique su tipo.", correcta: true }, { texto: "Hacer que la validación sea más rápida.", correcta: false }, { texto: "Ignorar los errores de validación.", correcta: false }], justificacion: "Es ideal para la limpieza de datos. Puedes convertir formatos extraños (ej. '1,000') a tipos nativos antes de que Pydantic lance un error." },
+                            { pregunta: "¿Cuál es la mejor estrategia para validar un DataFrame de Pandas con Pydantic?", opciones: [{ texto: "Convertir todo el DataFrame a un solo objeto Pydantic.", correcta: false }, { texto: "No se puede usar Pydantic con Pandas.", correcta: false }, { texto: "Iterar sobre las filas, validar cada una con try/except y separar los registros válidos de los errores.", correcta: true }, { texto: "Usar Pandas para validar tipos.", correcta: false }], justificacion: "Iterar permite capturar errores fila por fila sin detener todo el proceso, creando un flujo de datos robusto." }
                         ]} />
             </div>
         );
@@ -2831,10 +3059,10 @@ print(df_final)`} />
                                         <div className="usta-card p-6">
                                             <blockquote className="border-l-4 pl-4" style={{ borderLeftColor: '#ED1E79' }}>
                                                 <p className="text-gray-800 font-medium text-lg mb-2">
-                                                    "Data Reliability 101: A Practical Guide to Data Validation Using Pydantic in Data Science Projects"
+                                                    «Data Reliability 101: A Practical Guide to Data Validation Using Pydantic in Data Science Projects»
                                                 </p>
                                                 <p className="text-gray-600 mb-3">
-                                                    Publicado en <strong>Towards AI</strong> — Medium
+                                                    Shivam Dattatray Shinde, en <strong>Towards AI</strong> — Medium
                                                 </p>
                                                 <a
                                                     href="https://pub.towardsai.net/data-reliability-101-a-practical-guide-to-data-validation-using-pydantic-in-data-science-projects-3392968c3646"
@@ -2848,27 +3076,61 @@ print(df_final)`} />
                                             </blockquote>
                                         </div>
 
-                                        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r">
-                                            <p className="text-sm text-blue-800">
-                                                <i className="fas fa-info-circle mr-2"></i>
-                                                <strong>Nota:</strong> El contenido fue adaptado para estudiantes de estadística de la Universidad Santo Tomás (USTA), manteniendo los ejemplos prácticos y el enfoque en validación de datos científicos.
-                                            </p>
-                                        </div>
+                                        <Box type="info" label="Sobre esta adaptación">El contenido fue adaptado para estudiantes de estadística de la Universidad Santo Tomás (USTA), manteniendo los ejemplos prácticos y el enfoque en validación de datos científicos.
+                                        </Box>
 
                                         <div className="mt-8 p-4 bg-gray-50 rounded-lg">
                                             <h4 className="font-bold text-gray-700 mb-3 flex items-center gap-2">
-                                                <i className="fas fa-lightbulb text-gold"></i>
-                                                ¿Te gustaría profundizar?
+                                                <i className="fas fa-book-open text-gold"></i>
+                                                Fuente primaria
                                             </h4>
                                             <ul className="list-disc pl-5 space-y-2 text-gray-600 text-sm">
-                                                <li>Visita la <a href="https://docs.pydantic.dev/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline">documentación oficial de Pydantic</a> para conocer todas las funcionalidades avanzadas.</li>
-                                                <li>Explora más artículos en <a href="https://towardsdatascience.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline">Towards Data Science</a> sobre validación de datos.</li>
-                                                <li>Practica con datasets reales de <a href="https://www.kaggle.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline">Kaggle</a> aplicando los conceptos aprendidos.</li>
+                                                <li>
+                                                    Pydantic. <em>Concepts: Models, Fields, Validators</em>. <a href="https://docs.pydantic.dev/latest/concepts/models/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline">docs.pydantic.dev</a>.
+                                                    Es la referencia de la que salen todas las demás; consúltala antes que cualquier tutorial cuando algo no cuadre.
+                                                </li>
+                                            </ul>
+
+                                            <h4 className="font-bold text-gray-700 mb-3 mt-5 flex items-center gap-2">
+                                                <i className="fas fa-lightbulb text-gold"></i>
+                                                Para seguir leyendo
+                                            </h4>
+                                            <p className="text-sm text-gray-600 mb-2">
+                                                Tres artículos de <em>Towards Data Science</em>, los tres de lectura libre, elegidos porque continúan
+                                                exactamente donde este capítulo se detiene:
+                                            </p>
+                                            <ul className="list-disc pl-5 space-y-2 text-gray-600 text-sm">
+                                                <li>
+                                                    Wong, K. J. (17 de julio de 2024). <a href="https://towardsdatascience.com/validations-in-pydantic-v2-15bcbb39a98b/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline"><em>Validations in Pydantic V2</em></a>.
+                                                    Recorre <code>Field</code>, <code>Annotated</code>, <code>field_validator</code> y el orden en que se ejecutan.
+                                                    Es la continuación natural de las secciones 4 y 6, y añade el <code>model_validator</code> que aquí no se ve: el que valida
+                                                    unos campos contra otros.
+                                                </li>
+                                                <li>
+                                                    Huls, M. (6 de febrero de 2026). <a href="https://towardsdatascience.com/pydantic-performance-4-tips-on-how-to-validate-large-amounts-of-data-efficiently/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline"><em>Pydantic Performance: 4 Tips on How to Validate Large Amounts of Data Efficiently</em></a>.
+                                                    Responde a la advertencia de la sección 8 con números: por qué conviene <code>Annotated</code> antes que un validador,
+                                                    y cómo valida <code>TypeAdapter</code> una lista entera de una vez.
+                                                </li>
+                                                <li>
+                                                    Henderson, C. (14 de agosto de 2024). <a href="https://towardsdatascience.com/how-to-easily-validate-your-data-with-pandera-a9cd22c515a5/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline"><em>How to Easily Validate Your Data with Pandera</em></a>.
+                                                    La herramienta que la sección 8 menciona sin nombrar: valida el DataFrame por columnas en vez de fila a fila.
+                                                </li>
+                                            </ul>
+
+                                            <h4 className="font-bold text-gray-700 mb-3 mt-5 flex items-center gap-2">
+                                                <i className="fas fa-flask text-gold"></i>
+                                                Para practicar
+                                            </h4>
+                                            <ul className="list-disc pl-5 space-y-2 text-gray-600 text-sm">
+                                                <li>
+                                                    Coge un conjunto de datos real de <a href="https://www.kaggle.com/datasets" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-secondary underline">Kaggle</a>,
+                                                    escribe el modelo que <em>crees</em> que lo describe y pásale las filas. Los errores que salgan son el diccionario de datos que nadie escribió.
+                                                </li>
                                             </ul>
                                         </div>
                                     </div>
 
-                <CodeBlock title="Fuentes Consultadas" lang="python" code={`# Recursos adicionales para seguir aprendiendo
+                <CodeBlock title="Fuentes consultadas" lang="shell" code={`# Recursos adicionales para seguir aprendiendo
 
 # Documentación oficial de Pydantic
 # https://docs.pydantic.dev/
@@ -2876,11 +3138,11 @@ print(df_final)`} />
 # Instalación de Pydantic
 pip install pydantic
 
-# Para validación con Pandas (ejemplo adicional)
+# Para el ejemplo de la sección 8
 pip install pandas pydantic
 
-# Repositorio de ejemplos prácticos
-# Busca en GitHub: pydantic-examples-data-science`} />
+# Para validar el DataFrame por columnas, como sugiere la lectura de Henderson
+pip install pandera`} />
             </div>
         );
         /* === SECCIONES FIN === */
@@ -2895,7 +3157,7 @@ pip install pandas pydantic
             { id: 'error_422', title: '7. Del ValidationError al error HTTP 422', icon: 'Bug', component: ErroresSection },
             { id: 'dataframe_validation', title: '8. Validación de DataFrames', icon: 'Table', component: DataFramesSection },
             { id: 'quiz', title: '9. Autoevaluación', icon: 'Award', component: AutoevalSection },
-            { id: 'references', title: '10. Referencia bibliográfica', icon: 'Workflow', component: BibliografiaSection },
+            { id: 'references', title: '10. Referencia bibliográfica', icon: 'FileCode', component: BibliografiaSection },
         ];
 
         /* ============================================================
