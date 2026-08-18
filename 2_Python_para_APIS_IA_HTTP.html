@@ -2151,8 +2151,18 @@
         };
 
         /* ============================================================
-           EJEMPLOS DE CÓDIGO — hilo financiero del curso:
-           crédito de libre inversión de un banco colombiano
+           EJEMPLOS DE CÓDIGO DEL CAPÍTULO
+
+           Esto es contenido, no librería: los ejemplos que el capítulo repite,
+           escritos en los cuatro lenguajes, con el hilo que haya elegido el
+           curso. En Lógica de Programación Financiera es un crédito de libre
+           inversión de un banco colombiano; otro curso pondrá el suyo.
+
+           Y puede no quedar ninguno. Los capítulos que se montan desde un
+           material heredado traen sus propios ejemplos ya escritos, y la poda
+           se lleva estas constantes por no referenciarlas nadie: entonces este
+           encabezado queda solo, y sigue diciendo la verdad —aquí es donde
+           irían— en vez de anunciar un hilo que ese capítulo no sigue.
         ============================================================ */
         /* === GRÁFICAS INICIO — generadas por scripts/migracion/graficas.py === */
         const GraficaSynth = ({ caption }) => {
@@ -2579,7 +2589,7 @@ print(df_final)`} />
 
                 <table><thead><tr><th>Opción</th><th>A favor</th><th>En contra</th><th>Mejor para</th></tr></thead><tbody><tr><td>Instalación Global 🌍</td><td><ul><li>Fácil al principio (solo `pip install`)</li></ul></td><td><ul><li>Conflictos de versiones entre proyectos</li><li>Rompe el sistema operativo</li><li>Irreproducible</li></ul></td><td>Nada (Evitar siempre)</td></tr><tr><td>Entorno Virtual 📦</td><td><ul><li>Aislamiento total</li><li>Reproducible (requirements.txt)</li><li>Seguro</li></ul></td><td><ul><li>Requiere pasos extra (activar)</li></ul></td><td>Todos los proyectos de Python</td></tr></tbody></table>
 
-                <CodeBlock title="Flujo de Trabajo Profesional" lang="bash" code={`# 1. CREAR el entorno virtual (solo una vez)
+                <CodeBlock title="Flujo de Trabajo Profesional" lang="shell" code={`# 1. CREAR el entorno virtual (solo una vez)
 # (Esto crea una carpeta .venv oculta)
 python -m venv .venv
 
