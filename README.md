@@ -191,6 +191,31 @@ Se guarda el heredado, en vez de sobrescribirlo y confiar en el historial de git
 LP-CORE está vivo: cada cambio de la librería obliga a volver a montar estos capítulos, y sin
 la fuente a mano habría que editarlos uno a uno.
 
+**Al 2026-08-17: revisión a fondo del módulo 4**, y tres arreglos que salpican a los trece.
+El plan, los hallazgos y cómo se comprobó cada uno están en
+[`PLAN_MODULO_4_PYDANTIC.md`](PLAN_MODULO_4_PYDANTIC.md). Lo que conviene saber sin abrirlo:
+
+- **Lo que el estudiante veía mal.** Dos expresiones regulares se publicaban mutiladas —el
+  literal de plantilla de JS se come la barra invertida—, y por eso el ejemplo titulado
+  «Pattern inválido» rechazaba un correo que es válido: enseñaba lo contrario de lo que decía.
+  El bloque de apertura no daba un promedio falso, que era la lección: reventaba con un
+  `TypeError`. Y la bibliografía estaba marcada como Python conteniendo `pip install`.
+- **Un detector nuevo**, [`scripts/auditoria/escapes.py`](scripts/auditoria/escapes.py), para
+  el defecto de la barra invertida, que a ojo es invisible: el archivo se ve correcto. Barre
+  los 13 y `heredado/`, y trae autoprueba, porque una comprobación que sólo se ha visto callar
+  no está comprobada. Costó tres intentos y los dos fallos están documentados en el guion.
+- **El montaje ya no da por Python todo bloque.** El heredado puede declarar `codeLang`, y
+  `montar.py` **aborta** si la clave no está en el `GRAMATICA` de la plantilla. Encontró de
+  paso un defecto vivo en el módulo 2: un bloque de shell marcado `bash` —que no es la clave—
+  se publicaba sin resaltar.
+- **El encabezado de los ejemplos ya no anuncia el hilo de otro curso.** Venía de
+  `lp-base.html`, donde encabeza el `EJ_INTERES` de Lógica de Programación Financiera; aquí la
+  poda se lleva la constante y dejaba el encabezado mintiendo. Se le abrió el alcance en la
+  plantilla —sigue siendo cierto allí— y **se remontaron los trece** para propagarlo.
+
+> El cambio de `lp-base.html` está **sin confirmar** en el repositorio de Lógica de
+> Programación Financiera. Sus capítulos lo tomarán cuando se remonten.
+
 **Lo siguiente**, por orden de coste creciente:
 
 | Familia | Módulos | Qué falta |

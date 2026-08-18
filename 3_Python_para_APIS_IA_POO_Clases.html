@@ -430,6 +430,8 @@
         /* USTA Card Style */
         .usta-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; }
         .usta-card:hover { box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12); transform: translateY(-4px); }
+        /* Tip box USTA style */
+        .tip-box { background: linear-gradient(135deg, rgba(61, 0, 141, 0.08) 0%, rgba(237, 30, 121, 0.08) 100%); border: 1px solid rgba(61, 0, 141, 0.2); }
         /* === ESTILOS DEL MÓDULO FIN === */
 
     </style>
@@ -2157,8 +2159,18 @@
         };
 
         /* ============================================================
-           EJEMPLOS DE CÓDIGO — hilo financiero del curso:
-           crédito de libre inversión de un banco colombiano
+           EJEMPLOS DE CÓDIGO DEL CAPÍTULO
+
+           Esto es contenido, no librería: los ejemplos que el capítulo repite,
+           escritos en los cuatro lenguajes, con el hilo que haya elegido el
+           curso. En Lógica de Programación Financiera es un crédito de libre
+           inversión de un banco colombiano; otro curso pondrá el suyo.
+
+           Y puede no quedar ninguno. Los capítulos que se montan desde un
+           material heredado traen sus propios ejemplos ya escritos, y la poda
+           se lleva estas constantes por no referenciarlas nadie: entonces este
+           encabezado queda solo, y sigue diciendo la verdad —aquí es donde
+           irían— en vez de anunciar un hilo que ese capítulo no sigue.
         ============================================================ */
         /* === COMPONENTES DEL MÓDULO INICIO — escritos a mano, ver la receta === */
         /* ============================================================
@@ -2658,10 +2670,10 @@ print(estudio2.confianza) # 0.95`} />
                                                 En nuestro caso, el método <code>.varianza()</code> existe en ambas clases hijas, pero cada una lo calcula distinto:
                                             </p>
                                             <div className="grid grid-cols-2 gap-3 text-sm mb-3">
-                                                <Box type="info">
+                                                <div className="tip-box rounded-lg p-3">
                                                     <div className="font-bold text-primary text-xs uppercase mb-1">Poblacion.varianza()</div>
                                                     <div>Divide por <strong>N</strong> (total de datos)</div>
-                                                </Box>
+                                                </div>
                                                 <div className="bg-white rounded-lg p-3 border border-gray-200 shadow-sm">
                                                     <div className="font-bold text-secondary text-xs uppercase mb-1">Muestra.varianza()</div>
                                                     <div>Divide por <strong>N − 1</strong> (corrección de Bessel)</div>
@@ -2713,20 +2725,22 @@ print(estudio2.confianza) # 0.95`} />
         self.datos = datos
         self.mu = sum(datos) / len(datos)
 
+    def suma_de_cuadrados(self):
+        # Lo que las dos varianzas comparten, escrito UNA sola vez.
+        return sum((x - self.mu) ** 2 for x in self.datos)
+
     def varianza(self):
         raise NotImplementedError("Usar subclase")
 
 class Poblacion(EstadisticaBase):
     def varianza(self):
         # Divide por N
-        numerador = sum((x - self.mu) ** 2 for x in self.datos)
-        return numerador / len(self.datos)
+        return self.suma_de_cuadrados() / len(self.datos)
 
 class Muestra(EstadisticaBase):
     def varianza(self):
         # Divide por N - 1 (Corrección de Bessel)
-        numerador = sum((x - self.mu) ** 2 for x in self.datos)
-        return numerador / (len(self.datos) - 1)
+        return self.suma_de_cuadrados() / (len(self.datos) - 1)
 
 # Calificaciones de TODOS los estudiantes de un curso pequeño (población)
 calificaciones_curso = [85, 90, 78, 92, 88]
@@ -2923,11 +2937,14 @@ print("Tipo de edad:", type(sospechosa.edad).__name__)   # str, y a nadie le imp
                                                 Primero necesitas instalar la biblioteca oficial de Google para interactuar con Gemini. Ejecuta en tu terminal:
                                             </p>
                                             <div className="bg-gray-900 text-green-400 p-3 rounded-lg font-mono text-sm mb-3">
-                                                pip install google-generativeai
+                                                pip install google-genai
                                             </div>
                                             <p className="text-xs text-gray-500 italic">
                                                 Recuerda activar tu entorno virtual antes de instalar paquetes (<code>python -m venv .venv</code>).
                                             </p>
+                                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800 mt-3">
+                                                <strong><i className="fas fa-exclamation-triangle mr-1"></i> Ojo con los tutoriales viejos:</strong> muchos todavía enseñan <code>google-generativeai</code> (con <code>import google.generativeai as genai</code>). Ese paquete quedó <strong>obsoleto el 30 de noviembre de 2025</strong> y Google ya no lo mantiene. El SDK vigente es <code>google-genai</code>, y se importa <code>from google import genai</code>. Si copias código de un blog y te falla, revisa primero cuál de los dos está usando.
+                                            </div>
                                         </div>
 
                                         <div className="usta-card p-5 mb-4">
@@ -2978,9 +2995,9 @@ print("Tipo de edad:", type(sospechosa.edad).__name__)   # str, y a nadie le imp
                                                 La comunicación con Gemini sigue este flujo:
                                             </p>
                                             <ol className="list-decimal pl-5 space-y-2 text-sm mb-3">
-                                                <li><strong>Configurar</strong> — Le damos la API Key y elegimos el modelo (<code>gemini-2.5-flash</code>).</li>
-                                                <li><strong>Prompt</strong> — Enviamos una instrucción de sistema + un prompt del usuario.</li>
-                                                <li><strong>Respuesta</strong> — La API devuelve texto con el código Python generado.</li>
+                                                <li><strong>Crear el cliente</strong> — Le damos la API Key a <code>genai.Client(...)</code>. El cliente es el objeto que habla con Google y se crea <strong>una sola vez</strong>.</li>
+                                                <li><strong>Pedir</strong> — En <strong>cada petición</strong> elegimos el modelo (<code>gemini-3.6-flash</code>, el mismo que trae por defecto el Constructor IA de la sección anterior) y enviamos una instrucción de sistema + un prompt del usuario. A diferencia de la librería antigua, el modelo <em>no</em> queda fijado al crear el cliente: cambiarlo no obliga a rehacer la conexión.</li>
+                                                <li><strong>Respuesta</strong> — La API devuelve texto con el código Python generado. Un <code>200</code> no garantiza que venga texto: si el filtro de contenido bloqueó la petición, llega vacío, y eso no es un éxito.</li>
                                                 <li><strong>Limpiar</strong> — Removemos posibles bloques de markdown de la respuesta.</li>
                                             </ol>
                                             <p className="text-sm text-gray-600 italic">
@@ -3001,13 +3018,28 @@ print("Tipo de edad:", type(sospechosa.edad).__name__)   # str, y a nadie le imp
                                         </Box>
                                     </div>
 
-                <CodeBlock title="Script Completo: Generador de Clases con Gemini" lang="python" code={`import google.generativeai as genai
+                <CodeBlock title="Script Completo: Generador de Clases con Gemini" lang="python" code={`from google import genai
+from google.genai import errors
 import os
 import re
+import sys
 import time
 
 from dotenv import load_dotenv
 load_dotenv()
+
+INSTRUCCION = (
+    "Eres un profesor de Python para estudiantes "
+    "de estadística en la Universidad Santo Tomás. "
+    "Genera SOLO código Python puro, sin markdown."
+)
+
+class ErrorDeGeneracion(RuntimeError):
+    """La generación falló.
+
+    Se LANZA en vez de devolver el texto del error como si fuera código: quien
+    llama no puede confundir un fallo con una clase generada.
+    """
 
 class GeneradorClases:
     """
@@ -3015,7 +3047,13 @@ class GeneradorClases:
     Encapsula la configuración, el prompt y la comunicación con la IA.
     """
 
-    def __init__(self, modelo="gemini-2.5-flash"):
+    # Sólo se reintenta lo que puede salir distinto la segunda vez: la cuota
+    # (429) y una caída del servidor (5xx). Una clave inválida o un modelo que
+    # no existe van a fallar igual las tres veces, y reintentarlos sólo hace
+    # esperar al estudiante siete segundos antes de leer el error.
+    REINTENTABLES = (429, 500, 502, 503, 504)
+
+    def __init__(self, modelo="gemini-3.6-flash", intentos_max=3):
         # Leer la API Key de variable de entorno (seguro)
         api_key = os.environ.get("GEMINI_API_KEY")
 
@@ -3025,19 +3063,15 @@ class GeneradorClases:
                 "Configúrala con: export GEMINI_API_KEY='tu_clave'"
             )
 
-        # Configurar la librería con la clave
-        genai.configure(api_key=api_key)
+        # El cliente es el objeto que habla con Google. Se crea UNA sola vez y
+        # queda como atributo para reutilizarlo en cada llamada.
+        self.cliente = genai.Client(api_key=api_key)
 
-        # Crear el modelo con instrucción de sistema
-        self.model = genai.GenerativeModel(
-            model_name=modelo,
-            system_instruction=(
-                "Eres un profesor de Python para estudiantes "
-                "de estadística en la Universidad Santo Tomás. "
-                "Genera SOLO código Python puro, sin markdown."
-            )
-        )
-        self.intentos_max = 3
+        # A diferencia de la librería antigua, el modelo NO se fija al construir:
+        # se elige en cada petición. Por eso se guarda como atributo y no como
+        # parte del cliente —cambiar de modelo no obliga a rehacer la conexión—.
+        self.modelo = modelo
+        self.intentos_max = intentos_max
 
     def generar(self, concepto):
         """Genera una clase Python para el concepto dado."""
@@ -3049,37 +3083,87 @@ Incluye:
 - Comentarios en español
 - Ejemplo de uso al final"""
 
-        # Reintentos con backoff exponencial
+        # Reintentos con backoff exponencial, sólo para lo reintentable
         for intento in range(self.intentos_max):
             try:
-                respuesta = self.model.generate_content(prompt)
-                codigo = respuesta.text
-
-                # Limpiar posibles bloques markdown
-                codigo = re.sub(
-                    r'^\\x60\\x60\\x60python\\n?', '', codigo
+                interaccion = self.cliente.interactions.create(
+                    model=self.modelo,
+                    system_instruction=INSTRUCCION,
+                    input=prompt,
+                    # El modelo razona antes de responder. Para una clase de
+                    # veinte líneas "low" sobra, y ahorra segundos y tokens.
+                    generation_config={"thinking_level": "low"},
                 )
-                codigo = re.sub(r'\\n?\\x60\\x60\\x60$', '', codigo)
-                return codigo.strip()
-
-            except Exception as e:
-                print(f"Intento {intento + 1} falló: {e}")
-                if intento < self.intentos_max - 1:
+            except errors.APIError as e:
+                codigo_http = getattr(e, "code", None)
+                if codigo_http in self.REINTENTABLES and intento < self.intentos_max - 1:
                     espera = 2 ** intento  # 1s, 2s, 4s
-                    print(f"Reintentando en {espera}s...")
+                    print(f"Gemini devolvió {codigo_http}; reintento en {espera}s...")
                     time.sleep(espera)
-                else:
-                    return f"Error después de {self.intentos_max} intentos: {e}"
+                    continue
+                raise ErrorDeGeneracion(self._explicar(codigo_http, e)) from e
+
+            # Un 200 no garantiza texto. Si el filtro de contenido bloqueó la
+            # petición, la respuesta llega sin salida; eso NO es un éxito, y
+            # devolverlo como cadena vacía deja al estudiante sin saber qué pasó.
+            codigo = (interaccion.output_text or "").strip()
+            if not codigo:
+                raise ErrorDeGeneracion(
+                    f"Gemini respondió sin código (estado: {interaccion.status}). "
+                    "Suele ser el filtro de contenido: prueba con otro concepto."
+                )
+            return self._sin_vallas(codigo)
+
+        raise ErrorDeGeneracion(
+            f"Sin respuesta de Gemini tras {self.intentos_max} intentos."
+        )
+
+    @staticmethod
+    def _sin_vallas(texto):
+        """Quita las vallas markdown si el modelo las puso igual.
+
+        Se le pidió código puro, pero a veces lo envuelve. Se busca el primer
+        bloque cercado en cualquier posición, no sólo al principio del texto.
+        """
+        cercado = re.search(r'\\x60{3}[a-zA-Z]*\\n(.*?)\\x60{3}', texto, re.S)
+        return cercado.group(1).strip() if cercado else texto
+
+    @staticmethod
+    def _explicar(codigo_http, error):
+        """Traduce el error de la API a algo que el estudiante pueda accionar.
+
+        El mensaje que manda Google está en inglés y habla de \`projects\` y
+        \`credentials\`; lo único que sirve es qué hacer a continuación.
+        """
+        if codigo_http == 400:
+            return ("La API Key no es válida. Revisa que la copiaste completa "
+                    "desde aistudio.google.com/apikey.")
+        if codigo_http == 403:
+            return "La API Key no tiene permiso para usar la API de Gemini."
+        if codigo_http == 404:
+            return ("Ese modelo ya no está disponible. Los modelos se retiran: "
+                    "consulta ai.google.dev/gemini-api/docs/models.")
+        if codigo_http == 429:
+            return "Cuota excedida. Espera ~30 s y reintenta."
+        return f"Error de la API de Gemini: {error}"
 
 # --- Uso del generador ---
 if __name__ == "__main__":
-    generador = GeneradorClases()
-
     concepto = input("¿Qué clase quieres generar? ")
-    print(f"\\nGenerando clase para '{concepto}'...\\n")
 
-    resultado = generador.generar(concepto)
-    print(resultado)`} />
+    # El aviso de progreso va por stderr, no por stdout. Por stdout sale SÓLO
+    # la clase generada, y así se puede encadenar sin que el archivo resultante
+    # se llene de mensajes:
+    #     python Constructor_Clases_IA.py > Cuenta.py
+    print(f"\\nGenerando clase para '{concepto}'...\\n", file=sys.stderr)
+
+    try:
+        print(GeneradorClases().generar(concepto))
+    except (ValueError, ErrorDeGeneracion) as e:
+        # El fallo también sale por stderr, y con código de salida 1. Así el
+        # estudiante —y cualquier script que llame a éste— distingue un error
+        # de una clase.
+        sys.exit(f"ERROR: {e}")`} />
             </div>
         );
 
