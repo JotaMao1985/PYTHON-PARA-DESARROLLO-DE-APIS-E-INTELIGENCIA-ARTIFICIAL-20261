@@ -2737,7 +2737,7 @@ async def evaluate(user_id: str):
                                                         <li>Definir modelos Pydantic para todas las entradas y salidas</li>
                                                         <li>Separar la carga del modelo del endpoint (cargar al iniciar)</li>
                                                         <li>Incluir un endpoint <code>/health</code> para monitoreo</li>
-                                                        <li>Usar <code>async def</code> para consultas a BD, lectura de archivos o llamadas a otros servicios</li>
+                                                        <li>Usar <code>async def</code> cuando la espera sea de E/S <em>y</em> la librería sea asíncrona: consultas a BD con un driver async, llamadas a otros servicios con <code>httpx.AsyncClient</code>, archivos con <code>aiofiles</code>. Con <code>open()</code> corriente o un cliente síncrono, use <code>def</code>: dentro de una corrutina bloquearía el bucle de eventos</li>
                                                         <li>Versionar tu API (<code>/v1/predict</code>, <code>/v2/predict</code>)</li>
                                                         <li>Registrar las predicciones (logging) para auditoría</li>
                                                     </ul>
