@@ -1,0 +1,2534 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Syllabus de Python para Desarrollo de APIs e Inteligencia Artificial. Pregrado en Estadística, Universidad Santo Tomás, 2026-II. Cronograma de 16 semanas, proyecto integrador y rúbrica de evaluación.">
+    <meta name="author" content="Javier Mauricio Sierra">
+    <title>Taller del Corte I · «Riesgo API v0» — Python para APIs e IA · USTA 2026-II</title>
+
+    <!-- Este documento reutiliza el sistema de diseño LP-CORE, tomado de
+         `Logica de programacion/Material html/_plantilla/lp-base.html`
+         (Lógica de Programación Financiera, 2026-II). Es una COPIA CONGELADA:
+         vive en otro repositorio, así que `migrar.py` y `verificar.py` no lo
+         cubren y no deben ejecutarse sobre él —`migrar.py` reestamparía el App
+         de LPF encima del de este syllabus—. Si LP-CORE evoluciona, la
+         actualización aquí es manual y deliberada. Bloque LP-CORE tomado sin
+         modificar: SHA-256 019f1df2e66784c062eb7100f1f39c7c6602fb696082db829ad3f1106bc95292 -->
+
+    <!-- Open Graph / Twitter -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Syllabus · Python para APIs e IA Aplicada — USTA 2026-II">
+    <meta property="og:description"
+        content="Taller evaluativo del Corte I sobre los módulos 1 a 5: diagnóstico, refactor con Pydantic y POO, decisión sync/async medida, y auditoría de código generado por IA.">
+    <meta property="og:image"
+        content="https://jotamao1985.github.io/PYTHON-PARA-DESARROLLO-DE-APIS-E-INTELIGENCIA-ARTIFICIAL-20261/Logo_USTA.png">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="800">
+    <meta property="og:image:alt" content="Escudo de la Universidad Santo Tomás">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Syllabus · Python para APIs e IA Aplicada — USTA 2026-II">
+    <meta name="twitter:description"
+        content="Cronograma de 16 semanas, proyecto integrador con Teoría del Riesgo y rúbrica de evaluación.">
+    <meta name="twitter:image"
+        content="https://jotamao1985.github.io/PYTHON-PARA-DESARROLLO-DE-APIS-E-INTELIGENCIA-ARTIFICIAL-20261/Logo_USTA.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone@7.26.4/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+
+    <!-- Prism.js — resaltado de sintaxis con gramáticas oficiales.
+         `Prism.manual = true` DEBE ir antes de cargar el núcleo: si no, Prism
+         recorre el documento al cargar y aquí el contenido lo pinta React
+         después, de modo que ese recorrido solo gasta tiempo.
+         El pseudocódigo no tiene gramática oficial: se registra en LP-CORE. -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script>window.Prism = window.Prism || {}; window.Prism.manual = true;</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-r.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-visual-basic.min.js"></script>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            startup: { typeset: false }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3D008D',
+                        secondary: '#ED1E79',
+                        navy: '#001A4D',
+                        gold: '#FDB913',
+                        teal: '#0E7490',
+                        bg: '#F8FAFC',
+                        surface: '#FFFFFF',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #F8FAFC;
+            color: #1E293B;
+            scroll-behavior: smooth;
+        }
+
+        code,
+        pre {
+            font-family: 'Fira Code', monospace;
+        }
+
+        .lp-gradient {
+            background: linear-gradient(140deg, #3D008D 0%, #ED1E79 100%);
+        }
+
+        .lp-header {
+            background: linear-gradient(180deg, #001A4D 0%, #002868 100%);
+        }
+
+        .lp-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .lp-card:hover {
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.12);
+            transform: translateY(-4px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4A00A8, #FF2D8A);
+        }
+
+        .code-scroll::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .code-scroll::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+
+        .code-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3D008D, #ED1E79);
+            border-radius: 4px;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        button:focus-visible,
+        a:focus-visible {
+            outline: 2px solid #ED1E79;
+            outline-offset: 2px;
+        }
+
+        .inline-code {
+            background: #F1F5F9;
+            color: #0F172A;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.88em;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .chart-h-320 {
+            height: 320px;
+        }
+
+        .chart-h-360 {
+            height: 360px;
+        }
+
+        .chart-h-420 {
+            height: 420px;
+        }
+
+        .prose-lp p {
+            margin-bottom: 1rem;
+            line-height: 1.75;
+        }
+
+        .prose-lp h3 {
+            color: #ED1E79;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin: 1.8rem 0 0.6rem;
+        }
+
+        .prose-lp h4 {
+            color: #001A4D;
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin: 1.4rem 0 0.4rem;
+        }
+
+        .prose-lp ul {
+            list-style: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose-lp ol {
+            list-style: decimal;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .prose-lp li {
+            margin-bottom: 0.35rem;
+            line-height: 1.65;
+        }
+
+        .prose-lp strong {
+            color: #0F172A;
+        }
+
+        .prose-lp table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        }
+
+        .prose-lp th {
+            background: #F5F0FA;
+            color: #001A4D;
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #E2E8F0;
+        }
+
+        .prose-lp td {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid #E2E8F0;
+            vertical-align: top;
+        }
+
+        .eq-block {
+            background: #FAF8FF;
+            border: 1px solid rgba(61, 0, 141, 0.12);
+            border-radius: 12px;
+            padding: 0.6rem 1rem;
+            overflow-x: auto;
+        }
+
+        .lp-range {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 999px;
+            background: #EADCF8;
+            outline: none;
+        }
+
+        .lp-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ED1E79;
+            border: 2px solid #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .25);
+            cursor: pointer;
+        }
+
+        mjx-container svg {
+            display: inline-block;
+        }
+
+        /* ============================================================
+           BLOQUES DE CÓDIGO — patrón tomado del material de Diseño de
+           Experimentos (cap. 1, «El diseño, escrito en código»).
+        ============================================================ */
+        .lp-code-wrapper {
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.12);
+        }
+
+        /* La pestaña activa se apoya sobre el bloque: sin esquina superior
+           izquierda, para que se lea como una carpeta y no como dos cajas. */
+        .lp-code-wrapper.con-pestanas {
+            border-top-left-radius: 0;
+        }
+
+        .lp-code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            border-bottom: 1px solid #334155;
+        }
+
+        .lp-code-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #94A3B8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .lp-code-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #CBD5E1;
+            padding: 0.35rem 0.7rem;
+            border-radius: 0.375rem;
+            font-size: 0.72rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .lp-code-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .lp-code-btn.copiado {
+            background: rgba(34, 197, 94, 0.3);
+            color: #4ADE80;
+        }
+
+        .lp-code-pre {
+            background: #1E293B;
+            color: #F3F4F6;
+            padding: 1.5rem;
+            margin: 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            line-height: 1.625;
+            max-height: 30rem;
+            overflow-y: auto;
+            transition: max-height 0.3s ease;
+        }
+
+        .lp-code-pre.plegado {
+            max-height: 9.5rem;
+            overflow: hidden;
+        }
+
+        .lp-code-pre.plegado::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 3.75rem;
+            background: linear-gradient(transparent, #1E293B);
+            pointer-events: none;
+        }
+
+        /* Pestañas de lenguaje, en forma de carpeta. */
+        .lp-tab {
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.45rem 1.1rem;
+            border-radius: 0.5rem 0.5rem 0 0;
+            background: #E2E8F0;
+            color: #64748B;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .lp-tab:hover {
+            background: #CBD5E1;
+            color: #0F172A;
+        }
+
+        .lp-tab.activa {
+            background: linear-gradient(135deg, #3D008D 0%, #ED1E79 100%);
+            color: #fff;
+        }
+
+        /* Líneas de SALIDA dentro del bloque (`//>`, `#>`, `'>`).
+           Prism las tokeniza como comentario; aquí se les da color propio
+           para distinguir lo que escribió el docente de lo que respondió
+           la máquina. */
+        .lp-salida,
+        .lp-salida .token {
+            color: #7DD3FC !important;
+            font-style: normal !important;
+        }
+
+        .lp-salida {
+            display: inline-block;
+            width: 100%;
+            background: rgba(125, 211, 252, 0.07);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+
+        /* === LP-CORE INICIO — no editar a mano: se genera con ensamblar.py === */
+        const { useState, useEffect, useRef } = React;
+
+        const typesetMath = (retries = 25) => {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                try { window.MathJax.typesetClear && window.MathJax.typesetClear(); } catch (e) { }
+                window.MathJax.typesetPromise().catch(() => { });
+            } else if (retries > 0) {
+                setTimeout(() => typesetMath(retries - 1), 200);
+            }
+        };
+
+        const useTypeset = (ref, deps) => {
+            useEffect(() => {
+                const t = setTimeout(() => {
+                    if (ref.current && window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([ref.current]).catch(() => { });
+                    }
+                }, 40);
+                return () => clearTimeout(t);
+            }, deps);
+        };
+
+        /* ============================================================
+           ICONOS SVG
+        ============================================================ */
+        const Icons = {
+            BookOpen: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+            ),
+            Binary: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="2" y="2" width="20" height="20" rx="2" />
+                    <line x1="6" y1="7" x2="10" y2="7" /><line x1="8" y1="5" x2="8" y2="9" />
+                    <line x1="14" y1="7" x2="18" y2="7" />
+                    <line x1="6" y1="13" x2="10" y2="13" /><line x1="6" y1="17" x2="10" y2="17" /><line x1="14" y1="17" x2="18" y2="17" />
+                    <line x1="14" y1="13" x2="18" y2="13" /><line x1="16" y1="11" x2="16" y2="15" />
+                </svg>
+            ),
+            Cpu: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="4" y="4" width="16" height="16" rx="2" />
+                    <rect x="9" y="9" width="6" height="6" />
+                    <path d="M9 2v2" /><path d="M15 2v2" /><path d="M9 20v2" /><path d="M15 20v2" />
+                    <path d="M2 9h2" /><path d="M2 15h2" /><path d="M20 9h2" /><path d="M20 15h2" />
+                </svg>
+            ),
+            Calculator: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="4" y="2" width="16" height="20" rx="2" />
+                    <line x1="8" y1="6" x2="16" y2="6" /><line x1="8" y1="10" x2="8" y2="14" />
+                    <line x1="12" y1="10" x2="12" y2="14" /><line x1="16" y1="10" x2="16" y2="14" />
+                    <line x1="8" y1="18" x2="16" y2="18" />
+                </svg>
+            ),
+            Award: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <circle cx="12" cy="8" r="7"></circle>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                </svg>
+            ),
+            ChevronLeft: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            ),
+            ChevronRight: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            ),
+        };
+
+        const renderIcon = (iconName, size = 20) => {
+            const Icon = Icons[iconName];
+            return Icon ? <Icon size={size} /> : null;
+        };
+        const Box = ({ type = 'info', label, children }) => {
+            const styles = {
+                info: { border: '#3D008D', bg: '#F5F0FA', label: '#3D008D', icon: 'fa-circle-info' },
+                tip: { border: '#15803D', bg: '#F0FDF4', label: '#15803D', icon: 'fa-lightbulb' },
+                warn: { border: '#B45309', bg: '#FFFBEB', label: '#B45309', icon: 'fa-triangle-exclamation' },
+                danger: { border: '#B91C1C', bg: '#FEF2F2', label: '#B91C1C', icon: 'fa-circle-exclamation' },
+            }[type] || { border: '#3D008D', bg: '#F5F0FA', label: '#3D008D', icon: 'fa-circle-info' };
+            return (
+                <div className="rounded-xl px-5 py-4 my-4 border-l-4" style={{ borderColor: styles.border, background: styles.bg }}>
+                    {label && (
+                        <span className="inline-flex items-center gap-2 text-[0.7rem] uppercase tracking-wider font-bold rounded mb-2 px-2 py-0.5 text-white" style={{ background: styles.label }}>
+                            <i className={`fas ${styles.icon}`}></i>{label}
+                        </span>
+                    )}
+                    <div className="text-gray-700 leading-relaxed text-[0.95rem]">{children}</div>
+                </div>
+            );
+        };
+
+        const CalloutPro = ({ tema = 'info', titulo, subtitulo, icon, children }) => {
+            const temas = {
+                info: { grad: 'linear-gradient(135deg,#3D008D 0%,#0E7490 100%)', bg: 'rgba(61,0,141,0.05)', border: 'rgba(61,0,141,0.18)', icon: 'fa-circle-info' },
+                warn: { grad: 'linear-gradient(135deg,#B45309 0%,#F59E0B 100%)', bg: 'rgba(180,83,9,0.06)', border: 'rgba(180,83,9,0.22)', icon: 'fa-triangle-exclamation' },
+                gold: { grad: 'linear-gradient(135deg,#ED1E79 0%,#FF2D8A 100%)', bg: 'rgba(240,165,0,0.06)', border: 'rgba(240,165,0,0.22)', icon: 'fa-coins' },
+            };
+            const t = temas[tema] || temas.info;
+            return (
+                <div className="my-6 rounded-2xl overflow-hidden shadow-md border bg-white not-prose" style={{ borderColor: t.border }}>
+                    <div className="px-5 py-3 flex items-center gap-3" style={{ background: t.grad }}>
+                        <span className="bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0" style={{ width: 36, height: 36 }}>
+                            <i className={`fas ${icon || t.icon} text-white text-lg`}></i>
+                        </span>
+                        <div>
+                            <div className="text-white font-bold text-base leading-tight">{titulo}</div>
+                            {subtitulo && <div className="text-white/80 text-xs">{subtitulo}</div>}
+                        </div>
+                    </div>
+                    <div className="px-5 py-4 text-[0.95rem] text-gray-700 leading-relaxed" style={{ background: t.bg }}>
+                        {children}
+                    </div>
+                </div>
+            );
+        };
+
+        const Eq = ({ children }) => (
+            <div className="eq-block my-4 text-center">{children}</div>
+        );
+
+        const SectionHeader = ({ title, icon: Icon }) => (
+            <div className="flex items-center gap-3 mb-5 border-b border-gray-200 pb-3">
+                <div className="lp-gradient p-2.5 rounded-xl shadow-md text-white">
+                    {Icon && <Icon size={24} />}
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+            </div>
+        );
+
+        const Pipeline = ({ steps }) => (
+            <div className="flex items-stretch flex-wrap gap-2 my-6 justify-between">
+                {steps.map((s, i) => (
+                    <React.Fragment key={i}>
+                        <div className="flex-1 min-w-[140px] bg-white border border-gray-200 rounded-xl px-3 py-3 text-center text-sm shadow-sm" style={{ borderTop: '4px solid #3D008D' }}>
+                            <span className="inline-block w-6 h-6 leading-6 rounded-full text-white font-bold text-xs mb-1" style={{ background: '#3D008D' }}>{s.num}</span>
+                            <span className="block font-semibold text-navy mb-1">{s.title}</span>
+                            <span className="text-gray-600">{s.desc}</span>
+                        </div>
+                        {i < steps.length - 1 && <div className="self-center text-secondary font-bold text-xl hidden md:block">→</div>}
+                    </React.Fragment>
+                ))}
+            </div>
+        );
+
+        const Tabs = ({ tabs }) => {
+            const [active, setActive] = useState(0);
+            const contentRef = useRef(null);
+            useTypeset(contentRef, [active]);
+            return (
+                <div className="my-5">
+                    <div className="flex flex-wrap gap-1 border-b border-gray-200">
+                        {tabs.map((t, i) => (
+                            <button key={i} onClick={() => setActive(i)}
+                                className={`px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors ${active === i ? 'text-primary border-b-2 border-secondary bg-white' : 'text-gray-500 hover:text-primary'}`}>
+                                {t.label}
+                            </button>
+                        ))}
+                    </div>
+                    <div ref={contentRef} className="p-4 bg-white border border-t-0 border-gray-200 rounded-b-lg animate-fade-in text-[0.95rem] text-gray-700">
+                        <div key={active}>{tabs[active].content}</div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Accordion = ({ items }) => {
+            const [open, setOpen] = useState(null);
+            const ref = useRef(null);
+            useTypeset(ref, [open]);
+            return (
+                <div ref={ref} className="space-y-2 my-5">
+                    {items.map((it, i) => (
+                        <div key={i} className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+                            <button onClick={() => setOpen(open === i ? null : i)}
+                                className="w-full flex justify-between items-center px-4 py-3 hover:bg-gray-50 text-left font-semibold text-navy transition-colors">
+                                <span>{it.titulo}</span>
+                                <i className={`fas fa-chevron-down transition-transform duration-300 text-secondary ${open === i ? 'rotate-180' : ''}`}></i>
+                            </button>
+                            {open === i && (
+                                <div className="px-4 py-3 bg-gray-50 text-gray-700 text-[0.92rem] leading-relaxed animate-fade-in border-t border-gray-100">
+                                    {it.contenido}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        const Reto = ({ titulo = 'Reto práctico', children, solucion }) => {
+            const [show, setShow] = useState(false);
+            const ref = useRef(null);
+            useTypeset(ref, [show]);
+            return (
+                <div ref={ref} className="my-5 rounded-xl border-2 border-dashed p-5" style={{ borderColor: '#ED1E79', background: '#FFFDF5' }}>
+                    <div className="flex items-center gap-2 font-bold text-navy mb-2">
+                        <i className="fas fa-dumbbell text-gold"></i>{titulo}
+                    </div>
+                    <div className="text-gray-700 text-[0.95rem] mb-3">{children}</div>
+                    <button onClick={() => setShow(s => !s)}
+                        className="text-xs font-bold px-3 py-1.5 rounded-full text-white lp-gradient hover:opacity-90 transition-opacity">
+                        <i className={`fas ${show ? 'fa-eye-slash' : 'fa-key'} mr-1`}></i>
+                        {show ? 'Ocultar solución' : 'Mostrar solución'}
+                    </button>
+                    {show && <div className="mt-3 animate-fade-in">{solucion}</div>}
+                </div>
+            );
+        };
+
+        const MCQ = ({ pregunta, opciones, multiple = false }) => {
+            const [sel, setSel] = useState([]);
+            const [checked, setChecked] = useState(false);
+
+            const toggle = (i) => {
+                if (checked) return;
+                if (multiple) setSel(s => s.includes(i) ? s.filter(x => x !== i) : [...s, i]);
+                else setSel([i]);
+            };
+
+            const correctSet = opciones.map((o, i) => o.correcta ? i : -1).filter(i => i >= 0);
+            const acierto = sel.length === correctSet.length && sel.every(i => opciones[i].correcta);
+            const ref = useRef(null);
+            useTypeset(ref, [checked]);
+
+            return (
+                <div ref={ref} className="my-5 rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                    <div className="flex items-start gap-2 font-semibold text-navy mb-1">
+                        <i className="fas fa-circle-question text-secondary mt-1"></i>
+                        <span>{pregunta}</span>
+                    </div>
+                    {multiple && <p className="text-xs text-gray-400 mb-2 ml-6">Selección múltiple</p>}
+                    <div className="space-y-2 mt-3">
+                        {opciones.map((o, i) => {
+                            const isSel = sel.includes(i);
+                            let cls = 'border-gray-200 hover:border-primary/50';
+                            if (checked) {
+                                if (o.correcta) cls = 'border-green-500 bg-green-50';
+                                else if (isSel) cls = 'border-red-400 bg-red-50';
+                                else cls = 'border-gray-200 opacity-70';
+                            } else if (isSel) cls = 'border-secondary bg-amber-50';
+                            return (
+                                <button key={i} onClick={() => toggle(i)} disabled={checked}
+                                    className={`w-full text-left px-4 py-2.5 rounded-lg border text-[0.92rem] flex items-center gap-3 transition-all ${cls}`}>
+                                    <span className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${isSel ? 'lp-gradient text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                        {String.fromCharCode(97 + i)}
+                                    </span>
+                                    <span className="flex-1 text-gray-700">{o.texto}</span>
+                                    {checked && o.correcta && <i className="fas fa-check text-green-600"></i>}
+                                    {checked && isSel && !o.correcta && <i className="fas fa-xmark text-red-500"></i>}
+                                </button>
+                            );
+                        })}
+                    </div>
+                    <div className="mt-3 flex items-center gap-3">
+                        {!checked
+                            ? <button onClick={() => sel.length && setChecked(true)} disabled={!sel.length}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full text-white lp-gradient disabled:opacity-40">Comprobar</button>
+                            : <button onClick={() => { setChecked(false); setSel([]); }}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full border border-primary text-primary hover:bg-primary/5">Reintentar</button>}
+                        {checked && (
+                            <span className={`text-sm font-bold ${acierto ? 'text-green-600' : 'text-red-500'}`}>
+                                <i className={`fas ${acierto ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1`}></i>
+                                {acierto ? '¡Correcto!' : 'Revisa la explicación'}
+                            </span>
+                        )}
+                    </div>
+                    {checked && (
+                        <div className="mt-3 text-[0.9rem] text-gray-700 bg-bg rounded-lg p-3 border-l-4 animate-fade-in" style={{ borderColor: '#ED1E79' }}>
+                            <strong>Explicación: </strong>
+                            {opciones.find(o => o.correcta)?.justificacion ||
+                                opciones.filter(o => o.correcta).map(o => o.justificacion).filter(Boolean).join(' ')}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const Quiz = ({ titulo = 'Mini-cuestionario', preguntas }) => {
+            const [resp, setResp] = useState({});
+            const [enviado, setEnviado] = useState(false);
+
+            const toggle = (qi, oi, multiple) => {
+                if (enviado) return;
+                setResp(prev => {
+                    const actual = prev[qi] || [];
+                    if (multiple) {
+                        return { ...prev, [qi]: actual.includes(oi) ? actual.filter(x => x !== oi) : [...actual, oi] };
+                    }
+                    return { ...prev, [qi]: [oi] };
+                });
+            };
+
+            const esCorrecta = (qi) => {
+                const correctSet = preguntas[qi].opciones.map((o, i) => o.correcta ? i : -1).filter(i => i >= 0);
+                const sel = resp[qi] || [];
+                return sel.length === correctSet.length && sel.every(i => preguntas[qi].opciones[i].correcta);
+            };
+
+            const score = preguntas.reduce((acc, _, qi) => acc + (esCorrecta(qi) ? 1 : 0), 0);
+            const total = preguntas.length;
+            const pct = Math.round((score / total) * 100);
+            const todasResp = preguntas.every((_, qi) => (resp[qi] || []).length > 0);
+
+            const color = pct >= 80 ? '#15803D' : pct >= 50 ? '#B45309' : '#B91C1C';
+            const mensaje = pct >= 80 ? '¡Excelente dominio del tema!' : pct >= 50 ? 'Bien, repasa los puntos fallados.' : 'Conviene releer la lección antes de continuar.';
+            const ref = useRef(null);
+            useTypeset(ref, [enviado]);
+
+            return (
+                <div ref={ref} className="my-8 rounded-2xl border border-primary/20 bg-white p-6 shadow-md">
+                    <div className="flex items-center gap-2 mb-4">
+                        <span className="lp-gradient text-white p-2 rounded-lg"><i className="fas fa-clipboard-question"></i></span>
+                        <h3 className="text-lg font-bold text-primary" style={{ margin: 0 }}>{titulo}</h3>
+                    </div>
+
+                    {preguntas.map((q, qi) => (
+                        <div key={qi} className="mb-5">
+                            <div className="font-semibold text-navy text-[0.95rem] mb-2">
+                                {qi + 1}. {q.pregunta}
+                                {q.multiple && <span className="ml-2 text-xs text-gray-400 font-normal">(selección múltiple)</span>}
+                            </div>
+                            <div className="space-y-1.5">
+                                {q.opciones.map((o, oi) => {
+                                    const sel = (resp[qi] || []).includes(oi);
+                                    let cls = 'border-gray-200 hover:border-primary/40';
+                                    if (enviado) {
+                                        if (o.correcta) cls = 'border-green-500 bg-green-50';
+                                        else if (sel) cls = 'border-red-400 bg-red-50';
+                                        else cls = 'border-gray-200 opacity-70';
+                                    } else if (sel) cls = 'border-secondary bg-amber-50';
+                                    return (
+                                        <button key={oi} onClick={() => toggle(qi, oi, q.multiple)} disabled={enviado}
+                                            className={`w-full text-left px-3 py-2 rounded-lg border text-[0.9rem] flex items-center gap-2.5 transition-all ${cls}`}>
+                                            <span className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[0.7rem] font-bold ${sel ? 'lp-gradient text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                                {String.fromCharCode(97 + oi)}
+                                            </span>
+                                            <span className="flex-1 text-gray-700">{o.texto}</span>
+                                            {enviado && o.correcta && <i className="fas fa-check text-green-600 text-xs"></i>}
+                                            {enviado && sel && !o.correcta && <i className="fas fa-xmark text-red-500 text-xs"></i>}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                            {enviado && q.justificacion && (
+                                <p className="text-xs text-gray-600 mt-1.5 ml-1 italic">{q.justificacion}</p>
+                            )}
+                        </div>
+                    ))}
+
+                    {!enviado
+                        ? <button onClick={() => todasResp && setEnviado(true)} disabled={!todasResp}
+                            className="text-sm font-bold px-5 py-2 rounded-full text-white lp-gradient disabled:opacity-40">
+                            <i className="fas fa-flag-checkered mr-2"></i>Calificar ({Object.keys(resp).length}/{total})
+                        </button>
+                        : (
+                            <div className="animate-fade-in">
+                                <div className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#FAFAFA' }}>
+                                    <div className="relative w-20 h-20 flex-shrink-0">
+                                        <svg viewBox="0 0 36 36" className="w-20 h-20">
+                                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#eee" strokeWidth="3" />
+                                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke={color} strokeWidth="3" strokeDasharray={`${pct}, 100`} strokeLinecap="round" />
+                                        </svg>
+                                        <span className="absolute inset-0 flex items-center justify-center font-extrabold text-sm" style={{ color }}>{pct}%</span>
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-navy">Puntaje: {score} / {total}</div>
+                                        <div className="text-sm" style={{ color }}>{mensaje}</div>
+                                    </div>
+                                </div>
+                                <button onClick={() => { setEnviado(false); setResp({}); }}
+                                    className="mt-3 text-sm font-bold px-4 py-1.5 rounded-full border border-primary text-primary hover:bg-primary/5">
+                                    <i className="fas fa-rotate-right mr-1"></i>Reintentar
+                                </button>
+                            </div>
+                        )}
+                </div>
+            );
+        };
+
+        const usePlotly = (id, dataFn, layoutFn, deps = []) => {
+            useEffect(() => {
+                const el = document.getElementById(id);
+                if (el && window.Plotly) {
+                    window.Plotly.newPlot(id, dataFn(), layoutFn(), { responsive: true, displayModeBar: false });
+                }
+                return () => { if (window.Plotly) { try { window.Plotly.purge(id); } catch (e) { } } };
+            }, deps);
+        };
+
+        const ChartFrame = ({ id, height = 'chart-h-360', caption }) => (
+            <>
+                <div className="bg-white border border-gray-200 rounded-xl p-2 shadow-sm my-3">
+                    <div id={id} className={height} style={{ width: '100%' }}></div>
+                </div>
+                {caption && <p className="text-xs text-gray-500 italic text-center mb-4">{caption}</p>}
+            </>
+        );
+
+        const Termino = ({ children, def }) => {
+            const [open, setOpen] = useState(false);
+            const [pos, setPos] = useState(null);
+            const btnRef = useRef(null);
+            const popRef = useRef(null);
+            const closeTimer = useRef(null);
+
+            const cancelClose = () => { if (closeTimer.current) { clearTimeout(closeTimer.current); closeTimer.current = null; } };
+            const scheduleClose = () => { cancelClose(); closeTimer.current = setTimeout(() => setOpen(false), 150); };
+            const openNow = () => { cancelClose(); setOpen(true); };
+            useEffect(() => cancelClose, []);
+
+            const place = () => {
+                if (!btnRef.current) return;
+                const r = btnRef.current.getBoundingClientRect();
+                const margin = 12;
+                const w = Math.min(300, window.innerWidth - margin * 2);
+                let left = r.left;
+                if (left + w > window.innerWidth - margin) left = window.innerWidth - margin - w;
+                if (left < margin) left = margin;
+                const abreArriba = (window.innerHeight - r.bottom) < 180;
+                setPos({
+                    left, width: w,
+                    top: abreArriba ? null : Math.round(r.bottom + 6),
+                    bottom: abreArriba ? Math.round(window.innerHeight - r.top + 6) : null,
+                });
+            };
+
+            useEffect(() => {
+                if (!open) { setPos(null); return; }
+                place();
+                const reflow = () => place();
+                const onDoc = (e) => {
+                    if (popRef.current && popRef.current.contains(e.target)) return;
+                    if (btnRef.current && btnRef.current.contains(e.target)) return;
+                    setOpen(false);
+                };
+                window.addEventListener('scroll', reflow, true);
+                window.addEventListener('resize', reflow);
+                document.addEventListener('mousedown', onDoc);
+                return () => {
+                    window.removeEventListener('scroll', reflow, true);
+                    window.removeEventListener('resize', reflow);
+                    document.removeEventListener('mousedown', onDoc);
+                };
+            }, [open]);
+
+            return (
+                <span className="inline-block">
+                    <button ref={btnRef} type="button" onClick={openNow} onMouseEnter={openNow} onMouseLeave={scheduleClose}
+                        className="text-primary font-semibold cursor-help bg-primary/5 hover:bg-primary/10 rounded px-1 transition-colors"
+                        style={{ borderBottom: '1px dotted #3D008D' }} title="Ver definición rápida">
+                        {children}<i className="fas fa-circle-info text-[0.6em] align-super ml-0.5 text-secondary"></i>
+                    </button>
+                    {open && pos && ReactDOM.createPortal(
+                        <span ref={popRef} role="tooltip"
+                            onMouseEnter={cancelClose} onMouseLeave={scheduleClose}
+                            className="block rounded-lg bg-white shadow-2xl border border-primary/30 p-3 text-[0.8rem] font-normal text-gray-700 leading-snug animate-fade-in text-left"
+                            style={{ position: 'fixed', left: pos.left, top: pos.top == null ? 'auto' : pos.top, bottom: pos.bottom == null ? 'auto' : pos.bottom, width: pos.width, zIndex: 200 }}>
+                            <span className="block font-bold text-primary mb-1 text-[0.72rem] uppercase tracking-wide">{children}</span>
+                            {def}
+                        </span>,
+                        document.body
+                    )}
+                </span>
+            );
+        };
+        /* ============================================================
+           ICONOS ADICIONALES (se fusionan con el objeto Icons base)
+        ============================================================ */
+        Object.assign(Icons, {
+            Workflow: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="3" y="3" width="6" height="6" rx="1" /><rect x="15" y="15" width="6" height="6" rx="1" />
+                    <path d="M9 6h3a3 3 0 0 1 3 3v6" /><path d="M6 9v3a3 3 0 0 0 3 3h3" />
+                </svg>
+            ),
+            ArrowDownUp: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <path d="M7 3v18" /><polyline points="3 7 7 3 11 7" />
+                    <path d="M17 21V3" /><polyline points="13 17 17 21 21 17" />
+                </svg>
+            ),
+            GitBranch: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <line x1="6" y1="3" x2="6" y2="15" /><circle cx="18" cy="6" r="3" /><circle cx="6" cy="18" r="3" />
+                    <path d="M18 9a9 9 0 0 1-9 9" />
+                </svg>
+            ),
+            Repeat: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                    <polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                </svg>
+            ),
+            FileCode: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
+                    <polyline points="10 12 8 14 10 16" /><polyline points="14 12 16 14 14 16" />
+                </svg>
+            ),
+            Grid: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" /><line x1="3" y1="15" x2="21" y2="15" />
+                    <line x1="9" y1="3" x2="9" y2="21" /><line x1="15" y1="3" x2="15" y2="21" />
+                </svg>
+            ),
+            FunctionSquare: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M9 17c0-4 1-9 3-9" /><line x1="8" y1="12" x2="14" y2="12" />
+                </svg>
+            ),
+            Bug: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="8" y="6" width="8" height="14" rx="4" />
+                    <path d="M8 12H3" /><path d="M21 12h-5" /><path d="M8 17l-4 3" /><path d="M16 17l4 3" />
+                    <path d="M8 8L5 5" /><path d="M16 8l3-3" />
+                </svg>
+            ),
+            Table: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <line x1="3" y1="9" x2="21" y2="9" /><line x1="10" y1="9" x2="10" y2="21" />
+                </svg>
+            ),
+            Layers: ({ size = 24, className = "" }) => (
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                    <polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" />
+                </svg>
+            ),
+        });
+
+        /* ============================================================
+           RESALTADO DE SINTAXIS — Prism.js 1.29
+           Prism trae gramáticas oficiales de R, Python y VBA (`visual-basic`,
+           con alias `vba`). El pseudocódigo del curso no existe fuera de aquí,
+           así que su gramática se registra abajo.
+        ============================================================ */
+        if (window.Prism && !Prism.languages.pseudo) {
+            Prism.languages.pseudo = {
+                // `comment` va primero: si no, el operador `/` se comería el `//`.
+                'comment': { pattern: /\/\/.*/, greedy: true },
+                'string': { pattern: /"(?:[^"\\\n]|\\.)*"/, greedy: true },
+                'keyword': /\b(?:FinSi|FinMientras|FinPara|FinSegun|FinFuncion|FinProcedimiento|FinRepita|Inicio|Fin|Si|Entonces|SinoSi|Sino|Segun|Caso|DeOtroModo|Mientras|Hacer|Para|Repita|Hasta|Con|Paso|Leer|Escribir|Funcion|Procedimiento|Retornar|Llamar)\b/,
+                'builtin': /\b(?:Entero|Real|Cadena|Caracter|Logico|Arreglo|Matriz|Constante|Verdadero|Falso)\b/,
+                'function': /\b(?:Y|O|NO|MOD|DIV|abs|raiz|redondear|potencia|longitud)\b/,
+                'number': /\b\d+(?:\.\d+)?\b/,
+                'operator': /<-|←|>=|<=|<>|[+\-*\/=<>]/,
+                'punctuation': /[(),;\[\]]/,
+            };
+        }
+
+        const GRAMATICA = { pseudo: 'pseudo', python: 'python', r: 'r', vba: 'visual-basic', shell: 'bash', text: null };
+
+        /* Prefijo de SALIDA por lenguaje: el marcador de comentario del propio
+           lenguaje más `>`. Así la salida sigue siendo un comentario válido y
+           el bloque copiado se puede ejecutar tal cual. */
+        const PREFIJO_SALIDA = { pseudo: '//>', python: '#>', r: '#>', vba: "'>" };
+
+        const escaparHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+        /* Marca las líneas de salida sobre el HTML YA resaltado. Prism las
+           tokeniza como comentario, y un comentario nunca cruza el salto de
+           línea, así que cada línea queda autocontenida y se puede envolver. */
+        const marcarSalida = (html, lang) => {
+            const pref = PREFIJO_SALIDA[lang];
+            if (!pref) return html;
+            return html.split('\n').map(linea => {
+                const plano = linea.replace(/<[^>]*>/g, '').trimStart();
+                return plano.startsWith(pref) ? `<span class="lp-salida">${linea}</span>` : linea;
+            }).join('\n');
+        };
+
+        const resaltar = (codigo, lang) => {
+            const nombre = GRAMATICA[lang];
+            const gram = (nombre && window.Prism) ? Prism.languages[nombre] : null;
+            const html = gram ? Prism.highlight(codigo, gram, nombre) : escaparHtml(codigo);
+            return marcarSalida(html, lang);
+        };
+
+        /* ============================================================
+           METADATOS DE LENGUAJE — orden fijo del curso
+           Pseudocódigo (normativo) → Python → R → VBA (industria)
+        ============================================================ */
+        const LANG_ORDEN = ['pseudo', 'python', 'r', 'vba'];
+        const LANG_META = {
+            pseudo: { label: 'Pseudocódigo', corto: 'Pseudo', icon: 'fas fa-project-diagram', color: 'text-blue-300' },
+            python: { label: 'Python', corto: 'Python', icon: 'fab fa-python', color: 'text-yellow-400' },
+            r: { label: 'R', corto: 'R', icon: 'fas fa-chart-line', color: 'text-cyan-300' },
+            vba: { label: 'VBA (Excel)', corto: 'VBA', icon: 'fas fa-file-excel', color: 'text-green-400' },
+            shell: { label: 'Terminal', corto: 'Shell', icon: 'fas fa-terminal', color: 'text-green-400' },
+            text: { label: 'Salida', corto: 'Salida', icon: 'fas fa-file-alt', color: 'text-gray-300' },
+        };
+
+        /* ============================================================
+           BLOQUE DE CÓDIGO (un solo lenguaje)
+           La salida NO va en un panel aparte: se escribe dentro del código
+           con el prefijo del lenguaje, pegada a la instrucción que la produce.
+        ============================================================ */
+        const CodeBlock = ({ title, code, lang = 'pseudo', plegable, conPestanas = false }) => {
+            const [copiado, setCopiado] = useState(false);
+            const meta = LANG_META[lang] || LANG_META.text;
+
+            // Se pliegan los bloques largos de exposición. Dentro de un
+            // ejercicio nunca (`plegable={false}`): una traza que hay que
+            // desplegar antes de poder trazarla estorba.
+            const admitePliegue = plegable === undefined ? code.split('\n').length > 12 : plegable;
+            const [plegado, setPlegado] = useState(admitePliegue);
+
+            const copiar = () => {
+                // Se copia `code`, la cadena original. El DOM lleva el marcado
+                // de Prism y pegar eso daría un archivo que no corre.
+                navigator.clipboard.writeText(code).then(() => {
+                    setCopiado(true);
+                    setTimeout(() => setCopiado(false), 2000);
+                }).catch(() => { });
+            };
+
+            return (
+                <div className={`lp-code-wrapper my-4 ${conPestanas ? 'con-pestanas' : ''}`}>
+                    <div className="lp-code-header">
+                        <span className="lp-code-title">
+                            <i className={`${meta.icon} mr-2`}></i>{title || meta.label}
+                        </span>
+                        <span className="flex items-center gap-2">
+                            <button className={`lp-code-btn ${copiado ? 'copiado' : ''}`} onClick={copiar}
+                                title="Copiar código" aria-label="Copiar código">
+                                <i className={`fas ${copiado ? 'fa-check' : 'fa-copy'}`}></i>
+                                <span>{copiado ? 'Copiado' : 'Copiar'}</span>
+                            </button>
+                            {admitePliegue && (
+                                <button className="lp-code-btn" onClick={() => setPlegado(p => !p)}
+                                    aria-expanded={!plegado} title={plegado ? 'Mostrar todo el código' : 'Plegar el código'}>
+                                    <span>{plegado ? 'Mostrar' : 'Ocultar'}</span>
+                                    <i className={`fas fa-chevron-down transition-transform duration-200 ${plegado ? '' : 'rotate-180'}`}></i>
+                                </button>
+                            )}
+                        </span>
+                    </div>
+                    <pre className={`lp-code-pre ${plegado ? 'plegado' : ''}`}>
+                        <code dangerouslySetInnerHTML={{ __html: resaltar(code, lang) }} />
+                    </pre>
+                </div>
+            );
+        };
+
+        /* ============================================================
+           LÍNEA DE TIEMPO
+        ============================================================ */
+        const Timeline = ({ eventos }) => (
+            <div className="relative border-l-2 border-primary/30 ml-3 my-6 space-y-5">
+                {eventos.map((e, i) => (
+                    <div key={i} className="ml-6 relative">
+                        <span className="absolute left-[-1.95rem] top-1 w-4 h-4 rounded-full lp-gradient border-2 border-white shadow"></span>
+                        <span className="text-sm font-extrabold text-secondary">{e.year}</span>
+                        <p className="text-sm text-gray-700 mt-0.5">{e.text}</p>
+                    </div>
+                ))}
+            </div>
+        );
+
+        /* ============================================================
+           CODETABS — el mismo algoritmo en 4 lenguajes
+           Cada bloque es INDEPENDIENTE: cambiar su pestaña no mueve
+           ninguna otra, de modo que se pueden tener dos lenguajes en
+           pantalla a la vez para compararlos.
+           La última elección se guarda en localStorage y es la que
+           muestran, al montarse, los bloques que el estudiante aún no ha
+           tocado —en esta visita y en las siguientes—. Sin esa memoria,
+           quien lea en VBA tendría que elegirlo en cada uno de los hasta
+           15 bloques de un capítulo.
+        ============================================================ */
+        const CODETABS_KEY = 'lpf_lenguaje_preferido';
+
+        const CodeTabs = ({ bloques, titulo, defecto = 'pseudo', nota, plegable }) => {
+            const disponibles = LANG_ORDEN.filter(l => bloques && bloques[l]);
+            const elegirInicial = () => {
+                const guardado = localStorage.getItem(CODETABS_KEY);
+                if (guardado && bloques[guardado]) return guardado;
+                if (bloques[defecto]) return defecto;
+                return disponibles[0];
+            };
+            const [lang, setLang] = useState(elegirInicial);
+            const ref = useRef(null);
+
+            // Solo el estado propio. Escribir la preferencia NO avisa a las
+            // demás instancias: son independientes a propósito.
+            const cambiar = (l) => {
+                setLang(l);
+                localStorage.setItem(CODETABS_KEY, l);
+            };
+
+            if (!disponibles.length) return null;
+            const activo = bloques[lang] ? lang : disponibles[0];
+
+            return (
+                <div ref={ref} className="my-5">
+                    {titulo && (
+                        <div className="text-sm font-semibold text-navy mb-2 flex items-center gap-2">
+                            <i className="fas fa-code text-secondary"></i>{titulo}
+                        </div>
+                    )}
+                    <div className="flex flex-wrap gap-1 items-end" role="tablist" aria-label="Lenguaje del ejemplo">
+                        {disponibles.map(l => {
+                            const m = LANG_META[l];
+                            const esActivo = activo === l;
+                            return (
+                                <button key={l} role="tab" aria-selected={esActivo} onClick={() => cambiar(l)}
+                                    className={`lp-tab ${esActivo ? 'activa' : ''}`}>
+                                    <i className={m.icon}></i>
+                                    <span className="hidden sm:inline">{m.label}</span>
+                                    <span className="sm:hidden">{m.corto}</span>
+                                </button>
+                            );
+                        })}
+                        <span className="ml-auto text-[0.65rem] text-gray-400 pr-2 pb-1.5 hidden md:block">
+                            <i className="fas fa-bookmark mr-1"></i>solo este bloque · se recuerda su preferencia
+                        </span>
+                    </div>
+                    <div key={activo} className="animate-fade-in">
+                        <CodeBlock code={bloques[activo]} lang={activo} conPestanas plegable={plegable} />
+                    </div>
+                    {nota && <p className="text-xs text-gray-500 italic -mt-2 mb-4 px-1">{nota}</p>}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           LENGUAJE ACTIVO EN LOS EJERCICIOS
+           Misma regla que `CodeTabs`: cada ejercicio es independiente, y al
+           montarse arranca en la última preferencia guardada. Así, quien lee
+           la exposición en VBA encuentra el ejercicio en VBA sin tener que
+           volver a elegirlo, pero puede cambiarlo sin arrastrar consigo el
+           resto del capítulo.
+
+           `porLenguaje` acepta indistintamente un valor único (igual para
+           todos los lenguajes) o un objeto {pseudo, python, r, vba}. Si falta
+           el lenguaje activo, cae a pseudocódigo.
+        ============================================================ */
+        const esMapaDeLenguajes = (v) =>
+            v && typeof v === 'object' && !Array.isArray(v) && !React.isValidElement(v)
+            && LANG_ORDEN.some(l => l in v);
+
+        const porLenguaje = (v, lang) =>
+            esMapaDeLenguajes(v) ? (v[lang] !== undefined ? v[lang] : (v.pseudo !== undefined ? v.pseudo : Object.values(v)[0])) : v;
+
+        const lenguajesDe = (v) => esMapaDeLenguajes(v) ? LANG_ORDEN.filter(l => l in v) : [];
+
+        const useLenguajeActivo = (disponibles, defecto = 'pseudo') => {
+            const clave = disponibles.join('|');
+            const elegir = () => {
+                const g = localStorage.getItem(CODETABS_KEY);
+                if (g && disponibles.includes(g)) return g;
+                if (disponibles.includes(defecto)) return defecto;
+                return disponibles[0];
+            };
+            const [lang, setLang] = useState(elegir);
+            useEffect(() => { setLang(elegir()); }, [clave]);
+            // Devuelve un par, no un valor: el componente necesita el
+            // cambiador para pasárselo a su <SelectorLenguaje>.
+            const cambiar = (l) => {
+                setLang(l);
+                localStorage.setItem(CODETABS_KEY, l);
+            };
+            return [lang, cambiar];
+        };
+
+        const SelectorLenguaje = ({ disponibles, activo, onCambiar }) => {
+            if (!disponibles || disponibles.length < 2) return null;
+            const cambiar = (l) => onCambiar && onCambiar(l);
+            return (
+                <div className="flex flex-wrap gap-1 mb-2" role="tablist" aria-label="Lenguaje del ejercicio">
+                    {disponibles.map(l => {
+                        const m = LANG_META[l], act = activo === l;
+                        return (
+                            <button key={l} role="tab" aria-selected={act} onClick={() => cambiar(l)}
+                                className={`px-2.5 py-1 text-[0.72rem] font-semibold rounded-full transition-colors flex items-center gap-1.5 border ${act ? 'text-white lp-gradient border-transparent shadow-sm' : 'text-gray-500 border-gray-200 hover:text-primary hover:border-primary/40'}`}>
+                                <i className={`${m.icon} text-[0.7rem]`}></i>{m.corto}
+                            </button>
+                        );
+                    })}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           MOTIVACIÓN DE APERTURA
+           Obligatoria al comienzo de CADA sección. No resume lo que viene:
+           da una razón para seguir leyendo.
+
+           Receta (máx. ~80 palabras):
+             1. una escena concreta del sector financiero;
+             2. la tensión o el costo que esa escena revela;
+             3. `gancho`: la pregunta que la sección viene a responder.
+        ============================================================ */
+        const Motivacion = ({ gancho, icon = 'fa-compass', etiqueta = 'Antes de empezar', children }) => {
+            const ref = useRef(null);
+            useTypeset(ref, []);
+            return (
+                <div ref={ref} className="my-5 rounded-2xl overflow-hidden border not-prose"
+                    style={{ borderColor: 'rgba(61,0,141,0.15)' }}>
+                    <div className="px-5 py-4"
+                        style={{ background: 'linear-gradient(135deg, rgba(61,0,141,0.055) 0%, rgba(14,116,144,0.05) 45%, rgba(237,30,121,0.10) 100%)' }}>
+                        <div className="flex gap-3.5">
+                            <span className="flex-shrink-0 w-9 h-9 rounded-full lp-gradient text-white flex items-center justify-center shadow-sm">
+                                <i className={`fas ${icon} text-sm`}></i>
+                            </span>
+                            <div className="flex-1 min-w-0">
+                                <div className="text-[0.65rem] uppercase tracking-widest font-bold mb-1.5" style={{ color: 'rgba(61,0,141,0.62)' }}>
+                                    {etiqueta}
+                                </div>
+                                <div className="text-[0.96rem] text-gray-700 leading-relaxed">{children}</div>
+                                {gancho && (
+                                    <p className="mt-3 text-primary font-semibold text-[1.02rem] leading-snug pl-3"
+                                        style={{ margin: '0.75rem 0 0', borderLeft: '3px solid #ED1E79' }}>
+                                        {gancho}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        /* ============================================================
+           TAXONOMÍA DE EJERCICIOS DEL CURSO
+           E1, E3, E4, E5 y E6 tienen componente propio y ya se
+           autoetiquetan. E2, E7 y E8 se construyen con MCQ o Reto, así
+           que se envuelven en <Ejercicio tipo="E7"> para que el tipo sea
+           visible al estudiante y contable por verificar.py.
+        ============================================================ */
+        const TIPOS_EJERCICIO = {
+            E1: { etiqueta: 'E1 · Traza', color: '#3D008D' },
+            E2: { etiqueta: 'E2 · Predice', color: '#0E7490' },
+            E3: { etiqueta: 'E3 · Diagnóstico', color: '#B91C1C' },
+            E4: { etiqueta: 'E4 · Equivalencia', color: '#0E7490' },
+            E5: { etiqueta: 'E5 · Secuencia', color: '#3D008D' },
+            E6: { etiqueta: 'E6 · Emparejar', color: '#3D008D' },
+            E7: { etiqueta: 'E7 · Interpretación', color: '#15803D' },
+            E8: { etiqueta: 'E8 · Criterio', color: '#B45309' },
+        };
+
+        const Ejercicio = ({ tipo, children }) => {
+            const t = TIPOS_EJERCICIO[tipo];
+            if (!t) return children;
+            // La etiqueta se ancla SOBRE el borde superior de la tarjeta, no
+            // dentro: si se superpone al contenido, un enunciado de dos líneas
+            // le pasa por debajo y queda ilegible.
+            return (
+                <div className="relative">
+                    <span className="absolute z-10 text-[0.65rem] uppercase tracking-wider font-bold text-white rounded px-2 py-0.5 shadow-sm"
+                        style={{ background: t.color, top: '0.55rem', right: '1rem' }}>
+                        {t.etiqueta}
+                    </span>
+                    {children}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           E1 · TABLA DE TRAZA (prueba de escritorio)
+           El estudiante completa el estado de las variables paso a paso.
+           Comparación tolerante: espacios, mayúsculas, coma/punto decimal
+           y marcas de "sin valor" (—, -, vacío) se normalizan.
+        ============================================================ */
+        const normalizarCelda = (v) => {
+            let s = String(v === null || v === undefined ? '' : v).trim().toLowerCase();
+            s = s.replace(/\s+/g, '');
+            if (s === '' || s === '-' || s === '—' || s === '–' || s === 'vacio' || s === 'vacío' || s === 'nada' || s === 'null') return '∅';
+            s = s.replace(/\$/g, '').replace(/\bcop\b/g, '');
+            if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(s)) s = s.replace(/\./g, '').replace(',', '.');
+            else s = s.replace(',', '.');
+            return s;
+        };
+
+        const celdasIguales = (a, b) => {
+            const na = normalizarCelda(a), nb = normalizarCelda(b);
+            if (na === nb) return true;
+            const fa = parseFloat(na), fb = parseFloat(nb);
+            if (Number.isFinite(fa) && Number.isFinite(fb)) {
+                const tol = Math.max(1e-6, Math.abs(fb) * 1e-6);
+                return Math.abs(fa - fb) <= tol;
+            }
+            return false;
+        };
+
+        const TablaTraza = ({ titulo = 'Prueba de escritorio', enunciado, codigo, lang = 'pseudo', columnas, filas, ocultas = [], pista }) => {
+            // `codigo` y la columna `instruccion` de cada fila admiten un objeto
+            // {pseudo, python, r, vba}. Los VALORES de las variables no: son los
+            // mismos en los cuatro lenguajes, que es justamente lo que el
+            // ejercicio debe hacerle ver al estudiante.
+            const idiomas = lenguajesDe(codigo);
+            const disponibles = idiomas.length ? idiomas : [lang];
+            const [langActivo, cambiarLang] = useLenguajeActivo(disponibles, lang);
+
+            const editables = [];
+            filas.forEach((f, i) => columnas.forEach(c => { if (ocultas.includes(c.clave)) editables.push(`${i}|${c.clave}`); }));
+
+            const [valores, setValores] = useState({});
+            const [comprobado, setComprobado] = useState(false);
+            const [revelado, setRevelado] = useState(false);
+            const ref = useRef(null);
+            useTypeset(ref, [comprobado, revelado]);
+
+            const escribir = (k, v) => { if (!comprobado) setValores(p => ({ ...p, [k]: v })); };
+            const esCorrecta = (i, clave) => celdasIguales(valores[`${i}|${clave}`], filas[i][clave]);
+            const aciertos = editables.filter(k => { const [i, c] = k.split('|'); return esCorrecta(Number(i), c); }).length;
+            const total = editables.length;
+            const pct = total ? Math.round((aciertos / total) * 100) : 0;
+            const color = pct >= 80 ? '#15803D' : pct >= 50 ? '#B45309' : '#B91C1C';
+
+            return (
+                <div ref={ref} className="my-6 rounded-2xl border-2 border-primary/20 bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="lp-gradient text-white p-2 rounded-lg"><i className="fas fa-table-list"></i></span>
+                        <h4 className="text-base font-bold text-primary" style={{ margin: 0 }}>{titulo}</h4>
+                        <span className="ml-auto text-[0.65rem] uppercase tracking-wider font-bold text-white bg-primary/80 rounded px-2 py-0.5">E1 · Traza</span>
+                    </div>
+                    {enunciado && <div className="text-[0.95rem] text-gray-700 mb-3">{enunciado}</div>}
+                    <SelectorLenguaje disponibles={disponibles} activo={langActivo} onCambiar={cambiarLang} />
+                    {codigo && <CodeBlock code={porLenguaje(codigo, langActivo)} lang={langActivo} title="Algoritmo a trazar" plegable={false} />}
+
+                    <p className="text-xs text-gray-500 mb-2">
+                        <i className="fas fa-keyboard mr-1"></i>
+                        Complete las celdas resaltadas. Use <span className="inline-code">—</span> si la variable aún no tiene valor.
+                    </p>
+
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm border-collapse">
+                            <thead>
+                                <tr>
+                                    {columnas.map(c => (
+                                        <th key={c.clave} className="bg-primary/10 text-primary text-left px-3 py-2 border border-gray-200 font-semibold whitespace-nowrap">
+                                            {c.titulo}
+                                        </th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filas.map((f, i) => (
+                                    <tr key={i} className={i % 2 ? 'bg-gray-50/60' : ''}>
+                                        {columnas.map(c => {
+                                            const editable = ocultas.includes(c.clave);
+                                            if (!editable) {
+                                                return <td key={c.clave} className="px-3 py-1.5 border border-gray-200 text-gray-700 align-top">
+                                                    {c.clave === 'instruccion'
+                                                        ? <span className="font-mono text-[0.82rem]">{porLenguaje(f[c.clave], langActivo)}</span>
+                                                        : f[c.clave]}
+                                                </td>;
+                                            }
+                                            const k = `${i}|${c.clave}`;
+                                            const ok = esCorrecta(i, c.clave);
+                                            let cls = 'border-gray-300 bg-amber-50/60';
+                                            if (comprobado) cls = ok ? 'border-green-500 bg-green-50' : 'border-red-400 bg-red-50';
+                                            return (
+                                                <td key={c.clave} className="px-1.5 py-1 border border-gray-200">
+                                                    <div className="flex items-center gap-1">
+                                                        <input type="text" value={valores[k] || ''} onChange={e => escribir(k, e.target.value)}
+                                                            disabled={comprobado} aria-label={`${c.titulo}, paso ${i + 1}`}
+                                                            className={`w-full min-w-[70px] px-2 py-1 rounded border text-[0.82rem] font-mono outline-none focus:border-secondary ${cls}`} />
+                                                        {comprobado && <i className={`fas ${ok ? 'fa-check text-green-600' : 'fa-xmark text-red-500'} text-xs`}></i>}
+                                                    </div>
+                                                    {comprobado && !ok && (
+                                                        <div className="text-[0.7rem] text-green-700 font-mono mt-0.5 pl-1">→ {f[c.clave]}</div>
+                                                    )}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-3 flex-wrap">
+                        {!comprobado
+                            ? <button onClick={() => setComprobado(true)}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full text-white lp-gradient hover:opacity-90">
+                                <i className="fas fa-check-double mr-1"></i>Comprobar traza
+                            </button>
+                            : <>
+                                <button onClick={() => { setComprobado(false); setValores({}); setRevelado(false); }}
+                                    className="text-sm font-bold px-4 py-1.5 rounded-full border border-primary text-primary hover:bg-primary/5">
+                                    <i className="fas fa-rotate-right mr-1"></i>Reintentar
+                                </button>
+                                <span className="text-sm font-bold" style={{ color }}>
+                                    {aciertos} / {total} celdas correctas ({pct} %)
+                                </span>
+                            </>}
+                        {pista && !revelado && (
+                            <button onClick={() => setRevelado(true)} className="text-xs font-semibold text-gray-500 hover:text-primary underline">
+                                <i className="fas fa-lightbulb mr-1"></i>Ver pista
+                            </button>
+                        )}
+                    </div>
+                    {revelado && pista && (
+                        <div className="mt-3 animate-fade-in"><Box type="tip" label="Pista">{pista}</Box></div>
+                    )}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           E3 · DETECTA Y DIAGNOSTICA EL ERROR
+           Dos respuestas obligatorias: UBICAR la línea y CLASIFICAR el
+           tipo de error. La retroalimentación distingue el caso
+           "ubicó bien pero clasificó mal", que es el más informativo.
+        ============================================================ */
+        const DetectaError = ({ titulo = 'Detecte y diagnostique el error', enunciado, lineas, lang = 'pseudo', lineaCorrecta, tipos, tipoCorrecto, explicacion, impacto }) => {
+            // OJO: `lineaCorrecta` también admite {pseudo, python, r, vba}. El
+            // mismo fallo NO está en la misma línea en los cuatro lenguajes
+            // (VBA añade Sub/Dim, Python no lleva declaraciones...). Darlo por
+            // constante haría que el ejercicio calificara mal al cambiar de
+            // pestaña, y en silencio.
+            //
+            // Y con la clave va el TEXTO: `enunciado` y `explicacion` admiten
+            // el mismo objeto. Un enunciado que dice «el comentario de la
+            // línea 4» es cierto en pseudocódigo y falso en Python, donde esa
+            // línea es justamente la respuesta. Lo mejor es redactarlos sin
+            // citar ningún número; cuando haga falta citarlo, va por lenguaje.
+            // La comprobación 8 de verificar.py vigila las dos propiedades.
+            const idiomas = lenguajesDe(lineas);
+            const disponibles = idiomas.length ? idiomas : [lang];
+            const [langActivo, cambiarLang] = useLenguajeActivo(disponibles, lang);
+            const lineasAct = porLenguaje(lineas, langActivo);
+            const correctaAct = porLenguaje(lineaCorrecta, langActivo);
+            const enunciadoAct = porLenguaje(enunciado, langActivo);
+            const explicacionAct = porLenguaje(explicacion, langActivo);
+
+            const [linea, setLinea] = useState(null);
+            const [tipo, setTipo] = useState(null);
+            const [comprobado, setComprobado] = useState(false);
+            const ref = useRef(null);
+            useTypeset(ref, [comprobado]);
+
+            // Al cambiar de lenguaje la selección previa deja de tener sentido.
+            useEffect(() => { setLinea(null); setComprobado(false); }, [langActivo]);
+
+            const lineaOk = linea === correctaAct;
+            const tipoOk = tipo === tipoCorrecto;
+            // El botón exige las DOS respuestas. Un botón deshabilitado que no
+            // dice por qué se lee como roto: quien completó el Paso 1 pulsa y
+            // no pasa nada. Se rotula el progreso —igual que `Emparejamiento`,
+            // que muestra «Comprobar (2/4)»— y se nombra el paso que falta.
+            const hechos = (linea !== null ? 1 : 0) + (tipo !== null ? 1 : 0);
+            const listo = hechos === 2;
+            const queFalta = linea === null && tipo === null
+                ? 'Señale la línea (Paso 1) y clasifique el error (Paso 2) para poder comprobar.'
+                : linea === null ? 'Falta el Paso 1: señale la línea que contiene el error.'
+                    : tipo === null ? 'Falta el Paso 2: clasifique el tipo de error.'
+                        : null;
+
+            return (
+                <div ref={ref} className="my-6 rounded-2xl border-2 p-5 shadow-sm" style={{ borderColor: '#FCA5A5', background: '#FFFBFB' }}>
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="text-white p-2 rounded-lg" style={{ background: 'linear-gradient(135deg,#B91C1C 0%,#F59E0B 100%)' }}><i className="fas fa-bug"></i></span>
+                        <h4 className="text-base font-bold text-navy" style={{ margin: 0 }}>{titulo}</h4>
+                        <span className="ml-auto text-[0.65rem] uppercase tracking-wider font-bold text-white bg-red-700/80 rounded px-2 py-0.5">E3 · Diagnóstico</span>
+                    </div>
+                    {enunciadoAct && <div className="text-[0.95rem] text-gray-700 mb-3">{enunciadoAct}</div>}
+
+                    <p className="text-xs font-semibold text-gray-600 mb-1"><span className="text-red-700">Paso 1.</span> Señale la línea que contiene el error:</p>
+                    <SelectorLenguaje disponibles={disponibles} activo={langActivo} onCambiar={cambiarLang} />
+                    <div className="rounded-xl overflow-hidden border border-gray-700 bg-gray-900 mb-4">
+                        {lineasAct.map((l, i) => {
+                            const n = i + 1;
+                            const sel = linea === n;
+                            let cls = 'hover:bg-white/5';
+                            if (comprobado) {
+                                if (n === correctaAct) cls = 'bg-green-900/50 ring-1 ring-green-500';
+                                else if (sel) cls = 'bg-red-900/50 ring-1 ring-red-500';
+                            } else if (sel) cls = 'bg-amber-500/20 ring-1 ring-amber-400';
+                            return (
+                                <button key={i} onClick={() => !comprobado && setLinea(n)} disabled={comprobado}
+                                    aria-label={`Línea ${n}`} aria-pressed={sel}
+                                    className={`w-full text-left flex items-start gap-3 px-3 py-1 font-mono text-[0.82rem] transition-colors ${cls}`}>
+                                    <span className="text-gray-600 select-none w-6 text-right flex-shrink-0">{n}</span>
+                                    <span className="text-gray-100 whitespace-pre overflow-x-auto"
+                                        dangerouslySetInnerHTML={{ __html: resaltar(l, langActivo) }} />
+                                    {comprobado && n === correctaAct && <i className="fas fa-arrow-left text-green-400 ml-auto flex-shrink-0 mt-0.5"></i>}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <p className="text-xs font-semibold text-gray-600 mb-1"><span className="text-red-700">Paso 2.</span> Clasifique el tipo de error:</p>
+                    <div className="space-y-1.5 mb-3">
+                        {tipos.map((t, i) => {
+                            const sel = tipo === i;
+                            let cls = 'border-gray-200 bg-white hover:border-primary/40';
+                            if (comprobado) {
+                                if (i === tipoCorrecto) cls = 'border-green-500 bg-green-50';
+                                else if (sel) cls = 'border-red-400 bg-red-50';
+                                else cls = 'border-gray-200 bg-white opacity-70';
+                            } else if (sel) cls = 'border-secondary bg-amber-50';
+                            return (
+                                <button key={i} onClick={() => !comprobado && setTipo(i)} disabled={comprobado}
+                                    className={`w-full text-left px-3 py-2 rounded-lg border text-[0.9rem] flex items-center gap-2.5 transition-all ${cls}`}>
+                                    <span className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[0.7rem] font-bold ${sel ? 'lp-gradient text-white' : 'bg-gray-100 text-gray-500'}`}>
+                                        {String.fromCharCode(97 + i)}
+                                    </span>
+                                    <span className="flex-1 text-gray-700">{t}</span>
+                                    {comprobado && i === tipoCorrecto && <i className="fas fa-check text-green-600 text-xs"></i>}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className="flex items-center gap-3 flex-wrap">
+                        {!comprobado
+                            ? <button onClick={() => listo && setComprobado(true)} disabled={!listo}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full text-white lp-gradient disabled:opacity-40">
+                                <i className="fas fa-magnifying-glass mr-1"></i>Comprobar diagnóstico ({hechos}/2)
+                            </button>
+                            : <button onClick={() => { setComprobado(false); setLinea(null); setTipo(null); }}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full border border-primary text-primary hover:bg-primary/5">
+                                <i className="fas fa-rotate-right mr-1"></i>Reintentar
+                            </button>}
+                        {!comprobado && queFalta && (
+                            <span className="text-xs text-gray-600" role="status">
+                                <i className="fas fa-circle-info mr-1"></i>{queFalta}
+                            </span>
+                        )}
+                        {comprobado && (
+                            <span className={`text-sm font-bold ${lineaOk && tipoOk ? 'text-green-600' : 'text-red-500'}`}>
+                                <i className={`fas ${lineaOk && tipoOk ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1`}></i>
+                                {lineaOk && tipoOk ? '¡Diagnóstico correcto!'
+                                    : lineaOk ? 'Ubicó bien la línea, pero el tipo de error no es ese.'
+                                        : tipoOk ? 'Clasificó bien el tipo, pero el error está en otra línea.'
+                                            : 'Ni la línea ni el tipo son correctos.'}
+                            </span>
+                        )}
+                    </div>
+
+                    {comprobado && (
+                        <div className="mt-4 space-y-3 animate-fade-in">
+                            <Box type="info" label="Explicación">{explicacionAct}</Box>
+                            {impacto && <Box type="danger" label="Consecuencia financiera">{impacto}</Box>}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           E4 · COMPARADOR — dos versiones lado a lado + veredicto
+        ============================================================ */
+        const Comparador = ({ titulo = 'Compare las dos versiones', enunciado, a, b, lang = 'pseudo', pregunta, opciones, multiple = false }) => {
+            const idiomas = lenguajesDe(a.codigo);
+            const disponibles = idiomas.length ? idiomas : [lang];
+            const [langActivo, cambiarLang] = useLenguajeActivo(disponibles, lang);
+
+            const panel = (v, acento) => (
+                <div className="flex-1 min-w-[260px]">
+                    <div className="text-xs font-bold uppercase tracking-wider mb-1 px-1" style={{ color: acento }}>
+                        <i className="fas fa-code-branch mr-1"></i>{v.etiqueta}
+                    </div>
+                    <CodeBlock code={porLenguaje(v.codigo, langActivo)} lang={v.lang || langActivo} title={v.etiqueta} plegable={false} />
+                    {v.nota && <p className="text-xs text-gray-500 italic -mt-2 px-1">{v.nota}</p>}
+                </div>
+            );
+            return (
+                <div className="my-6 rounded-2xl border-2 border-teal/30 bg-white p-5 shadow-sm" style={{ borderColor: 'rgba(14,116,144,0.3)' }}>
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="text-white p-2 rounded-lg" style={{ background: 'linear-gradient(135deg,#0E7490,#3D008D)' }}><i className="fas fa-code-compare"></i></span>
+                        <h4 className="text-base font-bold text-primary" style={{ margin: 0 }}>{titulo}</h4>
+                        <span className="ml-auto text-[0.65rem] uppercase tracking-wider font-bold text-white rounded px-2 py-0.5" style={{ background: '#0E7490' }}>E4 · Equivalencia</span>
+                    </div>
+                    {enunciado && <div className="text-[0.95rem] text-gray-700 mb-3">{enunciado}</div>}
+                    <SelectorLenguaje disponibles={disponibles} activo={langActivo} onCambiar={cambiarLang} />
+                    <div className="flex flex-wrap gap-4">
+                        {panel(a, '#3D008D')}
+                        {panel(b, '#ED1E79')}
+                    </div>
+                    {pregunta && <MCQ pregunta={pregunta} opciones={opciones} multiple={multiple} />}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           E5 · ORDENA LOS PASOS
+           Interacción por clic (no arrastrar): accesible por teclado y
+           funcional en pantallas táctiles.
+           El desorden es DETERMINISTA: no puede recalcularse en cada
+           render ni cambiar entre visitas.
+        ============================================================ */
+        const mezclaPorDefecto = (n) => {
+            const out = [];
+            let i = 0, j = n - 1;
+            while (i <= j) { out.push(j); if (i !== j) out.push(i); i++; j--; }
+            return out;
+        };
+
+        const OrdenaPasos = ({ titulo = 'Ordene los pasos del algoritmo', enunciado, pasos, lang = 'pseudo', mezcla, pista }) => {
+            const idiomas = lenguajesDe(pasos);
+            const langs = idiomas.length ? idiomas : [lang];
+            const [langActivo, cambiarLang] = useLenguajeActivo(langs, lang);
+            const pasosAct = porLenguaje(pasos, langActivo);
+
+            const orden = (mezcla && mezcla.length === pasosAct.length) ? mezcla : mezclaPorDefecto(pasosAct.length);
+            const [secuencia, setSecuencia] = useState([]);
+            const [comprobado, setComprobado] = useState(false);
+            useEffect(() => { setSecuencia([]); setComprobado(false); }, [langActivo]);
+            const disponibles = orden.filter(i => !secuencia.includes(i));
+
+            const agregar = (i) => { if (!comprobado) setSecuencia(s => [...s, i]); };
+            const quitar = (pos) => { if (!comprobado) setSecuencia(s => s.filter((_, k) => k !== pos)); };
+            const completo = secuencia.length === pasosAct.length;
+            const posOk = (pos) => secuencia[pos] === pos;
+            const aciertos = secuencia.filter((_, pos) => posOk(pos)).length;
+            const todoOk = completo && aciertos === pasosAct.length;
+
+            return (
+                <div className="my-6 rounded-2xl border-2 border-primary/20 bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="lp-gradient text-white p-2 rounded-lg"><i className="fas fa-list-ol"></i></span>
+                        <h4 className="text-base font-bold text-primary" style={{ margin: 0 }}>{titulo}</h4>
+                        <span className="ml-auto text-[0.65rem] uppercase tracking-wider font-bold text-white bg-primary/80 rounded px-2 py-0.5">E5 · Secuencia</span>
+                    </div>
+                    {enunciado && <div className="text-[0.95rem] text-gray-700 mb-3">{enunciado}</div>}
+
+                    <SelectorLenguaje disponibles={langs} activo={langActivo} onCambiar={cambiarLang} />
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                                Pasos disponibles ({disponibles.length})
+                            </div>
+                            <div className="space-y-1.5 min-h-[60px] rounded-xl border-2 border-dashed border-gray-200 p-2">
+                                {disponibles.map(i => (
+                                    <button key={i} onClick={() => agregar(i)} disabled={comprobado}
+                                        className="w-full text-left px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:border-secondary hover:bg-amber-50 text-[0.88rem] text-gray-700 font-mono transition-all flex items-center gap-2">
+                                        <i className="fas fa-plus text-secondary text-xs flex-shrink-0"></i>
+                                        <span className="flex-1">{pasosAct[i]}</span>
+                                    </button>
+                                ))}
+                                {!disponibles.length && <p className="text-xs text-gray-400 italic text-center py-3" style={{ margin: 0 }}>Todos los pasos están en la secuencia</p>}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">
+                                Su secuencia ({secuencia.length}/{pasosAct.length})
+                            </div>
+                            <div className="space-y-1.5 min-h-[60px] rounded-xl border-2 border-dashed p-2" style={{ borderColor: '#ED1E79' }}>
+                                {secuencia.map((i, pos) => {
+                                    let cls = 'border-gray-200 bg-white';
+                                    if (comprobado) cls = posOk(pos) ? 'border-green-500 bg-green-50' : 'border-red-400 bg-red-50';
+                                    return (
+                                        <button key={pos} onClick={() => quitar(pos)} disabled={comprobado}
+                                            className={`w-full text-left px-3 py-2 rounded-lg border text-[0.88rem] text-gray-700 font-mono transition-all flex items-center gap-2 ${cls}`}>
+                                            <span className="flex-shrink-0 w-5 h-5 rounded-full lp-gradient text-white flex items-center justify-center text-[0.7rem] font-bold">{pos + 1}</span>
+                                            <span className="flex-1">{pasosAct[i]}</span>
+                                            {comprobado
+                                                ? <i className={`fas ${posOk(pos) ? 'fa-check text-green-600' : 'fa-xmark text-red-500'} text-xs flex-shrink-0`}></i>
+                                                : <i className="fas fa-xmark text-gray-300 text-xs flex-shrink-0"></i>}
+                                        </button>
+                                    );
+                                })}
+                                {!secuencia.length && <p className="text-xs text-gray-400 italic text-center py-3" style={{ margin: 0 }}>Haga clic en los pasos de la izquierda, en el orden correcto</p>}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-3 flex-wrap">
+                        {!comprobado
+                            ? <button onClick={() => completo && setComprobado(true)} disabled={!completo}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full text-white lp-gradient disabled:opacity-40">
+                                <i className="fas fa-flag-checkered mr-1"></i>Comprobar orden
+                            </button>
+                            : <>
+                                <button onClick={() => { setComprobado(false); setSecuencia([]); }}
+                                    className="text-sm font-bold px-4 py-1.5 rounded-full border border-primary text-primary hover:bg-primary/5">
+                                    <i className="fas fa-rotate-right mr-1"></i>Reintentar
+                                </button>
+                                <span className={`text-sm font-bold ${todoOk ? 'text-green-600' : 'text-red-500'}`}>
+                                    <i className={`fas ${todoOk ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1`}></i>
+                                    {todoOk ? '¡Secuencia correcta!' : `${aciertos} de ${pasosAct.length} pasos en la posición correcta`}
+                                </span>
+                            </>}
+                    </div>
+                    {comprobado && !todoOk && (
+                        <div className="mt-3 animate-fade-in">
+                            <Box type="tip" label="Orden correcto">
+                                <ol className="text-sm" style={{ listStyle: 'decimal', paddingLeft: '1.4rem', margin: 0 }}>
+                                    {pasosAct.map((p, i) => <li key={i} className="font-mono text-[0.85rem]">{p}</li>)}
+                                </ol>
+                            </Box>
+                        </div>
+                    )}
+                    {pista && <p className="text-xs text-gray-500 italic mt-2"><i className="fas fa-lightbulb mr-1 text-secondary"></i>{pista}</p>}
+                </div>
+            );
+        };
+
+        /* ============================================================
+           E6 · EMPAREJAMIENTO ENTRE REPRESENTACIONES
+           solucion[i] = índice en `derecha` que corresponde a izquierda[i]
+        ============================================================ */
+        const PALETA_PARES = ['#3D008D', '#ED1E79', '#0E7490', '#B91C1C', '#15803D', '#B45309', '#001A4D', '#7C3AED'];
+
+        const Emparejamiento = ({ titulo = 'Empareje cada elemento con su correspondencia', enunciado, izquierda, derecha, solucion, lang = 'pseudo', etiquetaIzq = 'Concepto', etiquetaDer = 'Corresponde a' }) => {
+            // El lado izquierdo suele ser codigo y por tanto cambia con el
+            // lenguaje; el derecho son significados y no cambia.
+            const idiomas = lenguajesDe(izquierda);
+            const langs = idiomas.length ? idiomas : [lang];
+            const [langActivo, cambiarLang] = useLenguajeActivo(langs, lang);
+            const izqAct = porLenguaje(izquierda, langActivo);
+
+            const [pares, setPares] = useState({});
+            const [selIzq, setSelIzq] = useState(null);
+            const [comprobado, setComprobado] = useState(false);
+            const ref = useRef(null);
+            useTypeset(ref, [comprobado]);
+            useEffect(() => { setPares({}); setSelIzq(null); setComprobado(false); }, [langActivo]);
+
+            const derUsada = (j) => Object.values(pares).includes(j);
+            const izqDe = (j) => Object.keys(pares).find(i => pares[i] === j);
+
+            const clicIzq = (i) => {
+                if (comprobado) return;
+                if (pares[i] !== undefined) { setPares(p => { const n = { ...p }; delete n[i]; return n; }); setSelIzq(null); return; }
+                setSelIzq(selIzq === i ? null : i);
+            };
+            const clicDer = (j) => {
+                if (comprobado) return;
+                if (derUsada(j)) { const i = izqDe(j); setPares(p => { const n = { ...p }; delete n[i]; return n; }); return; }
+                if (selIzq === null) return;
+                setPares(p => ({ ...p, [selIzq]: j }));
+                setSelIzq(null);
+            };
+
+            const completo = Object.keys(pares).length === izqAct.length;
+            const parOk = (i) => pares[i] === solucion[i];
+            const aciertos = izqAct.map((_, i) => parOk(i)).filter(Boolean).length;
+            const todoOk = aciertos === izqAct.length;
+
+            return (
+                <div ref={ref} className="my-6 rounded-2xl border-2 border-primary/20 bg-white p-5 shadow-sm">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="lp-gradient text-white p-2 rounded-lg"><i className="fas fa-link"></i></span>
+                        <h4 className="text-base font-bold text-primary" style={{ margin: 0 }}>{titulo}</h4>
+                        <span className="ml-auto text-[0.65rem] uppercase tracking-wider font-bold text-white bg-primary/80 rounded px-2 py-0.5">E6 · Emparejar</span>
+                    </div>
+                    {enunciado && <div className="text-[0.95rem] text-gray-700 mb-2">{enunciado}</div>}
+                    <SelectorLenguaje disponibles={langs} activo={langActivo} onCambiar={cambiarLang} />
+                    <p className="text-xs text-gray-500 mb-3">
+                        <i className="fas fa-hand-pointer mr-1"></i>
+                        Haga clic en un elemento de la izquierda y luego en su pareja de la derecha. Para deshacer, haga clic sobre cualquiera de los dos.
+                    </p>
+
+                    <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">{etiquetaIzq}</div>
+                            <div className="space-y-1.5">
+                                {izqAct.map((t, i) => {
+                                    const emparejado = pares[i] !== undefined;
+                                    const color = emparejado ? PALETA_PARES[pares[i] % PALETA_PARES.length] : null;
+                                    let cls = 'border-gray-200 bg-white hover:border-primary/40';
+                                    if (comprobado && emparejado) cls = parOk(i) ? 'border-green-500 bg-green-50' : 'border-red-400 bg-red-50';
+                                    else if (selIzq === i) cls = 'border-secondary bg-amber-50 ring-2 ring-secondary/30';
+                                    return (
+                                        <button key={i} onClick={() => clicIzq(i)} disabled={comprobado}
+                                            aria-pressed={selIzq === i}
+                                            className={`w-full text-left px-3 py-2 rounded-lg border text-[0.88rem] text-gray-700 transition-all flex items-start gap-2 ${cls}`}>
+                                            <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[0.7rem] font-bold text-white mt-0.5"
+                                                style={{ background: color || '#CBD5E1' }}>
+                                                {emparejado ? pares[i] + 1 : i + 1}
+                                            </span>
+                                            <span className="flex-1">{t}</span>
+                                            {comprobado && emparejado && <i className={`fas ${parOk(i) ? 'fa-check text-green-600' : 'fa-xmark text-red-500'} text-xs mt-1`}></i>}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">{etiquetaDer}</div>
+                            <div className="space-y-1.5">
+                                {derecha.map((t, j) => {
+                                    const usada = derUsada(j);
+                                    const color = usada ? PALETA_PARES[j % PALETA_PARES.length] : null;
+                                    let cls = 'border-gray-200 bg-white hover:border-primary/40';
+                                    if (usada) cls = 'border-gray-300 bg-gray-50';
+                                    if (comprobado && usada) {
+                                        const i = Number(izqDe(j));
+                                        cls = parOk(i) ? 'border-green-500 bg-green-50' : 'border-red-400 bg-red-50';
+                                    }
+                                    return (
+                                        <button key={j} onClick={() => clicDer(j)} disabled={comprobado}
+                                            className={`w-full text-left px-3 py-2 rounded-lg border text-[0.88rem] text-gray-700 transition-all flex items-start gap-2 ${cls}`}>
+                                            <span className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-[0.7rem] font-bold text-white mt-0.5"
+                                                style={{ background: color || '#CBD5E1' }}>
+                                                {String.fromCharCode(65 + j)}
+                                            </span>
+                                            <span className="flex-1">{t}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="mt-3 flex items-center gap-3 flex-wrap">
+                        {!comprobado
+                            ? <button onClick={() => completo && setComprobado(true)} disabled={!completo}
+                                className="text-sm font-bold px-4 py-1.5 rounded-full text-white lp-gradient disabled:opacity-40">
+                                <i className="fas fa-check-double mr-1"></i>Comprobar ({Object.keys(pares).length}/{izqAct.length})
+                            </button>
+                            : <>
+                                <button onClick={() => { setComprobado(false); setPares({}); setSelIzq(null); }}
+                                    className="text-sm font-bold px-4 py-1.5 rounded-full border border-primary text-primary hover:bg-primary/5">
+                                    <i className="fas fa-rotate-right mr-1"></i>Reintentar
+                                </button>
+                                <span className={`text-sm font-bold ${todoOk ? 'text-green-600' : 'text-red-500'}`}>
+                                    <i className={`fas ${todoOk ? 'fa-circle-check' : 'fa-circle-xmark'} mr-1`}></i>
+                                    {aciertos} de {izqAct.length} correctos
+                                </span>
+                            </>}
+                    </div>
+                    {comprobado && !todoOk && (
+                        <div className="mt-3 animate-fade-in">
+                            <Box type="tip" label="Emparejamiento correcto">
+                                <ul className="text-sm" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                                    {izqAct.map((t, i) => (
+                                        <li key={i} className="mb-1">
+                                            <strong>{i + 1}</strong> → <strong>{String.fromCharCode(65 + solucion[i])}</strong>
+                                            <span className="text-gray-500"> · {derecha[solucion[i]]}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </Box>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        /* === LP-CORE FIN === */
+
+        /* ============================================================
+           CONFIGURACIÓN DE LA ASIGNATURA
+           Este archivo es el COMPANION del estudiante. El documento
+           normativo es el formato institucional USTA; lo marcado como
+           `pendiente` debe tomarse de allí y no inventarse aquí.
+        ============================================================ */
+        /* ============================================================
+           CONFIG — Taller del Corte I
+        ============================================================ */
+        const CONFIG = {
+            asignatura: 'Python para Desarrollo de APIs e Inteligencia Artificial',
+            titulo: 'Taller del Corte I — «Riesgo API v0»',
+            codigo: '28549',
+            programa: 'Pregrado en Estadística',
+            facultad: 'Universidad Santo Tomás',
+            periodo: '2026-II',
+            creditos: 4,
+            semanas: 16,
+            docente: 'Javier Mauricio Sierra',
+            correoDocente: 'javiersierra@usta.edu.co',
+            storageKey: 'taller-corte1-usta-2026ii',
+            ra: 'Módulos 1 a 5',
+            horas: 16,
+            stack: 'FastAPI · Pydantic · scikit-learn · pytest',
+            // Lo que el App pinta en la portada y el pie. En la plantilla venían
+            // incrustados con la marca del syllabus; aquí salen de CONFIG.
+            subtitulo: 'Taller del Corte I · 2026-II · Módulos 1 a 5',
+            lema: 'Diagnosticar, refactorizar, medir y defender un servicio que ya funciona mal.',
+            chips: ['Diagnóstico', 'Pydantic', 'POO', 'HTTP', 'sync/async', 'Auditar la IA'],
+        };
+
+        const PESO_CORTE = 60;
+        const PESO_DEFINITIVA = 18;
+        const AUTO = 68;
+        const MANUAL = 100 - AUTO;
+
+        const CRITERIOS = [
+            ['C1', 'Entorno reproducible', 'M1', 8, 'Versiones fijadas; pip install limpio en venv nuevo; sin secretos versionados; .gitignore correcto'],
+            ['C2', 'Higiene de Git y trazabilidad', 'M1', 7, 'Un autor por integrante con ≥ 2 commits sustantivos cada uno; mensajes que describen el cambio'],
+            ['C3', 'Diagnóstico', 'Parte A', 15, 'Todos los defectos hallados, con causa, cita real al material y evidencia reproducible sobre el SHA que citan'],
+            ['C4', 'Contratos HTTP', 'M2 · M4', 12, 'Verbos correctos; 200/404/422; el error viaja en el estado; respuesta JSON, nunca pickle'],
+            ['C5', 'Modelado del dominio con POO', 'M3', 12, 'Dominio en clases con responsabilidad clara; sin estado mutable de clase; la lógica fuera de las rutas'],
+            ['C6', 'Validación declarativa', 'M4', 12, 'Entradas y salidas en BaseModel; restricciones en Field; ≥ 1 validador; ValidationError → 422'],
+            ['C7', 'Arquitectura del servicio', 'M5', 10, 'Modelo cargado al inicio; /health; arranque de producción sin --reload; la batería llega intacta'],
+            ['C8', 'Decisión sync/async con evidencia', 'Parte C', 10, 'Los cuatro clasificados; MEDICIONES.csv completo; la interpretación explica SUS tiempos'],
+            ['C9', 'Auditoría de la propuesta de IA', 'Parte D', 10, 'Los 3 defectos identificados; comprobación ejecutable; corrección que funciona'],
+            ['C10', 'Bitácora de IA', 'Parte E', 4, 'Rechazos argumentados y localizables, no solo prompts aceptados'],
+        ];
+
+        const INDIVIDUAL = [
+            ['I1', 'Sustentación dirigida', 50, 'sábado 5 de septiembre'],
+            ['I2', 'Control presencial de transferencia, sin IA', 30, 'sábado 29 de agosto'],
+            ['I3', 'Contribución trazable al repositorio', 20, 'git log del commit congelado'],
+        ];
+
+        const RUTAS = [
+            ['POST', '/score', '200 con la puntuación · 422 si la entrada es inválida'],
+            ['GET', '/historial', '200'],
+            ['GET', '/siniestros/{id}', '200 · 404 si no existe'],
+            ['GET', '/exportar', '200 en JSON'],
+            ['GET', '/health', '200 · hay que crearlo'],
+            ['GET', '/ping · /consulta-archivo · /servicio-externo · /calculo-pesado', '200'],
+        ];
+
+        const RESTRICCIONES = [
+            ['B1', 'El entorno es reproducible: requirements.txt con versiones fijadas, sin secretos versionados, .gitignore correcto', 'M1'],
+            ['B2', 'Los códigos de estado son correctos y el error viaja en el estado, no en el cuerpo con 200', 'M2'],
+            ['B3', 'Nada se serializa con pickle hacia el cliente', 'M2'],
+            ['B4', 'El dominio vive en clases, no en funciones sueltas con estado global', 'M3'],
+            ['B5', 'Todas las entradas y salidas se declaran con BaseModel; restricciones con Field; al menos un validador; ValidationError → 422', 'M4'],
+            ['B6', 'El modelo se carga al iniciar el servicio, no dentro del handler', 'M5'],
+            ['B7', 'Existe un endpoint /health que responde 200', 'M5'],
+            ['B8', 'El arranque documentado es de producción: uvicorn sin --reload y con --workers', 'M5'],
+            ['B9', 'Ningún decorador propio oculta la identidad de la función que envuelve, ni captura excepciones para devolver None', 'M1'],
+        ];
+
+        const PERFILES = [
+            ['/consulta-archivo', 'Lee un archivo del disco'],
+            ['/calculo-pesado', 'Cálculo numérico intensivo en CPU'],
+            ['/servicio-externo', 'Llama a otro servicio HTTP (simulado con latencia)'],
+            ['/ping', 'Devuelve una constante'],
+        ];
+
+        const Tabla = ({ cols, filas, anchos = [] }) => (
+            <div className="overflow-x-auto my-4">
+                <table className="w-full text-sm bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                    <thead className="lp-gradient text-white">
+                        <tr>{cols.map((c, i) => (
+                            <th key={i} className={`text-left px-4 py-2.5 font-semibold ${anchos[i] || ''}`}>{c}</th>
+                        ))}</tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                        {filas.map((f, i) => (
+                            <tr key={i} className={i % 2 ? 'bg-gray-50/60' : ''}>
+                                {f.map((c, j) => <td key={j} className="px-4 py-2.5 align-top break-words">{c}</td>)}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
+
+        const Dato = ({ valor, etiqueta, nota }) => (
+            <div className="flex-1 min-w-[9rem] bg-white rounded-xl border border-gray-200 shadow-sm p-4 text-center">
+                <div className="text-3xl font-extrabold text-primary leading-none">{valor}</div>
+                <div className="text-xs font-semibold text-navy mt-1.5 uppercase tracking-wide">{etiqueta}</div>
+                {nota && <div className="text-[11px] text-gray-500 mt-1 leading-snug">{nota}</div>}
+            </div>
+        );
+
+        /* ============================================================
+           SECCIÓN 1 — ENCUADRE Y REGLAS
+        ============================================================ */
+        const EncuadreSection = () => (
+            <div>
+                <Motivacion icon="fa-triangle-exclamation"
+                    gancho="Les entregamos un servicio que funciona. Ese es el problema.">
+                    <code>riesgo-api-v0</code> arranca, responde y hace lo que dice su README. También arrastra una
+                    colección de decisiones equivocadas, todas del tipo que este curso lleva cinco semanas enseñando a
+                    no tomar. Ninguna impide que corra: por eso hay que buscarlas.
+                </Motivacion>
+
+                <div className="flex flex-wrap gap-3 my-6">
+                    <Dato valor={`${PESO_CORTE} %`} etiqueta="del Corte I" nota={`${PESO_DEFINITIVA} % de la definitiva`} />
+                    <Dato valor="3" etiqueta="por grupo" nota="máximo" />
+                    <Dato valor="2" etiqueta="semanas" nota="22 ago → 4 sep" />
+                    <Dato valor="12" etiqueta="minutos" nota="de sustentación" />
+                </div>
+
+                <SectionHeader title="Lo que se evalúa, y lo que no" icon={Icons.Award} />
+                <Tabla cols={['Sí se evalúa', 'No se evalúa']} filas={[
+                    ['Que sepan nombrar lo que ven y por qué está mal', 'Que el código sea largo'],
+                    ['Que la decisión técnica esté justificada y medida', 'Que hayan añadido funcionalidades extra'],
+                    ['Que sepan comprobar si algo funciona', 'Que el servicio tenga interfaz gráfica'],
+                    ['Que cada integrante responda por el repositorio', 'La elegancia del formateo'],
+                ]} />
+                <p className="text-gray-700 leading-relaxed mb-4">
+                    Cualquier cosa que añadan más allá de lo pedido no suma puntos y sí ocupa el tiempo de la defensa.
+                    La consigna es <strong>hacer lo pedido y saber por qué</strong>.
+                </p>
+
+                <SectionHeader title="La IA está permitida — y es parte de lo evaluado" icon={Icons.Cpu} />
+                <p className="text-gray-700 leading-relaxed mb-3">
+                    Pueden usar cualquier asistente, sin restricción y para cualquier parte. A cambio, dos obligaciones:
+                </p>
+                <Pipeline steps={[
+                    { num: 1, title: 'Bitácora obligatoria', desc: 'Prompts, qué aceptaron y —esto es lo que se califica— qué rechazaron y con qué argumento' },
+                    { num: 2, title: 'La Parte D audita a la IA', desc: 'Se les entrega código generado por IA que parece correcto y no lo es. Encontrarlo es el ejercicio' },
+                ]} />
+                <Box type="danger" label="Bitácora ausente o falsificada: −15 puntos">
+                    El taller está diseñado sabiendo que van a usar IA. Las partes A y B las resolverán más rápido con
+                    ayuda, y está bien: ese tiempo es para las partes C, D y E, donde la IA no puede medir en su
+                    máquina, no audita bien su propio código, y no se sienta en la sustentación.
+                </Box>
+
+                <SectionHeader title="Entrega" icon={Icons.GitBranch} />
+                <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed mb-4">
+                    <li><strong>Un repositorio en GitHub por grupo</strong>, con historia real de commits. No se reciben
+                        <code>.zip</code>: el criterio C2 califica <code>git log</code> por autor.</li>
+                    <li>El enlace se entrega por Moodle antes del <strong>viernes 4 de septiembre, 23:59</strong>. Se
+                        registra el SHA del último commit a esa hora; <strong>lo que se califica es ese commit</strong>.</li>
+                    <li>El repositorio debe arrancar siguiendo <strong>su propio README</strong>, en una máquina limpia.
+                        Si no arranca, la nota tiene tope de 60.</li>
+                </ul>
+
+                <SectionHeader title="Grupos y responsabilidad individual" icon={Icons.Layers} />
+                <p className="text-gray-700 leading-relaxed mb-3">
+                    Máximo 3. Son 32 estudiantes: habrá diez grupos de tres y uno de dos. Esta agrupación
+                    <strong> es independiente de los equipos de dos del proyecto integrador</strong> y no crea equipo de
+                    proyecto. Repartan el trabajo como quieran, pero <strong>cualquier integrante puede ser preguntado
+                    por cualquier línea del repositorio</strong>.
+                </p>
+                <Box type="warn" label="Control presencial — sábado 29 de agosto, 10 minutos, sin IA">
+                    Individual, papel y lápiz. A cada estudiante se le entrega <strong>un endpoint que no ha visto</strong>,
+                    de cinco a diez líneas, y escribe: clasificación, decisión, <strong>justificación</strong> y
+                    <strong> predicción</strong> de qué vería al medirlo con concurrencia 1 y 20. No se pide reproducir
+                    nada de lo que entregaron: se pide llevar el criterio de la Parte C a un caso nuevo. Si hicieron la
+                    Parte C ustedes, esto les sale en cinco minutos.
+                </Box>
+            </div>
+        );
+
+        /* ============================================================
+           SECCIÓN 2 — EL ARTEFACTO Y SUS CONTRATOS
+        ============================================================ */
+        const ArtefactoSection = () => (
+            <div>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                    Un microservicio de puntuación de siniestros con ocho endpoints, un modelo serializado de juguete,
+                    un dataset sintético y un README. <strong>Arranca.</strong> Ninguno de los defectos impide que corra.
+                </p>
+                <CodeBlock lang="shell" title="Punto de partida" plegable={false} code={
+`git clone <url-del-semilla> riesgo-api
+cd riesgo-api
+cat README.md          # léanlo: forma parte del problema`} />
+                <Box type="tip" label="No se dice cuántos defectos hay">
+                    Buscarlos es la Parte A. Las cuatro plantillas de entrega vienen en <code>plantillas/</code> dentro
+                    del propio repositorio: cópienlas a la raíz y rellénenlas. Traen resueltos detalles de formato que
+                    el calificador exige.
+                </Box>
+
+                <SectionHeader title="El contrato de rutas no se cambia" icon={Icons.Workflow} />
+                <p className="text-gray-700 leading-relaxed mb-2">
+                    Estas son las rutas y los verbos que el calificador va a golpear. Pueden añadir rutas si lo
+                    justifican; no pueden quitar ni renombrar estas.
+                </p>
+                <Tabla cols={['Verbo', 'Ruta', 'Devuelve']} anchos={['w-20', 'w-64', '']}
+                    filas={RUTAS.map(([v, r, d]) => [
+                        <span className="font-mono font-bold text-secondary">{v}</span>,
+                        <span className="font-mono">{r}</span>, d])} />
+
+                <SectionHeader title="El contrato de dominio, tampoco" icon={Icons.Binary} />
+                <p className="text-gray-700 leading-relaxed mb-3">
+                    La batería construye objetos directamente, así que dos nombres quedan fijados:
+                </p>
+                <ul className="list-disc pl-6 space-y-2 text-gray-700 leading-relaxed mb-3">
+                    <li><code>dominio.EvaluadorRiesgo</code> debe poder construirse <strong>solo con la póliza</strong>:
+                        <code> EvaluadorRiesgo("POL-2026-0413")</code>. Cualquier colaborador —el modelo, un
+                        repositorio— va como argumento <strong>opcional</strong>.</li>
+                    <li>El método que registra una evaluación se sigue llamando <code>anotar(puntaje)</code>.</li>
+                </ul>
+                <p className="text-gray-700 leading-relaxed mb-4">
+                    Dentro de esos dos límites el modelado es suyo: dónde vive el historial, qué clases hay y qué
+                    colabora con qué es justo lo que califica C5.
+                </p>
+
+                <SectionHeader title="La batería visible" icon={Icons.Bug} />
+                <p className="text-gray-700 leading-relaxed mb-3">
+                    En <code>tests/test_contrato.py</code> hay once tests. Diez están <strong>en rojo</strong> sobre el
+                    repositorio tal como se entrega, y <strong>todos deben pasar al terminar</strong>. Que pasen es el
+                    mínimo, no la meta: hay criterios de rúbrica que los tests no ven.
+                </p>
+                <Box type="danger" label="No modifiquen ni borren esos tests">
+                    Se comprueba el SHA-256 del archivo contra el del semilla. Sin esa comprobación, «que pasen todos
+                    los tests» se cumpliría con <code>git rm tests/</code>.
+                </Box>
+            </div>
+        );
+
+        /* ============================================================
+           SECCIÓN 3 — LAS CINCO PARTES
+        ============================================================ */
+        const PartesSection = () => (
+            <div>
+                <Accordion items={[
+                    {
+                        titulo: 'Parte A · Diagnóstico',
+                        contenido: (
+                            <div>
+                                <p className="mb-3">Encuentren los defectos y documéntenlos en <code>HALLAZGOS.md</code>,
+                                    una fila por defecto, con las ocho columnas de la plantilla.</p>
+                                <Tabla cols={['Regla', 'Por qué']} filas={[
+                                    ['La cita «Módulo · Sección» debe existir', 'Se verifica contra el menú lateral del material. Una cita inventada anula la fila'],
+                                    ['«SHA donde se observa» es el commit donde el defecto todavía vive', 'Normalmente v0-semilla. La Parte B lo repara: si declaran el commit final, el comando no reproduce nada'],
+                                    ['El comando de evidencia se ejecuta', 'Escríbanlo contra localhost:8000; el calificador sustituye el puerto'],
+                                    ['La salida es literal, copiada de su terminal', 'Se compara con la salida real. Una salida inventada se detecta'],
+                                    ['Entre 6 y 12 hallazgos', 'Una fila que no sea un defecto real resta la mitad de lo que suma una correcta'],
+                                ]} />
+                                <Box type="warn" label="Tuberías dentro de una celda">
+                                    Si el comando lleva una tubería —y varios la llevarán, por <code>grep</code> o
+                                    <code> head</code>— escríbanla escapada con barra invertida. Sin escapar, Markdown
+                                    la lee como separador de columna y su fila pasa a tener nueve campos.
+                                </Box>
+                            </div>
+                        )
+                    },
+                    {
+                        titulo: 'Parte B · Refactor con restricciones',
+                        contenido: (
+                            <div>
+                                <p className="mb-3">Arreglen el servicio. Las restricciones no son sugerencias: el
+                                    calificador las comprueba una por una.</p>
+                                <Tabla cols={['#', 'Restricción', 'Módulo']} anchos={['w-12', '', 'w-20']}
+                                    filas={RESTRICCIONES.map(([n, t, m]) => [
+                                        <span className="font-mono font-bold text-secondary">{n}</span>, t,
+                                        <span className="font-semibold text-navy">{m}</span>])} />
+                            </div>
+                        )
+                    },
+                    {
+                        titulo: 'Parte C · Decisión sync/async, medida',
+                        contenido: (
+                            <div>
+                                <p className="mb-3">El servicio expone cuatro endpoints con perfiles distintos:</p>
+                                <Tabla cols={['Endpoint', 'Qué hace']} anchos={['w-56', '']}
+                                    filas={PERFILES.map(([e, d]) => [<span className="font-mono">{e}</span>, d])} />
+                                <p className="mb-3">Para cada uno: clasifíquenlo, decidan cómo debe declararse el
+                                    handler, y <strong>demuéstrenlo midiendo</strong>. Los dos vocabularios son cerrados
+                                    —se parsean, escríbanlos exactamente así:</p>
+                                <Tabla cols={['Columna', 'Valores admitidos']} anchos={['w-40', '']} filas={[
+                                    [<code>clasificacion</code>, <span className="font-mono">IO-bound · CPU-bound · trivial</span>],
+                                    [<code>decision</code>, <span className="font-mono">def · async def · async def + executor</span>],
+                                ]} />
+                                <p className="mb-3">Cada endpoint con <strong>dos condiciones</strong>: concurrencia 1 y
+                                    concurrencia 20, 50 peticiones. El semilla trae <code>medir.py</code> funcionando:
+                                    lanza las peticiones, calienta la caché, calcula los percentiles y escribe el CSV.
+                                    Lo que no hace —y es lo que se califica— es rellenar <code>clasificacion</code> y
+                                    <code> decision</code>, ni explicar los números.</p>
+                                <Box type="danger" label="La regla falla en más de un caso, y de dos maneras distintas">
+                                    En uno, seguirla da peor rendimiento. En otro, el código la incumple y
+                                    <strong> la medición dice que da exactamente igual</strong>. Los dos cuentan, y el
+                                    segundo solo se responde bien midiendo primero y decidiendo después.
+                                </Box>
+                                <p className="mb-1">Y un párrafo por endpoint en <code>HALLAZGOS.md</code> que explique
+                                    <strong> los tiempos que obtuvieron ustedes</strong>. Se califica la coherencia entre
+                                    la clasificación, la decisión que quedó en el código y la explicación de los
+                                    números. No se califica el número.</p>
+                            </div>
+                        )
+                    },
+                    {
+                        titulo: 'Parte D · Auditoría de la propuesta de IA',
+                        contenido: (
+                            <div>
+                                <p className="mb-3">En el repositorio hay un archivo <code>ia_propuesta.py</code>: código
+                                    generado por un asistente para resolver parte de este mismo taller. Importa y
+                                    ejecuta sin errores de sintaxis, está comentado, es legible y
+                                    <strong> tiene tres defectos de comportamiento</strong>.</p>
+                                <p className="mb-3">Entregan <code>DICTAMEN_IA.md</code> con cuatro secciones por
+                                    defecto —qué está mal, por qué (citando módulo y sección), cómo lo comprobaron con
+                                    su salida literal, y la corrección— más
+                                    <code> ia_propuesta_corregida.py</code>.</p>
+                                <Box type="tip" label="El peso está en «cómo lo comprobamos»">
+                                    Afirmar que algo está mal no vale; demostrarlo, sí. Conserven los nombres y las
+                                    firmas públicas: la corrección se prueba contra ese contrato.
+                                    <code> ia_propuesta.py</code> no forma parte del servicio: no lo integren.
+                                </Box>
+                            </div>
+                        )
+                    },
+                    {
+                        titulo: 'Parte E · Bitácora y sustentación',
+                        contenido: (
+                            <div>
+                                <p className="mb-3"><code>BITACORA_IA.md</code> con tres secciones obligatorias:
+                                    <code> ## Prompts</code>, <code>## Aceptado</code> y <code>## Rechazado</code>. En la
+                                    última va lo que se califica: qué les propuso la IA que no aceptaron, y por qué. Es
+                                    el único apartado con peso propio.</p>
+                                <Pipeline steps={[
+                                    { num: 1, title: '4 min · demo en vivo', desc: 'Levantan el servicio y le pegan con curl: un caso válido, uno inválido que debe dar 422, y /health. Sin diapositivas' },
+                                    { num: 2, title: '8 min · preguntas dirigidas', desc: 'A un integrante concreto, sobre una línea concreta de SU repositorio. Todos deben poder responder por todo' },
+                                ]} />
+                            </div>
+                        )
+                    },
+                ]} />
+            </div>
+        );
+
+        /* ============================================================
+           SECCIÓN 4 — EVALUACIÓN
+        ============================================================ */
+        const EvaluacionSection = () => {
+            const total = CRITERIOS.reduce((a, c) => a + c[3], 0);
+            const totalInd = INDIVIDUAL.reduce((a, c) => a + c[2], 0);
+            return (
+                <div>
+                    <div className="flex flex-wrap gap-3 mb-6">
+                        <Dato valor={total} etiqueta="puntos grupales" nota="10 criterios" />
+                        <Dato valor={AUTO} etiqueta="los decide un script" nota="con su evidencia" />
+                        <Dato valor={MANUAL} etiqueta="los lee el docente" nota="lo cualitativo" />
+                        <Dato valor={totalInd} etiqueta="puntos individuales" nota="I1 · I2 · I3" />
+                    </div>
+
+                    <Box type="info" label="Cómo se combinan">
+                        <p className="mb-2">La nota final de cada estudiante es:</p>
+                        <div className="text-center font-mono text-base font-bold text-secondary my-3">
+                            nota = min( 0,70 × grupal + 0,30 × individual , individual + 15 )
+                        </div>
+                        <p>Un buen repositorio no compensa no entender lo que hay dentro. Si su nota individual es 40,
+                        la final no pasa de 55 por bueno que sea el trabajo del grupo. Si ambas van parejas, la cota no
+                        se activa y no cambia nada.</p>
+                    </Box>
+
+                    <SectionHeader title="Rúbrica del grupo" icon={Icons.Calculator} />
+                    <p className="text-gray-700 leading-relaxed mb-2">
+                        Escala por criterio: <strong>4</strong> Excelente · <strong>3</strong> Competente ·
+                        <strong> 2</strong> En desarrollo · <strong>1</strong> Insuficiente · <strong>0</strong> Ausente
+                        o no verificable.
+                    </p>
+                    <Tabla cols={['#', 'Criterio', 'Cubre', 'Pts', 'Nivel 4 se ve así']}
+                        anchos={['w-12', 'w-52', 'w-20', 'w-12', '']}
+                        filas={CRITERIOS.map(([id, t, m, p, n4]) => [
+                            <span className="font-mono font-bold text-secondary">{id}</span>,
+                            <strong className="text-navy">{t}</strong>,
+                            <span className="text-xs font-semibold text-gray-500">{m}</span>,
+                            <span className="font-bold">{p}</span>, n4])} />
+
+                    <SectionHeader title="Nota individual" icon={Icons.Award} />
+                    <Tabla cols={['#', 'Componente', 'Pts', 'Cuándo']} anchos={['w-12', '', 'w-12', 'w-52']}
+                        filas={INDIVIDUAL.map(([id, t, p, c]) => [
+                            <span className="font-mono font-bold text-secondary">{id}</span>, t,
+                            <span className="font-bold">{p}</span>,
+                            <span className="text-gray-500">{c}</span>])} />
+
+                    <SectionHeader title="Penalizaciones" icon={Icons.Bug} />
+                    <Tabla cols={['Situación', 'Consecuencia']} filas={[
+                        ['Bitácora de IA ausente o falsificada', <strong className="text-red-700">−15 puntos</strong>],
+                        ['El repositorio no arranca siguiendo su propio README', <strong className="text-red-700">tope de 60</strong>],
+                        ['Entrega posterior al congelado', <strong className="text-red-700">no se recibe</strong>],
+                    ]} />
+                </div>
+            );
+        };
+
+        /* ============================================================
+           SECCIÓN 5 — QUÉ SE ENTREGA Y CÓMO SE CALIFICA
+        ============================================================ */
+        const EntregaSection = () => (
+            <div>
+                <SectionHeader title="Lista de verificación" icon={Icons.Table} />
+                <p className="text-gray-700 leading-relaxed mb-3">En la raíz del repositorio:</p>
+                <div className="grid sm:grid-cols-2 gap-2 my-4">
+                    {[
+                        ['El servicio corregido', 'arranca siguiendo su propio README'],
+                        ['HALLAZGOS.md', 'tabla de la Parte A + sección «Parte C»'],
+                        ['MEDICIONES.csv', '4 endpoints × 2 condiciones = 8 filas'],
+                        ['medir.py', 'con las modificaciones que hayan necesitado'],
+                        ['DICTAMEN_IA.md', 'los tres defectos, con su comprobación'],
+                        ['ia_propuesta_corregida.py', 'conservando las firmas públicas'],
+                        ['BITACORA_IA.md', 'Prompts · Aceptado · Rechazado'],
+                        ['requirements.txt', 'con versiones fijadas'],
+                        ['README.md', 'actualizado con el arranque real'],
+                    ].map(([f, d], i) => (
+                        <div key={i} className="flex items-start gap-2.5 bg-white border border-gray-200 rounded-lg px-3 py-2.5 shadow-sm">
+                            <i className="fas fa-square-check text-secondary mt-0.5"></i>
+                            <div>
+                                <div className="font-mono text-sm font-semibold text-navy">{f}</div>
+                                <div className="text-xs text-gray-500 leading-snug">{d}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <SectionHeader title="Cómo se califica" icon={Icons.Cpu} />
+                <p className="text-gray-700 leading-relaxed mb-3">
+                    {AUTO} de los 100 puntos los resuelve un <strong>calificador automático</strong> que se corre sobre
+                    su repositorio: crea un entorno limpio, instala sus dependencias, corre una batería de tests que
+                    ustedes no ven, levanta su servicio y le pega, analiza la estructura de su código y ejecuta los
+                    comandos de evidencia que declararon sobre el commit que citaron. Los {MANUAL} restantes los lee el
+                    docente.
+                </p>
+                <p className="text-gray-700 leading-relaxed mb-3">
+                    Reciben un reporte con <strong>la nota de cada criterio y la evidencia que la sustenta</strong>: el
+                    comando ejecutado y su salida literal. Es auditable: si creen que un check está mal, se revisa
+                    contra esa evidencia.
+                </p>
+                <Box type="warn" label="Dos consecuencias prácticas">
+                    <p className="mb-2"><strong>Los formatos son rígidos porque se parsean.</strong> Una tabla torcida
+                    en <code>HALLAZGOS.md</code> no se «entiende igual»: se rechaza indicando la línea. Usen las
+                    plantillas que vienen en el repositorio.</p>
+                    <p><strong>Que el calificador no pueda medir algo no es un aprobado.</strong> Sale marcado como no
+                    verificable y pasa a revisión del docente; si tampoco así puede sustentarse, cuenta 0.</p>
+                </Box>
+            </div>
+        );
+
+        /* ============================================================
+           CURRÍCULO
+        ============================================================ */
+        const curriculum = [
+            { id: 'encuadre', title: 'Encuadre y reglas del juego', icon: 'BookOpen', component: EncuadreSection },
+            { id: 'artefacto', title: 'El artefacto y sus contratos', icon: 'FileCode', component: ArtefactoSection },
+            { id: 'partes', title: 'Las cinco partes', icon: 'Layers', component: PartesSection },
+            { id: 'evaluacion', title: 'Evaluación y rúbrica', icon: 'Calculator', component: EvaluacionSection },
+            { id: 'entrega', title: 'Qué se entrega y cómo se califica', icon: 'Table', component: EntregaSection },
+        ];
+
+        /* ============================================================
+           APP — adaptado de la plantilla LP-CORE.
+           Cambios respecto de `lp-base.html`: el documento es un
+           syllabus y no un capítulo, así que se habla de SECCIONES y no
+           de lecciones, desaparece el pie de lenguajes del material de
+           Lógica de Programación, y la cabecera identifica la
+           asignatura. `migrar.py` no debe correrse sobre este archivo:
+           reestamparía el App de LPF encima.
+        ============================================================ */
+        const App = () => {
+            const [activeLessonIndex, setActiveLessonIndex] = useState(() => {
+                const saved = parseInt(localStorage.getItem(CONFIG.storageKey), 10);
+                return Number.isInteger(saved) && saved >= 0 ? saved : 0;
+            });
+            const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth >= 1024);
+
+            const safeIndex = Math.min(activeLessonIndex, curriculum.length - 1);
+            const activeLesson = curriculum[safeIndex];
+            const ActiveComponent = activeLesson.component;
+            const progreso = Math.round(((safeIndex + 1) / curriculum.length) * 100);
+
+            useEffect(() => {
+                localStorage.setItem(CONFIG.storageKey, String(safeIndex));
+                typesetMath();
+                const cont = document.getElementById('contenido-scroll');
+                if (cont) cont.scrollTo({ top: 0, behavior: 'smooth' });
+            }, [safeIndex]);
+
+            const irA = (idx) => {
+                setActiveLessonIndex(idx);
+                if (window.innerWidth < 1024) setSidebarOpen(false);
+            };
+
+            return (
+                <div className="flex h-screen overflow-hidden relative">
+                    <button onClick={() => setSidebarOpen(p => !p)}
+                        className="fixed top-4 left-4 z-50 p-2.5 rounded-full shadow-lg text-white transition-all hover:scale-110 lp-gradient"
+                        title={sidebarOpen ? 'Ocultar menú' : 'Mostrar menú'} aria-label={sidebarOpen ? 'Ocultar menú' : 'Mostrar menú'}>
+                        <i className={`fas ${sidebarOpen ? 'fa-times' : 'fa-bars'} text-sm`}></i>
+                    </button>
+
+                    {sidebarOpen && <div className="fixed inset-0 bg-black/20 z-30 lg:hidden" onClick={() => setSidebarOpen(false)} />}
+
+                    <aside className="flex-shrink-0 overflow-y-auto z-40 flex flex-col lp-header"
+                        style={{
+                            width: sidebarOpen ? '18rem' : '0', minWidth: sidebarOpen ? '18rem' : '0',
+                            opacity: sidebarOpen ? 1 : 0, transition: 'width 0.3s ease, min-width 0.3s ease, opacity 0.25s ease',
+                            overflow: sidebarOpen ? 'visible auto' : 'hidden'
+                        }}>
+                        <div className="p-6 pt-16 border-b border-white/10">
+                            <div className="flex items-center gap-3 mb-3">
+                                <img src="Logo_USTA.png" alt="" width="800" height="800"
+                                    className="rounded-lg flex-shrink-0" style={{ width: 38, height: 38, objectFit: 'contain', background: '#ECF2F6', padding: 2 }} />
+                                {/* contraste-ok: el gold va sobre el navy de `lp-header`, no sobre el fondo claro */}
+                                <p className="text-[0.62rem] uppercase tracking-widest text-gold font-bold leading-tight">
+                                    Universidad<br />Santo Tomás
+                                </p>
+                            </div>
+                            <h1 className="text-white font-bold text-base tracking-tight leading-snug">
+                                Python para APIs e IA
+                            </h1>
+                            <p className="text-xs text-white/60 mt-1">
+                                Syllabus · <span className="text-secondary font-semibold">{CONFIG.programa}</span>
+                            </p>
+                        </div>
+
+                        <nav className="p-4 space-y-2 flex-1">
+                            {curriculum.map((lesson, idx) => (
+                                <button key={lesson.id} onClick={() => irA(idx)}
+                                    className={`w-full flex items-start gap-3 px-3 py-3 text-sm rounded-lg transition-all text-left ${safeIndex === idx ? 'text-white shadow-lg lp-gradient' : 'text-white/60 hover:text-white hover:bg-white/10'}`}>
+                                    <span className="flex-shrink-0 mt-0.5" style={{ width: 18, height: 18 }}>{renderIcon(lesson.icon, 18)}</span>
+                                    <span className="font-medium leading-tight break-words">{lesson.title}</span>
+                                </button>
+                            ))}
+                        </nav>
+
+                        <div className="p-4 text-[10px] text-white/40 border-t border-white/10">
+                            <p>{CONFIG.codigo} · {CONFIG.periodo} · {CONFIG.creditos} créditos · {CONFIG.semanas} semanas</p>
+                            <p>{CONFIG.stack}</p>
+                        </div>
+                    </aside>
+
+                    <main className="flex-1 flex flex-col overflow-hidden bg-bg">
+                        <div className="h-1.5 bg-gray-200 flex-shrink-0">
+                            <div className="h-full lp-gradient transition-all duration-500" style={{ width: `${progreso}%` }}></div>
+                        </div>
+
+                        <div id="contenido-scroll" className="flex-1 overflow-y-auto p-6 lg:p-12">
+                            <div className="max-w-4xl mx-auto w-full">
+                                {/* Con la barra cerrada, el botón fijo de menú (x 16–48) se come el
+                                    rótulo, que arranca en x 24. La holgura depende de si la barra está
+                                    abierta y no del punto de corte: un usuario de escritorio que la
+                                    cierra tiene exactamente el mismo solape. */}
+                                <div className={`mb-6 flex items-center justify-between flex-wrap gap-3 ${sidebarOpen ? '' : 'pl-12'}`}>
+                                    <span className="text-xs font-bold tracking-wider text-secondary uppercase">
+                                        Sección {safeIndex + 1} de {curriculum.length}
+                                    </span>
+                                    <div className="flex gap-2">
+                                        <button disabled={safeIndex === 0} onClick={() => setActiveLessonIndex(c => c - 1)}
+                                            className="flex items-center gap-1 px-3 py-2 rounded-full hover:bg-gray-100 disabled:opacity-30 transition-colors text-sm font-medium text-navy">
+                                            {renderIcon('ChevronLeft', 18)} Anterior
+                                        </button>
+                                        <button disabled={safeIndex === curriculum.length - 1} onClick={() => setActiveLessonIndex(c => c + 1)}
+                                            className="flex items-center gap-1 px-3 py-2 rounded-full text-white lp-gradient disabled:opacity-30 transition-colors text-sm font-medium">
+                                            Siguiente {renderIcon('ChevronRight', 18)}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <SectionHeader title={activeLesson.title} icon={Icons[activeLesson.icon]} />
+
+                                {safeIndex === 0 && (
+                                    <div className="mb-8 text-center bg-white p-7 rounded-2xl shadow-sm border border-gray-100">
+                                        <p className="text-xs uppercase tracking-widest text-secondary font-bold mb-2">
+                                            {CONFIG.subtitulo}
+                                        </p>
+                                        <h1 className="text-2xl font-bold text-primary mb-2">{CONFIG.titulo}</h1>
+                                        <p className="text-sm text-gray-500 mt-1">{CONFIG.asignatura}</p>
+                                        <p className="text-gray-600 font-light">
+                                            {CONFIG.lema}
+                                        </p>
+                                        <div className="flex justify-center flex-wrap gap-2 mt-4 text-xs">
+                                            {CONFIG.chips.map(t => (
+                                                <span key={t} className="px-3 py-1 rounded-full bg-primary/10 text-primary">{t}</span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="animate-fade-in" key={activeLesson.id}>
+                                    <ActiveComponent />
+                                </div>
+
+                                <div className="mt-12 flex items-center justify-between gap-3">
+                                    <button disabled={safeIndex === 0} onClick={() => setActiveLessonIndex(c => c - 1)}
+                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-300 bg-white hover:bg-gray-50 disabled:opacity-30 text-sm font-medium text-navy">
+                                        {renderIcon('ChevronLeft', 18)}
+                                        <span className="hidden sm:inline">{safeIndex > 0 ? curriculum[safeIndex - 1].title : 'Inicio'}</span>
+                                        <span className="sm:hidden">Anterior</span>
+                                    </button>
+                                    <button disabled={safeIndex === curriculum.length - 1} onClick={() => setActiveLessonIndex(c => c + 1)}
+                                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-white lp-gradient hover:opacity-90 disabled:opacity-30 text-sm font-medium">
+                                        <span className="hidden sm:inline">{safeIndex < curriculum.length - 1 ? curriculum[safeIndex + 1].title : 'Fin'}</span>
+                                        <span className="sm:hidden">Siguiente</span>
+                                        {renderIcon('ChevronRight', 18)}
+                                    </button>
+                                </div>
+
+                                <footer className="mt-16 pt-8 border-t border-gray-200">
+                                    <div className="lp-header rounded-xl p-6 text-center">
+                                        <p className="text-white font-medium text-sm">
+                                            <strong>{CONFIG.asignatura}</strong>
+                                        </p>
+                                        <p className="text-xs mt-1 text-white/80 italic">
+                                            {CONFIG.lema}
+                                        </p>
+                                        <p className="text-xs mt-2 text-white/70">
+                                            {CONFIG.facultad} · {CONFIG.programa} · {CONFIG.periodo}
+                                        </p>
+                                        <p className="text-xs text-white/70">
+                                            Docente y diseño del material: {CONFIG.docente}
+                                        </p>
+                                        <p className="text-[10px] mt-2 text-white/50">
+                                            Companion del estudiante. El documento normativo es el formato institucional de la asignatura.
+                                        </p>
+                                    </div>
+                                </footer>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+
+</html>
