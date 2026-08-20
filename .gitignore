@@ -50,3 +50,12 @@ cerebro/
 build/
 _piloto_*.html
 _migrado_*.html
+
+# Taller Corte I — material docente. NUNCA se publica: static.yml sube path:'.'
+# a GitHub Pages en cada push a main, y .nojekyll desactiva todo filtrado.
+taller_corte1/docente/
+taller_corte1/rubrica.json
+scripts/taller_corte1/
+PLAN_TALLER_CORTE_I.md
+INFORME_AUDITORIA_TALLER.md
+taller_corte1/build/
