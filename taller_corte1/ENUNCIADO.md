@@ -3,7 +3,7 @@
 **Python para Desarrollo de APIs e IA** · USTA · Estadística · 2026-II · Código 28549
 **Cubre:** módulos 1 a 5 · **Peso:** 60 % del Corte I (18 % de la nota definitiva)
 **Grupos:** máximo 3 personas · **Publicado:** sáb 22 ago 2026
-**Congelado del repositorio:** vie 4 sep 2026, 23:59 · **Sustentación:** sáb 5 sep 2026
+**Congelado del repositorio:** vie 4 sep 2026, 23:59 · **Sustentación:** sesión de la primera semana de septiembre
 
 ---
 
@@ -69,7 +69,7 @@ independiente de los equipos de dos del proyecto integrador** y no crea equipo d
 Repartan el trabajo como quieran, pero **cualquier integrante puede ser preguntado por
 cualquier línea del repositorio**. El 30 % de la nota es individual, y se mide dos veces:
 
-**Control presencial — sesión del 29 de agosto, 10 minutos, individual, sin IA y sin
+**Control presencial — segunda sesión de la última semana de agosto, 10 minutos, individual, sin IA y sin
 consultar a los compañeros.** Papel y lápiz; no hace falta computador.
 
 A cada estudiante se le entrega **un endpoint que no ha visto**, de cinco a diez líneas, y
@@ -306,8 +306,8 @@ nota individual repartida así:
 
 | # | Componente individual | Pts |
 |---|---|---:|
-| I1 | Sustentación dirigida del 5 de septiembre | 50 |
-| I2 | Control presencial del 29 de agosto: un endpoint nuevo, sin IA | 30 |
+| I1 | Sustentación dirigida, sesión de la primera semana de septiembre | 50 |
+| I2 | Control presencial, segunda sesión de la última semana de agosto: un endpoint nuevo, sin IA | 30 |
 | I3 | Contribución trazable al repositorio (`git log` propio) | 20 |
 
 Escala por criterio: **4 Excelente (100 %) · 3 Competente (75 %) · 2 En desarrollo (50 %) ·
