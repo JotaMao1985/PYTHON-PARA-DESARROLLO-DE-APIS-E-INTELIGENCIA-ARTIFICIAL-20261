@@ -437,24 +437,46 @@ nadie ha remontado— pero entonces conviene que el comentario que ya lleva el a
 
 ---
 
-## 3 bis. Lo que T5 dejó confirmado y sin arreglar
+## 3 bis. Lo que T5 dejó confirmado, y cómo se arregló
 
 El plan pedía comprobar si los bloques que `verificar_codigo.py` marca rotos en el módulo 6 son
 un defecto real o un artefacto del extractor. **Son un defecto real, y el estudiante lo ve.**
 
-Nueve bloques del módulo 6 —los de formato heredado, `<pre><code>{`…`}</code></pre>`, no los
-`CodeBlock` de LP-CORE— se publican con **16 espacios de más en todas las líneas menos la
+Diez bloques del módulo 6 —los de formato heredado, `<pre><code>{`…`}</code></pre>`, no los
+`CodeBlock` de LP-CORE— se publicaban con **16 espacios de más en todas las líneas menos la
 primera**. Medido en el DOM, no en el archivo: en la lección 2, bajo un `from flask import …`
-a ras de margen, la línea siguiente se pinta como `                app = Flask(__name__)`. Lo
-que el estudiante copia con el botón «Copiar» no corre: da `IndentationError`.
+a ras de margen, la línea siguiente se pintaba como `                app = Flask(__name__)`. Lo
+que el estudiante copiaba con el botón «Copiar» no corría: daba `IndentationError`. Ocho son de
+Python —tres de «2. Arquitectura» y cinco de «4. Routing y CRUD»— y los otros dos son de
+terminal, que sólo salían feos. (Esta sección decía nueve: eran diez.)
 
-Es el defecto que `indentar_jsx` arregló en `montar.py` y que el módulo 6 nunca recibió, porque
-nunca se remontó. Los `CodeBlock` del mismo módulo están bien (sangría extra 0), así que el
-defecto es exactamente de los bloques heredados.
+**No era el defecto que `indentar_jsx` arregla.** Esta sección lo daba por supuesto y es falso.
+La guarda de `indentar_jsx` es `code={`…`}`, la forma de `CodeBlock`; la forma heredada
+`<pre …><code>{`…`}</code></pre>` no está protegida, y `textwrap.indent` le mete los dieciséis
+espacios igual. Comprobado montando el módulo 6 a un destino temporal con el `montar.py` de
+esta rama, que sí trae `indentar_jsx`: los doce bloques crudos salían otra vez con sangría 16.
+Para esta forma **el remontaje nunca fue el arreglo**. Los dieciséis espacios tampoco están en
+el heredado, donde el código es correcto: los pone el montaje.
 
-**No se arregló aquí, a propósito.** Es ajeno a este plan, toca nueve bloques de cuatro
-lecciones y tiene dos salidas —convertir esos `<pre>` a `CodeBlock`, o remontar el módulo con
-el arreglo de sangría— que son decisiones de otro tamaño. Merece su propio plan.
+**Arreglado el 2026-09-09.** De las dos salidas que planteaba esta sección, la del remontaje no
+existía, así que se tomó la otra: los diez pasan a `CodeBlock` de LP-CORE —como los otros ocho
+del archivo— con el `code` tomado del heredado, donde ya estaba bien, en vez de desangrado a
+ojo. La misma edición va en `heredado/`, y eso es lo que hace que un remontaje futuro reproduzca
+el arreglo en lugar de deshacerlo: montando desde el heredado corregido salen dieciocho
+`CodeBlock` con sangría extra cero. En ocho se quitó además el `title`, porque la cabecera
+repetía el encabezado que ya está justo encima.
+
+Commits `d3e54b2` y `a840fee`, fusionados en `ab829ff`. Verificado sobre el archivo ya fusionado
+en la página servida: veinte bloques en pantalla, **ninguno con sangría de más**; diecinueve
+`CodeBlock`, y los diecinueve copian a ras de margen —leyendo el argumento real de
+`clipboard.writeText`, no el DOM—; queda un solo `<pre>` crudo, el `uvicorn main:app --reload`
+de una línea, que es correcto. Consola limpia.
+
+**Un efecto colateral que merece mirarse aparte.** Al desaparecer los `<pre>` crudos con código,
+`extraer_codigo.py` —que sólo entiende esa forma— ya no extrae **ningún** bloque de Python de
+los trece módulos, y `verificar_codigo.py` da verde sobre cero. Era la última cosa que ese
+guion sabía leer. Enseñarle `CodeBlock` deja de ser opcional; mientras tanto, la comprobación
+de sintaxis real es el barrido propio con `ast.parse`.
 
 ---
 
@@ -465,7 +487,7 @@ el arreglo de sangría— que son decisiones de otro tamaño. Merece su propio p
 | R1 | `storageKey` guarda el **índice** de la lección. Al insertar una sección, quien iba por la 7 aterriza en otra | Medio | Cambiar la clave a `usta_2026i_apis_cap05_v2`: la reanudación vuelve a la primera lección en vez de a una equivocada |
 | R2 | Babel compila en el navegador: un JSX mal cerrado deja la **página en blanco**, sin aviso en el archivo | Alto | Abrir la página tras cada tarea y leer la consola. Nunca dar por buena una edición sin verla renderizada |
 | R3 | Los literales de plantilla se comen la barra invertida antes de llegar a la pantalla — es el bloqueante B1 documentado en `PLAN_MODULO_4_PYDANTIC.md`. Afecta a `venv\Scripts\activate` y a cualquier ruta de Windows | Alto | Doblar la barra (`venv\\Scripts\\activate`), como ya hace el módulo 6, y **verificar en el DOM**, no en el archivo |
-| R4 | El módulo 6 tiene un problema de sangría conocido que impide remontarlo con `montar.py` | Alto | T5 es una **edición manual** del HTML. No ejecutar el remontaje sobre el módulo 6 |
+| R4 | Remontar el módulo 6 borraría T5: es una **edición manual del publicado** y no está en `heredado/`, donde la guía larga sigue entera | Alto | No remontar el 6 mientras T5 no se lleve al heredado. La sangría ya **no** es motivo: se arregló en los dos archivos (`ab829ff`), así que un remontaje la reproduce bien — ver «3 bis» |
 | R6 | La sección **no existe en `heredado/`**: `montar.py` regenera todo lo que hay entre los centinelas, así que un remontaje del módulo 5 la borraría | Alto | Queda un comentario en el propio archivo avisándolo. Si hay que remontar, la sección se recupera del control de versiones |
 | R5 | La renumeración de los títulos es manual y se hace en diez strings | Bajo | Comprobar la numeración leyendo la barra lateral renderizada, no el array |
 
