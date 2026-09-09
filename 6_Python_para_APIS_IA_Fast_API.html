@@ -2540,24 +2540,24 @@ def experimento_bernoulli():
                                                 <li><code>environ</code> — Un diccionario con toda la información de la petición HTTP (URL, método, headers, body, query string).</li>
                                                 <li><code>start_response</code> — Un callback para enviar el código de estado HTTP y los headers de respuesta al servidor.</li>
                                             </ol>
-                                            <pre className="bg-gray-900 text-gray-100 p-3 rounded-lg text-xs overflow-x-auto"><code>{`# Aplicación WSGI "pura" (sin framework)
-                def mi_app_wsgi(environ, start_response):
-                    ruta = environ['PATH_INFO']
-                    metodo = environ['REQUEST_METHOD']
+                                            <CodeBlock title="Aplicación WSGI pura" lang="python" plegable={false} code={`# Aplicación WSGI "pura" (sin framework)
+def mi_app_wsgi(environ, start_response):
+    ruta = environ['PATH_INFO']
+    metodo = environ['REQUEST_METHOD']
 
-                    if ruta == '/' and metodo == 'GET':
-                        status = '200 OK'
-                        body = b'{"mensaje": "Hola desde WSGI puro"}'
-                    else:
-                        status = '404 Not Found'
-                        body = b'{"error": "Ruta no encontrada"}'
+    if ruta == '/' and metodo == 'GET':
+        status = '200 OK'
+        body = b'{"mensaje": "Hola desde WSGI puro"}'
+    else:
+        status = '404 Not Found'
+        body = b'{"error": "Ruta no encontrada"}'
 
-                    headers = [('Content-Type', 'application/json')]
-                    start_response(status, headers)
-                    return [body]
+    headers = [('Content-Type', 'application/json')]
+    start_response(status, headers)
+    return [body]
 
-                # Flask y Django implementan este contrato internamente.
-                # Por eso funcionan con Gunicorn, uWSGI y mod_wsgi.`}</code></pre>
+# Flask y Django implementan este contrato internamente.
+# Por eso funcionan con Gunicorn, uWSGI y mod_wsgi.`} />
                                             <p className="text-xs text-gray-500 mt-2 italic">En la práctica, nadie escribe WSGI puro. Flask y Django encapsulan toda esta complejidad. Pero entender el contrato es fundamental para diagnosticar problemas en producción.</p>
                                         </div>
 
@@ -2724,30 +2724,30 @@ def experimento_bernoulli():
                                             <div className="grid md:grid-cols-2 gap-4 mt-3">
                                                 <div>
                                                     <p className="text-xs font-bold text-red-700 mb-1">Flask — Routing manual</p>
-                                                    <pre className="bg-gray-900 text-gray-100 p-2 rounded-lg text-xs overflow-x-auto"><code>{`from flask import Flask, request, jsonify
+                                                    <CodeBlock lang="python" code={`from flask import Flask, request, jsonify
 
-                app = Flask(__name__)
+app = Flask(__name__)
 
-                @app.route("/predict", methods=["POST"])
-                def predict():
-                    data = request.get_json()
-                    # Sin validación automática
-                    # Sin documentación auto-generada
-                    return jsonify({"resultado": 42})`}</code></pre>
+@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    # Sin validación automática
+    # Sin documentación auto-generada
+    return jsonify({"resultado": 42})`} />
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-bold text-green-700 mb-1">FastAPI — Routing moderno</p>
-                                                    <pre className="bg-gray-900 text-gray-100 p-2 rounded-lg text-xs overflow-x-auto"><code>{`from fastapi import FastAPI
-                from pydantic import BaseModel
+                                                    <CodeBlock lang="python" code={`from fastapi import FastAPI
+from pydantic import BaseModel
 
-                app = FastAPI()
+app = FastAPI()
 
-                class Input(BaseModel):
-                    x: float  # ← validación automática
+class Input(BaseModel):
+    x: float  # ← validación automática
 
-                @app.post("/predict")  # ← /docs gratis
-                async def predict(data: Input):
-                    return {"resultado": 42}`}</code></pre>
+@app.post("/predict")  # ← /docs gratis
+async def predict(data: Input):
+    return {"resultado": 42}`} />
                                                 </div>
                                             </div>
                                         </Box>
@@ -3159,36 +3159,36 @@ async def stats_fast(data: DatosInput):
                                             <div className="usta-card p-4">
                                                 <h5 className="font-bold text-sm text-primary mb-2">📌 Rutas Estáticas</h5>
                                                 <p className="text-xs text-gray-600 mb-2">La URL es fija. Siempre apunta al mismo recurso.</p>
-                                                <pre className="bg-gray-900 text-gray-100 p-2 rounded text-xs overflow-x-auto"><code>{`@app.get("/")
-                def inicio():
-                    return {"msg": "Bienvenido"}
+                                                <CodeBlock lang="python" code={`@app.get("/")
+def inicio():
+    return {"msg": "Bienvenido"}
 
-                @app.get("/about")
-                def acerca_de():
-                    return {"info": "API v1.0"}`}</code></pre>
+@app.get("/about")
+def acerca_de():
+    return {"info": "API v1.0"}`} />
                                             </div>
                                             <div className="usta-card p-4">
                                                 <h5 className="font-bold text-sm text-secondary mb-2">🔄 Rutas Dinámicas (Path Parameters)</h5>
                                                 <p className="text-xs text-gray-600 mb-2">Parte de la URL es variable. FastAPI la extrae y valida automáticamente.</p>
-                                                <pre className="bg-gray-900 text-gray-100 p-2 rounded text-xs overflow-x-auto"><code>{`@app.get("/usuario/{user_id}")
-                def get_usuario(user_id: int):
-                    return {"id": user_id}
+                                                <CodeBlock lang="python" code={`@app.get("/usuario/{user_id}")
+def get_usuario(user_id: int):
+    return {"id": user_id}
 
-                # /usuario/42  → user_id = 42
-                # /usuario/abc → Error 422 (no es int)`}</code></pre>
+# /usuario/42  → user_id = 42
+# /usuario/abc → Error 422 (no es int)`} />
                                             </div>
                                         </div>
 
                                         <div className="usta-card p-4 mb-6">
                                             <h5 className="font-bold text-sm text-primary mb-2">🔍 Query Parameters (Parámetros de Consulta)</h5>
                                             <p className="text-xs text-gray-600 mb-2">Son los valores después del <code>?</code> en la URL. Ideales para filtros, paginación y opciones opcionales.</p>
-                                            <pre className="bg-gray-900 text-gray-100 p-2 rounded text-xs overflow-x-auto"><code>{`@app.get("/buscar")
-                def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
-                    return {"campo": campo, "limite": limite, "orden": orden}
+                                            <CodeBlock lang="python" code={`@app.get("/buscar")
+def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
+    return {"campo": campo, "limite": limite, "orden": orden}
 
-                # /buscar?campo=edad&limite=5        → OK
-                # /buscar?campo=edad                  → OK (limite=10 por defecto)
-                # /buscar                             → Error 422 (campo es obligatorio)`}</code></pre>
+# /buscar?campo=edad&limite=5        → OK
+# /buscar?campo=edad                  → OK (limite=10 por defecto)
+# /buscar                             → Error 422 (campo es obligatorio)`} />
                                             <p className="text-xs text-gray-500 mt-2 italic">Los parámetros con valor por defecto son opcionales. Los que no tienen default son obligatorios. FastAPI los documenta automáticamente en Swagger UI.</p>
                                         </div>
 
@@ -3241,26 +3241,26 @@ async def stats_fast(data: DatosInput):
                                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                                             <div className="bg-red-50/50 p-4 rounded-xl border border-red-200">
                                                 <h5 className="font-bold text-red-700 text-sm mb-2">❌ Flask — Validación Manual</h5>
-                                                <pre className="text-xs bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto"><code>{`@app.route("/predict", methods=["POST"])
-                def predict():
-                    data = request.get_json()
-                    if not isinstance(data.get("age"), int):
-                        return jsonify({"error": "age must be int"}), 400
-                    if not isinstance(data.get("income"), float):
-                        return jsonify({"error": "income must be float"}), 400
-                    return jsonify({"success": True})`}</code></pre>
+                                                <CodeBlock lang="python" code={`@app.route("/predict", methods=["POST"])
+def predict():
+    data = request.get_json()
+    if not isinstance(data.get("age"), int):
+        return jsonify({"error": "age must be int"}), 400
+    if not isinstance(data.get("income"), float):
+        return jsonify({"error": "income must be float"}), 400
+    return jsonify({"success": True})`} />
                                                 <p className="text-xs text-red-600 mt-2 italic">Cada campo requiere validación manual. Propenso a errores y verboso.</p>
                                             </div>
                                             <div className="bg-green-50/50 p-4 rounded-xl border border-green-200">
                                                 <h5 className="font-bold text-green-700 text-sm mb-2">✅ FastAPI — Validación Automática</h5>
-                                                <pre className="text-xs bg-gray-900 text-gray-100 p-3 rounded-lg overflow-x-auto"><code>{`class Features(BaseModel):
-                    age: int
-                    income: float
+                                                <CodeBlock lang="python" code={`class Features(BaseModel):
+    age: int
+    income: float
 
-                @app.post("/predict")
-                def predict(data: Features):
-                    return {"success": True}
-                # ¡FastAPI valida automáticamente!`}</code></pre>
+@app.post("/predict")
+def predict(data: Features):
+    return {"success": True}
+# ¡FastAPI valida automáticamente!`} />
                                                 <p className="text-xs text-green-600 mt-2 italic">Pydantic valida tipos, rangos y formatos automáticamente. Limpio y seguro.</p>
                                             </div>
                                         </div>
@@ -3354,10 +3354,10 @@ def eliminar_experimento(exp_id: int):
                                             <p className="text-sm text-gray-700 mb-2">
                                                 Copie el código del bloque de abajo y guárdelo como <code>main.py</code>. Ejecute <code>uvicorn main:app --reload</code> y luego pruebe con:
                                             </p>
-                                            <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto"><code>{`# Desde otra terminal (el servidor queda corriendo en la primera):
-                curl -X POST "http://127.0.0.1:8000/trigger-retrain"
+                                            <CodeBlock title="Probar el endpoint" lang="shell" code={`# Desde otra terminal (el servidor queda corriendo en la primera):
+curl -X POST "http://127.0.0.1:8000/trigger-retrain"
 
-                # O visite http://127.0.0.1:8000/docs y use el botón "Try it out"`}</code></pre>
+# O visite http://127.0.0.1:8000/docs y use el botón "Try it out"`} />
                                             <p className="text-xs text-gray-500 mt-2 italic">El POST responde inmediatamente con "Entrenamiento iniciado" mientras la tarea pesada se ejecuta en segundo plano.</p>
                                         </Box>
 
@@ -3595,19 +3595,19 @@ FastAPI = (
                                         <p className="mb-3 text-sm text-gray-700">
                                             Cree la estructura profesional del proyecto con entorno virtual. Use un nombre de carpeta que refleje su dominio (ej: <code>salud_api</code>, <code>deportes_api</code>).
                                         </p>
-                                        <pre className="bg-gray-900 text-green-400 p-4 rounded-lg text-sm overflow-x-auto mb-4"><code>{`# 1. Crear carpeta con el nombre de su dominio
-                mkdir mi_dominio_api && cd mi_dominio_api
+                                        <CodeBlock lang="shell" plegable={false} code={`# 1. Crear carpeta con el nombre de su dominio
+mkdir mi_dominio_api && cd mi_dominio_api
 
-                # 2. Crear entorno virtual
-                python -m venv venv
-                source venv/bin/activate   # macOS/Linux
-                # venv\\Scripts\\activate   # Windows
+# 2. Crear entorno virtual
+python -m venv venv
+source venv/bin/activate   # macOS/Linux
+# venv\\Scripts\\activate   # Windows
 
-                # 3. Instalar dependencias
-                pip install fastapi uvicorn numpy
+# 3. Instalar dependencias
+pip install fastapi uvicorn numpy
 
-                # 4. Generar requirements.txt
-                pip freeze > requirements.txt`}</code></pre>
+# 4. Generar requirements.txt
+pip freeze > requirements.txt`} />
 
                                         <h3 className="text-lg font-semibold text-secondary mb-4">Fase 2 — Diseñe sus Modelos Pydantic <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full ml-2">Semana 2</span></h3>
                                         <p className="mb-3 text-sm text-gray-700">
