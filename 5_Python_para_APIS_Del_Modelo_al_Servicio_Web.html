@@ -2153,7 +2153,7 @@
             contenidoSyllabus: "Servidor web, WSGI y ASGI. Routing. Flask frente a los frameworks modernos. Síncrono frente a asíncrono.",
             temas: ["WSGI", "ASGI", "Routing", "FastAPI"],
             stack: "WSGI · ASGI · HTTP",
-            storageKey: "usta_2026i_apis_cap05",
+            storageKey: "usta_2026i_apis_cap05_v2",
         };
 
         /* ============================================================
@@ -2177,7 +2177,7 @@
 
                 <p>Semana 5 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
 
-                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>El ciclo petición-respuesta, de principio a fin</li><li>Servidor web, WSGI y ASGI: qué cambió y por qué</li><li>Routing con FastAPI, y cómo se leía en Flask</li><li>Síncrono frente a asíncrono</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Levantar un servidor mínimo con uvicorn --reload</li><li>Exponer la limpieza de datos de la semana 1 como endpoint</li><li>Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li>Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Flask frente a los frameworks modernos (sección 3)</li><li>El detalle de Starlette, Werkzeug y Jinja2</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>El ciclo petición-respuesta, de principio a fin</li><li>Servidor web, WSGI y ASGI: qué cambió y por qué</li><li>Routing con FastAPI, y cómo se leía en Flask</li><li>Síncrono frente a asíncrono</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Levantar un servidor mínimo con uvicorn --reload (sección 2)</li><li>Exponer la limpieza de datos de la semana 1 como endpoint</li><li>Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li>Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Flask frente a los frameworks modernos (sección 4)</li><li>El detalle de Starlette, Werkzeug y Jinja2</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
 
                 <Box type="info" label="Cómo leer este reparto"><p>Flask aparece en este módulo como <strong>término de comparación</strong>, no como herramienta de trabajo: es lo que el syllabus pide para esta semana («Flask frente a los frameworks modernos») y lo que vas a encontrar en el código Python que ya está en producción. Lo que tú escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.</p></Box>
             </div>
@@ -2283,6 +2283,8 @@ gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
 # Waitress (multiplataforma, incluye Windows)
 waitress-serve --port=8000 app:app`} />
 
+                                            <p className="text-gray-700 leading-relaxed mb-5">Si <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app.main:app</code> te parece un galimatías, es normal: todavía no hemos dicho qué separan esos dos puntos. Se desmonta pieza a pieza en la sección 2.2, y allí levantarás tu primer servicio. Aquí lo único que importa es la diferencia entre las dos líneas: una recarga al guardar, la otra lanza cuatro procesos y no recarga nada.</p>
+
                                             <p className="text-gray-700 leading-relaxed mb-5">El parámetro <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">--workers 4</code> le dice a Gunicorn que lance 4 procesos independientes de tu aplicación. Cada worker puede atender una petición simultáneamente. Es como tener <strong>4 cocinas paralelas</strong> en el restaurante.</p>
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.4 El flujo completo en producción</h3>
@@ -2382,16 +2384,236 @@ waitress-serve --port=8000 app:app`} />
             </div>
         );
 
+        /* Sección escrita a mano: NO existe en `heredado/5_…html`, así que un
+           remontaje con `montar.py` la borraría junto con el resto de lo que
+           hay entre los centinelas. Si alguna vez hay que remontar el módulo,
+           esta sección se recupera del control de versiones. */
+        const ArrancarSection = () => (
+            <div className="prose-lp">
+                <section className="usta-card p-6 md:p-8 mb-8">
+                    <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">2.1 La aplicación: el objeto que el servidor busca</h3>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Hace un momento, en la sección 1.2, escribimos la aplicación WSGI más simple del mundo: una función llamada <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app</code> que recibía la petición y devolvía bytes. Y dijimos que nadie escribe eso a mano. Lo que no dijimos es <strong>qué ocupa su lugar</strong>, y la respuesta son las tres líneas con las que empieza cualquier servicio de este curso:</p>
+
+                    <CodeBlock title="main.py" lang="python" code={`from fastapi import FastAPI
+
+app = FastAPI()`} />
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Ese <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app</code> es <strong>la misma pieza</strong> que la función de la sección 1.2, y por eso se llama igual. No es un archivo, no es un proceso y no es el servidor: es un objeto de Python que vive dentro de tu módulo y que cumple el papel de <em>aplicación</em>. La diferencia es que ya no lo escribes tú —lo construye el framework— y que habla ASGI en vez de WSGI.</p>
+
+                    <Box type="tip" label="Tres cosas que conviene fijar ahora">
+                        <ol className="list-decimal ml-5 space-y-2 mb-0">
+                            <li><strong>Es un objeto, y se crea una sola vez.</strong> Al importar el módulo se ejecuta <code className="font-mono text-xs">FastAPI()</code> y nace la aplicación. Todo lo demás le va añadiendo cosas encima.</li>
+                            <li><strong>El decorador no ejecuta nada.</strong> Cuando escribes <code className="font-mono text-xs">@app.get("/health")</code> no estás atendiendo una petición: estás <em>registrando</em> esa función en la tabla de rutas del objeto. Con tres decoradores no has respondido a nadie; has rellenado un directorio.</li>
+                            <li><strong>Es lo que el servidor importa.</strong> Uvicorn no ejecuta tu archivo como un guion: lo importa como módulo y busca dentro esa variable. Si no la encuentra, no arranca.</li>
+                        </ol>
+                    </Box>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">La tercera tiene una consecuencia que sorprende a todo el mundo el primer día, y conviene verla antes de tropezar con ella:</p>
+
+                    <Box type="warn" label="El tropiezo del primer día">
+                        <p className="mb-0">Ejecutar <code className="font-mono text-xs">python main.py</code> es el reflejo que traes de los cuatro módulos anteriores, y aquí <strong>no levanta ningún servidor</strong>. Python importa el archivo, crea el objeto, registra las rutas… y termina. No hay error y no hay salida: la terminal devuelve el <em>prompt</em> y parece que no ha pasado nada. Ha pasado casi todo; falta lo único que hace de esto un servicio, que es alguien escuchando en un puerto. Ese alguien es <strong>uvicorn</strong>, y es el asunto de la sección siguiente.</p>
+                    </Box>
+
+                    <Pipeline steps={[
+                        { num: 1, title: 'main.py', desc: 'El archivo que escribes' },
+                        { num: 2, title: 'app', desc: 'El objeto FastAPI, con sus rutas ya registradas' },
+                        { num: 3, title: 'uvicorn', desc: 'Lo importa y se queda escuchando' },
+                        { num: 4, title: ':8000', desc: 'Cualquier cliente puede ya pedirle algo' },
+                    ]} />
+
+                    <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 De archivo a servicio: el comando</h3>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Vamos a levantarlo de verdad. Guarda esto en un archivo llamado <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">main.py</code>, en una carpeta cualquiera, con el entorno virtual de los prerrequisitos activado:</p>
+
+                    <CodeBlock title="main.py" lang="python" code={`from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/")
+def raiz():
+    return {"servicio": "estadisticas", "estado": "vivo"}
+
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}`} plegable={false} />
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Eso es todo: dos rutas. La segunda, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">/health</code>, no es decorativa: es la que usan los sistemas de monitoreo para preguntar «¿sigues vivo?», y volverá a aparecer en las buenas prácticas de este módulo y en el despliegue de la semana 12. Y sí, pone <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">def</code> y no <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async def</code>: estas dos funciones no esperan a nada, así que no hay nada que asincronizar. Por qué eso importa es justamente la sección 5.</p>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Ahora, desde la terminal y <strong>en esa misma carpeta</strong>:</p>
+
+                    <CodeBlock title="Terminal" lang="shell" code={`uvicorn main:app --reload`} />
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Cinco fragmentos, y cada uno responde a una pregunta distinta. Vale la pena leerlos de uno en uno, porque los tres errores más frecuentes del primer arranque son errores de esta línea:</p>
+
+                    <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Fragmento</th>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Qué es</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>uvicorn</code></td><td className="px-6 py-4 text-sm text-gray-800">El servidor ASGI. Es un programa aparte, no una función de tu código: lo instalaste con <code>pip</code> y ahora lo invocas por su nombre.</td></tr>
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>main</code></td><td className="px-6 py-4 text-sm text-gray-800">El <strong>módulo</strong> donde vive la aplicación: el archivo <code>main.py</code>, escrito sin la extensión, tal como lo escribirías en un <code>import</code>.</td></tr>
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>:</code></td><td className="px-6 py-4 text-sm text-gray-800">Separa <em>dónde</em> vive el objeto de <em>cómo se llama</em>. A la izquierda, el módulo; a la derecha, la variable.</td></tr>
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>app</code></td><td className="px-6 py-4 text-sm text-gray-800">El nombre exacto de la variable dentro de ese módulo. Si en tu archivo pusiste <code>api = FastAPI()</code>, aquí va <code>api</code>. Coincide letra por letra o no arranca.</td></tr>
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>--reload</code></td><td className="px-6 py-4 text-sm text-gray-800">Vigila los archivos y reinicia solo al guardar. Comodísimo mientras escribes, prohibido en producción, por lo que vimos en 1.3.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Fíjate en que el comando <strong>no nombra un archivo, nombra un módulo</strong>. Es una distinción que parece pedante hasta que el código deja de ser un archivo suelto y pasa a vivir dentro de un paquete, que es exactamente lo que ocurre en el proyecto integrador:</p>
+
+                    <CodeBlock title="Terminal" lang="shell" code={`# Un archivo suelto: main.py en la carpeta actual.
+# Es lo que usa la semilla del taller del corte I.
+uvicorn main:app --reload
+
+# El MISMO objeto, cuando el codigo vive en un paquete: app/main.py
+# Es lo que usa el proyecto integrador, y lo que ira en el
+# Dockerfile de la semana 11.
+uvicorn app.main:app --reload`} />
+
+                    <p className="text-gray-700 leading-relaxed mb-5">El punto separa la carpeta del archivo, igual que en cualquier <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">import</code>. Que el paquete se llame <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app</code> y la variable también es una coincidencia desafortunada, universal en este ecosistema, y la causa de que <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app.main:app</code> parezca un trabalenguas. No lo es: a la izquierda de los dos puntos está <strong>dónde</strong>; a la derecha, <strong>cómo se llama</strong>.</p>
+
+                    <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 Qué pasa al pulsar Enter</h3>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">La terminal <strong>no</strong> te devuelve el <em>prompt</em>. Se queda ocupada, escupiendo esto y esperando:</p>
+
+                    <CodeBlock title="Salida de uvicorn" lang="text" code={`INFO:     Will watch for changes in these directories: ['/Users/tu/proyecto']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [41283] using StatReload
+INFO:     Started server process [41285]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.`} />
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Que la terminal quede ocupada <strong>es la señal de que funciona</strong>. Alguna línea puede cambiar según la versión —el vigilante de archivos se anuncia como <code className="font-mono text-xs">StatReload</code> o como <code className="font-mono text-xs">WatchFiles</code> según lo que tengas instalado—, pero la que importa es siempre la segunda: <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">127.0.0.1</code> es tu propia máquina —nadie más de la red puede entrar todavía— y <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">8000</code> es el puerto donde escucha. Con eso ya tienes tres direcciones que abrir en el navegador:</p>
+
+                    <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Dirección</th>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Qué verás</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>http://127.0.0.1:8000/</code></td><td className="px-6 py-4 text-sm text-gray-800"><code>&#123;"servicio":"estadisticas","estado":"vivo"&#125;</code> — el diccionario que devuelve <code>raiz()</code>, convertido a JSON sin que tú hicieras nada.</td></tr>
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>http://127.0.0.1:8000/health</code></td><td className="px-6 py-4 text-sm text-gray-800"><code>&#123;"status":"ok"&#125;</code></td></tr>
+                            <tr><td className="px-6 py-4 text-sm text-gray-800"><code>http://127.0.0.1:8000/docs</code></td><td className="px-6 py-4 text-sm text-gray-800">Una página de documentación interactiva que <strong>tú no escribiste</strong>.</td></tr>
+                        </tbody>
+                    </table>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Y lo mismo desde la terminal, con el <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">curl</code> de la semana 2 —porque una API no se prueba sólo con el navegador—. Ojo: la primera terminal está ocupada por el servidor, así que esto va en una <strong>segunda</strong>:</p>
+
+                    <CodeBlock title="Terminal" lang="shell" code={`curl http://127.0.0.1:8000/health
+# {"status":"ok"}`} />
+
+                    <p className="text-gray-700 leading-relaxed mb-5">La tercera dirección merece que te detengas. En <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">/docs</code>, FastAPI ha montado una página con tus dos endpoints, sus respuestas y un botón «Try it out» que los ejecuta desde el navegador. No la generó adivinando: la leyó de tu código, y por eso está siempre al día. En cuanto los endpoints empiecen a recibir modelos de Pydantic —los de la semana 4—, esa misma página dirá qué campos exige cada uno, de qué tipo y con qué restricciones. Es el pago de haber escrito los tipos.</p>
+
+                    <Box type="info" label="Mientras el servidor corre">
+                        <p className="mb-0">Con <code className="font-mono text-xs">--reload</code> no hace falta parar y volver a arrancar: guardas el archivo, uvicorn lo detecta, reinicia solo y en la terminal aparece una línea nueva. Para detenerlo del todo, <strong>Ctrl + C</strong> en la terminal donde está corriendo.</p>
+                    </Box>
+
+                    <OrdenaPasos
+                        titulo="Ordene el primer arranque"
+                        enunciado={<>Ya tiene escrito el <code className="font-mono text-xs">main.py</code> de la sección 2.2, solo, en una carpeta vacía. Ordene lo que hay que hacer <strong>desde la terminal</strong> para verlo respondiendo y dejarlo parado al terminar.</>}
+                        lang="shell"
+                        pasos={[
+                            'python3 -m venv venv',
+                            'source venv/bin/activate',
+                            'pip install fastapi uvicorn',
+                            'uvicorn main:app --reload',
+                            'curl http://127.0.0.1:8000/health',
+                            'Ctrl + C para detener el servidor',
+                        ]}
+                        pista="Dos dependencias mandan sobre todo lo demás: nada se instala donde debe hasta que el entorno está activado, y nadie responde en el puerto 8000 hasta que hay alguien escuchando."
+                    />
+
+                    <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Cuando no arranca</h3>
+
+                    <p className="text-gray-700 leading-relaxed mb-5">Cuatro mensajes cubren casi todo lo que falla el primer día. Los cuatro dicen exactamente lo que pasó; el problema es que lo dicen en un vocabulario que todavía no es el tuyo. Conviene reconocerlos de vista:</p>
+
+                    <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
+                        <thead className="bg-gray-100">
+                            <tr>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Lo que dice la terminal</th>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Qué pasó</th>
+                                <th className="px-6 py-4 text-left text-xs font-extrabold text-gray-700 uppercase tracking-wider">Qué hacer</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td className="px-6 py-4 text-sm text-gray-800"><code>Error loading ASGI app. Could not import module "main".</code></td>
+                                <td className="px-6 py-4 text-sm text-gray-800">Uvicorn no encontró ningún módulo llamado <code>main</code>. Casi siempre la terminal está en otra carpeta.</td>
+                                <td className="px-6 py-4 text-sm text-gray-800">Lista la carpeta con <code>ls</code> (o <code>dir</code> en Windows): tiene que aparecer <code>main.py</code>. Si no aparece, <code>cd</code> hasta donde esté.</td>
+                            </tr>
+                            <tr>
+                                <td className="px-6 py-4 text-sm text-gray-800"><code>Error loading ASGI app. Attribute "app" not found in module "main".</code></td>
+                                <td className="px-6 py-4 text-sm text-gray-800">El archivo se importó bien, pero dentro no hay ninguna variable que se llame <code>app</code>. Suele llamarse <code>api</code>, o el archivo está a medias.</td>
+                                <td className="px-6 py-4 text-sm text-gray-800">Haz que coincidan las dos: o renombras la variable, o cambias lo que va a la derecha de los dos puntos.</td>
+                            </tr>
+                            <tr>
+                                <td className="px-6 py-4 text-sm text-gray-800"><code>[Errno 48] Address already in use</code></td>
+                                <td className="px-6 py-4 text-sm text-gray-800">El puerto 8000 ya está ocupado, casi siempre por otro uvicorn que quedó vivo en otra pestaña. El número del error cambia con el sistema: 48 en macOS, 98 en Linux, 10048 en Windows.</td>
+                                <td className="px-6 py-4 text-sm text-gray-800">Busca la terminal anterior y para el servidor con <strong>Ctrl + C</strong>, o arranca en otro puerto: <code>uvicorn main:app --reload --port 8001</code>.</td>
+                            </tr>
+                            <tr>
+                                <td className="px-6 py-4 text-sm text-gray-800"><code>ModuleNotFoundError: No module named 'fastapi'</code></td>
+                                <td className="px-6 py-4 text-sm text-gray-800">Python arrancó, pero en un entorno donde FastAPI no está instalado. Casi siempre es el entorno virtual sin activar.</td>
+                                <td className="px-6 py-4 text-sm text-gray-800">Actívalo y repite el <code>pip install</code> de los prerrequisitos. El <em>prompt</em> te lo dice: si no ves el nombre del entorno delante, no está activo.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <Box type="danger" label="Y un quinto que no da ningún mensaje">
+                        <p className="mb-0">Ejecutar <code className="font-mono text-xs">python main.py</code>. No sale ningún error, no sale ninguna advertencia, y no hay servidor: es lo que vimos en 2.1. De ahí una regla que te va a servir todo el semestre —<strong>si la terminal te devuelve el <em>prompt</em>, no hay servidor; si se queda ocupada, sí lo hay</strong>.</p>
+                    </Box>
+
+                    <DetectaError
+                        titulo="Diagnostique por qué no arranca"
+                        enunciado={<>Este archivo se llama <code className="font-mono text-xs">main.py</code> y es Python perfectamente válido: no le falta ni un paréntesis. Aun así, al ejecutar el comando de la primera línea, uvicorn se niega a arrancar y responde <code className="font-mono text-xs">Error loading ASGI app. Attribute "app" not found in module "main"</code>. El comando <strong>no se puede cambiar</strong> —es el que exige el enunciado del taller—, así que la corrección va en el archivo. <strong>¿Qué línea hay que tocar?</strong></>}
+                        lang="python"
+                        lineas={[
+                            '# Se levanta con:  uvicorn main:app --reload',
+                            '',
+                            'from fastapi import FastAPI',
+                            '',
+                            'api = FastAPI()',
+                            '',
+                            '',
+                            '@api.get("/health")',
+                            'def health_check():',
+                            '    return {"status": "ok"}',
+                        ]}
+                        lineaCorrecta={5}
+                        tipos={[
+                            'Error de sintaxis: al archivo le falta un delimitador o una palabra clave.',
+                            'Error de nombre: el objeto de la aplicación no se llama como el comando espera.',
+                            'Error de importación: FastAPI no está instalado en el entorno que está activo.',
+                            'Error de ruta: el decorador registra un camino que nadie va a pedir.',
+                        ]}
+                        tipoCorrecto={1}
+                        explicacion={<>La línea 5 bautiza la aplicación como <code className="font-mono text-xs">api</code>, y lo que va a la derecha de los dos puntos en <code className="font-mono text-xs">main:app</code> no es una convención: es el nombre exacto de la variable que uvicorn va a buscar dentro del módulo. Fíjese en <em>cuál</em> de los dos mensajes salió, porque los dos de la tabla anterior dicen cosas distintas: <code className="font-mono text-xs">Could not import module "main"</code> significa que ni siquiera encontró el archivo; <code className="font-mono text-xs">Attribute "app" not found</code> significa que el archivo se importó bien —Python lo leyó entero, sin quejarse— y que lo que falta está dentro. La línea 8 es cómplice, pero no es la culpable: si renombra la variable, ese decorador hay que ajustarlo también.</>}
+                        impacto={<>Es el segundo tropiezo más común del primer día, y tiene <strong>dos arreglos igual de válidos</strong>: renombrar la variable a <code className="font-mono text-xs">app</code>, o escribir <code className="font-mono text-xs">uvicorn main:api --reload</code>. En este curso se arregla siempre por el lado de la variable, y no por gusto: la semilla del taller y el <code className="font-mono text-xs">Dockerfile</code> de la semana 11 dan por hecho que se llama <code className="font-mono text-xs">app</code>. Cuando el comando lo escribe otro —un Dockerfile, un servicio de despliegue, un compañero—, el que se adapta es su archivo.</>}
+                    />
+
+                </section>
+            </div>
+        );
+
         const RoutingSection = () => (
             <div className="prose-lp">
                 <section className="usta-card p-6 md:p-8 mb-8">
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">2.1 ¿Qué es el routing?</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">3.1 ¿Qué es el routing?</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">El <em>routing</em> es el mecanismo que conecta una URL con una función de Python. Cuando alguien visita <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">/predict</code>, el framework necesita saber qué función ejecutar. Es el equivalente a un directorio telefónico: dado un "número" (la URL), te conecta con la "persona" (la función) correcta.</p>
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 Routing en FastAPI</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 Routing en FastAPI</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Éste es el que vas a usar en el proyecto, así que empezamos por él. FastAPI declara una ruta por cada método HTTP —<code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.get</code>, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.post</code>— y aprovecha el <em>type hinting</em> que ya usas desde la semana 1: al escribir <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">min_age: int</code> no estás documentando, estás <strong>declarando una validación</strong>. Si llega otra cosa, FastAPI responde 422 —el error que viste en la semana 4— sin que tú escribas una línea:</p>
 
-                                            <CodeBlock title="FastAPI — routing.py" lang="python" code={`from fastapi import FastAPI, Query
+                                            <CodeBlock title="FastAPI — main.py" lang="python" code={`# Se levanta con:  uvicorn main:app --reload
+
+from fastapi import FastAPI, Query
 
 app = FastAPI()
 
@@ -2413,10 +2635,12 @@ async def filter_data(
 ):
     return {"min_age": min_age, "max_age": max_age}`} />
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 El mismo routing en Flask, para que lo reconozcas</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 El mismo routing en Flask, para que lo reconozcas</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Esto es lo que vas a encontrar en la mayor parte del codigo Python que ya esta en produccion, asi que conviene que lo leas sin esfuerzo. Flask usa el mismo decorador <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.route()</code> para todos los metodos HTTP, y los parametros hay que sacarlos y convertirlos a mano: fijate en <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">request.args.get(..., type=int)</code>, que es la linea que en FastAPI no existe porque la escribe el type hint.</p>
 
-                                            <CodeBlock title="Flask — routing.py" lang="python" code={`from flask import Flask, request, jsonify
+                                            <CodeBlock title="Flask — main.py" lang="python" code={`# Se levanta con:  flask --app main run
+
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -2438,7 +2662,7 @@ def filter_data():
     max_age = request.args.get("max_age", default=120, type=int)
     return jsonify({"min_age": min_age, "max_age": max_age})`} />
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Tabla Comparativa de Routing</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.4 Tabla Comparativa de Routing</h3>
                                             <table className="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
                                                 <thead className="bg-gray-100">
                                                     <tr>
@@ -2462,10 +2686,12 @@ def filter_data():
         const FrameworksSection = () => (
             <div className="prose-lp">
                 <section className="usta-card p-6 md:p-8 mb-8">
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">3.1 El endpoint <code>/predict</code> en Flask</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">4.1 El endpoint <code>/predict</code> en Flask</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Veamos cómo se implementa un endpoint de predicción con Flask, el framework veterano (2010). Observa la validación manual y la falta de documentación automática:</p>
 
-                                            <CodeBlock title="app_flask.py" lang="python" code={`from flask import Flask, request, jsonify
+                                            <CodeBlock title="app_flask.py" lang="python" code={`# Se levanta con:  flask --app app_flask run
+
+from flask import Flask, request, jsonify
 import numpy as np
 import pickle
 
@@ -2493,10 +2719,12 @@ def predict():
         "risk_level": "alto" if probability > 0.5 else "bajo"
     })`} />
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 El mismo endpoint en FastAPI</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.2 El mismo endpoint en FastAPI</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Ahora veamos cómo el mismo endpoint se reimagina con FastAPI. Observa cómo Pydantic maneja la validación y la documentación se genera automáticamente:</p>
 
-                                            <CodeBlock title="app_fastapi.py" lang="python" code={`from fastapi import FastAPI
+                                            <CodeBlock title="app_fastapi.py" lang="python" code={`# Se levanta con:  uvicorn app_fastapi:app --reload
+
+from fastapi import FastAPI
 from pydantic import BaseModel, Field
 import numpy as np
 import pickle
@@ -2530,7 +2758,7 @@ async def predict(data: CreditRequest):
         risk_level="alto" if probability > 0.5 else "bajo",
     )`} />
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 ¿Por qué migró el ecosistema?</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.3 ¿Por qué migró el ecosistema?</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">No fue una moda. Hay razones técnicas concretas:</p>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
@@ -2561,7 +2789,7 @@ async def predict(data: CreditRequest):
         const AsincroniaSection = () => (
             <div className="prose-lp">
                 <section className="usta-card p-6 md:p-8 mb-8">
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">4.1 I/O-bound vs CPU-bound</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">5.1 I/O-bound vs CPU-bound</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Antes de entender <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code>, necesitas distinguir dos tipos de tareas:</p>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
@@ -2580,13 +2808,13 @@ async def predict(data: CreditRequest):
                                             <Box type="tip" label="Punto clave">En una API de predicción, la mayor parte del tiempo se gasta en operaciones <strong>I/O</strong>, no en cómputo. Cargar datos, leer el modelo del disco, consultar la base de datos para obtener features del usuario… todo eso es <em>espera</em>.
                                             </Box>
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.2 Modelo síncrono: una fila con un solo cajero</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.2 Modelo síncrono: una fila con un solo cajero</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">En Flask (síncrono), cada petición <strong>bloquea</strong> al worker mientras se procesa. El Worker 1 no puede atender la Petición 2 hasta que termine con la 1, aunque el 97% del tiempo esté simplemente esperando a la base de datos:</p>
 
                                             <div className="diagram">Petición 1 ──[leer BD: 200ms]──[predecir: 5ms]──[responder]──▶
                                                                                 Petición 2 ──[leer BD: 200ms]──...</div>
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.3 Modelo asíncrono: un cajero muy eficiente</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.3 Modelo asíncrono: un cajero muy eficiente</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code>, un solo proceso puede manejar muchas peticiones <strong>concurrentemente</strong>. Mientras la Petición 1 espera la BD, el event loop atiende la 2 y la 3:</p>
 
                                             <div className="diagram">Petición 1 ──[leer BD ⏸️ ]─────────────────────[predecir]──[responder]──▶
@@ -2597,7 +2825,7 @@ async def predict(data: CreditRequest):
                                                     <p>Imagina un chef que pone la pasta a hervir (operación I/O: esperar) y mientras hierve, prepara la salsa (otra tarea). No se queda mirando la olla. Eso es <code>async</code>: el event loop "cocina" múltiples platos aprovechando los tiempos de espera.</p>
                                                 </div></>) }]} />
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.4 Ejemplo comparativo completo</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.4 Ejemplo comparativo completo</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5">Un endpoint que consulta dos fuentes de datos antes de hacer una predicción. Primero síncrono (Flask), luego asíncrono (FastAPI):</p>
 
                                             <CodeBlock title="Flask — síncrono (0.3 + 0.2 = 0.5s)" lang="python" code={`import time
@@ -2644,7 +2872,7 @@ async def evaluate(user_id: str):
     risk_score = credito["score"] * 0.6 + empleo["years"] * 10
     return {"user": user_id, "risk_score": risk_score}`} />
 
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.5 Advertencia: async no es magia para todo</h3>
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.5 Advertencia: async no es magia para todo</h3>
                                             <p className="text-gray-700 leading-relaxed mb-5"><code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code> brilla en tareas <strong>I/O-bound</strong>. Para tareas <strong>CPU-bound</strong> (como entrenar un modelo o calcular bootstrapping), <code>async</code> no ayuda porque el procesador está realmente ocupado. La estrategia correcta es delegar el cómputo a un proceso separado con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">run_in_executor</code> + <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">ProcessPoolExecutor</code>.</p>
                                         </section>
 
@@ -2745,6 +2973,7 @@ async def evaluate(user_id: str):
                                                 <div className="bg-red-50 border border-red-200 rounded-xl p-6">
                                                     <h4 className="font-bold text-red-800 mb-4 flex items-center gap-2">❌ Errores Comunes</h4>
                                                     <ul className="space-y-3 text-sm text-gray-700">
+                                                        <li>Ejecutar <code>python main.py</code> esperando que arranque el servidor</li>
                                                         <li>Usar <code>flask run</code> en producción</li>
                                                         <li>Cargar el modelo <code>.pkl</code> dentro de la función del endpoint</li>
                                                         <li>Usar <code>async def</code> para tareas CPU-bound sin executor</li>
@@ -2903,13 +3132,14 @@ async def evaluate(user_id: str):
             { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
             { id: 'modulo-0', title: '2. Introducción: por qué necesitas saber esto', icon: 'Workflow', component: IntroSection },
             { id: 'modulo-1', title: '3. El servidor web y WSGI', icon: 'Layers', component: ServidorWebSection },
-            { id: 'modulo-2', title: '4. Routing básico y avanzado', icon: 'ArrowDownUp', component: RoutingSection },
-            { id: 'modulo-3', title: '5. Flask frente a frameworks modernos', icon: 'Repeat', component: FrameworksSection },
-            { id: 'modulo-4', title: '6. Síncrono frente a asíncrono', icon: 'Cpu', component: AsincroniaSection },
-            { id: 'modulo-5', title: '7. Ejercicios de autoevaluación', icon: 'Award', component: AutoevalSection },
-            { id: 'modulo-6', title: '8. Resumen y mejores prácticas', icon: 'GitBranch', component: CierreSection },
-            { id: 'preguntas-sustentacion', title: '9. Preguntas de sustentación', icon: 'Calculator', component: SustentacionSection },
-            { id: 'modulo-7', title: '10. Bibliografía y fuentes consultadas', icon: 'Table', component: BibliografiaSection },
+            { id: 'arrancar', title: '4. La aplicación: qué es y cómo se levanta', icon: 'FileCode', component: ArrancarSection },
+            { id: 'modulo-2', title: '5. Routing básico y avanzado', icon: 'ArrowDownUp', component: RoutingSection },
+            { id: 'modulo-3', title: '6. Flask frente a frameworks modernos', icon: 'Repeat', component: FrameworksSection },
+            { id: 'modulo-4', title: '7. Síncrono frente a asíncrono', icon: 'Cpu', component: AsincroniaSection },
+            { id: 'modulo-5', title: '8. Ejercicios de autoevaluación', icon: 'Award', component: AutoevalSection },
+            { id: 'modulo-6', title: '9. Resumen y mejores prácticas', icon: 'GitBranch', component: CierreSection },
+            { id: 'preguntas-sustentacion', title: '10. Preguntas de sustentación', icon: 'Calculator', component: SustentacionSection },
+            { id: 'modulo-7', title: '11. Bibliografía y fuentes consultadas', icon: 'Table', component: BibliografiaSection },
         ];
 
         /* ============================================================
