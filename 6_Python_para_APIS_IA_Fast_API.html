@@ -2408,97 +2408,24 @@
 
                                         <h3 className="text-xl font-semibold text-secondary mb-4 mt-8 flex items-center gap-2">🚀 ¿Cómo Ejecutar los Ejemplos?</h3>
                                         <p className="mb-4">
-                                            Para ejecutar los códigos presentados en este módulo, siga estos <strong>5 pasos</strong> en su terminal. Solo necesita hacerlo una vez para configurar el entorno.
+                                            Esto ya lo hizo. El objeto <code>app</code>, la sintaxis <code>módulo:variable</code> del comando, lo que uvicorn escribe en pantalla y los cuatro mensajes del primer arranque están en la <strong>semana 5</strong>, en la sección «La aplicación: qué es y cómo se levanta»; el entorno virtual, en la <strong>semana 1</strong>. Aquí va sólo lo que conviene tener a mano mientras recorre este módulo.
+                                        </p>
+                                        <p className="mb-4">
+                                            Guarde el código del ejemplo en un archivo llamado <code>main.py</code> y, con el entorno activo, desde esa misma carpeta:
                                         </p>
 
-                                        <div className="space-y-4 mb-6">
-                                            <div className="usta-card p-4 border-l-4 border-secondary">
-                                                <h4 className="font-bold text-primary mb-2">Paso 1 — Crear un Entorno Virtual</h4>
-                                                <p className="text-sm text-gray-700 mb-2">
-                                                    Un entorno virtual aísla las dependencias del proyecto. Abra una terminal y ejecute:
-                                                </p>
-                                                <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto mb-2"><code>{`# Crear el entorno virtual
-                python -m venv venv
+                                        <CodeBlock title="Terminal" lang="shell" code={`# Si aún no las tiene instaladas en este entorno
+pip install fastapi uvicorn numpy
 
-                # Activar el entorno virtual
-                # En macOS/Linux:
-                source venv/bin/activate
+# Levantar el servicio
+uvicorn main:app --reload`} />
 
-                # En Windows:
-                venv\\Scripts\\activate
+                                        <p className="mb-4">
+                                            Con el servidor corriendo, este módulo le da tres direcciones que visitar: <code>http://127.0.0.1:8000</code>, el endpoint raíz; <code>http://127.0.0.1:8000/docs</code>, la documentación interactiva; y <code>http://127.0.0.1:8000/bernoulli</code>, el endpoint de Bernoulli. Para detenerlo, <strong>Ctrl + C</strong> en la terminal.
+                                        </p>
 
-                # Verá (venv) al inicio de su terminal cuando esté activo`}</code></pre>
-                                            </div>
-
-                                            <div className="usta-card p-4 border-l-4 border-secondary">
-                                                <h4 className="font-bold text-primary mb-2">Paso 2 — Instalar Dependencias</h4>
-                                                <p className="text-sm text-gray-700 mb-2">
-                                                    Con el entorno virtual activo, instale FastAPI y el servidor Uvicorn:
-                                                </p>
-                                                <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto"><code>{`pip install fastapi uvicorn numpy`}</code></pre>
-                                                <p className="text-xs text-gray-500 mt-2 italic">
-                                                    <strong>fastapi</strong> = el framework · <strong>uvicorn</strong> = el servidor ASGI · <strong>numpy</strong> = para los ejemplos estadísticos
-                                                </p>
-                                            </div>
-
-                                            <div className="usta-card p-4 border-l-4 border-secondary">
-                                                <h4 className="font-bold text-primary mb-2">Paso 3 — Guardar el Código en un Archivo</h4>
-                                                <p className="text-sm text-gray-700 mb-2">
-                                                    Copie el código del ejemplo (use el botón <strong>"Copiar"</strong> en la esquina superior derecha del bloque de código) y guárdelo en un archivo llamado <code>main.py</code>:
-                                                </p>
-                                                <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto"><code>{`📁 mi_proyecto/
-                ├── venv/          ← entorno virtual (no editar)
-                └── main.py        ← su código FastAPI va aquí`}</code></pre>
-                                            </div>
-
-                                            <div className="usta-card p-4 border-l-4 border-secondary">
-                                                <h4 className="font-bold text-primary mb-2">Paso 4 — Ejecutar el Servidor</h4>
-                                                <p className="text-sm text-gray-700 mb-2">
-                                                    Desde la carpeta donde está <code>main.py</code>, ejecute:
-                                                </p>
-                                                <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto"><code>{`uvicorn main:app --reload`}</code></pre>
-                                                <div className="mt-2 text-sm text-gray-700">
-                                                    <ul className="list-disc pl-5 space-y-1">
-                                                        <li><code>main</code> = nombre del archivo (sin <code>.py</code>)</li>
-                                                        <li><code>app</code> = nombre de la variable <code>FastAPI()</code> dentro del archivo</li>
-                                                        <li><code>--reload</code> = reinicia automáticamente al guardar cambios (solo en desarrollo)</li>
-                                                    </ul>
-                                                </div>
-                                                <p className="text-sm text-gray-700 mt-2">
-                                                    Verá un mensaje como: <code className="text-green-600">Uvicorn running on http://127.0.0.1:8000</code>
-                                                </p>
-                                            </div>
-
-                                            <div className="usta-card p-4 border-l-4 border-secondary">
-                                                <h4 className="font-bold text-primary mb-2">Paso 5 — Probar en el Navegador</h4>
-                                                <p className="text-sm text-gray-700 mb-2">
-                                                    Con el servidor corriendo, abra su navegador y visite:
-                                                </p>
-                                                <div className="grid md:grid-cols-3 gap-3 mt-2">
-                                                    <div className="bg-white/80 p-3 rounded-lg text-center shadow-sm">
-                                                        <p className="font-mono text-sm font-bold text-primary">http://127.0.0.1:8000</p>
-                                                        <p className="text-xs text-gray-500 mt-1">Endpoint raíz (Hello World)</p>
-                                                    </div>
-                                                    <div className="bg-white/80 p-3 rounded-lg text-center shadow-sm">
-                                                        <p className="font-mono text-sm font-bold text-primary">http://127.0.0.1:8000/docs</p>
-                                                        <p className="text-xs text-gray-500 mt-1">Swagger UI (documentación interactiva)</p>
-                                                    </div>
-                                                    <div className="bg-white/80 p-3 rounded-lg text-center shadow-sm">
-                                                        <p className="font-mono text-sm font-bold text-primary">http://127.0.0.1:8000/bernoulli</p>
-                                                        <p className="text-xs text-gray-500 mt-1">Endpoint de Bernoulli</p>
-                                                    </div>
-                                                </div>
-                                                <p className="text-xs text-gray-500 mt-3 italic">
-                                                    Para detener el servidor, presione <strong>Ctrl + C</strong> en la terminal.
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <Box type="info">
-                                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-lightbulb"></i> Consejo para los Siguientes Ejemplos</h4>
-                                            <p className="text-sm text-gray-700">
-                                                Cada lección incluye un bloque de código diferente. Para ejecutarlos, simplemente <strong>reemplace el contenido</strong> de <code>main.py</code> con el nuevo código y el servidor se reiniciará automáticamente (gracias a <code>--reload</code>). No necesita repetir los pasos 1-2.
-                                            </p>
+                                        <Box type="tip" label="Consejo para los siguientes ejemplos">
+                                            <p className="mb-0">Cada lección trae un bloque de código distinto. Para probarlo, <strong>reemplace el contenido</strong> de <code>main.py</code> con el nuevo código: gracias a <code>--reload</code> el servidor se reinicia solo, y no hay que repetir nada de la instalación.</p>
                                         </Box>
                                     </div>
 

@@ -346,7 +346,7 @@ ese archivo.
 
 ### Fase 3 — El módulo 6
 
-#### Tarea 5: Reducir la guía del módulo 6 a un recordatorio
+#### Tarea 5: Reducir la guía del módulo 6 a un recordatorio — **HECHA el 2026-09-09**
 
 **Descripción.** Las líneas 2409–2503 de `6_Python_para_APIS_IA_Fast_API.html` repiten el
 procedimiento completo. Se sustituyen por un recordatorio de tres o cuatro líneas que remita a
@@ -364,7 +364,23 @@ contenido de `main.py` para cada ejemplo, y las URL específicas (`/bernoulli`).
 
 **Dependencias:** T1 (para fijar el texto de la remisión)
 **Archivos:** `6_Python_para_APIS_IA_Fast_API.html`
-**Alcance:** S (1 archivo, ~95 líneas sustituidas por ~10)
+**Alcance:** S (1 archivo: 94 líneas sustituidas por 21 — +13 −86 en el diff)
+
+**Cómo quedó.** Los cinco pasos se van; queda un recordatorio que remite a **dos** sitios, no
+a uno: el arranque a la semana 5, y el entorno virtual a la **semana 1**, que es el módulo de
+entornos y ya enseña `venv` con la activación de Windows y la de Mac/Linux. Se conservan el
+`pip install` y el `uvicorn main:app --reload` —para que el módulo 6 siga sirviendo a quien lo
+abra suelto—, las tres direcciones propias del módulo (`/`, `/docs`, `/bernoulli`), el `Ctrl +
+C` y el consejo de reemplazar el contenido de `main.py` en cada ejemplo.
+
+Edición manual, sin `montar.py`. Un solo tramo de cambios en el archivo, líneas 2408–2504.
+
+**Verificado:** el módulo 6 abre con sus ocho lecciones y la consola limpia; el recordatorio se
+leyó renderizado; no queda ningún «Paso N —» ni ningún paseo por `venv` en esa lección.
+
+**Descartada una preocupación por el camino:** parecía que borrar el paso 1 dejaría al curso
+sin la activación de Windows, porque `venv\Scripts\activate` sólo salía en el módulo 6. Es
+falso: el módulo 1 la tiene, con las dos plataformas, y es su sitio. No se duplicó nada.
 
 ### Fase 4: Que el trabajo sobreviva a un remontaje
 
@@ -413,11 +429,32 @@ defendible —el módulo 5 lleva desde el 19 de agosto con un arreglo que tampoc
 nadie ha remontado— pero entonces conviene que el comentario que ya lleva el archivo sea la
 única advertencia, y asumir que remontar el 5 significa rehacer esto a mano.
 
-### Punto de control C — cierre
+### Punto de control C — cierre · **PASADO el 2026-09-09**
 
-- [ ] Los dos módulos abren y navegan sin errores
-- [ ] El procedimiento de arranque está escrito una sola vez, en el módulo 5
-- [ ] Commit por tarea, en la rama actual
+- [x] Los dos módulos abren y navegan sin errores, con la consola limpia
+- [x] El procedimiento de arranque está escrito una sola vez, en el módulo 5
+- [x] T1–T4 confirmadas en un commit; T5 pendiente de confirmar
+
+---
+
+## 3 bis. Lo que T5 dejó confirmado y sin arreglar
+
+El plan pedía comprobar si los bloques que `verificar_codigo.py` marca rotos en el módulo 6 son
+un defecto real o un artefacto del extractor. **Son un defecto real, y el estudiante lo ve.**
+
+Nueve bloques del módulo 6 —los de formato heredado, `<pre><code>{`…`}</code></pre>`, no los
+`CodeBlock` de LP-CORE— se publican con **16 espacios de más en todas las líneas menos la
+primera**. Medido en el DOM, no en el archivo: en la lección 2, bajo un `from flask import …`
+a ras de margen, la línea siguiente se pinta como `                app = Flask(__name__)`. Lo
+que el estudiante copia con el botón «Copiar» no corre: da `IndentationError`.
+
+Es el defecto que `indentar_jsx` arregló en `montar.py` y que el módulo 6 nunca recibió, porque
+nunca se remontó. Los `CodeBlock` del mismo módulo están bien (sangría extra 0), así que el
+defecto es exactamente de los bloques heredados.
+
+**No se arregló aquí, a propósito.** Es ajeno a este plan, toca nueve bloques de cuatro
+lecciones y tiene dos salidas —convertir esos `<pre>` a `CodeBlock`, o remontar el módulo con
+el arreglo de sangría— que son decisiones de otro tamaño. Merece su propio plan.
 
 ---
 
