@@ -2797,7 +2797,7 @@ def mi_app_wsgi(environ, start_response):
                                             <div className="grid md:grid-cols-2 gap-4 mt-3">
                                                 <div>
                                                     <p className="text-xs font-bold text-red-700 mb-1">Flask — Routing manual</p>
-                                                    <CodeBlock title="Flask — Routing manual" lang="python" code={`from flask import Flask, request, jsonify
+                                                    <CodeBlock lang="python" code={`from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -2810,7 +2810,7 @@ def predict():
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-bold text-green-700 mb-1">FastAPI — Routing moderno</p>
-                                                    <CodeBlock title="FastAPI — Routing moderno" lang="python" code={`from fastapi import FastAPI
+                                                    <CodeBlock lang="python" code={`from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -3232,7 +3232,7 @@ async def stats_fast(data: DatosInput):
                                             <div className="usta-card p-4">
                                                 <h5 className="font-bold text-sm text-primary mb-2">📌 Rutas Estáticas</h5>
                                                 <p className="text-xs text-gray-600 mb-2">La URL es fija. Siempre apunta al mismo recurso.</p>
-                                                <CodeBlock title="Rutas estáticas" lang="python" code={`@app.get("/")
+                                                <CodeBlock lang="python" code={`@app.get("/")
 def inicio():
     return {"msg": "Bienvenido"}
 
@@ -3243,7 +3243,7 @@ def acerca_de():
                                             <div className="usta-card p-4">
                                                 <h5 className="font-bold text-sm text-secondary mb-2">🔄 Rutas Dinámicas (Path Parameters)</h5>
                                                 <p className="text-xs text-gray-600 mb-2">Parte de la URL es variable. FastAPI la extrae y valida automáticamente.</p>
-                                                <CodeBlock title="Rutas dinámicas" lang="python" code={`@app.get("/usuario/{user_id}")
+                                                <CodeBlock lang="python" code={`@app.get("/usuario/{user_id}")
 def get_usuario(user_id: int):
     return {"id": user_id}
 
@@ -3255,7 +3255,7 @@ def get_usuario(user_id: int):
                                         <div className="usta-card p-4 mb-6">
                                             <h5 className="font-bold text-sm text-primary mb-2">🔍 Query Parameters (Parámetros de Consulta)</h5>
                                             <p className="text-xs text-gray-600 mb-2">Son los valores después del <code>?</code> en la URL. Ideales para filtros, paginación y opciones opcionales.</p>
-                                            <CodeBlock title="Query parameters" lang="python" code={`@app.get("/buscar")
+                                            <CodeBlock lang="python" code={`@app.get("/buscar")
 def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
     return {"campo": campo, "limite": limite, "orden": orden}
 
@@ -3314,7 +3314,7 @@ def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
                                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                                             <div className="bg-red-50/50 p-4 rounded-xl border border-red-200">
                                                 <h5 className="font-bold text-red-700 text-sm mb-2">❌ Flask — Validación Manual</h5>
-                                                <CodeBlock title="Flask — Validación manual" lang="python" code={`@app.route("/predict", methods=["POST"])
+                                                <CodeBlock lang="python" code={`@app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     if not isinstance(data.get("age"), int):
@@ -3326,7 +3326,7 @@ def predict():
                                             </div>
                                             <div className="bg-green-50/50 p-4 rounded-xl border border-green-200">
                                                 <h5 className="font-bold text-green-700 text-sm mb-2">✅ FastAPI — Validación Automática</h5>
-                                                <CodeBlock title="FastAPI — Validación automática" lang="python" code={`class Features(BaseModel):
+                                                <CodeBlock lang="python" code={`class Features(BaseModel):
     age: int
     income: float
 
@@ -3668,7 +3668,7 @@ FastAPI = (
                                         <p className="mb-3 text-sm text-gray-700">
                                             Cree la estructura profesional del proyecto con entorno virtual. Use un nombre de carpeta que refleje su dominio (ej: <code>salud_api</code>, <code>deportes_api</code>).
                                         </p>
-                                        <CodeBlock title="Fase 1 — Setup del proyecto" lang="shell" plegable={false} code={`# 1. Crear carpeta con el nombre de su dominio
+                                        <CodeBlock lang="shell" plegable={false} code={`# 1. Crear carpeta con el nombre de su dominio
 mkdir mi_dominio_api && cd mi_dominio_api
 
 # 2. Crear entorno virtual
