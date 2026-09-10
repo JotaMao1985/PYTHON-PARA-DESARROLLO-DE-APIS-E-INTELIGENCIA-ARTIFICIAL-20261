@@ -315,8 +315,8 @@
   <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 5 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
   <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
     <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">El ciclo petición-respuesta, de principio a fin</li><li style="margin:0 0 .3rem 0;">Servidor web, WSGI y ASGI: qué cambió y por qué</li><li style="margin:0 0 .3rem 0;">Routing con FastAPI, y cómo se leía en Flask</li><li style="margin:0 0 .3rem 0;">Síncrono frente a asíncrono</li></ul></div>
-    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Levantar un servidor mínimo con uvicorn --reload</li><li style="margin:0 0 .3rem 0;">Exponer la limpieza de datos de la semana 1 como endpoint</li><li style="margin:0 0 .3rem 0;">Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li style="margin:0 0 .3rem 0;">Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></div>
-    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Flask frente a los frameworks modernos (sección 3)</li><li style="margin:0 0 .3rem 0;">El detalle de Starlette, Werkzeug y Jinja2</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Levantar un servidor mínimo con uvicorn --reload (sección 2)</li><li style="margin:0 0 .3rem 0;">Exponer la limpieza de datos de la semana 1 como endpoint</li><li style="margin:0 0 .3rem 0;">Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li style="margin:0 0 .3rem 0;">Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Flask frente a los frameworks modernos (sección 4)</li><li style="margin:0 0 .3rem 0;">El detalle de Starlette, Werkzeug y Jinja2</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
   </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Flask aparece en este módulo como <strong>término de comparación</strong>, no como herramienta de trabajo: es lo que el syllabus pide para esta semana («Flask frente a los frameworks modernos») y lo que vas a encontrar en el código Python que ya está en producción. Lo que tú escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.</p>
 </section>
 
@@ -517,6 +517,8 @@ gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
 waitress-serve --port=8000 app:app</code></pre>
                             </div>
 
+                            <p class="text-gray-700 leading-relaxed mb-5">Si <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app.main:app</code> te parece un galimatías, es normal: todavía no hemos dicho qué separan esos dos puntos. Se desmonta pieza a pieza en la sección 2.2, y allí levantarás tu primer servicio. Aquí lo único que importa es la diferencia entre las dos líneas: una recarga al guardar, la otra lanza cuatro procesos y no recarga nada.</p>
+
                             <p class="text-gray-700 leading-relaxed mb-5">El parámetro <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">--workers 4</code> le dice a Gunicorn que lance 4 procesos independientes de tu aplicación. Cada worker puede atender una petición simultáneamente. Es como tener <strong>4 cocinas paralelas</strong> en el restaurante.</p>
 
                             <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.4 El flujo completo en producción</h3>
@@ -694,22 +696,24 @@ waitress-serve --port=8000 app:app</code></pre>
                         </div>
 
                         <section class="usta-card p-6 md:p-8 mb-8">
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">2.1 ¿Qué es el routing?</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">3.1 ¿Qué es el routing?</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">El <em>routing</em> es el mecanismo que conecta una URL con una función de Python. Cuando alguien visita <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">/predict</code>, el framework necesita saber qué función ejecutar. Es el equivalente a un directorio telefónico: dado un "número" (la URL), te conecta con la "persona" (la función) correcta.</p>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.2 Routing en FastAPI</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 Routing en FastAPI</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Éste es el que vas a usar en el proyecto, así que empezamos por él. FastAPI declara una ruta por cada método HTTP —<code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.get</code>, <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.post</code>— y aprovecha el <em>type hinting</em> que ya usas desde la semana 1: al escribir <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">min_age: int</code> no estás documentando, estás <strong>declarando una validación</strong>. Si llega otra cosa, FastAPI responde 422 —el error que viste en la semana 4— sin que tú escribas una línea:</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
                                 <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
                                     <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
-                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>FastAPI — routing.py</span>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>FastAPI — main.py</span>
                                     <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-fastapi-route', this)" title="Copiar al portapapeles">
                                         <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                     </button>
                                 </div>
-                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-fastapi-route"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI, Query
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-fastapi-route"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Se levanta con:  uvicorn main:app --reload</span>
+
+<span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI, Query
 
 app = FastAPI()
 
@@ -732,19 +736,21 @@ app = FastAPI()
     <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age}</code></pre>
                             </div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.3 El mismo routing en Flask, para que lo reconozcas</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 El mismo routing en Flask, para que lo reconozcas</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Esto es lo que vas a encontrar en la mayor parte del codigo Python que ya esta en produccion, asi que conviene que lo leas sin esfuerzo. Flask usa el mismo decorador <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">@app.route()</code> para todos los metodos HTTP, y los parametros hay que sacarlos y convertirlos a mano: fijate en <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">request.args.get(..., type=int)</code>, que es la linea que en FastAPI no existe porque la escribe el type hint.</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
                                 <div class="bg-gray-800 px-4 py-2 text-xs font-mono text-gray-400 border-b border-gray-700 flex justify-between items-center">
                                     <div class="flex items-center gap-2"><span class="flex items-center gap-1"><div class="w-3 h-3 rounded-full bg-red-500"></div><div class="w-3 h-3 rounded-full bg-yellow-500"></div><div class="w-3 h-3 rounded-full bg-green-500"></div></span></div>
-                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Flask — routing.py</span>
+                                    <span><i class="fab fa-python text-yellow-400 mr-2"></i>Flask — main.py</span>
                                     <button class="text-gray-400 hover:text-white transition-colors focus:outline-none flex items-center gap-1 group" onclick="copyCode('code-flask-route', this)" title="Copiar al portapapeles">
                                         <span class="text-[10px] uppercase font-bold tracking-wider opacity-0 group-hover:opacity-100 transition-opacity">Copiar</span>
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                     </button>
                                 </div>
-                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-route"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-route"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Se levanta con:  flask --app main run</span>
+
+<span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
 
 app = Flask(__name__)
 
@@ -767,7 +773,7 @@ app = Flask(__name__)
     <span class="text-pink-500 font-bold">return</span> jsonify({<span class="text-yellow-300">"min_age"</span>: min_age, <span class="text-yellow-300">"max_age"</span>: max_age})</code></pre>
                             </div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">2.4 Tabla Comparativa de Routing</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.4 Tabla Comparativa de Routing</h3>
                             <table class="min-w-full divide-y divide-gray-200 my-8 shadow-sm border border-gray-200 rounded-lg overflow-hidden block md:table overflow-x-auto">
                                 <thead class="bg-gray-100">
                                     <tr>
@@ -805,7 +811,7 @@ app = Flask(__name__)
                         </div>
 
                         <section class="usta-card p-6 md:p-8 mb-8">
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">3.1 El endpoint <code>/predict</code> en Flask</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">4.1 El endpoint <code>/predict</code> en Flask</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Veamos cómo se implementa un endpoint de predicción con Flask, el framework veterano (2010). Observa la validación manual y la falta de documentación automática:</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
@@ -817,7 +823,9 @@ app = Flask(__name__)
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                     </button>
                                 </div>
-                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-predict"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-flask-predict"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Se levanta con:  flask --app app_flask run</span>
+
+<span class="text-pink-500 font-bold">from</span> flask <span class="text-pink-500 font-bold">import</span> Flask, request, jsonify
 <span class="text-pink-500 font-bold">import</span> numpy <span class="text-pink-500 font-bold">as</span> np
 <span class="text-pink-500 font-bold">import</span> pickle
 
@@ -846,7 +854,7 @@ app = Flask(__name__)
     })</code></pre>
                             </div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.2 El mismo endpoint en FastAPI</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.2 El mismo endpoint en FastAPI</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Ahora veamos cómo el mismo endpoint se reimagina con FastAPI. Observa cómo Pydantic maneja la validación y la documentación se genera automáticamente:</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
@@ -858,7 +866,9 @@ app = Flask(__name__)
                                         <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                                     </button>
                                 </div>
-                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-fastapi-predict"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI
+                                <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-b-xl overflow-x-auto shadow-xl border border-gray-700 code-scroll font-mono" data-language="python" id="code-fastapi-predict"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Se levanta con:  uvicorn app_fastapi:app --reload</span>
+
+<span class="text-pink-500 font-bold">from</span> fastapi <span class="text-pink-500 font-bold">import</span> FastAPI
 <span class="text-pink-500 font-bold">from</span> pydantic <span class="text-pink-500 font-bold">import</span> BaseModel, Field
 <span class="text-pink-500 font-bold">import</span> numpy <span class="text-pink-500 font-bold">as</span> np
 <span class="text-pink-500 font-bold">import</span> pickle
@@ -893,7 +903,7 @@ app = FastAPI(
     )</code></pre>
                             </div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">3.3 ¿Por qué migró el ecosistema?</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.3 ¿Por qué migró el ecosistema?</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">No fue una moda. Hay razones técnicas concretas:</p>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
@@ -939,7 +949,7 @@ app = FastAPI(
                         </div>
 
                         <section class="usta-card p-6 md:p-8 mb-8">
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">4.1 I/O-bound vs CPU-bound</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">5.1 I/O-bound vs CPU-bound</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Antes de entender <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code>, necesitas distinguir dos tipos de tareas:</p>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
@@ -959,13 +969,13 @@ app = FastAPI(
                                 <strong>Punto clave:</strong> En una API de predicción, la mayor parte del tiempo se gasta en operaciones <strong>I/O</strong>, no en cómputo. Cargar datos, leer el modelo del disco, consultar la base de datos para obtener features del usuario… todo eso es <em>espera</em>.
                             </div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.2 Modelo síncrono: una fila con un solo cajero</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.2 Modelo síncrono: una fila con un solo cajero</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">En Flask (síncrono), cada petición <strong>bloquea</strong> al worker mientras se procesa. El Worker 1 no puede atender la Petición 2 hasta que termine con la 1, aunque el 97% del tiempo esté simplemente esperando a la base de datos:</p>
 
                             <div class="diagram">Petición 1 ──[leer BD: 200ms]──[predecir: 5ms]──[responder]──▶
                                                                 Petición 2 ──[leer BD: 200ms]──...</div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.3 Modelo asíncrono: un cajero muy eficiente</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.3 Modelo asíncrono: un cajero muy eficiente</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Con <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code>, un solo proceso puede manejar muchas peticiones <strong>concurrentemente</strong>. Mientras la Petición 1 espera la BD, el event loop atiende la 2 y la 3:</p>
 
                             <div class="diagram">Petición 1 ──[leer BD ⏸️ ]─────────────────────[predecir]──[responder]──▶
@@ -985,7 +995,7 @@ Petición 3 ──────────────────────�
                                 </div>
                             </details>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.4 Ejemplo comparativo completo</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.4 Ejemplo comparativo completo</h3>
                             <p class="text-gray-700 leading-relaxed mb-5">Un endpoint que consulta dos fuentes de datos antes de hacer una predicción. Primero síncrono (Flask), luego asíncrono (FastAPI):</p>
 
                             <div class="my-4 rounded-xl overflow-hidden shadow-lg">
@@ -1052,7 +1062,7 @@ app = FastAPI()
     <span class="text-pink-500 font-bold">return</span> {<span class="text-yellow-300">"user"</span>: user_id, <span class="text-yellow-300">"risk_score"</span>: risk_score}</code></pre>
                             </div>
 
-                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.5 Advertencia: async no es magia para todo</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">5.5 Advertencia: async no es magia para todo</h3>
                             <p class="text-gray-700 leading-relaxed mb-5"><code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">async/await</code> brilla en tareas <strong>I/O-bound</strong>. Para tareas <strong>CPU-bound</strong> (como entrenar un modelo o calcular bootstrapping), <code>async</code> no ayuda porque el procesador está realmente ocupado. La estrategia correcta es delegar el cómputo a un proceso separado con <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">run_in_executor</code> + <code class="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">ProcessPoolExecutor</code>.</p>
                         </section>
 
@@ -1203,7 +1213,7 @@ app = FastAPI()
                                         <li>Definir modelos Pydantic para todas las entradas y salidas</li>
                                         <li>Separar la carga del modelo del endpoint (cargar al iniciar)</li>
                                         <li>Incluir un endpoint <code>/health</code> para monitoreo</li>
-                                        <li>Usar <code>async def</code> para consultas a BD, lectura de archivos o llamadas a otros servicios</li>
+                                        <li>Usar <code>async def</code> cuando la espera sea de E/S <em>y</em> la librería sea asíncrona: consultas a BD con un driver async, llamadas a otros servicios con <code>httpx.AsyncClient</code>, archivos con <code>aiofiles</code>. Con <code>open()</code> corriente o un cliente síncrono, use <code>def</code>: dentro de una corrutina bloquearía el bucle de eventos</li>
                                         <li>Versionar tu API (<code>/v1/predict</code>, <code>/v2/predict</code>)</li>
                                         <li>Registrar las predicciones (logging) para auditoría</li>
                                     </ul>
@@ -1211,6 +1221,7 @@ app = FastAPI()
                                 <div class="bg-red-50 border border-red-200 rounded-xl p-6">
                                     <h4 class="font-bold text-red-800 mb-4 flex items-center gap-2">❌ Errores Comunes</h4>
                                     <ul class="space-y-3 text-sm text-gray-700">
+                                        <li>Ejecutar <code>python main.py</code> esperando que arranque el servidor</li>
                                         <li>Usar <code>flask run</code> en producción</li>
                                         <li>Cargar el modelo <code>.pkl</code> dentro de la función del endpoint</li>
                                         <li>Usar <code>async def</code> para tareas CPU-bound sin executor</li>

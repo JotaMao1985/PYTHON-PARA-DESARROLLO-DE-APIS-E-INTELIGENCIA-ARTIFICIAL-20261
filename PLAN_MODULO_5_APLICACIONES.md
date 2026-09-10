@@ -384,7 +384,7 @@ falso: el módulo 1 la tiene, con las dos plataformas, y es su sitio. No se dupl
 
 ### Fase 4: Que el trabajo sobreviva a un remontaje
 
-#### Tarea 6: Llevar la sección a la receta y a los componentes
+#### Tarea 6: Llevar la sección a la receta y a los componentes — **HECHA el 2026-09-09**
 
 **Descripción.** Todo lo hecho en T1–T4 vive **sólo en el archivo publicado**, y `montar.py`
 regenera ese archivo entero desde `heredado/` y `recetas/modulo_5.json`. Hoy, un remontaje del
@@ -413,21 +413,44 @@ El mecanismo duradero ya existe y está probado en el módulo 4: la receta admit
 5. Montar a un destino temporal y comparar con el publicado antes de sustituir nada.
 
 **Criterios de aceptación:**
-- [ ] Montar la receta a un temporal produce un archivo equivalente al publicado hoy
-- [ ] El diff contra el publicado no pierde ni la sección, ni los ejercicios, ni los retoques de T3
+- [x] Montar la receta a un temporal produce un archivo equivalente al publicado hoy
+- [x] El diff contra el publicado no pierde ni la sección, ni los ejercicios, ni los retoques de T3
 
 **Verificación:**
-- [ ] `diff -w` entre el montado temporal y el publicado, revisado línea a línea
-- [ ] El temporal se abre en el navegador con las once lecciones y la consola limpia
+- [x] `diff` entre el montado y el publicado, revisado hunk a hunk hasta agotarlo
+- [x] El montado se abre en el navegador con las once lecciones y la consola limpia
+
+**Cómo quedó.** El paso 1 del plan —«mover `ArrancarSection` a `componentes/`»— no bastaba, y
+conviene dejarlo escrito: hasta hoy **toda** sección de la receta exigía una pieza generada en
+`build/…/jsx/<id>.jsx`, así que declarar la sección nueva en `secciones` hacía fallar el
+montaje, y el `componentes` del módulo 4 sólo servía para componentes auxiliares, no para una
+lección entera. `montar.py` admite ahora `"propia": true` en una sección: el componente lo
+estampa desde `componentes/`, y de la sección sólo se genera su fila del `curriculum`. Si el
+nombre no aparece en ese archivo, el montaje falla con un mensaje, en vez de dejar la página en
+blanco sin avisar, que es lo que haría Babel.
+
+Los dos ejercicios **no** hubo que moverlos: `OrdenaPasos` y `DetectaError` son de LP-CORE y
+los trae `lp-base.html`. El módulo 5 es el único de los trece que los usa.
+
+Los retoques de T3 fueron **veintiuno**, no cinco: además de los cuatro bloques de código y el
+consejo de `async def`, catorce encabezados renumerados —al entrar una lección segunda, lo que
+sigue corre un puesto—, la remisión de `app.main:app`, el error «`python main.py`» y las dos
+referencias de la tabla de la sesión.
+
+Y un paso del proceso que no estaba escrito en ninguna parte: `estilos.py`. Sin él, el
+montaje sale **sin el `<style>` propio del módulo** —`.usta-card` y `.diagram`— y nadie avisa.
+La cadena completa del 5 es `convertir_plano.py` → `estilos.py` → `montar.py`.
+
+**La prueba que cierra la tarea:** montar la receta sobre el archivo publicado no lo cambia
+—mismo `shasum` antes y después—. Y montar los módulos 3 y 4 con el `montar.py` viejo y con el
+nuevo da archivos idénticos, así que el cambio no toca a los otros doce.
 
 **Dependencias:** T1–T4
 **Archivos:** `scripts/migracion/componentes/modulo_5.jsx` (nuevo), `scripts/migracion/recetas/modulo_5.json`, `heredado/5_…html`
 **Alcance:** M
 
-**Decisión pendiente del docente:** T6 puede hacerse ahora o no hacerse nunca. No hacerla es
-defendible —el módulo 5 lleva desde el 19 de agosto con un arreglo que tampoco sobrevive, y
-nadie ha remontado— pero entonces conviene que el comentario que ya lleva el archivo sea la
-única advertencia, y asumir que remontar el 5 significa rehacer esto a mano.
+**La decisión se tomó el 2026-09-09: hacerla.** El módulo 5 ya no depende de que nadie
+remonte.
 
 ### Punto de control C — cierre · **PASADO el 2026-09-09**
 
@@ -488,7 +511,7 @@ de sintaxis real es el barrido propio con `ast.parse`.
 | R2 | Babel compila en el navegador: un JSX mal cerrado deja la **página en blanco**, sin aviso en el archivo | Alto | Abrir la página tras cada tarea y leer la consola. Nunca dar por buena una edición sin verla renderizada |
 | R3 | Los literales de plantilla se comen la barra invertida antes de llegar a la pantalla — es el bloqueante B1 documentado en `PLAN_MODULO_4_PYDANTIC.md`. Afecta a `venv\Scripts\activate` y a cualquier ruta de Windows | Alto | Doblar la barra (`venv\\Scripts\\activate`), como ya hace el módulo 6, y **verificar en el DOM**, no en el archivo |
 | R4 | Remontar el módulo 6 borraría T5: es una **edición manual del publicado** y no está en `heredado/`, donde la guía larga sigue entera | Alto | No remontar el 6 mientras T5 no se lleve al heredado. La sangría ya **no** es motivo: se arregló en los dos archivos (`ab829ff`), así que un remontaje la reproduce bien — ver «3 bis» |
-| R6 | La sección **no existe en `heredado/`**: `montar.py` regenera todo lo que hay entre los centinelas, así que un remontaje del módulo 5 la borraría | Alto | Queda un comentario en el propio archivo avisándolo. Si hay que remontar, la sección se recupera del control de versiones |
+| R6 | ~~La sección **no existe en `heredado/`**: un remontaje del módulo 5 la borraría~~ **Cerrado por T6**: la sección vive en `componentes/modulo_5.jsx`, la receta la declara `"propia": true` y los retoques de T3 están en el heredado. Un remontaje la reproduce | — | — |
 | R5 | La renumeración de los títulos es manual y se hace en diez strings | Bajo | Comprobar la numeración leyendo la barra lateral renderizada, no el array |
 
 ---

@@ -392,22 +392,42 @@ def main():
     # del que se escribió es un juicio, no una transformación mecánica. Por eso
     # viven en `componentes/modulo_N.jsx`, que sí se versiona, y por eso los
     # nombra la receta en vez de buscarlos el guion.
+    fuente_propia = ""
     if receta.get("componentes"):
         propio = ruta("componentes")
         if not propio.exists():
             print(f"ERROR: la receta declara componentes en {propio} y no está.",
                   file=sys.stderr)
             return 1
-        cuerpo = indentar_jsx(propio.read_text(encoding="utf-8"), 8)
+        fuente_propia = propio.read_text(encoding="utf-8")
+        cuerpo = indentar_jsx(fuente_propia, 8)
         texto = poner(texto, INI_COMP, FIN_COMP, cuerpo, "        const curriculum = [")
 
     # 6 · secciones
+    #
+    # Casi todas salen de una pieza que generó un conversor a partir del
+    # heredado. Una sección con `"propia": true` no: la escribió alguien a
+    # mano, entera, y vive en el `componentes` de la receta. El heredado no
+    # la tiene y ningún conversor puede inventarla —el módulo 5 estrenó el
+    # caso: una lección nueva, con dos ejercicios, que no existía en el
+    # original—. Aquí sólo se pone su fila del `curriculum`; el componente
+    # ya lo estampó el paso 5.
     comps, filas = [], []
     for s in receta["secciones"]:
-        cuerpo = (piezas / "jsx" / f"{s['id']}.jsx").read_text(encoding="utf-8").rstrip()
-        cuerpo = indentar_jsx(cuerpo, 16)
-        comps.append(f"        const {s['componente']} = () => (\n"
-                     f"            <div className=\"prose-lp\">\n{cuerpo}\n            </div>\n        );")
+        if s.get("propia"):
+            # Sin este aviso el fallo es mudo: `curriculum` nombraría un
+            # componente que no existe y la página saldría en blanco, que es
+            # justo lo que Babel no avisa al compilar en el navegador.
+            if not re.search(rf"\bconst {re.escape(s['componente'])}\b", fuente_propia):
+                print(f"ERROR: la sección {s['id']!r} se declara propia, pero "
+                      f"{s['componente']} no se define en los componentes de la receta.",
+                      file=sys.stderr)
+                return 1
+        else:
+            cuerpo = (piezas / "jsx" / f"{s['id']}.jsx").read_text(encoding="utf-8").rstrip()
+            cuerpo = indentar_jsx(cuerpo, 16)
+            comps.append(f"        const {s['componente']} = () => (\n"
+                         f"            <div className=\"prose-lp\">\n{cuerpo}\n            </div>\n        );")
         filas.append(f"            {{ id: {s['id']!r}, title: {s['titulo']!r}, "
                      f"icon: {s['icono']!r}, component: {s['componente']} }},")
     texto = poner(texto, INI_SEC, FIN_SEC, "\n\n".join(comps), "        const curriculum = [")

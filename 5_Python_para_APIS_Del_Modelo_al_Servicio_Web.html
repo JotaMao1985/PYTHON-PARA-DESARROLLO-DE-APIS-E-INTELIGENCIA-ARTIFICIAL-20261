@@ -2170,224 +2170,18 @@
            encabezado queda solo, y sigue diciendo la verdad —aquí es donde
            irían— en vez de anunciar un hilo que ese capítulo no sigue.
         ============================================================ */
-        /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
-        const AperturaSection = () => (
-            <div className="prose-lp">
-                <h3>Cómo se usa este material en la sesión</h3>
+        /* === COMPONENTES DEL MÓDULO INICIO — escritos a mano, ver la receta === */
+        /* Lección 4 — «La aplicación: qué es y cómo se levanta».
+         *
+         * No sale de `heredado/5_…html` ni de ningún conversor: es una lección nueva,
+         * escrita entera a mano, y por eso vive aquí. La receta la declara en
+         * `secciones` con `"propia": true`, y `montar.py` sólo le pone su fila del
+         * `curriculum` — el componente lo estampa desde este archivo.
+         *
+         * Los dos ejercicios —`OrdenaPasos` y `DetectaError`— son de LP-CORE, los
+         * trae `lp-base.html`, y no hay que traerlos aquí.
+         */
 
-                <p>Semana 5 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
-
-                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>El ciclo petición-respuesta, de principio a fin</li><li>Servidor web, WSGI y ASGI: qué cambió y por qué</li><li>Routing con FastAPI, y cómo se leía en Flask</li><li>Síncrono frente a asíncrono</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Levantar un servidor mínimo con uvicorn --reload (sección 2)</li><li>Exponer la limpieza de datos de la semana 1 como endpoint</li><li>Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li>Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Flask frente a los frameworks modernos (sección 4)</li><li>El detalle de Starlette, Werkzeug y Jinja2</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
-
-                <Box type="info" label="Cómo leer este reparto"><p>Flask aparece en este módulo como <strong>término de comparación</strong>, no como herramienta de trabajo: es lo que el syllabus pide para esta semana («Flask frente a los frameworks modernos») y lo que vas a encontrar en el código Python que ya está en producción. Lo que tú escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.</p></Box>
-            </div>
-        );
-
-        const IntroSection = () => (
-            <div className="prose-lp">
-                <section className="usta-card p-6 md:p-8 mb-8">
-
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">Imagina que has entrenado un modelo de <strong>regresión logística</strong> para predecir riesgo crediticio. El modelo funciona perfectamente en tu notebook de Jupyter: le pasas las variables de un solicitante y devuelve una probabilidad de impago. Ahora llega la pregunta real: <strong>¿cómo lo usan los demás?</strong></p>
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">El equipo de desarrollo del banco necesita llamar a tu modelo desde su aplicación web. El equipo de fraude quiere consultarlo en tiempo real. Y la gerencia quiere un dashboard que muestre predicciones actualizadas. Ninguno de ellos va a abrir tu notebook. La respuesta es <strong>exponer tu modelo como una API</strong>: un servicio web al que cualquier sistema puede enviarle datos y recibir predicciones.</p>
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">Pero esto abre nuevas preguntas fundamentales:</p>
-
-                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
-                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
-                                                    <div className="text-3xl mb-3">🏗️</div>
-                                                    <p className="text-gray-800 font-medium text-sm">¿Qué infraestructura necesitas para que tu modelo reciba peticiones HTTP?</p>
-                                                </div>
-                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
-                                                    <div className="text-3xl mb-3">📍</div>
-                                                    <p className="text-gray-800 font-medium text-sm">¿Cómo defines las rutas (<code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/predict</code>, <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/health</code>, <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/stats</code>) de forma clara?</p>
-                                                </div>
-                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
-                                                    <div className="text-3xl mb-3">⚡</div>
-                                                    <p className="text-gray-800 font-medium text-sm">¿Qué pasa si 500 usuarios consultan el modelo al mismo tiempo? ¿Cómo garantizas que no colapse?</p>
-                                                </div>
-                                            </div>
-
-                                            <Box type="info" label="Objetivo del módulo">Llevarte desde los fundamentos de cómo funciona un servidor web hasta la construcción de APIs asíncronas con FastAPI, siempre con ejemplos orientados a estadística y ciencia de datos. Al finalizar, tendrás la capacidad de exponer cualquier modelo estadístico como un servicio web robusto y escalable.
-                                            </Box>
-
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">Prerrequisitos e Instalación</h3>
-                                            <p className="text-gray-700 leading-relaxed mb-5">Para ejecutar todos los ejemplos de este módulo, necesitas instalar las siguientes dependencias en tu entorno virtual:</p>
-
-                                            <CodeBlock title="Terminal" lang="shell" code={`pip install flask fastapi uvicorn pandas numpy scikit-learn aiofiles`} />
-                                        </section>
-            </div>
-        );
-
-        const ServidorWebSection = () => (
-            <div className="prose-lp">
-                <section className="usta-card p-6 md:p-8 mb-8">
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">1.1 ¿Qué es un servidor web?</h3>
-                                            <p className="text-gray-700 leading-relaxed mb-5">Piensa en un <strong>restaurante</strong>. Cuando un cliente (el navegador o una aplicación) hace un pedido (una petición HTTP), alguien tiene que recibirlo, llevarlo a la cocina y traer el plato de vuelta. Ese "alguien" es el <strong>servidor web</strong>.</p>
-                                            <p className="text-gray-700 leading-relaxed mb-5">En términos técnicos, un servidor web es un programa que: escucha conexiones entrantes en un puerto (típicamente el 80 o 443), recibe peticiones HTTP (GET, POST, PUT, DELETE…), las delega a tu aplicación Python, y devuelve la respuesta al cliente. Ejemplos de servidores web que encontrarás en producción: <strong>Nginx</strong>, <strong>Apache</strong>, <strong>Gunicorn</strong>, <strong>Uvicorn</strong>.</p>
-
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.2 WSGI: El protocolo entre el servidor y tu aplicación</h3>
-                                            <p className="text-gray-700 leading-relaxed mb-5">¿Cómo se comunican el servidor web y tu código Python? Necesitan un "idioma común". Ese idioma es <strong>WSGI</strong> (<em>Web Server Gateway Interface</em>), definido en la PEP 3333.</p>
-
-                                            <Box type="tip" label="Analogía">Si el servidor web es el <em>maître</em> que recibe al cliente en el restaurante, <strong>WSGI es el protocolo de comunicación entre el maître y la cocina</strong>. Define exactamente cómo se pasa el pedido (la petición) y cómo se devuelve el plato (la respuesta).
-                                            </Box>
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">WSGI tiene una limitación de origen, y conviene verla ahora porque explica todo lo que viene después: <strong>es síncrono por diseño</strong>. La PEP 3333 se escribió en 2010, cuando el problema era estandarizar, no concurrir. Una aplicación WSGI atiende una petición, la termina, y sólo entonces empieza la siguiente. Por eso apareció <strong>ASGI</strong> (<em>Asynchronous Server Gateway Interface</em>): el mismo papel de idioma común entre servidor y aplicación, pero con <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">async</code> desde la base. <strong>Es el que vas a usar en este curso</strong>, y el módulo 4 explica qué se gana con él.</p>
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">Cuando usas <strong>FastAPI</strong>, en realidad trabajas sobre dos piezas: <strong>Starlette</strong>, el toolkit ASGI que se encarga de toda la comunicación HTTP —parsear peticiones, construir respuestas, manejar cabeceras y rutas—, y <strong>Pydantic</strong>, que valida y serializa los datos, y que ya conoces de la semana 4. FastAPI envuelve las dos y añade la generación automática de la documentación a partir de tus tipos. Es el mismo reparto que en la generación anterior —Flask envolvía <strong>Werkzeug</strong> (HTTP) y <strong>Jinja2</strong> (plantillas HTML)—, con una diferencia que importa: la segunda pieza ya no sirve para pintar páginas, sino para <em>validar datos</em>, porque lo que devuelve una API estadística no es HTML, es JSON.</p>
-
-                                            <Accordion items={[{ titulo: "¿Qué son Starlette y Werkzeug exactamente?", contenido: (<><div className="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
-                                                    <p><strong>Starlette</strong> es el framework ASGI ligero sobre el que está construido FastAPI. Cuando llega una petición, es Starlette quien parsea la URL, las cabeceras, el cuerpo y los parámetros de consulta, y quien construye el objeto <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Request</code>. También es suyo el sistema de rutas, el middleware y el manejo de WebSockets. FastAPI le añade encima la capa que te interesa como estadístico: leer tus type hints, validar con Pydantic y generar la documentación en <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">/docs</code>.</p>
-                                                    <p className="mt-2"><strong>Werkzeug</strong> (del alemán: "herramienta") es su equivalente en el mundo WSGI, y es lo que hay debajo de Flask. Hace el mismo trabajo —parsear la petición, construir la respuesta— pero de forma síncrona. El servidor de desarrollo de Flask (<code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">flask run</code>) lo provee Werkzeug, igual que el de FastAPI lo provee <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">uvicorn</code>. Merece la pena conocerlo porque vas a encontrar muchísimo código Python en producción escrito sobre él.</p>
-                                                    <p className="mt-2"><strong>Jinja2</strong> es la otra mitad de Flask: el motor de plantillas que genera HTML dinámico. No lo usamos aquí porque nuestras APIs devuelven JSON, no páginas. En FastAPI ese hueco lo ocupa Pydantic, que no pinta nada: valida. Es un buen resumen de en qué cambió el oficio entre 2010 y hoy.</p>
-                                                    <table className="w-full mt-3 text-xs border-collapse">
-                                                        <tr className="border-b border-blue-200"><th className="text-left py-1 font-bold">Papel</th><th className="text-left py-1 font-bold">Generación WSGI</th><th className="text-left py-1 font-bold">Generación ASGI</th></tr>
-                                                        <tr className="border-b border-blue-100"><td className="py-1">Framework</td><td className="py-1">Flask</td><td className="py-1"><strong>FastAPI</strong></td></tr>
-                                                        <tr className="border-b border-blue-100"><td className="py-1">Capa HTTP</td><td className="py-1">Werkzeug</td><td className="py-1"><strong>Starlette</strong></td></tr>
-                                                        <tr className="border-b border-blue-100"><td className="py-1">Segunda pieza</td><td className="py-1">Jinja2 (plantillas)</td><td className="py-1"><strong>Pydantic</strong> (validación)</td></tr>
-                                                        <tr><td className="py-1">Servidor</td><td className="py-1">Gunicorn</td><td className="py-1"><strong>Uvicorn</strong></td></tr>
-                                                    </table>
-                                                </div></>) }]} />
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">Una aplicación WSGI, en su forma más pura, es simplemente una función <em>callable</em>:</p>
-
-                                            <CodeBlock title="Python" lang="python" code={`# La aplicación WSGI más simple del mundo
-def app(environ, start_response):
-    """
-    environ: diccionario con toda la info de la petición HTTP
-    start_response: función para enviar los headers de respuesta
-    """
-    status = "200 OK"
-    headers = [("Content-Type", "text/plain")]
-    start_response(status, headers)
-    return [b"Hola desde una app WSGI pura"]`} />
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">Nadie escribe aplicaciones así en la práctica. Para eso existen los frameworks —FastAPI hoy, Flask en la generación anterior—, que encapsulan esta complejidad. Lo que acabas de ver es lo que <em>no</em> vas a tener que escribir nunca.</p>
-
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.3 De desarrollo a producción: Uvicorn y Gunicorn</h3>
-                                            <p className="text-gray-700 leading-relaxed mb-5">Todo framework trae un servidor de desarrollo —<code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">uvicorn --reload</code> en FastAPI, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">flask run</code> en Flask— y <strong>ninguno de los dos es apto para producción</strong>: recargan el código en caliente, no gestionan varios procesos y no están endurecidos frente a un cliente hostil. En producción se lanza el mismo servidor con otra configuración, o se le pone un gestor de procesos delante:</p>
-
-                                            <CodeBlock title="Terminal" lang="shell" code={`# ── ASGI: lo que usa este curso ──────────────────────────
-# Desarrollo: recarga al guardar. NO usar en produccion.
-uvicorn app.main:app --reload
-
-# Produccion: varios procesos, sin recarga.
-# Es la linea que ira en el Dockerfile de la semana 11.
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
-
-# ── WSGI: la generacion anterior, para que la reconozcas ─
-# Gunicorn con una app Flask
-gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
-
-# Waitress (multiplataforma, incluye Windows)
-waitress-serve --port=8000 app:app`} />
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">Si <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app.main:app</code> te parece un galimatías, es normal: todavía no hemos dicho qué separan esos dos puntos. Se desmonta pieza a pieza en la sección 2.2, y allí levantarás tu primer servicio. Aquí lo único que importa es la diferencia entre las dos líneas: una recarga al guardar, la otra lanza cuatro procesos y no recarga nada.</p>
-
-                                            <p className="text-gray-700 leading-relaxed mb-5">El parámetro <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">--workers 4</code> le dice a Gunicorn que lance 4 procesos independientes de tu aplicación. Cada worker puede atender una petición simultáneamente. Es como tener <strong>4 cocinas paralelas</strong> en el restaurante.</p>
-
-                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.4 El flujo completo en producción</h3>
-
-
-                                            <div className="my-8">
-                                                <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" className="w-full">
-                                                    <defs>
-                                                        <style>{`
-                                                            .d-box { fill: #ffffff; stroke: #3D008D; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
-                                                            .d-box-pink { fill: #ffffff; stroke: #ED1E79; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
-                                                            .d-box-green { fill: #ffffff; stroke: #2ecc71; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
-                                                            .d-label { font-family: 'Montserrat', sans-serif; font-size: 14px; fill: #1E293B; font-weight: 700; text-anchor: middle; }
-                                                            .d-desc { font-family: 'Montserrat', sans-serif; font-size: 11px; fill: #64748B; text-anchor: middle; }
-                                                            .d-step { font-family: 'Fira Code', monospace; font-size: 22px; fill: #3D008D; font-weight: 800; text-anchor: middle; opacity: 0.2; }
-                                                            .d-arrow { stroke: #CBD5E1; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
-                                                        `}</style>
-                                                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                                                            <polygon points="0 0, 10 3.5, 0 7" fill="#CBD5E1" />
-                                                        </marker>
-                                                    </defs>
-
-
-                                                    <g transform="translate(50, 30)">
-                                                        <rect width="160" height="130" className="d-box" />
-                                                        <text x="80" y="35" className="d-step">01</text>
-                                                        <text x="80" y="65" className="d-label">Cliente</text>
-                                                        <text x="80" y="88" className="d-desc">Navegador, App,</text>
-                                                        <text x="80" y="105" className="d-desc">curl, otro servicio</text>
-                                                    </g>
-                                                    <path d="M210 95 L260 95" className="d-arrow" />
-
-
-                                                    <g transform="translate(260, 30)">
-                                                        <rect width="160" height="130" className="d-box-pink" />
-                                                        <text x="80" y="35" className="d-step">02</text>
-                                                        <text x="80" y="65" className="d-label" style={{ fill: '#ED1E79' }}>Nginx (proxy)</text>
-                                                        <text x="80" y="88" className="d-desc">SSL, balanceo,</text>
-                                                        <text x="80" y="105" className="d-desc">archivos estáticos</text>
-                                                    </g>
-                                                    <path d="M420 95 L470 95" className="d-arrow" />
-
-
-                                                    <g transform="translate(470, 30)">
-                                                        <rect width="160" height="130" className="d-box" />
-                                                        <text x="80" y="35" className="d-step">03</text>
-                                                        <text x="80" y="65" className="d-label">Gunicorn / Uvicorn</text>
-                                                        <text x="80" y="88" className="d-desc">Servidor WSGI/ASGI</text>
-                                                        <text x="80" y="105" className="d-desc">Gestiona workers</text>
-                                                    </g>
-                                                    <path d="M630 95 L680 95" className="d-arrow" />
-
-
-                                                    <g transform="translate(680, 30)">
-                                                        <rect width="160" height="130" className="d-box-green" />
-                                                        <text x="80" y="35" className="d-step">04</text>
-                                                        <text x="80" y="65" className="d-label" style={{ fill: '#27ae60' }}>Tu App Python</text>
-                                                        <text x="80" y="88" className="d-desc">Rutas, lógica,</text>
-                                                        <text x="80" y="105" className="d-desc">modelos ML</text>
-                                                    </g>
-
-
-                                                    <g transform="translate(490, 200)">
-                                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" strokeWidth="1.5" />
-                                                        <text x="60" y="30" className="d-desc" style={{ fontWeight: '600', fill: '#3D008D' }}>Worker 1</text>
-                                                    </g>
-                                                    <g transform="translate(490, 265)">
-                                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" strokeWidth="1.5" />
-                                                        <text x="60" y="30" className="d-desc" style={{ fontWeight: '600', fill: '#3D008D' }}>Worker 2</text>
-                                                    </g>
-                                                    <g transform="translate(490, 330)">
-                                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" strokeWidth="1.5" />
-                                                        <text x="60" y="30" className="d-desc" style={{ fontWeight: '600', fill: '#3D008D' }}>Worker N</text>
-                                                    </g>
-                                                    <path d="M550 160 L550 200" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4,4" />
-                                                    <path d="M550 250 L550 265" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4,4" />
-                                                    <path d="M550 315 L550 330" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4,4" />
-
-                                                    <text x="450" y="400" style={{ fontFamily: '\'Montserrat\', sans-serif', fontSize: '11px', fill: '#94a3b8', textAnchor: 'middle', fontStyle: 'italic' }}>
-                                                        Cada worker es un proceso independiente que atiende peticiones concurrentemente.
-                                                    </text>
-                                                </svg>
-                                            </div>
-                                        </section>
-
-
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>¿Por qué <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">uvicorn --reload</code> no es adecuado para producción?</>), opciones: [{ texto: (<>Porque Uvicorn no soporta el protocolo HTTP y necesita un adaptador externo para recibir peticiones.</>), correcta: false }, { texto: (<>Porque <code className="font-mono text-xs">--reload</code> vigila el sistema de archivos y reinicia el proceso ante cualquier cambio, arranca un solo worker y desactiva optimizaciones: gasta recursos y deja el servicio caído durante cada reinicio.</>), correcta: true }, { texto: (<>Porque Uvicorn en modo desarrollo solo acepta peticiones POST y no GET.</>), correcta: false }], justificacion: (<><div className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            El modo <code className="font-mono text-xs">--reload</code> está diseñado para depuración local: vigila el sistema de archivos y reinicia el proceso cada vez que guardas, lo que en producción significa consumo constante de recursos y un corte del servicio en cada reinicio. Además arranca con un solo worker. El binario es el mismo —en producción se lanza <code className="font-mono text-xs">uvicorn app.main:app --workers 4</code> sin <code className="font-mono text-xs">--reload</code>—, y es esa línea la que acabará en el Dockerfile de la semana 11. Ojo con la trampa de la opción A: Uvicorn <em>sí</em> habla HTTP; eso es justamente lo que hace.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Si Gunicorn es un servidor WSGI (síncrono por diseño), ¿cómo es posible que FastAPI, que es asíncrono, funcione correctamente en producción?</>), opciones: [{ texto: (<>FastAPI internamente convierte todas las funciones <code>async</code> a funciones síncronas antes de ejecutarlas.</>), correcta: false }, { texto: (<>Porque FastAPI no usa Gunicorn directamente, sino <strong>Uvicorn</strong>, un servidor ASGI que soporta el event loop asíncrono. En producción se puede usar Gunicorn como gestor de procesos con workers de clase Uvicorn.</>), correcta: true }, { texto: (<>No es posible; FastAPI requiere Apache como servidor exclusivo.</>), correcta: false }], justificacion: (<><div className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            WSGI es síncrono; ASGI es su evolución asíncrona. FastAPI se ejecuta sobre Uvicorn (servidor ASGI) que gestiona un event loop. En despliegues de producción, una configuración común es: <code>gunicorn -k uvicorn.workers.UvicornWorker app:app</code>, donde Gunicorn actúa como gestor de procesos y cada worker es una instancia de Uvicorn con su propio event loop asíncrono.
-                                                        </div></>) }
-                ]} />
-            </div>
-        );
-
-        /* Sección escrita a mano: NO existe en `heredado/5_…html`, así que un
-           remontaje con `montar.py` la borraría junto con el resto de lo que
-           hay entre los centinelas. Si alguna vez hay que remontar el módulo,
-           esta sección se recupera del control de versiones. */
         const ArrancarSection = () => (
             <div className="prose-lp">
                 <section className="usta-card p-6 md:p-8 mb-8">
@@ -2599,6 +2393,221 @@ INFO:     Application startup complete.`} />
                     />
 
                 </section>
+            </div>
+        );
+        /* === COMPONENTES DEL MÓDULO FIN === */
+
+        /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 5 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>El ciclo petición-respuesta, de principio a fin</li><li>Servidor web, WSGI y ASGI: qué cambió y por qué</li><li>Routing con FastAPI, y cómo se leía en Flask</li><li>Síncrono frente a asíncrono</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Levantar un servidor mínimo con uvicorn --reload (sección 2)</li><li>Exponer la limpieza de datos de la semana 1 como endpoint</li><li>Escribir el endpoint de estadísticas descriptivas del ejercicio</li><li>Redactar el contrato de la API del proyecto: qué recibe y qué devuelve</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Flask frente a los frameworks modernos (sección 4)</li><li>El detalle de Starlette, Werkzeug y Jinja2</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>Flask aparece en este módulo como <strong>término de comparación</strong>, no como herramienta de trabajo: es lo que el syllabus pide para esta semana («Flask frente a los frameworks modernos») y lo que vas a encontrar en el código Python que ya está en producción. Lo que tú escribes, aquí y en el proyecto, es FastAPI sobre Python 3.11.9.</p></Box>
+            </div>
+        );
+
+        const IntroSection = () => (
+            <div className="prose-lp">
+                <section className="usta-card p-6 md:p-8 mb-8">
+
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">Imagina que has entrenado un modelo de <strong>regresión logística</strong> para predecir riesgo crediticio. El modelo funciona perfectamente en tu notebook de Jupyter: le pasas las variables de un solicitante y devuelve una probabilidad de impago. Ahora llega la pregunta real: <strong>¿cómo lo usan los demás?</strong></p>
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">El equipo de desarrollo del banco necesita llamar a tu modelo desde su aplicación web. El equipo de fraude quiere consultarlo en tiempo real. Y la gerencia quiere un dashboard que muestre predicciones actualizadas. Ninguno de ellos va a abrir tu notebook. La respuesta es <strong>exponer tu modelo como una API</strong>: un servicio web al que cualquier sistema puede enviarle datos y recibir predicciones.</p>
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">Pero esto abre nuevas preguntas fundamentales:</p>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+                                                    <div className="text-3xl mb-3">🏗️</div>
+                                                    <p className="text-gray-800 font-medium text-sm">¿Qué infraestructura necesitas para que tu modelo reciba peticiones HTTP?</p>
+                                                </div>
+                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+                                                    <div className="text-3xl mb-3">📍</div>
+                                                    <p className="text-gray-800 font-medium text-sm">¿Cómo defines las rutas (<code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/predict</code>, <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/health</code>, <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs">/stats</code>) de forma clara?</p>
+                                                </div>
+                                                <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-5 rounded-xl border border-purple-200 shadow-sm">
+                                                    <div className="text-3xl mb-3">⚡</div>
+                                                    <p className="text-gray-800 font-medium text-sm">¿Qué pasa si 500 usuarios consultan el modelo al mismo tiempo? ¿Cómo garantizas que no colapse?</p>
+                                                </div>
+                                            </div>
+
+                                            <Box type="info" label="Objetivo del módulo">Llevarte desde los fundamentos de cómo funciona un servidor web hasta la construcción de APIs asíncronas con FastAPI, siempre con ejemplos orientados a estadística y ciencia de datos. Al finalizar, tendrás la capacidad de exponer cualquier modelo estadístico como un servicio web robusto y escalable.
+                                            </Box>
+
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">Prerrequisitos e Instalación</h3>
+                                            <p className="text-gray-700 leading-relaxed mb-5">Para ejecutar todos los ejemplos de este módulo, necesitas instalar las siguientes dependencias en tu entorno virtual:</p>
+
+                                            <CodeBlock title="Terminal" lang="shell" code={`pip install flask fastapi uvicorn pandas numpy scikit-learn aiofiles`} />
+                                        </section>
+            </div>
+        );
+
+        const ServidorWebSection = () => (
+            <div className="prose-lp">
+                <section className="usta-card p-6 md:p-8 mb-8">
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-2">1.1 ¿Qué es un servidor web?</h3>
+                                            <p className="text-gray-700 leading-relaxed mb-5">Piensa en un <strong>restaurante</strong>. Cuando un cliente (el navegador o una aplicación) hace un pedido (una petición HTTP), alguien tiene que recibirlo, llevarlo a la cocina y traer el plato de vuelta. Ese "alguien" es el <strong>servidor web</strong>.</p>
+                                            <p className="text-gray-700 leading-relaxed mb-5">En términos técnicos, un servidor web es un programa que: escucha conexiones entrantes en un puerto (típicamente el 80 o 443), recibe peticiones HTTP (GET, POST, PUT, DELETE…), las delega a tu aplicación Python, y devuelve la respuesta al cliente. Ejemplos de servidores web que encontrarás en producción: <strong>Nginx</strong>, <strong>Apache</strong>, <strong>Gunicorn</strong>, <strong>Uvicorn</strong>.</p>
+
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.2 WSGI: El protocolo entre el servidor y tu aplicación</h3>
+                                            <p className="text-gray-700 leading-relaxed mb-5">¿Cómo se comunican el servidor web y tu código Python? Necesitan un "idioma común". Ese idioma es <strong>WSGI</strong> (<em>Web Server Gateway Interface</em>), definido en la PEP 3333.</p>
+
+                                            <Box type="tip" label="Analogía">Si el servidor web es el <em>maître</em> que recibe al cliente en el restaurante, <strong>WSGI es el protocolo de comunicación entre el maître y la cocina</strong>. Define exactamente cómo se pasa el pedido (la petición) y cómo se devuelve el plato (la respuesta).
+                                            </Box>
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">WSGI tiene una limitación de origen, y conviene verla ahora porque explica todo lo que viene después: <strong>es síncrono por diseño</strong>. La PEP 3333 se escribió en 2010, cuando el problema era estandarizar, no concurrir. Una aplicación WSGI atiende una petición, la termina, y sólo entonces empieza la siguiente. Por eso apareció <strong>ASGI</strong> (<em>Asynchronous Server Gateway Interface</em>): el mismo papel de idioma común entre servidor y aplicación, pero con <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-sm border border-gray-200">async</code> desde la base. <strong>Es el que vas a usar en este curso</strong>, y el módulo 4 explica qué se gana con él.</p>
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">Cuando usas <strong>FastAPI</strong>, en realidad trabajas sobre dos piezas: <strong>Starlette</strong>, el toolkit ASGI que se encarga de toda la comunicación HTTP —parsear peticiones, construir respuestas, manejar cabeceras y rutas—, y <strong>Pydantic</strong>, que valida y serializa los datos, y que ya conoces de la semana 4. FastAPI envuelve las dos y añade la generación automática de la documentación a partir de tus tipos. Es el mismo reparto que en la generación anterior —Flask envolvía <strong>Werkzeug</strong> (HTTP) y <strong>Jinja2</strong> (plantillas HTML)—, con una diferencia que importa: la segunda pieza ya no sirve para pintar páginas, sino para <em>validar datos</em>, porque lo que devuelve una API estadística no es HTML, es JSON.</p>
+
+                                            <Accordion items={[{ titulo: "¿Qué son Starlette y Werkzeug exactamente?", contenido: (<><div className="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
+                                                    <p><strong>Starlette</strong> es el framework ASGI ligero sobre el que está construido FastAPI. Cuando llega una petición, es Starlette quien parsea la URL, las cabeceras, el cuerpo y los parámetros de consulta, y quien construye el objeto <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">Request</code>. También es suyo el sistema de rutas, el middleware y el manejo de WebSockets. FastAPI le añade encima la capa que te interesa como estadístico: leer tus type hints, validar con Pydantic y generar la documentación en <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">/docs</code>.</p>
+                                                    <p className="mt-2"><strong>Werkzeug</strong> (del alemán: "herramienta") es su equivalente en el mundo WSGI, y es lo que hay debajo de Flask. Hace el mismo trabajo —parsear la petición, construir la respuesta— pero de forma síncrona. El servidor de desarrollo de Flask (<code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">flask run</code>) lo provee Werkzeug, igual que el de FastAPI lo provee <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">uvicorn</code>. Merece la pena conocerlo porque vas a encontrar muchísimo código Python en producción escrito sobre él.</p>
+                                                    <p className="mt-2"><strong>Jinja2</strong> es la otra mitad de Flask: el motor de plantillas que genera HTML dinámico. No lo usamos aquí porque nuestras APIs devuelven JSON, no páginas. En FastAPI ese hueco lo ocupa Pydantic, que no pinta nada: valida. Es un buen resumen de en qué cambió el oficio entre 2010 y hoy.</p>
+                                                    <table className="w-full mt-3 text-xs border-collapse">
+                                                        <tr className="border-b border-blue-200"><th className="text-left py-1 font-bold">Papel</th><th className="text-left py-1 font-bold">Generación WSGI</th><th className="text-left py-1 font-bold">Generación ASGI</th></tr>
+                                                        <tr className="border-b border-blue-100"><td className="py-1">Framework</td><td className="py-1">Flask</td><td className="py-1"><strong>FastAPI</strong></td></tr>
+                                                        <tr className="border-b border-blue-100"><td className="py-1">Capa HTTP</td><td className="py-1">Werkzeug</td><td className="py-1"><strong>Starlette</strong></td></tr>
+                                                        <tr className="border-b border-blue-100"><td className="py-1">Segunda pieza</td><td className="py-1">Jinja2 (plantillas)</td><td className="py-1"><strong>Pydantic</strong> (validación)</td></tr>
+                                                        <tr><td className="py-1">Servidor</td><td className="py-1">Gunicorn</td><td className="py-1"><strong>Uvicorn</strong></td></tr>
+                                                    </table>
+                                                </div></>) }]} />
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">Una aplicación WSGI, en su forma más pura, es simplemente una función <em>callable</em>:</p>
+
+                                            <CodeBlock title="Python" lang="python" code={`# La aplicación WSGI más simple del mundo
+def app(environ, start_response):
+    """
+    environ: diccionario con toda la info de la petición HTTP
+    start_response: función para enviar los headers de respuesta
+    """
+    status = "200 OK"
+    headers = [("Content-Type", "text/plain")]
+    start_response(status, headers)
+    return [b"Hola desde una app WSGI pura"]`} />
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">Nadie escribe aplicaciones así en la práctica. Para eso existen los frameworks —FastAPI hoy, Flask en la generación anterior—, que encapsulan esta complejidad. Lo que acabas de ver es lo que <em>no</em> vas a tener que escribir nunca.</p>
+
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.3 De desarrollo a producción: Uvicorn y Gunicorn</h3>
+                                            <p className="text-gray-700 leading-relaxed mb-5">Todo framework trae un servidor de desarrollo —<code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">uvicorn --reload</code> en FastAPI, <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">flask run</code> en Flask— y <strong>ninguno de los dos es apto para producción</strong>: recargan el código en caliente, no gestionan varios procesos y no están endurecidos frente a un cliente hostil. En producción se lanza el mismo servidor con otra configuración, o se le pone un gestor de procesos delante:</p>
+
+                                            <CodeBlock title="Terminal" lang="shell" code={`# ── ASGI: lo que usa este curso ──────────────────────────
+# Desarrollo: recarga al guardar. NO usar en produccion.
+uvicorn app.main:app --reload
+
+# Produccion: varios procesos, sin recarga.
+# Es la linea que ira en el Dockerfile de la semana 11.
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
+
+# ── WSGI: la generacion anterior, para que la reconozcas ─
+# Gunicorn con una app Flask
+gunicorn --workers 4 --bind 0.0.0.0:8000 app:app
+
+# Waitress (multiplataforma, incluye Windows)
+waitress-serve --port=8000 app:app`} />
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">Si <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">app.main:app</code> te parece un galimatías, es normal: todavía no hemos dicho qué separan esos dos puntos. Se desmonta pieza a pieza en la sección 2.2, y allí levantarás tu primer servicio. Aquí lo único que importa es la diferencia entre las dos líneas: una recarga al guardar, la otra lanza cuatro procesos y no recarga nada.</p>
+
+                                            <p className="text-gray-700 leading-relaxed mb-5">El parámetro <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">--workers 4</code> le dice a Gunicorn que lance 4 procesos independientes de tu aplicación. Cada worker puede atender una petición simultáneamente. Es como tener <strong>4 cocinas paralelas</strong> en el restaurante.</p>
+
+                                            <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">1.4 El flujo completo en producción</h3>
+
+
+                                            <div className="my-8">
+                                                <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" className="w-full">
+                                                    <defs>
+                                                        <style>{`
+                                                            .d-box { fill: #ffffff; stroke: #3D008D; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
+                                                            .d-box-pink { fill: #ffffff; stroke: #ED1E79; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
+                                                            .d-box-green { fill: #ffffff; stroke: #2ecc71; stroke-width: 2.5; rx: 14; ry: 14; filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.08)); }
+                                                            .d-label { font-family: 'Montserrat', sans-serif; font-size: 14px; fill: #1E293B; font-weight: 700; text-anchor: middle; }
+                                                            .d-desc { font-family: 'Montserrat', sans-serif; font-size: 11px; fill: #64748B; text-anchor: middle; }
+                                                            .d-step { font-family: 'Fira Code', monospace; font-size: 22px; fill: #3D008D; font-weight: 800; text-anchor: middle; opacity: 0.2; }
+                                                            .d-arrow { stroke: #CBD5E1; stroke-width: 2.5; fill: none; marker-end: url(#arrowhead); }
+                                                        `}</style>
+                                                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                                            <polygon points="0 0, 10 3.5, 0 7" fill="#CBD5E1" />
+                                                        </marker>
+                                                    </defs>
+
+
+                                                    <g transform="translate(50, 30)">
+                                                        <rect width="160" height="130" className="d-box" />
+                                                        <text x="80" y="35" className="d-step">01</text>
+                                                        <text x="80" y="65" className="d-label">Cliente</text>
+                                                        <text x="80" y="88" className="d-desc">Navegador, App,</text>
+                                                        <text x="80" y="105" className="d-desc">curl, otro servicio</text>
+                                                    </g>
+                                                    <path d="M210 95 L260 95" className="d-arrow" />
+
+
+                                                    <g transform="translate(260, 30)">
+                                                        <rect width="160" height="130" className="d-box-pink" />
+                                                        <text x="80" y="35" className="d-step">02</text>
+                                                        <text x="80" y="65" className="d-label" style={{ fill: '#ED1E79' }}>Nginx (proxy)</text>
+                                                        <text x="80" y="88" className="d-desc">SSL, balanceo,</text>
+                                                        <text x="80" y="105" className="d-desc">archivos estáticos</text>
+                                                    </g>
+                                                    <path d="M420 95 L470 95" className="d-arrow" />
+
+
+                                                    <g transform="translate(470, 30)">
+                                                        <rect width="160" height="130" className="d-box" />
+                                                        <text x="80" y="35" className="d-step">03</text>
+                                                        <text x="80" y="65" className="d-label">Gunicorn / Uvicorn</text>
+                                                        <text x="80" y="88" className="d-desc">Servidor WSGI/ASGI</text>
+                                                        <text x="80" y="105" className="d-desc">Gestiona workers</text>
+                                                    </g>
+                                                    <path d="M630 95 L680 95" className="d-arrow" />
+
+
+                                                    <g transform="translate(680, 30)">
+                                                        <rect width="160" height="130" className="d-box-green" />
+                                                        <text x="80" y="35" className="d-step">04</text>
+                                                        <text x="80" y="65" className="d-label" style={{ fill: '#27ae60' }}>Tu App Python</text>
+                                                        <text x="80" y="88" className="d-desc">Rutas, lógica,</text>
+                                                        <text x="80" y="105" className="d-desc">modelos ML</text>
+                                                    </g>
+
+
+                                                    <g transform="translate(490, 200)">
+                                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" strokeWidth="1.5" />
+                                                        <text x="60" y="30" className="d-desc" style={{ fontWeight: '600', fill: '#3D008D' }}>Worker 1</text>
+                                                    </g>
+                                                    <g transform="translate(490, 265)">
+                                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" strokeWidth="1.5" />
+                                                        <text x="60" y="30" className="d-desc" style={{ fontWeight: '600', fill: '#3D008D' }}>Worker 2</text>
+                                                    </g>
+                                                    <g transform="translate(490, 330)">
+                                                        <rect width="120" height="50" rx="10" ry="10" fill="#F0F4FF" stroke="#3D008D" strokeWidth="1.5" />
+                                                        <text x="60" y="30" className="d-desc" style={{ fontWeight: '600', fill: '#3D008D' }}>Worker N</text>
+                                                    </g>
+                                                    <path d="M550 160 L550 200" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4,4" />
+                                                    <path d="M550 250 L550 265" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4,4" />
+                                                    <path d="M550 315 L550 330" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4,4" />
+
+                                                    <text x="450" y="400" style={{ fontFamily: '\'Montserrat\', sans-serif', fontSize: '11px', fill: '#94a3b8', textAnchor: 'middle', fontStyle: 'italic' }}>
+                                                        Cada worker es un proceso independiente que atiende peticiones concurrentemente.
+                                                    </text>
+                                                </svg>
+                                            </div>
+                                        </section>
+
+
+                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>¿Por qué <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">uvicorn --reload</code> no es adecuado para producción?</>), opciones: [{ texto: (<>Porque Uvicorn no soporta el protocolo HTTP y necesita un adaptador externo para recibir peticiones.</>), correcta: false }, { texto: (<>Porque <code className="font-mono text-xs">--reload</code> vigila el sistema de archivos y reinicia el proceso ante cualquier cambio, arranca un solo worker y desactiva optimizaciones: gasta recursos y deja el servicio caído durante cada reinicio.</>), correcta: true }, { texto: (<>Porque Uvicorn en modo desarrollo solo acepta peticiones POST y no GET.</>), correcta: false }], justificacion: (<><div className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                                            <strong>Respuesta Correcta: B</strong><br /><br />
+                                                            El modo <code className="font-mono text-xs">--reload</code> está diseñado para depuración local: vigila el sistema de archivos y reinicia el proceso cada vez que guardas, lo que en producción significa consumo constante de recursos y un corte del servicio en cada reinicio. Además arranca con un solo worker. El binario es el mismo —en producción se lanza <code className="font-mono text-xs">uvicorn app.main:app --workers 4</code> sin <code className="font-mono text-xs">--reload</code>—, y es esa línea la que acabará en el Dockerfile de la semana 11. Ojo con la trampa de la opción A: Uvicorn <em>sí</em> habla HTTP; eso es justamente lo que hace.
+                                                        </div></>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Si Gunicorn es un servidor WSGI (síncrono por diseño), ¿cómo es posible que FastAPI, que es asíncrono, funcione correctamente en producción?</>), opciones: [{ texto: (<>FastAPI internamente convierte todas las funciones <code>async</code> a funciones síncronas antes de ejecutarlas.</>), correcta: false }, { texto: (<>Porque FastAPI no usa Gunicorn directamente, sino <strong>Uvicorn</strong>, un servidor ASGI que soporta el event loop asíncrono. En producción se puede usar Gunicorn como gestor de procesos con workers de clase Uvicorn.</>), correcta: true }, { texto: (<>No es posible; FastAPI requiere Apache como servidor exclusivo.</>), correcta: false }], justificacion: (<><div className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
+                                                            <strong>Respuesta Correcta: B</strong><br /><br />
+                                                            WSGI es síncrono; ASGI es su evolución asíncrona. FastAPI se ejecuta sobre Uvicorn (servidor ASGI) que gestiona un event loop. En despliegues de producción, una configuración común es: <code>gunicorn -k uvicorn.workers.UvicornWorker app:app</code>, donde Gunicorn actúa como gestor de procesos y cada worker es una instancia de Uvicorn con su propio event loop asíncrono.
+                                                        </div></>) }
+                ]} />
             </div>
         );
 
