@@ -251,8 +251,16 @@ def p_anio_2025():
     detalle = {}
     for n in (6, 7):
         t = mod(n)
+        # Un año dentro de una URL no lo lee nadie como fecha del material, y
+        # uno dentro del título entrecomillado de la fuente es su nombre: el
+        # módulo 6 cita «The Most Popular Python Frameworks and Libraries in
+        # 2025», y quitarle el año sería citar otra cosa. Se descuentan los
+        # tres casos —href, título entre comillas y `(2025).`— y lo que queda
+        # es prosa que fecha el material, que es lo que el hallazgo persigue.
+        t = re.sub(r'href="[^"]*"', "", t)
+        t = re.sub(r'"[^"\n]{0,120}\b2025\b[^"\n]{0,120}"', "", t)
         detalle[n] = len(re.findall(r"\b2025\b", t)) - len(re.findall(r"\(2025\)\.", t))
-    return all(v == 0 for v in detalle.values()), f"«2025» de caducidad (sin citas): {detalle}"
+    return all(v == 0 for v in detalle.values()), f"«2025» de caducidad (sin citas ni URL): {detalle}"
 
 
 def p_fa_version():
@@ -371,7 +379,7 @@ H = [
     ("I8", 1, "importante", "5", "Enseña Flask donde el proyecto exige FastAPI *(= P4)*", CERRADO, "Fase 3", "1bb8eb7", p_flask_modulo5),
     ("I9", 1, "importante", "12", "Enseña Railway y Render en paralelo *(= P13)*", CERRADO, "Fase 3", "7d69b57", p_railway),
     ("I10", 1, "importante", "3", "Sin `description`, sin autor y sin Open Graph", CERRADO, "Fase 3", "35412a2", p_meta("description", r'name="description"')),
-    ("I11", 1, "importante", "4, 6, 7", "4 referencias bibliográficas tras el muro de pago de Medium", ABIERTO, "—", "", p_medium),
+    ("I11", 1, "importante", "4, 6, 7", "4 referencias bibliográficas tras el muro de pago de Medium", CERRADO, "Auditoría", "", p_medium),
 
     # ── Fase 1 · cosméticos ───────────────────────────────────────────────
     ("C1", 1, "cosmético", "7", "El comentario dice «MathJax» sobre una carga de KaTeX", CERRADO, "Fase 3", "7d69b57", p_comentario_mathjax),
@@ -535,7 +543,6 @@ def a_markdown(pruebas) -> str:
         "|---|---|---|---|---|",
     ]
     motivos = {
-        "I11": "Hace falta buscar alternativas de acceso abierto: es trabajo de contenido",
         "C3": "Cosmético y sin efecto visible",
         "C4": "Cambiar de versión mayor sin verificar las 37 gráficas es peor negocio",
                 "C9": "La Fase 1 demostró que no rompe ningún icono",

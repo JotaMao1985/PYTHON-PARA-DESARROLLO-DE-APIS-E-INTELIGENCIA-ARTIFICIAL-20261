@@ -19,9 +19,9 @@ python3 scripts/auditoria/hallazgos.py --abiertos  # sólo lo que queda por hace
 
 | Estado | | Qué significa |
 |---|---|---|
-| ✔ Cerrado | **51** | Corregido y verificado |
+| ✔ Cerrado | **52** | Corregido y verificado |
 | ◐ Parcial | **0** | Cerrado en unos módulos y abierto en otros |
-| ✘ Abierto | **1** | Sigue ahí, con motivo declarado |
+| ✘ Abierto | **0** | Sigue ahí, con motivo declarado |
 | · Nota | **1** | Corrección a un informe, no un defecto |
 | | **53** | |
 
@@ -33,7 +33,6 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 
 | ID | Módulos | Hallazgo | Estado | Por qué sigue así |
 |---|---|---|---|---|
-| **I11** | 4, 6, 7 | 4 referencias bibliográficas tras el muro de pago de Medium | ✘ abierto | Hace falta buscar alternativas de acceso abierto: es trabajo de contenido |
 
 ---
 
@@ -57,7 +56,7 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | I8 | 1 | importante | 5 | Enseña Flask donde el proyecto exige FastAPI *(= P4)* | ✔ cerrado | Fase 3 | `1bb8eb7` |
 | I9 | 1 | importante | 12 | Enseña Railway y Render en paralelo *(= P13)* | ✔ cerrado | Fase 3 | `7d69b57` |
 | I10 | 1 | importante | 3 | Sin `description`, sin autor y sin Open Graph | ✔ cerrado | Fase 3 | `35412a2` |
-| I11 | 1 | importante | 4, 6, 7 | 4 referencias bibliográficas tras el muro de pago de Medium | ✘ abierto | — | — |
+| I11 | 1 | importante | 4, 6, 7 | 4 referencias bibliográficas tras el muro de pago de Medium | ✔ cerrado | Auditoría | — |
 | C1 | 1 | cosmético | 7 | El comentario dice «MathJax» sobre una carga de KaTeX | ✔ cerrado | Fase 3 | `7d69b57` |
 | C2 | 1 | cosmético | 8 | Carga los 3 archivos de KaTeX y renderiza 0 fórmulas | ✔ cerrado | Fase 3 | `7d69b57` |
 | C3 | 1 | cosmético | 5, 7, 8, 9 | 89 KB de Font Awesome para 1 o 2 iconos | ✔ cerrado | Migración | `b5f6b0b` |
