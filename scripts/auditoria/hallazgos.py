@@ -41,6 +41,61 @@ def cuenta(n: int, patron: str, flags=re.I) -> int:
 # ---------------------------------------------------------------------------
 # Pruebas. Devuelven (el defecto ya no está, evidencia)
 # ---------------------------------------------------------------------------
+def p_continuaciones():
+    """
+    Ningún bloque de código continúa a otro sin decirlo (C7).
+
+    Un bloque «continúa» cuando usa un nombre que no define, no importa y no es
+    de Python, y que sí define un bloque anterior del mismo módulo. Copiado
+    suelto, ese bloque da `NameError`. La regla es que lo diga en su primera
+    línea: «Continúa el bloque anterior…» o «Fragmento:…».
+
+    Esto no se podía comprobar hasta el 2026-09-09, cuando `extraer_codigo.py`
+    aprendió a leer los `CodeBlock` de LP-CORE. Antes no extraía ni un bloque
+    de Python, y C7 llevaba abierto por «requiere leer los bloques uno a uno».
+    """
+    import ast
+    import builtins
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from extraer_codigo import extraer
+
+    integrados = set(dir(builtins)) | {"__name__", "__file__"}
+
+    def definidos(arbol):
+        d = set()
+        for n in ast.walk(arbol):
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                d.add(n.name)
+            elif isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store):
+                d.add(n.id)
+            elif isinstance(n, ast.arg):
+                d.add(n.arg)
+            elif isinstance(n, (ast.Import, ast.ImportFrom)):
+                for a in n.names:
+                    d.add(a.asname or a.name.split(".")[0])
+        return d
+
+    callan = []
+    for p in sorted(RAIZ.glob("*.html")):
+        if not re.match(r"^\d+_", p.name):
+            continue
+        previos = []
+        for b in extraer(p):
+            try:
+                arbol = ast.parse(b["codigo"])
+            except SyntaxError:
+                continue
+            usados = {n.id for n in ast.walk(arbol)
+                      if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+            libres = usados - definidos(arbol) - integrados
+            if any(n in ds for n in libres for ds in previos):
+                cabecera = b["codigo"].split("\n")[0].lower()
+                if "contin" not in cabecera and "fragmento" not in cabecera:
+                    callan.append(b["id"])
+            previos.append(definidos(arbol))
+    return not callan, f"bloques que continúan a otro sin decirlo: {callan or 'ninguno'}"
+
+
 def p_titulos_semana():
     malos = [n for n in range(1, 14)
              if not re.search(rf"<title>Semana {n} —", mod(n))]
@@ -318,7 +373,7 @@ H = [
     ("C4", 1, "cosmético", "10–13", "Plotly 3.5.0 frente al 2.35.2 del syllabus", CERRADO, "Migración", "b5f6b0b", p_plotly),
     ("C5", 1, "cosmético", "6, 7", "Referencias a «2025» que fechan el material", CERRADO, "Fase 3", "eca3261", p_anio_2025),
     ("C6", 1, "cosmético", "todos", "Ningún módulo declara el periodo 2026-II", CERRADO, "Fase 3", "4e31026", p_meta("periodo", r"2026-II")),
-    ("C7", 1, "cosmético", "7, 13", "Bloques de código que continúan a otro sin decirlo", ABIERTO, "—", "", None),
+    ("C7", 1, "cosmético", "2, 6, 7, 10, 13", "Bloques de código que continúan a otro sin decirlo", PARCIAL, "—", "", p_continuaciones),
     ("C8", 1, "cosmético", "2, 10, 11", "Semana correcta pero en tres notaciones distintas", CERRADO, "Fase 3", "4e31026", p_titulos_semana),
     ("C9", 1, "cosmético", "11 módulos", "Font Awesome 6.0.0 frente al 6.5.2 del syllabus", CERRADO, "Migración", "b5f6b0b", p_fa_version),
 
@@ -476,7 +531,9 @@ def a_markdown(pruebas) -> str:
         "I11": "Hace falta buscar alternativas de acceso abierto: es trabajo de contenido",
         "C3": "Cosmético y sin efecto visible",
         "C4": "Cambiar de versión mayor sin verificar las 37 gráficas es peor negocio",
-        "C7": "Requiere leer los bloques en contexto, uno a uno",
+        "C7": "Cerrado en 7 y 13 (11 bloques ya lo declaran). La prueba nueva encuentra "
+           "9 más en 2, 6 y 10: el alcance registrado se quedaba corto porque hasta "
+           "hoy no había forma de medirlo",
         "C9": "La Fase 1 demostró que no rompe ningún icono",
         "Q4": "Añadir gráficas es contenido nuevo, no corrección",
         "C5": "Quedan 3 referencias a «2025» en el módulo 6",

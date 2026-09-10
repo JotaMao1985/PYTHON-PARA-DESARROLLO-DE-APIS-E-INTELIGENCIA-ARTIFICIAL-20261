@@ -658,14 +658,16 @@ with open("modelo_pickle.pkl", "wb") as f:
 joblib.dump(clf, "modelo_joblib.joblib", compress=3)
 `;
 
-        const lecturaSimetricaCode = `# Lectura: importante usar la misma biblioteca con la que se serializó.
+        const lecturaSimetricaCode = `# Continúa el bloque anterior: usa sus imports y lee los dos archivos que allí se escribieron.
+# Lectura: importante usar la misma biblioteca con la que se serializó.
 with open("modelo_pickle.pkl", "rb") as f:
     clf_a = pickle.load(f)              # objeto original
 
 clf_b = joblib.load("modelo_joblib.joblib")
 `;
 
-        const antipatronCode = `@app.post("/predict")
+        const antipatronCode = `# Fragmento: \`app\` e \`InputData\` son los de su \`main.py\`; aquí sólo se ve el endpoint.
+@app.post("/predict")
 def predict(data: InputData):
     # Antipatrón: cada petición lee el archivo de disco
     # y reconstruye el objeto. Latencia muy alta y E/S innecesaria.
@@ -1068,7 +1070,8 @@ def get_model(request: Request) -> Pipeline:
     return request.app.state.model
 `;
 
-        const predictEndpointCode = `from app.schemas import IrisInput, IrisPrediction
+        const predictEndpointCode = `# Continúa el bloque anterior: usa su \`app\`, su \`get_model\` y sus imports.
+from app.schemas import IrisInput, IrisPrediction
 
 
 @app.post("/predict", response_model=IrisPrediction)
@@ -2116,7 +2119,8 @@ docker images iris-api:1.0
         // SECCIÓN 6 — Autoevaluación
         // ============================================================
         // ── Fase 3 · Tablero (criterio 14 de la rubrica, 3 %) ──────────────
-        const tableroCorsCode = `# app/main.py  —  permitir que el tablero consuma la API
+        const tableroCorsCode = `# Continúa \`app/main.py\`: \`app\` es la aplicación que allí se creó.
+# app/main.py  —  permitir que el tablero consuma la API
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(

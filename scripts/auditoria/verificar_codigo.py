@@ -153,6 +153,14 @@ def main() -> int:
         r["salida_declarada"] = b["salida"]["comentarios"]
         try:
             arbol = ast.parse(b["codigo"])
+            # `ast.parse` construye el arbol y para ahi: un `return` fuera de
+            # una funcion, un `break` fuera de un bucle o un `await` fuera de
+            # una corrutina le parecen bien, porque esa comprobacion la hace el
+            # compilador, no el analizador. `compile()` la hace, y es la que ve
+            # el estudiante al ejecutar. Sin esto, el modulo 7 publicaba un
+            # bloque con `return` a ras de margen y el verificador daba «ok»
+            # (encontrado el 2026-09-10).
+            compile(b["codigo"], f"<{b['id']}>", "exec")
             r["sintaxis"] = "ok"
             imports = modulos_importados(arbol)
         except SyntaxError as e:

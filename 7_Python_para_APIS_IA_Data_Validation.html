@@ -3073,7 +3073,8 @@ for clave, valores in datos_simulados.items():
     print(f"  {clave}: {valores[:5]}...")`} />
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
-                                            <CodeBlock title="Python" lang="python" code={`# 1. Definición del tipo para matriz de covariables continuas
+                                            <CodeBlock title="Python" lang="python" code={`# Continúa el bloque anterior: reutiliza sus imports de numpy, pandas, pydantic y typing.
+# 1. Definición del tipo para matriz de covariables continuas
 import numpy.typing as npt
 
 # Anotación de arreglos multidimensionales con precisión especificada
@@ -3990,7 +3991,8 @@ print(f"Simuladas {n_muestras} observaciones con errores en índices 3, 7 y 11")
 
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
-                                            <CodeBlock title="Python" lang="python" code={`import time
+                                            <CodeBlock title="Python" lang="python" code={`# Continúa el bloque anterior: consume su lista \`datos_iris_simulados\`.
+import time
 import functools
 import logging
 from typing import ClassVar, List
@@ -4353,7 +4355,8 @@ if __name__ == "__main__":
                                                 <p className="text-gray-700 leading-relaxed mb-5"><strong>Problema:</strong> Identificar el
                                                     error metodológico en el siguiente código y proponer una implementación correcta:
                                                 </p>
-                                                <CodeBlock title="Python" lang="python" code={`# CÓDIGO CON ERROR METODOLÓGICO
+                                                <CodeBlock title="Python" lang="python" code={`# Fragmento: este validador va dentro de un modelo de Pydantic; suelto no se ejecuta.
+# CÓDIGO CON ERROR METODOLÓGICO
 @field_validator('edad')
 @classmethod
 def validar_edad(cls, v: int) -> int:
@@ -4370,7 +4373,8 @@ def validar_edad(cls, v: int) -> int:
                                                         generador de datos.</p>
                                                     <p className="text-gray-700 leading-relaxed mb-5">La implementación correcta debe
                                                         levantar una excepción explícita:</p>
-                                                    <CodeBlock title="Python" lang="python" code={`# IMPLEMENTACIÓN CORRECTA
+                                                    <CodeBlock title="Python" lang="python" code={`# Fragmento: sustituye al validador anterior, dentro del mismo modelo de Pydantic.
+# IMPLEMENTACIÓN CORRECTA
 @field_validator('edad')
 @classmethod
 def validar_edad(cls, v: int) -> int:
@@ -5355,7 +5359,8 @@ for s in sesiones_simuladas:
     print(f"  {s['id_sesion_laboratorio']}: {len(s['ensayos_experimentales'])} vehículos")`} />
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
-                                            <CodeBlock title="Python" lang="python" code={`from pydantic import BaseModel, Field, field_validator, ValidationError
+                                            <CodeBlock title="Python" lang="python" code={`# Continúa el bloque anterior: consume su lista \`sesiones_simuladas\`.
+from pydantic import BaseModel, Field, field_validator, ValidationError
 from typing import List, Dict, Any
 from datetime import datetime
 
@@ -6269,7 +6274,8 @@ class SistemaNacionalSalud(BaseModel):
                                                         className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">EnsayoVehiculo</code>.
                                                     Implementar validadores apropiados para cada nivel.</p>
                                                 <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
-                                                    <strong>Solución Parcial:</strong> <CodeBlock title="Python" lang="python" code={`class CentroInvestigacion(BaseModel):
+                                                    <strong>Solución Parcial:</strong> <CodeBlock title="Python" lang="python" code={`# Continúa los bloques anteriores: usa sus imports y la clase \`SesionDinamometro\`.
+class CentroInvestigacion(BaseModel):
     """
     Nivel 3: Centro de Investigación (super-bloque)
     Contiene múltiples sesiones de prueba.
@@ -6882,7 +6888,8 @@ print(f"Simulados {len(datos_demograficos_simulados)} registros demográficos")
 print("  Casos con error: índices 1, 2, 3, 4")`} />
                                             <h4 className="text-lg md:text-xl font-medium mb-3 text-navy mt-6">Implementación Paso a Paso
                                             </h4>
-                                            <CodeBlock title="Python" lang="python" code={`from pydantic import BaseModel, Field, ValidationError
+                                            <CodeBlock title="Python" lang="python" code={`# Continúa el bloque anterior: consume su lista \`datos_demograficos_simulados\`.
+from pydantic import BaseModel, Field, ValidationError
 from typing import Literal, List, Dict, Any
 from typing_extensions import Annotated
 from datetime import datetime
@@ -7082,7 +7089,8 @@ for campo, cuenta in reporte['desglose_por_campo'].items():
                                                     de Silenciamiento de Excepciones</h4>
                                                 <p className="text-gray-700 leading-relaxed mb-5"><strong>Problema:</strong> Identificar el
                                                     error metodológico en el siguiente código:</p>
-                                                <CodeBlock title="Python" lang="python" code={`# CÓDIGO CON ERROR GRAVE
+                                                <CodeBlock title="Python" lang="python" code={`# Fragmento: \`Modelo\` es cualquiera de los modelos de Pydantic anteriores.
+# CÓDIGO CON ERROR GRAVE
 def procesar_datos(lista_datos):
     resultados = []
     for dato in lista_datos:
@@ -7091,7 +7099,7 @@ def procesar_datos(lista_datos):
             resultados.append(resultado)
         except Exception:
             pass  # Ignorar silenciosamente todos los errores
-return resultados`} />
+    return resultados`} />
                                                 <div className="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">
                                                     <strong>Solución Parcial:</strong>
                                                     <p className="text-gray-700 leading-relaxed mb-5">Este código presenta un anti-patrón

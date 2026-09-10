@@ -2706,7 +2706,8 @@ joblib.dump(clf, "modelo_joblib.joblib", compress=3)
 `} lang="python" />
 
                         <h4 className="text-md font-semibold text-secondary mt-4 mb-2">Lectura simétrica</h4>
-                        <CodeBlock title="leer_modelo.py" code={`# Lectura: importante usar la misma biblioteca con la que se serializó.
+                        <CodeBlock title="leer_modelo.py" code={`# Continúa el bloque anterior: usa sus imports y lee los dos archivos que allí se escribieron.
+# Lectura: importante usar la misma biblioteca con la que se serializó.
 with open("modelo_pickle.pkl", "rb") as f:
     clf_a = pickle.load(f)              # objeto original
 
@@ -2725,7 +2726,8 @@ clf_b = joblib.load("modelo_joblib.joblib")
 
                         <p className="mb-2">El error característico del principiante consiste en cargar el modelo dentro de la propia función del <em>endpoint</em>:</p>
 
-                        <CodeBlock title="main.py — antipatrón (no usar)" code={`@app.post("/predict")
+                        <CodeBlock title="main.py — antipatrón (no usar)" code={`# Fragmento: \`app\` e \`InputData\` son los de su \`main.py\`; aquí sólo se ve el endpoint.
+@app.post("/predict")
 def predict(data: InputData):
     # Antipatrón: cada petición lee el archivo de disco
     # y reconstruye el objeto. Latencia muy alta y E/S innecesaria.
@@ -3037,7 +3039,8 @@ def get_model(request: Request) -> Pipeline:
 `} lang="python" />
 
                         <p className="mb-2">Y un <em>endpoint</em> que <strong>no sabe nada</strong> sobre cómo se cargó el modelo:</p>
-                        <CodeBlock title="endpoints.py" code={`from app.schemas import IrisInput, IrisPrediction
+                        <CodeBlock title="endpoints.py" code={`# Continúa el bloque anterior: usa su \`app\`, su \`get_model\` y sus imports.
+from app.schemas import IrisInput, IrisPrediction
 
 
 @app.post("/predict", response_model=IrisPrediction)
@@ -3830,7 +3833,8 @@ docker images iris-api:1.0
                         petición: son orígenes distintos. Es la política del <em>mismo origen</em>, y no es un fallo
                         tuyo. Se resuelve declarando en la API qué orígenes pueden llamarla:
                     </p>
-                    <CodeBlock title="app/main.py — CORS" code={`# app/main.py  —  permitir que el tablero consuma la API
+                    <CodeBlock title="app/main.py — CORS" code={`# Continúa \`app/main.py\`: \`app\` es la aplicación que allí se creó.
+# app/main.py  —  permitir que el tablero consuma la API
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(

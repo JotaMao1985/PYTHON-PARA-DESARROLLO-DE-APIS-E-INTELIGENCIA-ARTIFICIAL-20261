@@ -1586,7 +1586,8 @@ for clave, valores in datos_simulados.items():
                                     </button>
                                 </div>
                                 <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                    data-language="python" id="code-block-2"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># 1. Definición del tipo para matriz de covariables continuas</span>
+                                    data-language="python" id="code-block-2"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Continúa el bloque anterior: reutiliza sus imports de numpy, pandas, pydantic y typing.</span>
+<span class="text-green-500 italic"># 1. Definición del tipo para matriz de covariables continuas</span>
 <span class="text-pink-500 font-bold">import </span>numpy.typing as npt
 
 <span class="text-green-500 italic"># Anotación de arreglos multidimensionales con precisión especificada</span>
@@ -2829,7 +2830,8 @@ for i in range(n_muestras):
                                     </button>
                                 </div>
                                 <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                    data-language="python" id="code-block-6"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">import </span>time
+                                    data-language="python" id="code-block-6"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Continúa el bloque anterior: consume su lista `datos_iris_simulados`.</span>
+<span class="text-pink-500 font-bold">import </span>time
 <span class="text-pink-500 font-bold">import </span>functools
 <span class="text-pink-500 font-bold">import </span>logging
 <span class="text-pink-500 font-bold">from </span>typing <span class="text-pink-500 font-bold">import </span>ClassVar, List
@@ -3250,7 +3252,8 @@ logger = logging.getLogger(__name__)
                                         </button>
                                     </div>
                                     <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                        data-language="python" id="code-block-7"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># CÓDIGO CON ERROR METODOLÓGICO</span>
+                                        data-language="python" id="code-block-7"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Fragmento: este validador va dentro de un modelo de Pydantic; suelto no se ejecuta.</span>
+<span class="text-green-500 italic"># CÓDIGO CON ERROR METODOLÓGICO</span>
 <span class="text-yellow-400">@</span>field_validator('edad')
 <span class="text-yellow-400">@</span>classmethod
 <span class="text-pink-500 font-bold">def </span>validar_edad(cls, v: int) -&gt; int:
@@ -3297,7 +3300,8 @@ logger = logging.getLogger(__name__)
                                             </button>
                                         </div>
                                         <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                            data-language="python" id="code-block-8"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># IMPLEMENTACIÓN CORRECTA</span>
+                                            data-language="python" id="code-block-8"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Fragmento: sustituye al validador anterior, dentro del mismo modelo de Pydantic.</span>
+<span class="text-green-500 italic"># IMPLEMENTACIÓN CORRECTA</span>
 <span class="text-yellow-400">@</span>field_validator('edad')
 <span class="text-yellow-400">@</span>classmethod
 <span class="text-pink-500 font-bold">def </span>validar_edad(cls, v: int) -&gt; int:
@@ -4625,7 +4629,8 @@ for s in sesiones_simuladas:
                                     </button>
                                 </div>
                                 <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                    data-language="python" id="code-block-11"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from </span>pydantic <span class="text-pink-500 font-bold">import </span>BaseModel, Field, field_validator, ValidationError
+                                    data-language="python" id="code-block-11"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Continúa el bloque anterior: consume su lista `sesiones_simuladas`.</span>
+<span class="text-pink-500 font-bold">from </span>pydantic <span class="text-pink-500 font-bold">import </span>BaseModel, Field, field_validator, ValidationError
 <span class="text-pink-500 font-bold">from </span>typing <span class="text-pink-500 font-bold">import </span>List, Dict, Any
 <span class="text-pink-500 font-bold">from </span>datetime <span class="text-pink-500 font-bold">import </span>datetime
 
@@ -5603,7 +5608,8 @@ for sesion_data in sesiones_simuladas:
                                             </button>
                                         </div>
                                         <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                            data-language="python" id="code-block-12"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">class </span>CentroInvestigacion(BaseModel):
+                                            data-language="python" id="code-block-12"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Continúa los bloques anteriores: usa sus imports y la clase `SesionDinamometro`.</span>
+<span class="text-pink-500 font-bold">class </span>CentroInvestigacion(BaseModel):
     """
     Nivel 3: Centro de Investigación (super-bloque)
     Contiene múltiples sesiones de prueba.
@@ -6490,7 +6496,8 @@ datos_demograficos_simulados = [
                                     </button>
                                 </div>
                                 <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                    data-language="python" id="code-block-15"><code class="text-sm text-sky-100 font-mono"><span class="text-pink-500 font-bold">from </span>pydantic <span class="text-pink-500 font-bold">import </span>BaseModel, Field, ValidationError
+                                    data-language="python" id="code-block-15"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Continúa el bloque anterior: consume su lista `datos_demograficos_simulados`.</span>
+<span class="text-pink-500 font-bold">from </span>pydantic <span class="text-pink-500 font-bold">import </span>BaseModel, Field, ValidationError
 <span class="text-pink-500 font-bold">from </span>typing <span class="text-pink-500 font-bold">import </span>Literal, List, Dict, Any
 <span class="text-pink-500 font-bold">from </span>typing_extensions <span class="text-pink-500 font-bold">import </span>Annotated
 <span class="text-pink-500 font-bold">from </span>datetime <span class="text-pink-500 font-bold">import </span>datetime
@@ -6720,7 +6727,8 @@ for campo, cuenta in reporte['desglose_por_campo'].items():
                                         </button>
                                     </div>
                                     <pre class="text-sm leading-relaxed bg-gray-900 text-gray-100 p-5 rounded-xl overflow-x-auto shadow-xl my-6 border border-gray-700 code-scroll font-mono"
-                                        data-language="python" id="code-block-16"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># CÓDIGO CON ERROR GRAVE</span>
+                                        data-language="python" id="code-block-16"><code class="text-sm text-sky-100 font-mono"><span class="text-green-500 italic"># Fragmento: `Modelo` es cualquiera de los modelos de Pydantic anteriores.</span>
+<span class="text-green-500 italic"># CÓDIGO CON ERROR GRAVE</span>
 <span class="text-pink-500 font-bold">def </span>procesar_datos(lista_datos):
     resultados = []
     for dato in lista_datos:
@@ -6729,7 +6737,7 @@ for campo, cuenta in reporte['desglose_por_campo'].items():
             resultados.append(resultado)
         <span class="text-pink-500 font-bold">except </span>Exception:
             pass  <span class="text-green-500 italic"># Ignorar silenciosamente todos los errores</span>
-<span class="text-pink-500 font-bold">return </span>resultados
+    <span class="text-pink-500 font-bold">return </span>resultados
 </code></pre>
                                 </div>
                                 <div class="bg-white p-6 rounded-xl border border-gray-100 my-6 shadow-sm">

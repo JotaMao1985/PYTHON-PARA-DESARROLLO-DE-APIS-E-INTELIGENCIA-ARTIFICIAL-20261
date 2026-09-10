@@ -4,7 +4,7 @@
 **Generado:** 2026-08-08 por `scripts/auditoria/hallazgos.py --markdown`
 
 > **No edites esta tabla a mano.** El registro vive en `scripts/auditoria/hallazgos.py`,
-> y 41 de los 53 hallazgos llevan una prueba que se ejecuta contra los
+> y 42 de los 53 hallazgos llevan una prueba que se ejecuta contra los
 > archivos: si el estado escrito y el archivo dejan de coincidir, el script lo dice y sale
 > con código 1. Las cifras de esta página se calculan, no se escriben.
 
@@ -20,8 +20,8 @@ python3 scripts/auditoria/hallazgos.py --abiertos  # sólo lo que queda por hace
 | Estado | | Qué significa |
 |---|---|---|
 | ✔ Cerrado | **50** | Corregido y verificado |
-| ◐ Parcial | **0** | Cerrado en unos módulos y abierto en otros |
-| ✘ Abierto | **2** | Sigue ahí, con motivo declarado |
+| ◐ Parcial | **1** | Cerrado en unos módulos y abierto en otros |
+| ✘ Abierto | **1** | Sigue ahí, con motivo declarado |
 | · Nota | **1** | Corrección a un informe, no un defecto |
 | | **53** | |
 
@@ -34,7 +34,7 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | ID | Módulos | Hallazgo | Estado | Por qué sigue así |
 |---|---|---|---|---|
 | **I11** | 4, 6, 7 | 4 referencias bibliográficas tras el muro de pago de Medium | ✘ abierto | Hace falta buscar alternativas de acceso abierto: es trabajo de contenido |
-| **C7** | 7, 13 | Bloques de código que continúan a otro sin decirlo | ✘ abierto | Requiere leer los bloques en contexto, uno a uno |
+| **C7** | 2, 6, 7, 10, 13 | Bloques de código que continúan a otro sin decirlo | ◐ parcial | Cerrado en 7 y 13 (11 bloques ya lo declaran). La prueba nueva encuentra 9 más en 2, 6 y 10: el alcance registrado se quedaba corto porque hasta hoy no había forma de medirlo |
 
 ---
 
@@ -65,7 +65,7 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | C4 | 1 | cosmético | 10–13 | Plotly 3.5.0 frente al 2.35.2 del syllabus | ✔ cerrado | Migración | `b5f6b0b` |
 | C5 | 1 | cosmético | 6, 7 | Referencias a «2025» que fechan el material | ✔ cerrado | Fase 3 | `eca3261` |
 | C6 | 1 | cosmético | todos | Ningún módulo declara el periodo 2026-II | ✔ cerrado | Fase 3 | `4e31026` |
-| C7 | 1 | cosmético | 7, 13 | Bloques de código que continúan a otro sin decirlo | ✘ abierto | — | — |
+| C7 | 1 | cosmético | 2, 6, 7, 10, 13 | Bloques de código que continúan a otro sin decirlo | ◐ parcial | — | — |
 | C8 | 1 | cosmético | 2, 10, 11 | Semana correcta pero en tres notaciones distintas | ✔ cerrado | Fase 3 | `4e31026` |
 | C9 | 1 | cosmético | 11 módulos | Font Awesome 6.0.0 frente al 6.5.2 del syllabus | ✔ cerrado | Migración | `b5f6b0b` |
 | P1 | 2 | bloqueante | 13 | La rúbrica evalúa «Tablero (frontend)» (3 %) y ningún módulo lo prepara | ✔ cerrado | Fase 3 | `2f385db` |
