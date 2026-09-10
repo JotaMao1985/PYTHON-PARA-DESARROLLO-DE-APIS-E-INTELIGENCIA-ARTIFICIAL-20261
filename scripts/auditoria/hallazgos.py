@@ -89,7 +89,14 @@ def p_continuaciones():
                       if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
             libres = usados - definidos(arbol) - integrados
             if any(n in ds for n in libres for ds in previos):
-                cabecera = b["codigo"].split("\n")[0].lower()
+                # La cabecera de comentarios, no sólo la primera línea: en el
+                # módulo 2 la primera es el título del bloque —el conversor lo
+                # saca de ahí— y el aviso tiene que ir debajo.
+                cabecera = ""
+                for l in b["codigo"].split("\n"):
+                    if not l.strip().startswith("#"):
+                        break
+                    cabecera += l.lower() + " "
                 if "contin" not in cabecera and "fragmento" not in cabecera:
                     callan.append(b["id"])
             previos.append(definidos(arbol))
@@ -373,7 +380,7 @@ H = [
     ("C4", 1, "cosmético", "10–13", "Plotly 3.5.0 frente al 2.35.2 del syllabus", CERRADO, "Migración", "b5f6b0b", p_plotly),
     ("C5", 1, "cosmético", "6, 7", "Referencias a «2025» que fechan el material", CERRADO, "Fase 3", "eca3261", p_anio_2025),
     ("C6", 1, "cosmético", "todos", "Ningún módulo declara el periodo 2026-II", CERRADO, "Fase 3", "4e31026", p_meta("periodo", r"2026-II")),
-    ("C7", 1, "cosmético", "2, 6, 7, 10, 13", "Bloques de código que continúan a otro sin decirlo", PARCIAL, "—", "", p_continuaciones),
+    ("C7", 1, "cosmético", "2, 6, 7, 10, 13", "Bloques de código que continúan a otro sin decirlo", CERRADO, "Auditoría", "", p_continuaciones),
     ("C8", 1, "cosmético", "2, 10, 11", "Semana correcta pero en tres notaciones distintas", CERRADO, "Fase 3", "4e31026", p_titulos_semana),
     ("C9", 1, "cosmético", "11 módulos", "Font Awesome 6.0.0 frente al 6.5.2 del syllabus", CERRADO, "Migración", "b5f6b0b", p_fa_version),
 
@@ -531,10 +538,7 @@ def a_markdown(pruebas) -> str:
         "I11": "Hace falta buscar alternativas de acceso abierto: es trabajo de contenido",
         "C3": "Cosmético y sin efecto visible",
         "C4": "Cambiar de versión mayor sin verificar las 37 gráficas es peor negocio",
-        "C7": "Cerrado en 7 y 13 (11 bloques ya lo declaran). La prueba nueva encuentra "
-           "9 más en 2, 6 y 10: el alcance registrado se quedaba corto porque hasta "
-           "hoy no había forma de medirlo",
-        "C9": "La Fase 1 demostró que no rompe ningún icono",
+                "C9": "La Fase 1 demostró que no rompe ningún icono",
         "Q4": "Añadir gráficas es contenido nuevo, no corrección",
         "C5": "Quedan 3 referencias a «2025» en el módulo 6",
         "P6": "El bloque de reparto ya separa exposición de consulta; falta volver a medir la prosa",

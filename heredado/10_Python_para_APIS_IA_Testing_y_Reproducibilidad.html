@@ -1182,7 +1182,8 @@ client = TestClient(app)
                         tiempo de prueba. Es la herramienta canónica para inyectar bases de datos en memoria,
                         autenticación falsa o relojes deterministas:</p>
 
-                    <pre><code><span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
+                    <pre><code><span class="text-green-500 italic"># Continúa el bloque anterior: reutiliza su import de pytest.</span>
+<span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
 <span class="kw">from</span> app.main <span class="kw">import</span> app, obtener_almacen, Observacion
 
 <span class="kw">def</span> <span class="fn">test_resumen_media_con_almacen_inyectado</span>():
@@ -1422,7 +1423,8 @@ client = TestClient(app)
                     <p>Una fixture puede declarar <code>params=</code> para que pytest la ejecute repetidamente
                         con diferentes valores. Esto multiplica todas las pruebas que la consuman:</p>
 
-                    <pre><code><span class="dec">@pytest.fixture</span>(params=[<span class="num">30</span>, <span class="num">100</span>, <span class="num">500</span>], ids=[<span class="str">"n30"</span>, <span class="str">"n100"</span>, <span class="str">"n500"</span>])
+                    <pre><code><span class="text-green-500 italic"># Continúa el bloque anterior: reutiliza su import de pytest.</span>
+<span class="dec">@pytest.fixture</span>(params=[<span class="num">30</span>, <span class="num">100</span>, <span class="num">500</span>], ids=[<span class="str">"n30"</span>, <span class="str">"n100"</span>, <span class="str">"n500"</span>])
 <span class="kw">def</span> <span class="fn">tamano_muestra</span>(request) -&gt; <span class="builtin">int</span>:
     <span class="kw">return</span> request.param
 

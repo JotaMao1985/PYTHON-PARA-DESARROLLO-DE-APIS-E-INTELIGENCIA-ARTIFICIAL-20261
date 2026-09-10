@@ -3463,7 +3463,8 @@ def test_resumen_media_falla_con_pocas_observaciones():
                                         tiempo de prueba. Es la herramienta canónica para inyectar bases de datos en memoria,
                                         autenticación falsa o relojes deterministas:</p>
 
-                                    <CodeBlock lang="python" code={`from fastapi.testclient import TestClient
+                                    <CodeBlock lang="python" code={`# Continúa el bloque anterior: reutiliza su import de pytest.
+from fastapi.testclient import TestClient
 from app.main import app, obtener_almacen, Observacion
 
 def test_resumen_media_con_almacen_inyectado():
@@ -3689,7 +3690,8 @@ def test_resumen_con_30_observaciones(cliente, fabrica_observaciones):
                                     <p>Una fixture puede declarar <code>params=</code> para que pytest la ejecute repetidamente
                                         con diferentes valores. Esto multiplica todas las pruebas que la consuman:</p>
 
-                                    <CodeBlock lang="python" code={`@pytest.fixture(params=[30, 100, 500], ids=["n30", "n100", "n500"])
+                                    <CodeBlock lang="python" code={`# Continúa el bloque anterior: reutiliza su import de pytest.
+@pytest.fixture(params=[30, 100, 500], ids=["n30", "n100", "n500"])
 def tamano_muestra(request) -> int:
     return request.param
 

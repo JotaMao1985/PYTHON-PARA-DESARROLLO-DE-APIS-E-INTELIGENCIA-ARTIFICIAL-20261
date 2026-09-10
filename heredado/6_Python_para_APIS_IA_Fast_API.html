@@ -1598,7 +1598,8 @@ async def stats_fast(data: DatosInput):
                             <div className="usta-card p-4">
                                 <h5 className="font-bold text-sm text-primary mb-2">📌 Rutas Estáticas</h5>
                                 <p className="text-xs text-gray-600 mb-2">La URL es fija. Siempre apunta al mismo recurso.</p>
-                                <CodeBlock lang="python" code={`@app.get("/")
+                                <CodeBlock lang="python" code={`# Continúa el bloque anterior: \`app\` es la aplicación de FastAPI que allí se creó.
+@app.get("/")
 def inicio():
     return {"msg": "Bienvenido"}
 
@@ -1609,7 +1610,8 @@ def acerca_de():
                             <div className="usta-card p-4">
                                 <h5 className="font-bold text-sm text-secondary mb-2">🔄 Rutas Dinámicas (Path Parameters)</h5>
                                 <p className="text-xs text-gray-600 mb-2">Parte de la URL es variable. FastAPI la extrae y valida automáticamente.</p>
-                                <CodeBlock lang="python" code={`@app.get("/usuario/{user_id}")
+                                <CodeBlock lang="python" code={`# Continúa el bloque anterior: \`app\` es la aplicación de FastAPI que allí se creó.
+@app.get("/usuario/{user_id}")
 def get_usuario(user_id: int):
     return {"id": user_id}
 
@@ -1621,7 +1623,8 @@ def get_usuario(user_id: int):
                         <div className="usta-card p-4 mb-6">
                             <h5 className="font-bold text-sm text-primary mb-2">🔍 Query Parameters (Parámetros de Consulta)</h5>
                             <p className="text-xs text-gray-600 mb-2">Son los valores después del <code>?</code> en la URL. Ideales para filtros, paginación y opciones opcionales.</p>
-                            <CodeBlock lang="python" code={`@app.get("/buscar")
+                            <CodeBlock lang="python" code={`# Continúa el bloque anterior: \`app\` es la aplicación de FastAPI que allí se creó.
+@app.get("/buscar")
 def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
     return {"campo": campo, "limite": limite, "orden": orden}
 
@@ -1680,7 +1683,8 @@ def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                             <div className="bg-red-50/50 p-4 rounded-xl border border-red-200">
                                 <h5 className="font-bold text-red-700 text-sm mb-2">❌ Flask — Validación Manual</h5>
-                                <CodeBlock lang="python" code={`@app.route("/predict", methods=["POST"])
+                                <CodeBlock lang="python" code={`# Fragmento de la versión Flask del bloque anterior: usa su \`app\`, \`request\` y \`jsonify\`.
+@app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     if not isinstance(data.get("age"), int):
@@ -1692,7 +1696,8 @@ def predict():
                             </div>
                             <div className="bg-green-50/50 p-4 rounded-xl border border-green-200">
                                 <h5 className="font-bold text-green-700 text-sm mb-2">✅ FastAPI — Validación Automática</h5>
-                                <CodeBlock lang="python" code={`class Features(BaseModel):
+                                <CodeBlock lang="python" code={`# Continúa el bloque anterior: usa su \`app\` y el \`BaseModel\` de Pydantic.
+class Features(BaseModel):
     age: int
     income: float
 
@@ -1816,7 +1821,8 @@ curl -X POST "http://127.0.0.1:8000/trigger-retrain"
                         </div>
                     </div>
                 ),
-                pythonCode: `from fastapi import BackgroundTasks
+                pythonCode: `# Continúa el bloque anterior: \`app\` es la aplicación de «API de Registro de Experimentos».
+from fastapi import BackgroundTasks
 
 @app.post("/trigger-retrain")
 def iniciar_entrenamiento(background_tasks: BackgroundTasks, n_iter: int = 1000):
