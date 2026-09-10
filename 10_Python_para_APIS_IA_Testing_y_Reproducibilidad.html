@@ -2157,7 +2157,7 @@
             contenidoSyllabus: "La pirámide de testing. pytest. TestClient de FastAPI. Fixtures. Qué significa que un resultado sea reproducible.",
             temas: ["pytest", "TestClient", "Fixtures", "Reproducibilidad"],
             stack: "pytest · httpx · TestClient",
-            storageKey: "usta_2026i_apis_cap10",
+            storageKey: "usta_2026i_apis_cap10_v2",
         };
 
         /* ============================================================
@@ -3056,6 +3056,18 @@
         /* === GRÁFICAS FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 10 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>La pirámide de testing</li><li>pytest y el TestClient de FastAPI</li><li>Fixtures: preparar el estado sin repetirse</li><li>Qué significa que un resultado sea reproducible</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Escribir pruebas para las respuestas correctas</li><li>Escribir una prueba por cada modo de fallo previsto</li><li>Cubrir al menos tres endpoints del proyecto</li><li>Documentar cómo clonar el proyecto y ejecutarlo desde cero</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Cobertura y sus límites</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>«Cada modo de fallo previsto» es la parte que se suele saltar y la que la rúbrica mira: una API que sólo tiene pruebas del camino feliz no está probada. Entorno: Python 3.11.9 con pytest, httpx y TestClient.</p></Box>
+            </div>
+        );
+
         const IntroSection = () => (
             <div className="prose-lp">
                 <p>En las semanas previas se construyó una API estadística con FastAPI: se definieron modelos
@@ -4069,14 +4081,15 @@ pytest --fixtures`} />
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'intro', title: '1. Introducción', icon: 'BookOpen', component: IntroSection },
-            { id: 'piramide', title: '2. Pirámide de testing', icon: 'Layers', component: PiramideSection },
-            { id: 'pytest', title: '3. Framework pytest', icon: 'Bug', component: PytestSection },
-            { id: 'testclient', title: '4. TestClient de FastAPI', icon: 'Workflow', component: TestclientSection },
-            { id: 'fixtures', title: '5. Fixtures en pytest', icon: 'Grid', component: FixturesSection },
-            { id: 'reproducibilidad', title: '6. Reproducibilidad sin Docker', icon: 'Repeat', component: ReproducibilidadSection },
-            { id: 'autoevaluacion', title: '7. Autoevaluación', icon: 'Award', component: AutoevaluacionSection },
-            { id: 'resumen', title: '8. Resumen y referencias', icon: 'GitBranch', component: ResumenSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'intro', title: '2. Introducción', icon: 'BookOpen', component: IntroSection },
+            { id: 'piramide', title: '3. Pirámide de testing', icon: 'Layers', component: PiramideSection },
+            { id: 'pytest', title: '4. Framework pytest', icon: 'Bug', component: PytestSection },
+            { id: 'testclient', title: '5. TestClient de FastAPI', icon: 'Workflow', component: TestclientSection },
+            { id: 'fixtures', title: '6. Fixtures en pytest', icon: 'Grid', component: FixturesSection },
+            { id: 'reproducibilidad', title: '7. Reproducibilidad sin Docker', icon: 'Repeat', component: ReproducibilidadSection },
+            { id: 'autoevaluacion', title: '8. Autoevaluación', icon: 'Award', component: AutoevaluacionSection },
+            { id: 'resumen', title: '9. Resumen y referencias', icon: 'GitBranch', component: ResumenSection },
         ];
 
         /* ============================================================

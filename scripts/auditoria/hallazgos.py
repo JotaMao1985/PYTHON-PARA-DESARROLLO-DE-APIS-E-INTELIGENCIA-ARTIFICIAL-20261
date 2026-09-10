@@ -102,8 +102,19 @@ def p_celery():
 
 
 def p_reparto():
-    malos = [n for n in range(1, 14) if 'data-fase3="reparto"' not in mod(n)]
-    return not malos, f"sin bloque de reparto: {malos or 'ninguno'}"
+    """
+    Mide el reparto por su contenido, no por el atributo que lo marcaba.
+
+    La prueba preguntaba por `data-fase3="reparto"`, que es marcado del
+    heredado. La migración a LP-CORE reconstruye la página desde una plantilla
+    y ningún atributo del original sobrevive, así que desde entonces daba
+    negativo en los trece módulos incluso donde el reparto se veía en pantalla.
+    Lo que el estudiante lee es la tabla de tres filas —exposición, práctica y
+    material de consulta—, y eso es lo que se comprueba.
+    """
+    malos = [n for n in range(1, 14)
+             if "<th>Momento</th>" not in mod(n) or "aterial de consulta" not in mod(n)]
+    return not malos, f"sin tabla de reparto de la sesión: {malos or 'ninguno'}"
 
 
 def p_reloj_a_mano():
@@ -135,7 +146,16 @@ def p_comentario_mathjax():
 
 
 def p_guarda_temporizador():
-    return "if (!timeDisplay) return" in mod(1), "módulo 1: guarda contra timeDisplay nulo"
+    """
+    El defecto era un `TypeError` cada 60 s por leer `timeDisplay` sin guarda.
+    La prueba exigía la guarda, y la migración se llevó por delante el
+    temporizador entero —LP-CORE trae el suyo—, así que daba negativo por la
+    mejor de las razones: el código que fallaba ya no existe. Vale cualquiera
+    de las dos, tener la guarda o no tener el temporizador.
+    """
+    t = mod(1)
+    return "timeDisplay" not in t or "if (!timeDisplay) return" in t, \
+        f"módulo 1: timeDisplay aparece {t.count('timeDisplay')} veces"
 
 
 def p_error_422():
@@ -248,8 +268,10 @@ def p_main_anidado():
 
 
 def p_aperturas():
-    malos = [n for n in (1, 4, 7) if 'data-fase3="apertura"' not in mod(n)]
-    return not malos, f"sin bloque de apertura: {malos or 'ninguno'}"
+    """Igual que `p_reparto`: el marcador no sobrevive a la migración, el
+    componente sí. La apertura sale como `<Motivacion gancho=…>`."""
+    malos = [n for n in (1, 4, 7) if "<Motivacion gancho=" not in mod(n)]
+    return not malos, f"sin apertura que motive: {malos or 'ninguno'}"
 
 
 def p_presupuesto_modulo7():
@@ -292,13 +314,13 @@ H = [
     # ── Fase 1 · cosméticos ───────────────────────────────────────────────
     ("C1", 1, "cosmético", "7", "El comentario dice «MathJax» sobre una carga de KaTeX", CERRADO, "Fase 3", "7d69b57", p_comentario_mathjax),
     ("C2", 1, "cosmético", "8", "Carga los 3 archivos de KaTeX y renderiza 0 fórmulas", CERRADO, "Fase 3", "7d69b57", p_katex_muerto),
-    ("C3", 1, "cosmético", "5, 7, 8, 9", "89 KB de Font Awesome para 1 o 2 iconos", ABIERTO, "—", "", p_fa_pocos_iconos),
-    ("C4", 1, "cosmético", "10–13", "Plotly 3.5.0 frente al 2.35.2 del syllabus", ABIERTO, "—", "", p_plotly),
+    ("C3", 1, "cosmético", "5, 7, 8, 9", "89 KB de Font Awesome para 1 o 2 iconos", CERRADO, "Migración", "b5f6b0b", p_fa_pocos_iconos),
+    ("C4", 1, "cosmético", "10–13", "Plotly 3.5.0 frente al 2.35.2 del syllabus", CERRADO, "Migración", "b5f6b0b", p_plotly),
     ("C5", 1, "cosmético", "6, 7", "Referencias a «2025» que fechan el material", CERRADO, "Fase 3", "eca3261", p_anio_2025),
     ("C6", 1, "cosmético", "todos", "Ningún módulo declara el periodo 2026-II", CERRADO, "Fase 3", "4e31026", p_meta("periodo", r"2026-II")),
     ("C7", 1, "cosmético", "7, 13", "Bloques de código que continúan a otro sin decirlo", ABIERTO, "—", "", None),
     ("C8", 1, "cosmético", "2, 10, 11", "Semana correcta pero en tres notaciones distintas", CERRADO, "Fase 3", "4e31026", p_titulos_semana),
-    ("C9", 1, "cosmético", "11 módulos", "Font Awesome 6.0.0 frente al 6.5.2 del syllabus", ABIERTO, "—", "", p_fa_version),
+    ("C9", 1, "cosmético", "11 módulos", "Font Awesome 6.0.0 frente al 6.5.2 del syllabus", CERRADO, "Migración", "b5f6b0b", p_fa_version),
 
     # ── Fase 2 · bloqueantes ──────────────────────────────────────────────
     ("P1", 2, "bloqueante", "13", "La rúbrica evalúa «Tablero (frontend)» (3 %) y ningún módulo lo prepara", CERRADO, "Fase 3", "2f385db", p_tablero),
@@ -324,7 +346,7 @@ H = [
     ("Q1", 2, "cosmético", "10", "El `<title>` dice «Semana 10» y la cabecera «Semana X»", CERRADO, "Fase 3", "7d69b57", p_semana_x),
     ("Q2", 2, "cosmético", "1, 4, 7", "Aperturas que indexan en vez de motivar", CERRADO, "Fase 3", "eca3261", p_aperturas),
     ("Q3", 2, "cosmético", "1", "Gráfica de barras sin fuente citada", CERRADO, "Fase 3", "e9dfeb2", None),
-    ("Q4", 2, "cosmético", "7", "El módulo más pesado del curso no tiene ni una gráfica", ABIERTO, "—", "", p_graficas_modulo7),
+    ("Q4", 2, "cosmético", "7", "El módulo más pesado del curso no tiene ni una gráfica", CERRADO, "Migración", "b5f6b0b", p_graficas_modulo7),
     ("Q5", 2, "cosmético", "2", "«Bonus: Funciones en Python», por debajo del nivel de la semana", CERRADO, "Fase 3 (D3: se declara)", "f2a65fc", None),
     ("Q6", 2, "cosmético", "3", "Termina en un generador de clases con IA, no en el puente", CERRADO, "Fase 3", "35412a2", p_puente_modulo3),
 

@@ -23,61 +23,67 @@
       "dataclasses"
     ],
     "stack": "Python 3.11.9 · POO · dataclasses",
-    "storageKey": "usta_2026i_apis_cap03"
+    "storageKey": "usta_2026i_apis_cap03_v2"
   },
   "secciones": [
     {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
       "id": "intro",
       "componente": "IntroSection",
-      "titulo": "1. Introducción: el concepto",
+      "titulo": "2. Introducción: el concepto",
       "icono": "BookOpen"
     },
     {
       "id": "class_obj",
       "componente": "ClaseObjetoSection",
-      "titulo": "2. Clases y el constructor",
+      "titulo": "3. Clases y el constructor",
       "icono": "Layers"
     },
     {
       "id": "class_components",
       "componente": "ComponentesSection",
-      "titulo": "3. Componentes: atributos de clase",
+      "titulo": "4. Componentes: atributos de clase",
       "icono": "Grid"
     },
     {
       "id": "methods",
       "componente": "MetodosSection",
-      "titulo": "4. Métodos: dando vida al objeto",
+      "titulo": "5. Métodos: dando vida al objeto",
       "icono": "FunctionSquare"
     },
     {
       "id": "inheritance",
       "componente": "HerenciaSection",
-      "titulo": "5. Herencia y polimorfismo",
+      "titulo": "6. Herencia y polimorfismo",
       "icono": "GitBranch"
     },
     {
       "id": "bridge",
       "componente": "CimientoSection",
-      "titulo": "6. Por qué esto es el cimiento del curso",
+      "titulo": "7. Por qué esto es el cimiento del curso",
       "icono": "ArrowDownUp"
     },
     {
       "id": "ai_builder",
       "componente": "ConstructorIaSection",
-      "titulo": "7. Constructor IA: genera tu clase",
+      "titulo": "8. Constructor IA: genera tu clase",
       "icono": "Cpu"
     },
     {
       "id": "api_python",
       "componente": "ApiPythonSection",
-      "titulo": "8. Conexión API con Python",
+      "titulo": "9. Conexión API con Python",
       "icono": "Workflow"
     },
     {
       "id": "references",
       "componente": "BibliografiaSection",
-      "titulo": "9. Referencia bibliográfica",
+      "titulo": "10. Referencia bibliográfica",
       "icono": "Table"
     }
   ]

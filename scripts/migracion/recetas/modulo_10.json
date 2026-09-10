@@ -22,55 +22,61 @@
       "Reproducibilidad"
     ],
     "stack": "pytest · httpx · TestClient",
-    "storageKey": "usta_2026i_apis_cap10"
+    "storageKey": "usta_2026i_apis_cap10_v2"
   },
   "secciones": [
     {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
       "id": "intro",
       "componente": "IntroSection",
-      "titulo": "1. Introducción",
+      "titulo": "2. Introducción",
       "icono": "BookOpen"
     },
     {
       "id": "piramide",
       "componente": "PiramideSection",
-      "titulo": "2. Pirámide de testing",
+      "titulo": "3. Pirámide de testing",
       "icono": "Layers"
     },
     {
       "id": "pytest",
       "componente": "PytestSection",
-      "titulo": "3. Framework pytest",
+      "titulo": "4. Framework pytest",
       "icono": "Bug"
     },
     {
       "id": "testclient",
       "componente": "TestclientSection",
-      "titulo": "4. TestClient de FastAPI",
+      "titulo": "5. TestClient de FastAPI",
       "icono": "Workflow"
     },
     {
       "id": "fixtures",
       "componente": "FixturesSection",
-      "titulo": "5. Fixtures en pytest",
+      "titulo": "6. Fixtures en pytest",
       "icono": "Grid"
     },
     {
       "id": "reproducibilidad",
       "componente": "ReproducibilidadSection",
-      "titulo": "6. Reproducibilidad sin Docker",
+      "titulo": "7. Reproducibilidad sin Docker",
       "icono": "Repeat"
     },
     {
       "id": "autoevaluacion",
       "componente": "AutoevaluacionSection",
-      "titulo": "7. Autoevaluación",
+      "titulo": "8. Autoevaluación",
       "icono": "Award"
     },
     {
       "id": "resumen",
       "componente": "ResumenSection",
-      "titulo": "8. Resumen y referencias",
+      "titulo": "9. Resumen y referencias",
       "icono": "GitBranch"
     }
   ]

@@ -387,7 +387,29 @@ def main():
               f"Hay: {', '.join(i for _, i in secciones)}", file=sys.stderr)
         return 1
 
+    # La portada: la apertura de la semana y el reparto del tiempo, que son
+    # HTML estático fuera de las `<section id=…>` y por eso no salían de
+    # ninguna de ellas. Se perdían al montar, en silencio.
+    #
+    # La importación va aquí dentro a propósito: `convertir_datos` importa de
+    # este archivo, así que a nivel de módulo sería circular. Y el directorio
+    # se añade al camino porque este guion se invoca sin `PYTHONPATH`.
     total_avisos = 0
+    if args.todas and args.salida:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from convertir_datos import bloque_portada
+        propios = []
+        portada = "\n\n".join(b for b in bloque_portada(texto, propios) if b.strip())
+        if portada:
+            args.salida.mkdir(parents=True, exist_ok=True)
+            (args.salida / "portada.jsx").write_text(portada, encoding="utf-8")
+            print(f"{'OK  ' if not propios else 'AVISO'} {'portada':14s} "
+                  f"{len(portada.splitlines()):4d} líneas · "
+                  f"{portada.count('<Motivacion'):2d} Motivacion", file=sys.stderr)
+            for a in propios:
+                print(f"        · {a}", file=sys.stderr)
+            total_avisos += len(propios)
+
     for bruto, sid in elegidas:
         avisos = []
         jsx = convertir_seccion(bruto, sid, GRAFICAS, avisos)

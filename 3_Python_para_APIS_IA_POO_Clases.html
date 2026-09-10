@@ -2155,7 +2155,7 @@
             contenidoSyllabus: "Clases, atributos y métodos aplicados al modelado estadístico. Composición frente a herencia. Métodos especiales. Por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero.",
             temas: ["Clases", "Herencia", "Polimorfismo", "dataclasses"],
             stack: "Python 3.11.9 · POO · dataclasses",
-            storageKey: "usta_2026i_apis_cap03",
+            storageKey: "usta_2026i_apis_cap03_v2",
         };
 
         /* ============================================================
@@ -2483,6 +2483,18 @@
         /* === COMPONENTES DEL MÓDULO FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 3 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>Clases, constructor y atributos</li><li>Métodos y métodos especiales</li><li>Composición frente a herencia, y polimorfismo</li><li>Por qué Pydantic, SQLAlchemy y FastAPI exigen entender esto primero</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Convertir el módulo de limpieza de la semana 1 en una clase con estado</li><li>Separar responsabilidades del pipeline en clases distintas</li><li>Escribir la dataclass de la observación del proyecto, con sus tipos</li><li>Comprobar en Python 3.11.9 que @dataclass no valida los tipos que declara</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Constructor IA: generar una clase a partir de un concepto</li><li>Conexión a una API desde Python</li><li>Referencia bibliográfica</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>La sección «Por qué esto es el cimiento del curso» es la bisagra de la semana: enseña qué parte de lo que has visto hoy reaparece en las semanas 4, 6 y 9. El entorno es Python 3.11.9, el mismo de la semana 1.</p></Box>
+            </div>
+        );
+
         const IntroSection = () => (
             <div className="prose-lp">
                                     <div>
@@ -3231,15 +3243,16 @@ if __name__ == "__main__":
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'intro', title: '1. Introducción: el concepto', icon: 'BookOpen', component: IntroSection },
-            { id: 'class_obj', title: '2. Clases y el constructor', icon: 'Layers', component: ClaseObjetoSection },
-            { id: 'class_components', title: '3. Componentes: atributos de clase', icon: 'Grid', component: ComponentesSection },
-            { id: 'methods', title: '4. Métodos: dando vida al objeto', icon: 'FunctionSquare', component: MetodosSection },
-            { id: 'inheritance', title: '5. Herencia y polimorfismo', icon: 'GitBranch', component: HerenciaSection },
-            { id: 'bridge', title: '6. Por qué esto es el cimiento del curso', icon: 'ArrowDownUp', component: CimientoSection },
-            { id: 'ai_builder', title: '7. Constructor IA: genera tu clase', icon: 'Cpu', component: ConstructorIaSection },
-            { id: 'api_python', title: '8. Conexión API con Python', icon: 'Workflow', component: ApiPythonSection },
-            { id: 'references', title: '9. Referencia bibliográfica', icon: 'Table', component: BibliografiaSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'intro', title: '2. Introducción: el concepto', icon: 'BookOpen', component: IntroSection },
+            { id: 'class_obj', title: '3. Clases y el constructor', icon: 'Layers', component: ClaseObjetoSection },
+            { id: 'class_components', title: '4. Componentes: atributos de clase', icon: 'Grid', component: ComponentesSection },
+            { id: 'methods', title: '5. Métodos: dando vida al objeto', icon: 'FunctionSquare', component: MetodosSection },
+            { id: 'inheritance', title: '6. Herencia y polimorfismo', icon: 'GitBranch', component: HerenciaSection },
+            { id: 'bridge', title: '7. Por qué esto es el cimiento del curso', icon: 'ArrowDownUp', component: CimientoSection },
+            { id: 'ai_builder', title: '8. Constructor IA: genera tu clase', icon: 'Cpu', component: ConstructorIaSection },
+            { id: 'api_python', title: '9. Conexión API con Python', icon: 'Workflow', component: ApiPythonSection },
+            { id: 'references', title: '10. Referencia bibliográfica', icon: 'Table', component: BibliografiaSection },
         ];
 
         /* ============================================================

@@ -2176,7 +2176,7 @@
             contenidoSyllabus: "Del entorno virtual al contenedor. Contenedores frente a máquinas virtuales. Estructura del Dockerfile. Imagen base python:3.11.9-slim-bookworm. Construcción multietapa.",
             temas: ["Docker", "Dockerfile", "Multi-stage", "python:3.11.9-slim-bookworm"],
             stack: "Docker · python:3.11.9-slim-bookworm",
-            storageKey: "usta_2026i_apis_cap11",
+            storageKey: "usta_2026i_apis_cap11_v2",
         };
 
         /* ============================================================
@@ -2513,6 +2513,18 @@
         /* === GRÁFICAS FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 11 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>Del entorno virtual al contenedor</li><li>Contenedores frente a máquinas virtuales</li><li>Estructura del Dockerfile y la imagen base python:3.11.9-slim-bookworm</li><li>Construcción multietapa</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Escribir el Dockerfile del proyecto</li><li>Construir la imagen y ejecutarla</li><li>Comprobar que la API se comporta igual dentro del contenedor</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Optimización del tamaño de imagen y del caché de capas</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>Aquí se cierra el adelanto que abrió la semana 1: allí bastaba con saber cuándo elegir un contenedor, y ésta es la semana en la que se construye. La imagen que salga de aquí es la que se despliega en la 12.</p></Box>
+            </div>
+        );
+
         const IntroSection = () => (
             <div className="prose-lp">
                 <p>En las semanas previas se construyó una API estadística con FastAPI, se validaron sus
@@ -4173,17 +4185,18 @@ CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]`} />
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'intro', title: '1. Introducción y objetivos', icon: 'BookOpen', component: IntroSection },
-            { id: 'repaso', title: '2. Del entorno virtual al contenedor', icon: 'ArrowDownUp', component: RepasoSection },
-            { id: 'vms', title: '3. Contenedores vs máquinas virtuales', icon: 'Layers', component: VmsSection },
-            { id: 'porque', title: '4. ¿Por qué Docker ahora?', icon: 'Workflow', component: PorqueSection },
-            { id: 'dockerfile', title: '5. Estructura de un Dockerfile', icon: 'FileCode', component: DockerfileSection },
-            { id: 'imagen-base', title: '6. Imagen base slim-bookworm', icon: 'Binary', component: ImagenBaseSection },
-            { id: 'contexto', title: '7. Contexto de construcción', icon: 'Grid', component: ContextoSection },
-            { id: 'multistage', title: '8. Multi-stage builds', icon: 'Repeat', component: MultistageSection },
-            { id: 'integrador', title: '9. Ejemplo integrador', icon: 'FunctionSquare', component: IntegradorSection },
-            { id: 'autoeval', title: '10. Autoevaluación', icon: 'Award', component: AutoevalSection },
-            { id: 'cierre', title: '11. Conclusión y buenas prácticas', icon: 'GitBranch', component: CierreSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'intro', title: '2. Introducción y objetivos', icon: 'BookOpen', component: IntroSection },
+            { id: 'repaso', title: '3. Del entorno virtual al contenedor', icon: 'ArrowDownUp', component: RepasoSection },
+            { id: 'vms', title: '4. Contenedores vs máquinas virtuales', icon: 'Layers', component: VmsSection },
+            { id: 'porque', title: '5. ¿Por qué Docker ahora?', icon: 'Workflow', component: PorqueSection },
+            { id: 'dockerfile', title: '6. Estructura de un Dockerfile', icon: 'FileCode', component: DockerfileSection },
+            { id: 'imagen-base', title: '7. Imagen base slim-bookworm', icon: 'Binary', component: ImagenBaseSection },
+            { id: 'contexto', title: '8. Contexto de construcción', icon: 'Grid', component: ContextoSection },
+            { id: 'multistage', title: '9. Multi-stage builds', icon: 'Repeat', component: MultistageSection },
+            { id: 'integrador', title: '10. Ejemplo integrador', icon: 'FunctionSquare', component: IntegradorSection },
+            { id: 'autoeval', title: '11. Autoevaluación', icon: 'Award', component: AutoevalSection },
+            { id: 'cierre', title: '12. Conclusión y buenas prácticas', icon: 'GitBranch', component: CierreSection },
         ];
 
         /* ============================================================

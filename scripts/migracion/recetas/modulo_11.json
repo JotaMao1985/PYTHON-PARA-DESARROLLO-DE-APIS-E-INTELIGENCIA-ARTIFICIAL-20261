@@ -22,73 +22,79 @@
       "python:3.11.9-slim-bookworm"
     ],
     "stack": "Docker · python:3.11.9-slim-bookworm",
-    "storageKey": "usta_2026i_apis_cap11"
+    "storageKey": "usta_2026i_apis_cap11_v2"
   },
   "secciones": [
     {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
       "id": "intro",
       "componente": "IntroSection",
-      "titulo": "1. Introducción y objetivos",
+      "titulo": "2. Introducción y objetivos",
       "icono": "BookOpen"
     },
     {
       "id": "repaso",
       "componente": "RepasoSection",
-      "titulo": "2. Del entorno virtual al contenedor",
+      "titulo": "3. Del entorno virtual al contenedor",
       "icono": "ArrowDownUp"
     },
     {
       "id": "vms",
       "componente": "VmsSection",
-      "titulo": "3. Contenedores vs máquinas virtuales",
+      "titulo": "4. Contenedores vs máquinas virtuales",
       "icono": "Layers"
     },
     {
       "id": "porque",
       "componente": "PorqueSection",
-      "titulo": "4. ¿Por qué Docker ahora?",
+      "titulo": "5. ¿Por qué Docker ahora?",
       "icono": "Workflow"
     },
     {
       "id": "dockerfile",
       "componente": "DockerfileSection",
-      "titulo": "5. Estructura de un Dockerfile",
+      "titulo": "6. Estructura de un Dockerfile",
       "icono": "FileCode"
     },
     {
       "id": "imagen-base",
       "componente": "ImagenBaseSection",
-      "titulo": "6. Imagen base slim-bookworm",
+      "titulo": "7. Imagen base slim-bookworm",
       "icono": "Binary"
     },
     {
       "id": "contexto",
       "componente": "ContextoSection",
-      "titulo": "7. Contexto de construcción",
+      "titulo": "8. Contexto de construcción",
       "icono": "Grid"
     },
     {
       "id": "multistage",
       "componente": "MultistageSection",
-      "titulo": "8. Multi-stage builds",
+      "titulo": "9. Multi-stage builds",
       "icono": "Repeat"
     },
     {
       "id": "integrador",
       "componente": "IntegradorSection",
-      "titulo": "9. Ejemplo integrador",
+      "titulo": "10. Ejemplo integrador",
       "icono": "FunctionSquare"
     },
     {
       "id": "autoeval",
       "componente": "AutoevalSection",
-      "titulo": "10. Autoevaluación",
+      "titulo": "11. Autoevaluación",
       "icono": "Award"
     },
     {
       "id": "cierre",
       "componente": "CierreSection",
-      "titulo": "11. Conclusión y buenas prácticas",
+      "titulo": "12. Conclusión y buenas prácticas",
       "icono": "GitBranch"
     }
   ]

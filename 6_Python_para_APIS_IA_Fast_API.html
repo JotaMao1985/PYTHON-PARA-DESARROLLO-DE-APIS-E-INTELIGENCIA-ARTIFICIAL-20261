@@ -2154,7 +2154,7 @@
             contenidoSyllabus: "Routers y organización modular. El type hinting como contrato ejecutable. OpenAPI, Swagger UI y Redoc. async/await.",
             temas: ["FastAPI", "Uvicorn", "async/await", "OpenAPI"],
             stack: "FastAPI · Uvicorn · OpenAPI",
-            storageKey: "usta_2026i_apis_cap06",
+            storageKey: "usta_2026i_apis_cap06_v2",
         };
 
         /* ============================================================
@@ -2333,6 +2333,18 @@
         /* === COMPONENTES DEL MÓDULO FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 6 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>El type hinting como contrato ejecutable</li><li>Routers y organización modular del proyecto</li><li>OpenAPI, Swagger UI y Redoc: documentación que no se escribe</li><li>async/await: cuándo aporta y cuándo no</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Reescribir en FastAPI el servicio de la semana 5</li><li>Recorrer la documentación interactiva generada en /docs</li><li>Partir la aplicación en routers por responsabilidad</li><li>Migrar el proyecto con validación estricta en cada endpoint</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Comparativa histórica con Flask y Django</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>Es la semana en la que el proyecto deja de ser un script: a partir de aquí todo lo demás —dependencias, base de datos, pruebas, contenedor— se monta encima de esta API. Entorno: Python 3.11.9 con FastAPI y Uvicorn.</p></Box>
+            </div>
+        );
+
         const FundamentosSection = () => (
             <div className="prose-lp">
                                     <div>
@@ -4138,14 +4150,15 @@ pip freeze > requirements.txt
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'fundamentals', title: '1. Fundamentos', icon: 'BookOpen', component: FundamentosSection },
-            { id: 'architecture', title: '2. Arquitectura', icon: 'Layers', component: ArquitecturaSection },
-            { id: 'flask-debate', title: '3. Flask vs FastAPI: ¿perspectiva?', icon: 'Repeat', component: FlaskFastapiSection },
-            { id: 'crud', title: '4. Routing y CRUD', icon: 'ArrowDownUp', component: RoutingCrudSection },
-            { id: 'concurrency', title: '5. Concurrencia', icon: 'Cpu', component: ConcurrenciaSection },
-            { id: 'evaluation', title: '6. Evaluación y cierre', icon: 'Award', component: CierreSection },
-            { id: 'lab-activity', title: '7. Actividad aplicada', icon: 'FunctionSquare', component: ActividadSection },
-            { id: 'references', title: '8. Referencia bibliográfica', icon: 'Table', component: BibliografiaSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'fundamentals', title: '2. Fundamentos', icon: 'BookOpen', component: FundamentosSection },
+            { id: 'architecture', title: '3. Arquitectura', icon: 'Layers', component: ArquitecturaSection },
+            { id: 'flask-debate', title: '4. Flask vs FastAPI: ¿perspectiva?', icon: 'Repeat', component: FlaskFastapiSection },
+            { id: 'crud', title: '5. Routing y CRUD', icon: 'ArrowDownUp', component: RoutingCrudSection },
+            { id: 'concurrency', title: '6. Concurrencia', icon: 'Cpu', component: ConcurrenciaSection },
+            { id: 'evaluation', title: '7. Evaluación y cierre', icon: 'Award', component: CierreSection },
+            { id: 'lab-activity', title: '8. Actividad aplicada', icon: 'FunctionSquare', component: ActividadSection },
+            { id: 'references', title: '9. Referencia bibliográfica', icon: 'Table', component: BibliografiaSection },
         ];
 
         /* ============================================================

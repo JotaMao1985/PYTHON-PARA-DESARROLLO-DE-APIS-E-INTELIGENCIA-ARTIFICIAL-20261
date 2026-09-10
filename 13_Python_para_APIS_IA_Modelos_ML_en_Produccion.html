@@ -2161,7 +2161,7 @@
             contenidoSyllabus: "Ciclo de vida del modelo: entrenar, serializar, cargar, predecir. El patrón Singleton para no recargar el modelo en cada petición. Coste de las dependencias de ML sobre el tamaño de la imagen.",
             temas: ["scikit-learn", "joblib", "Singleton", "Docker"],
             stack: "Scikit-Learn · joblib · Docker",
-            storageKey: "usta_2026i_apis_cap13",
+            storageKey: "usta_2026i_apis_cap13_v2",
         };
 
         /* ============================================================
@@ -2390,6 +2390,18 @@ const GraficaDockerComp = ({ caption }) => {
         /* === COMPONENTES DEL MÓDULO FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 13 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>Ciclo de vida del modelo: entrenar, serializar, cargar, predecir</li><li>El patrón Singleton para no recargar el modelo en cada petición</li><li>Coste de las dependencias de ML sobre el tamaño de la imagen</li><li>Consistencia entre entrenamiento y servicio</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Entrenar un modelo y serializarlo con joblib</li><li>Servirlo desde un endpoint que lo cargue una sola vez al arranque</li><li>Construir el tablero mínimo que consume ese endpoint</li><li>Reconstruir la imagen con el modelo dentro</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Comparativa de formatos de serialización</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>El tablero es el criterio 14 de la rúbrica del proyecto: pesa un 3 % y no necesita ser bonito, necesita existir, consumir tu API real y mostrar el resultado. El taller de la semana 15 lo integra con el resto del sistema.</p></Box>
+            </div>
+        );
+
         const IntroSection = () => (
             <div className="prose-lp">
                 <div>
@@ -4058,13 +4070,14 @@ document.getElementById("formulario").addEventListener("submit", async (evento) 
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'intro', title: '1. Introducción y objetivos', icon: 'BookOpen', component: IntroSection },
-            { id: 'ciclo', title: '2. Ciclo de vida del modelo', icon: 'Repeat', component: CicloVidaSection },
-            { id: 'singleton', title: '3. Patrón Singleton', icon: 'Cpu', component: SingletonSection },
-            { id: 'docker', title: '4. Docker para ML', icon: 'Layers', component: DockerSection },
-            { id: 'proyecto', title: '5. Mini-proyecto integrador', icon: 'FunctionSquare', component: ProyectoSection },
-            { id: 'tablero', title: '6. El tablero (rúbrica 3 %)', icon: 'Grid', component: TableroSection },
-            { id: 'auto', title: '7. Autoevaluación', icon: 'Award', component: AutoevaluacionSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'intro', title: '2. Introducción y objetivos', icon: 'BookOpen', component: IntroSection },
+            { id: 'ciclo', title: '3. Ciclo de vida del modelo', icon: 'Repeat', component: CicloVidaSection },
+            { id: 'singleton', title: '4. Patrón Singleton', icon: 'Cpu', component: SingletonSection },
+            { id: 'docker', title: '5. Docker para ML', icon: 'Layers', component: DockerSection },
+            { id: 'proyecto', title: '6. Mini-proyecto integrador', icon: 'FunctionSquare', component: ProyectoSection },
+            { id: 'tablero', title: '7. El tablero (rúbrica 3 %)', icon: 'Grid', component: TableroSection },
+            { id: 'auto', title: '8. Autoevaluación', icon: 'Award', component: AutoevaluacionSection },
         ];
 
         /* ============================================================

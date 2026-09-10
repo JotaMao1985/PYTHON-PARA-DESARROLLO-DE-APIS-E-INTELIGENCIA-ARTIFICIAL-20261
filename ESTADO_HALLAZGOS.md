@@ -19,9 +19,9 @@ python3 scripts/auditoria/hallazgos.py --abiertos  # sólo lo que queda por hace
 
 | Estado | | Qué significa |
 |---|---|---|
-| ✔ Cerrado | **46** | Corregido y verificado |
+| ✔ Cerrado | **50** | Corregido y verificado |
 | ◐ Parcial | **0** | Cerrado en unos módulos y abierto en otros |
-| ✘ Abierto | **6** | Sigue ahí, con motivo declarado |
+| ✘ Abierto | **2** | Sigue ahí, con motivo declarado |
 | · Nota | **1** | Corrección a un informe, no un defecto |
 | | **53** | |
 
@@ -34,11 +34,7 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | ID | Módulos | Hallazgo | Estado | Por qué sigue así |
 |---|---|---|---|---|
 | **I11** | 4, 6, 7 | 4 referencias bibliográficas tras el muro de pago de Medium | ✘ abierto | Hace falta buscar alternativas de acceso abierto: es trabajo de contenido |
-| **C3** | 5, 7, 8, 9 | 89 KB de Font Awesome para 1 o 2 iconos | ✘ abierto | Cosmético y sin efecto visible |
-| **C4** | 10–13 | Plotly 3.5.0 frente al 2.35.2 del syllabus | ✘ abierto | Cambiar de versión mayor sin verificar las 37 gráficas es peor negocio |
 | **C7** | 7, 13 | Bloques de código que continúan a otro sin decirlo | ✘ abierto | Requiere leer los bloques en contexto, uno a uno |
-| **C9** | 11 módulos | Font Awesome 6.0.0 frente al 6.5.2 del syllabus | ✘ abierto | La Fase 1 demostró que no rompe ningún icono |
-| **Q4** | 7 | El módulo más pesado del curso no tiene ni una gráfica | ✘ abierto | Añadir gráficas es contenido nuevo, no corrección |
 
 ---
 
@@ -65,13 +61,13 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | I11 | 1 | importante | 4, 6, 7 | 4 referencias bibliográficas tras el muro de pago de Medium | ✘ abierto | — | — |
 | C1 | 1 | cosmético | 7 | El comentario dice «MathJax» sobre una carga de KaTeX | ✔ cerrado | Fase 3 | `7d69b57` |
 | C2 | 1 | cosmético | 8 | Carga los 3 archivos de KaTeX y renderiza 0 fórmulas | ✔ cerrado | Fase 3 | `7d69b57` |
-| C3 | 1 | cosmético | 5, 7, 8, 9 | 89 KB de Font Awesome para 1 o 2 iconos | ✘ abierto | — | — |
-| C4 | 1 | cosmético | 10–13 | Plotly 3.5.0 frente al 2.35.2 del syllabus | ✘ abierto | — | — |
+| C3 | 1 | cosmético | 5, 7, 8, 9 | 89 KB de Font Awesome para 1 o 2 iconos | ✔ cerrado | Migración | `b5f6b0b` |
+| C4 | 1 | cosmético | 10–13 | Plotly 3.5.0 frente al 2.35.2 del syllabus | ✔ cerrado | Migración | `b5f6b0b` |
 | C5 | 1 | cosmético | 6, 7 | Referencias a «2025» que fechan el material | ✔ cerrado | Fase 3 | `eca3261` |
 | C6 | 1 | cosmético | todos | Ningún módulo declara el periodo 2026-II | ✔ cerrado | Fase 3 | `4e31026` |
 | C7 | 1 | cosmético | 7, 13 | Bloques de código que continúan a otro sin decirlo | ✘ abierto | — | — |
 | C8 | 1 | cosmético | 2, 10, 11 | Semana correcta pero en tres notaciones distintas | ✔ cerrado | Fase 3 | `4e31026` |
-| C9 | 1 | cosmético | 11 módulos | Font Awesome 6.0.0 frente al 6.5.2 del syllabus | ✘ abierto | — | — |
+| C9 | 1 | cosmético | 11 módulos | Font Awesome 6.0.0 frente al 6.5.2 del syllabus | ✔ cerrado | Migración | `b5f6b0b` |
 | P1 | 2 | bloqueante | 13 | La rúbrica evalúa «Tablero (frontend)» (3 %) y ningún módulo lo prepara | ✔ cerrado | Fase 3 | `2f385db` |
 | P2 | 2 | bloqueante | 3 | No nombra `dataclasses`, Pydantic, SQLAlchemy ni FastAPI | ✔ cerrado | Fase 3 | `35412a2` |
 | P3 | 2 | bloqueante | 3 | Envía la API Key del estudiante **en la URL** | ✔ cerrado | Fase 3 | `35412a2` |
@@ -91,7 +87,7 @@ Por fase de origen: Fase 1 → 26 · Fase 2 → 23 · Fase 3 → 4.
 | Q1 | 2 | cosmético | 10 | El `<title>` dice «Semana 10» y la cabecera «Semana X» | ✔ cerrado | Fase 3 | `7d69b57` |
 | Q2 | 2 | cosmético | 1, 4, 7 | Aperturas que indexan en vez de motivar | ✔ cerrado | Fase 3 | `eca3261` |
 | Q3 | 2 | cosmético | 1 | Gráfica de barras sin fuente citada | ✔ cerrado | Fase 3 | `e9dfeb2` |
-| Q4 | 2 | cosmético | 7 | El módulo más pesado del curso no tiene ni una gráfica | ✘ abierto | — | — |
+| Q4 | 2 | cosmético | 7 | El módulo más pesado del curso no tiene ni una gráfica | ✔ cerrado | Migración | `b5f6b0b` |
 | Q5 | 2 | cosmético | 2 | «Bonus: Funciones en Python», por debajo del nivel de la semana | ✔ cerrado | Fase 3 (D3: se declara) | `f2a65fc` |
 | Q6 | 2 | cosmético | 3 | Termina en un generador de clases con IA, no en el puente | ✔ cerrado | Fase 3 | `35412a2` |
 | F1 | 3 | importante | 1 | `TypeError` en consola cada 60 s, en el primer módulo del curso | ✔ cerrado | Fase 3 | `5e17c40` |

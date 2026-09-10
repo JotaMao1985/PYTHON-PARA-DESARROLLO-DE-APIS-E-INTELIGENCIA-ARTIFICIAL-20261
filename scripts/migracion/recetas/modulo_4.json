@@ -23,67 +23,73 @@
       "HTTP 422"
     ],
     "stack": "Pydantic v2",
-    "storageKey": "usta_2026i_apis_cap04"
+    "storageKey": "usta_2026i_apis_cap04_v2"
   },
   "secciones": [
     {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
       "id": "intro",
       "componente": "IntroSection",
-      "titulo": "1. Introducción: el problema de los datos",
+      "titulo": "2. Introducción: el problema de los datos",
       "icono": "BookOpen"
     },
     {
       "id": "pydantic",
       "componente": "QueEsPydanticSection",
-      "titulo": "2. ¿Qué es Pydantic?",
+      "titulo": "3. ¿Qué es Pydantic?",
       "icono": "Binary"
     },
     {
       "id": "models",
       "componente": "ModelosSection",
-      "titulo": "3. Profundizando en los modelos",
+      "titulo": "4. Profundizando en los modelos",
       "icono": "Layers"
     },
     {
       "id": "fields",
       "componente": "FieldSection",
-      "titulo": "4. El poder de Field",
+      "titulo": "5. El poder de Field",
       "icono": "Grid"
     },
     {
       "id": "required_optional",
       "componente": "NulosSection",
-      "titulo": "5. Obligatorios, opcionales y nulos",
+      "titulo": "6. Obligatorios, opcionales y nulos",
       "icono": "ArrowDownUp"
     },
     {
       "id": "field_validators",
       "componente": "ValidadoresSection",
-      "titulo": "6. Validadores de campo",
+      "titulo": "7. Validadores de campo",
       "icono": "FunctionSquare"
     },
     {
       "id": "error_422",
       "componente": "ErroresSection",
-      "titulo": "7. Del ValidationError al error HTTP 422",
+      "titulo": "8. Del ValidationError al error HTTP 422",
       "icono": "Bug"
     },
     {
       "id": "dataframe_validation",
       "componente": "DataFramesSection",
-      "titulo": "8. Validación de DataFrames",
+      "titulo": "9. Validación de DataFrames",
       "icono": "Table"
     },
     {
       "id": "quiz",
       "componente": "AutoevalSection",
-      "titulo": "9. Autoevaluación",
+      "titulo": "10. Autoevaluación",
       "icono": "Award"
     },
     {
       "id": "references",
       "componente": "BibliografiaSection",
-      "titulo": "10. Referencia bibliográfica",
+      "titulo": "11. Referencia bibliográfica",
       "icono": "FileCode"
     }
   ]

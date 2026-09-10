@@ -219,7 +219,27 @@ def main():
     if args.salida:
         (args.salida / "jsx").mkdir(parents=True, exist_ok=True)
 
+    # La portada: la apertura de la semana y el reparto del tiempo. Van en HTML
+    # estático delante del armazón, fuera de `<div id="root">`, así que no están
+    # en el `curriculum` y este guion no los veía: se perdían al montar.
+    #
+    # La importación es local porque este guion se invoca sin `PYTHONPATH` —así
+    # está documentado— y sería la única razón para necesitarlo.
     titulos, graficas, total = {}, [], 0
+    if args.salida:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from convertir_datos import bloque_portada
+        propios = []
+        portada = "\n\n".join(b for b in bloque_portada(texto, propios) if b.strip())
+        if portada:
+            (args.salida / "jsx" / "portada.jsx").write_text(portada, encoding="utf-8")
+            print(f"{'OK  ' if not propios else 'AVISO'} {'portada':12s} "
+                  f"{len(portada.splitlines()):4d} líneas · "
+                  f"{portada.count('<Motivacion'):2d} Motivacion", file=sys.stderr)
+            for a in propios:
+                print(f"        · {a}", file=sys.stderr)
+            total += len(propios)
+
     for e in lista:
         avisos = []
         fuente, abre = fuente_componente(cuerpo, e["componente"], avisos)

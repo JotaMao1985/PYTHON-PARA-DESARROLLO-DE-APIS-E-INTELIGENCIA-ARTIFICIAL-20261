@@ -47,7 +47,12 @@ from convertir_plano import fin_elemento, tipo_de_caja
 # un campo, y con él viene gratis el recorte de la felicitación. `evaluar_js`
 # es el lector de Node que ya usaba `courseData`, por el mismo motivo: esto es
 # JavaScript, no JSON.
-from convertir_datos import bloque_quiz, evaluar_js
+#
+# Y `bloque_portada` por la misma razón de fondo: la apertura de la semana y el
+# reparto del tiempo son HTML estático que va FUERA de `<div id="root">`, así
+# que no están en el `curriculum` y este guion no los veía. Se perdían al
+# montar, en silencio y en los tres módulos de esta familia.
+from convertir_datos import bloque_portada, bloque_quiz, evaluar_js
 
 # Qué componente propio acompaña a cada `interactiveType`.
 #
@@ -409,7 +414,21 @@ def main():
     if args.salida:
         (args.salida / "jsx").mkdir(parents=True, exist_ok=True)
 
+    # La portada: el `data-fase3` que va delante del armazón. No sale de
+    # ninguna entrada del `curriculum`, y la receta la nombra como una sección
+    # más, con su `id` «portada».
     titulos, total = {}, 0
+    propios = []
+    portada = "\n\n".join(b for b in bloque_portada(texto, propios) if b.strip())
+    if portada and args.salida:
+        (args.salida / "jsx" / "portada.jsx").write_text(portada, encoding="utf-8")
+        print(f"{'OK  ' if not propios else 'AVISO'} {'portada':22s} "
+              f"{len(portada.splitlines()):4d} líneas · "
+              f"{portada.count('<Motivacion'):2d} Motivacion", file=sys.stderr)
+        for a in propios:
+            print(f"        · {a}", file=sys.stderr)
+        total += len(propios)
+
     for e in lista:
         avisos = []
         jsx = seccion_jsx(e, avisos, quiz)

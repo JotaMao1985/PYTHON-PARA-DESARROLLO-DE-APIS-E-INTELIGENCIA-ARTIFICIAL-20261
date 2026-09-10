@@ -2155,7 +2155,7 @@
             contenidoSyllabus: "El tipo como fuente de verdad. Modelos, campos y coerción. Serialización y deserialización. Errores de validación como respuesta HTTP 422.",
             temas: ["Pydantic v2", "Field", "field_validator", "HTTP 422"],
             stack: "Pydantic v2",
-            storageKey: "usta_2026i_apis_cap04",
+            storageKey: "usta_2026i_apis_cap04_v2",
         };
 
         /* ============================================================
@@ -2287,6 +2287,24 @@
         /* === COMPONENTES DEL MÓDULO FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <Motivacion gancho="La semana en que los tipos empiezan a trabajar">
+                <p>La semana pasada escribiste <code>edad: int</code> en una <code>dataclass</code> y comprobaste algo incómodo: Python <strong>no comprueba nada</strong>. Podías meter la cadena «treinta y cuatro» y el objeto se construía tan tranquilo. Esa anotación era documentación, no una regla.</p>
+                <p>Pydantic toma esa misma línea que ya sabes escribir y la convierte en un <strong>contrato que se verifica en tiempo de ejecución</strong>. No cambias de sintaxis ni aprendes un lenguaje nuevo: cambias de clase base y, de pronto, lo que escribiste como comentario para el próximo humano se lo empieza a tomar en serio la máquina. A partir de la semana 6 quien construya esos objetos no serás tú, sino FastAPI cuando llegue una petición de alguien a quien no puedes explicarle nada — y por eso el contrato tiene que aguantar solo.</p>
+                <p><strong>Esta semana no hay sesión presencial:</strong> el material está escrito para que lo recorras por tu cuenta. Es más corto que el resto a propósito. Lo que tiene que quedarte hecho son los esquemas de tu dataset, porque la semana 6 los da por escritos.</p>
+                </Motivacion>
+
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 4 · <strong>módulo de estudio autónomo</strong>. El syllabus no asigna sesión de exposición a esta semana: el material está escrito para recorrerlo entero por tu cuenta.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Recorrido del material</td><td>a tu ritmo</td><td><ul><li>El tipo como fuente de verdad</li><li>Modelos, campos y coerción</li><li>Field, valores por defecto y campos opcionales</li><li>Validadores de campo con @field_validator</li><li>Serialización y deserialización</li><li>El error 422 como respuesta HTTP</li></ul></td></tr><tr><td>Trabajo sobre el proyecto</td><td>entregable de la semana</td><td><ul><li>Construir los modelos de entrada y salida de tu dataset</li><li>Provocar a propósito cada tipo de error de validación</li><li>Dejar los esquemas del proyecto listos para la semana 6</li></ul></td></tr><tr><td>Material de consulta</td><td>de apoyo</td><td><ul><li>Validación de DataFrames de Pandas</li><li>Autoevaluación</li><li>Referencia bibliográfica</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>Ésta es la única semana sin sesión de exposición: el syllabus la declara «módulo de estudio autónomo: recorrer el material completo». Por eso este material es más corto que el resto — no le falta nada, está dimensionado para lo que es. Entorno: Python 3.11.9.</p></Box>
+            </div>
+        );
+
         const IntroSection = () => (
             <div className="prose-lp">
                                     <div className="space-y-4">
@@ -3148,16 +3166,17 @@ pip install pandera`} />
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'intro', title: '1. Introducción: el problema de los datos', icon: 'BookOpen', component: IntroSection },
-            { id: 'pydantic', title: '2. ¿Qué es Pydantic?', icon: 'Binary', component: QueEsPydanticSection },
-            { id: 'models', title: '3. Profundizando en los modelos', icon: 'Layers', component: ModelosSection },
-            { id: 'fields', title: '4. El poder de Field', icon: 'Grid', component: FieldSection },
-            { id: 'required_optional', title: '5. Obligatorios, opcionales y nulos', icon: 'ArrowDownUp', component: NulosSection },
-            { id: 'field_validators', title: '6. Validadores de campo', icon: 'FunctionSquare', component: ValidadoresSection },
-            { id: 'error_422', title: '7. Del ValidationError al error HTTP 422', icon: 'Bug', component: ErroresSection },
-            { id: 'dataframe_validation', title: '8. Validación de DataFrames', icon: 'Table', component: DataFramesSection },
-            { id: 'quiz', title: '9. Autoevaluación', icon: 'Award', component: AutoevalSection },
-            { id: 'references', title: '10. Referencia bibliográfica', icon: 'FileCode', component: BibliografiaSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'intro', title: '2. Introducción: el problema de los datos', icon: 'BookOpen', component: IntroSection },
+            { id: 'pydantic', title: '3. ¿Qué es Pydantic?', icon: 'Binary', component: QueEsPydanticSection },
+            { id: 'models', title: '4. Profundizando en los modelos', icon: 'Layers', component: ModelosSection },
+            { id: 'fields', title: '5. El poder de Field', icon: 'Grid', component: FieldSection },
+            { id: 'required_optional', title: '6. Obligatorios, opcionales y nulos', icon: 'ArrowDownUp', component: NulosSection },
+            { id: 'field_validators', title: '7. Validadores de campo', icon: 'FunctionSquare', component: ValidadoresSection },
+            { id: 'error_422', title: '8. Del ValidationError al error HTTP 422', icon: 'Bug', component: ErroresSection },
+            { id: 'dataframe_validation', title: '9. Validación de DataFrames', icon: 'Table', component: DataFramesSection },
+            { id: 'quiz', title: '10. Autoevaluación', icon: 'Award', component: AutoevalSection },
+            { id: 'references', title: '11. Referencia bibliográfica', icon: 'FileCode', component: BibliografiaSection },
         ];
 
         /* ============================================================

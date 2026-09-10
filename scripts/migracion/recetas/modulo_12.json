@@ -22,55 +22,61 @@
       "Logs"
     ],
     "stack": "Render · GitHub Actions · Docker",
-    "storageKey": "usta_2026i_apis_cap12"
+    "storageKey": "usta_2026i_apis_cap12_v2"
   },
   "secciones": [
     {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
       "id": "intro",
       "componente": "IntroSection",
-      "titulo": "1. Introducción",
+      "titulo": "2. Introducción",
       "icono": "BookOpen"
     },
     {
       "id": "paas",
       "componente": "PaasSection",
-      "titulo": "2. Concepto de PaaS",
+      "titulo": "3. Concepto de PaaS",
       "icono": "Layers"
     },
     {
       "id": "env",
       "componente": "EnvSection",
-      "titulo": "3. Variables de entorno",
+      "titulo": "4. Variables de entorno",
       "icono": "Grid"
     },
     {
       "id": "cicd",
       "componente": "CicdSection",
-      "titulo": "4. CI/CD con GitHub Actions",
+      "titulo": "5. CI/CD con GitHub Actions",
       "icono": "GitBranch"
     },
     {
       "id": "logs",
       "componente": "LogsSection",
-      "titulo": "5. Logs de producción",
+      "titulo": "6. Logs de producción",
       "icono": "FileCode"
     },
     {
       "id": "railway",
       "componente": "RailwaySection",
-      "titulo": "6. Render y el Dockerfile",
+      "titulo": "7. Render y el Dockerfile",
       "icono": "Workflow"
     },
     {
       "id": "autoevaluacion",
       "componente": "AutoevaluacionSection",
-      "titulo": "7. Autoevaluación",
+      "titulo": "8. Autoevaluación",
       "icono": "Award"
     },
     {
       "id": "resumen",
       "componente": "ResumenSection",
-      "titulo": "8. Resumen y referencias",
+      "titulo": "9. Resumen y referencias",
       "icono": "Binary"
     }
   ]

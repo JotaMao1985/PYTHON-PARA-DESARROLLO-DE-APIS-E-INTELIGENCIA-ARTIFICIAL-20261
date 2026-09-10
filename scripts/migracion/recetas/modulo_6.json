@@ -23,55 +23,61 @@
       "OpenAPI"
     ],
     "stack": "FastAPI · Uvicorn · OpenAPI",
-    "storageKey": "usta_2026i_apis_cap06"
+    "storageKey": "usta_2026i_apis_cap06_v2"
   },
   "secciones": [
     {
+      "id": "portada",
+      "componente": "AperturaSection",
+      "titulo": "1. Antes de empezar",
+      "icono": "BookOpen"
+    },
+    {
       "id": "fundamentals",
       "componente": "FundamentosSection",
-      "titulo": "1. Fundamentos",
+      "titulo": "2. Fundamentos",
       "icono": "BookOpen"
     },
     {
       "id": "architecture",
       "componente": "ArquitecturaSection",
-      "titulo": "2. Arquitectura",
+      "titulo": "3. Arquitectura",
       "icono": "Layers"
     },
     {
       "id": "flask-debate",
       "componente": "FlaskFastapiSection",
-      "titulo": "3. Flask vs FastAPI: ¿perspectiva?",
+      "titulo": "4. Flask vs FastAPI: ¿perspectiva?",
       "icono": "Repeat"
     },
     {
       "id": "crud",
       "componente": "RoutingCrudSection",
-      "titulo": "4. Routing y CRUD",
+      "titulo": "5. Routing y CRUD",
       "icono": "ArrowDownUp"
     },
     {
       "id": "concurrency",
       "componente": "ConcurrenciaSection",
-      "titulo": "5. Concurrencia",
+      "titulo": "6. Concurrencia",
       "icono": "Cpu"
     },
     {
       "id": "evaluation",
       "componente": "CierreSection",
-      "titulo": "6. Evaluación y cierre",
+      "titulo": "7. Evaluación y cierre",
       "icono": "Award"
     },
     {
       "id": "lab-activity",
       "componente": "ActividadSection",
-      "titulo": "7. Actividad aplicada",
+      "titulo": "8. Actividad aplicada",
       "icono": "FunctionSquare"
     },
     {
       "id": "references",
       "componente": "BibliografiaSection",
-      "titulo": "8. Referencia bibliográfica",
+      "titulo": "9. Referencia bibliográfica",
       "icono": "Table"
     }
   ]

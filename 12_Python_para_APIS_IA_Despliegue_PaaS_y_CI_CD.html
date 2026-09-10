@@ -2184,7 +2184,7 @@
             contenidoSyllabus: "El concepto de plataforma como servicio. Variables de entorno en producción frente a desarrollo. Integración continua con GitHub Actions. Lectura de logs.",
             temas: ["Render", "GitHub Actions", "Variables de entorno", "Logs"],
             stack: "Render · GitHub Actions · Docker",
-            storageKey: "usta_2026i_apis_cap12",
+            storageKey: "usta_2026i_apis_cap12_v2",
         };
 
         /* ============================================================
@@ -2650,6 +2650,18 @@
         /* === GRÁFICAS FIN === */
 
         /* === SECCIONES INICIO — generadas por scripts/migracion/convertir.py === */
+        const AperturaSection = () => (
+            <div className="prose-lp">
+                <h3>Cómo se usa este material en la sesión</h3>
+
+                <p>Semana 12 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
+
+                <table><thead><tr><th>Momento</th><th>Tiempo</th><th>Qué se hace</th></tr></thead><tbody><tr><td>Exposición</td><td>60 min</td><td><ul><li>Qué es una plataforma como servicio</li><li>Variables de entorno en producción frente a desarrollo</li><li>Integración continua con GitHub Actions</li><li>Lectura de logs de producción</li></ul></td></tr><tr><td>Práctica guiada</td><td>180 min</td><td><ul><li>Conectar el repositorio a Render</li><li>Configurar el entorno de producción y sus secretos</li><li>Desplegar la imagen construida en la semana 11</li><li>Dejar el workflow de integración continua en verde</li></ul></td></tr><tr><td>Material de consulta</td><td>fuera de sesión</td><td><ul><li>Otras plataformas del mercado y en qué se diferencian</li><li>Bibliografía y fuentes consultadas</li></ul></td></tr></tbody></table>
+
+                <Box type="info" label="Cómo leer este reparto"><p>La plataforma de este curso es <strong>Render</strong>: es la que el syllabus declara y la que la rúbrica del proyecto evalúa. El hito de esta semana es una API desplegada y accesible públicamente.</p></Box>
+            </div>
+        );
+
         const IntroSection = () => (
             <div className="prose-lp">
                 <p>Hasta esta semana, la API estadística <code>encuestas-api</code> se ha desarrollado en una
@@ -3757,14 +3769,15 @@ gh secret list`} />
         /* === SECCIONES FIN === */
 
         const curriculum = [
-            { id: 'intro', title: '1. Introducción', icon: 'BookOpen', component: IntroSection },
-            { id: 'paas', title: '2. Concepto de PaaS', icon: 'Layers', component: PaasSection },
-            { id: 'env', title: '3. Variables de entorno', icon: 'Grid', component: EnvSection },
-            { id: 'cicd', title: '4. CI/CD con GitHub Actions', icon: 'GitBranch', component: CicdSection },
-            { id: 'logs', title: '5. Logs de producción', icon: 'FileCode', component: LogsSection },
-            { id: 'railway', title: '6. Render y el Dockerfile', icon: 'Workflow', component: RailwaySection },
-            { id: 'autoevaluacion', title: '7. Autoevaluación', icon: 'Award', component: AutoevaluacionSection },
-            { id: 'resumen', title: '8. Resumen y referencias', icon: 'Binary', component: ResumenSection },
+            { id: 'portada', title: '1. Antes de empezar', icon: 'BookOpen', component: AperturaSection },
+            { id: 'intro', title: '2. Introducción', icon: 'BookOpen', component: IntroSection },
+            { id: 'paas', title: '3. Concepto de PaaS', icon: 'Layers', component: PaasSection },
+            { id: 'env', title: '4. Variables de entorno', icon: 'Grid', component: EnvSection },
+            { id: 'cicd', title: '5. CI/CD con GitHub Actions', icon: 'GitBranch', component: CicdSection },
+            { id: 'logs', title: '6. Logs de producción', icon: 'FileCode', component: LogsSection },
+            { id: 'railway', title: '7. Render y el Dockerfile', icon: 'Workflow', component: RailwaySection },
+            { id: 'autoevaluacion', title: '8. Autoevaluación', icon: 'Award', component: AutoevaluacionSection },
+            { id: 'resumen', title: '9. Resumen y referencias', icon: 'Binary', component: ResumenSection },
         ];
 
         /* ============================================================
