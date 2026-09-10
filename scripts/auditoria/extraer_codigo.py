@@ -8,6 +8,14 @@ cubrir las tres o se audita menos de lo que se cree:
   2. plantillas de JavaScript `const xxxCode = \\`...\\`` que React inyecta en un
      componente <CodeBlock> (modulos 0, 3, 4, 6, 13)
   3. objetos de datos JS con claves `snippet:` o `code:` (modulos 1, 2)
+  4. <CodeBlock ... code={\\`...\\`} /> de LP-CORE, que es la forma que dejo la
+     migracion y hoy la unica de casi todos los modulos
+
+La cuarta se anadio el 2026-09-09 y no es un refinamiento: sin ella el guion
+extraia CERO bloques de Python de los trece modulos. Las tres primeras son
+formas del material heredado, y de la ultima que quedaba viva —los <pre> crudos
+del modulo 6— se paso a CodeBlock ese mismo dia. `verificar_codigo.py` daba
+verde sin haber mirado nada.
 
 Salida: salida/bloques.json con un registro por bloque.
 
@@ -173,6 +181,50 @@ def de_pre(html: str) -> list[dict]:
     return bloques
 
 
+# El literal que sigue a `code={`, hasta el acento de cierre y su llave.
+RE_LITERAL_CODE = re.compile(r"`((?:[^`\\]|\\.)*)`\}", re.S)
+
+
+def de_codeblock(html: str) -> list[dict]:
+    """`<CodeBlock ... code={\\`...\\`} />` de LP-CORE.
+
+    Se recorre etiqueta por etiqueta en vez de con una sola expresion porque
+    el literal puede contener `>` —un `->` de una anotacion de tipo basta— y
+    cualquier patron que cruce los atributos de un tiron se corta ahi.
+
+    El `lang` del componente se pasa como pista: es lo que el autor declaro, y
+    vale mas que adivinarlo del cuerpo. Un `code={porLenguaje(...)}` no trae
+    literal ninguno —lo arma LP-CORE en tiempo de render— y se descarta solo,
+    porque el patron exige un acento invertido justo detras de la llave.
+    """
+    bloques = []
+    for m in re.finditer(r"<CodeBlock\b", html):
+        j = html.find("code={", m.end())
+        if j == -1:
+            continue
+        atributos = html[m.end():j]
+        # Si entre la etiqueta y el `code=` hay un `>`, ese `code=` es de otro
+        # componente y este CodeBlock no lleva literal.
+        if ">" in atributos:
+            continue
+        lit = RE_LITERAL_CODE.match(html, j + len("code={"))
+        if not lit:
+            continue
+        pista = re.search(r'\blang="([^"]+)"', atributos)
+        titulo = re.search(r'\btitle="([^"]*)"', atributos)
+        codigo = desescapar_js(lit.group(1))
+        if not codigo.strip():
+            continue
+        bloques.append({
+            "origen": f"CodeBlock:{titulo.group(1)}" if titulo else "CodeBlock",
+            "pos": m.start(),
+            "pista": pista.group(1) if pista else None,
+            "codigo": codigo,
+            "cloudflare": False,
+        })
+    return bloques
+
+
 # Plantillas de JS que NO son codigo del material: maquetacion, CSS, prompts de IA.
 def _es_maquetacion(codigo: str) -> bool:
     if re.search(r"<(div|span|section|p|h[1-6]|table|li|button)\b", codigo, re.I):
@@ -212,7 +264,7 @@ def linea_de(html: str, pos: int) -> int:
 
 def extraer(ruta: Path) -> list[dict]:
     html = ruta.read_text(encoding="utf-8", errors="replace")
-    crudos = de_pre(html) + de_plantillas_js(html)
+    crudos = de_pre(html) + de_plantillas_js(html) + de_codeblock(html)
     vistos: set[str] = set()
     salida = []
     for i, b in enumerate(sorted(crudos, key=lambda x: x["pos"])):
