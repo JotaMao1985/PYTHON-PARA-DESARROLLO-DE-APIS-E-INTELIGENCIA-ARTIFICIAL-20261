@@ -81,6 +81,7 @@
         }
 
         /* USTA Card Style */
+        .usta-card { min-width: 0; }
         .usta-card {
             background: white;
             border-radius: 16px;
@@ -356,7 +357,7 @@
                             <span className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div><div className="w-2 h-2 rounded-full bg-yellow-500"></div><div className="w-2 h-2 rounded-full bg-green-500"></div></span>
                         </span>
                     </div>
-                    <div className="p-4 overflow-x-auto code-scroll">
+                    <div className="p-4 overflow-x-auto code-scroll min-w-0">
                         <pre className="text-sm leading-relaxed"><code dangerouslySetInnerHTML={{
                             __html: code.replace(/#.*/g, match => `<span class="text-green-500 italic">${match}</span>`)
                                 .replace(/"""[\s\S]*?"""/g, match => `<span class="text-green-500 italic">${match}</span>`)
@@ -406,41 +407,42 @@
         const ComparisonDiagram = () => (
             <div className="grid md:grid-cols-2 gap-4">
                 {/* WSGI */}
-                <div className="bg-red-50/50 p-4 rounded-xl border border-red-100">
+                <div className="bg-red-50/50 p-4 rounded-xl border border-red-100 min-w-0" role="img"
+                    aria-label="Línea de tiempo con un worker WSGI de un solo hilo: en el segundo 0 el usuario A ocupa el hilo; en el segundo 5 llega el usuario B y espera, porque el hilo sigue ocupado durante la espera de entrada y salida de A; en el segundo 10 A termina y libera el hilo; hasta el segundo 11 no empieza a atenderse a B.">
                     <div className="text-center mb-4">
-                        <span className="font-bold text-red-800 text-sm uppercase tracking-wider block">Estilo WSGI</span>
-                        <span className="text-xs text-red-600">Bloqueante (Un camión en un carril)</span>
+                        <span className="font-bold text-red-800 text-sm uppercase tracking-wider block">Estilo WSGI — un worker, un hilo</span>
+                        <span className="text-xs text-red-800">El hilo queda ocupado durante toda la espera</span>
                     </div>
 
                     <div className="space-y-2 font-mono text-xs">
                         {/* Time T1 */}
                         <div className="flex items-center gap-2">
-                            <span className="w-8 text-gray-400">0s</span>
+                            <span className="w-8 text-gray-600">0s</span>
                             <div className="flex-1 h-10 bg-primary text-white rounded flex items-center justify-center shadow-sm">
                                 Usuario A (Procesando...)
                             </div>
                         </div>
 
                         {/* Time T2 */}
-                        <div className="flex items-center gap-2 opacity-50">
-                            <span className="w-8 text-gray-400">5s</span>
-                            <div className="flex-1 h-10 border-2 border-dashed border-red-300 bg-red-50 text-red-400 rounded flex items-center justify-center">
+                        <div className="flex items-center gap-2">
+                            <span className="w-8 text-gray-600">5s</span>
+                            <div className="flex-1 min-w-0 h-10 border-2 border-dashed border-red-400 bg-red-50 text-red-800 rounded flex items-center justify-center">
                                 Usuario B (ESPERANDO 🛑)
                             </div>
                         </div>
 
                         {/* Time T3 */}
                         <div className="flex items-center gap-2">
-                            <span className="w-8 text-gray-400">10s</span>
-                            <div className="flex-1 h-10 bg-gray-200 text-gray-500 rounded flex items-center justify-center">
+                            <span className="w-8 text-gray-600">10s</span>
+                            <div className="flex-1 min-w-0 h-10 bg-gray-200 text-gray-700 rounded flex items-center justify-center">
                                 Usuario A termina
                             </div>
                         </div>
 
                         {/* Time T4 */}
                         <div className="flex items-center gap-2">
-                            <span className="w-8 text-gray-400">11s</span>
-                            <div className="flex-1 h-10 bg-secondary text-white rounded flex items-center justify-center shadow-sm">
+                            <span className="w-8 text-gray-600">11s</span>
+                            <div className="flex-1 min-w-0 h-10 bg-[#C41461] text-white rounded flex items-center justify-center shadow-sm">
                                 Usuario B (Por fin inicia!)
                             </div>
                         </div>
@@ -448,50 +450,42 @@
                 </div>
 
                 {/* ASGI */}
-                <div className="bg-green-50/50 p-4 rounded-xl border border-green-100">
+                <div className="bg-green-50/50 p-4 rounded-xl border border-green-100 min-w-0" role="img"
+                    aria-label="Línea de tiempo con un worker ASGI de un solo hilo: en el segundo 0 la petición de A ocupa la CPU; durante su espera de entrada y salida la CPU queda libre, y el servidor atiende al usuario B en ese hueco; en el segundo 10 A retoma la CPU y termina.">
                     <div className="text-center mb-4">
-                        <span className="font-bold text-green-800 text-sm uppercase tracking-wider block">Estilo ASGI (FastAPI)</span>
-                        <span className="text-xs text-green-600">Asíncrono (Autopista con sobrepaso)</span>
+                        <span className="font-bold text-green-800 text-sm uppercase tracking-wider block">Estilo ASGI (FastAPI) — un worker, un hilo</span>
+                        <span className="text-xs text-green-800">El hilo se libera durante la espera de I/O</span>
                     </div>
 
-                    <div className="relative font-mono text-xs h-[180px]">
-                        {/* Background grid lines */}
-                        <div className="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
-                            <div className="border-b border-black h-8"></div>
-                            <div className="border-b border-black h-8"></div>
-                            <div className="border-b border-black h-8"></div>
-                            <div className="border-b border-black h-8"></div>
-                        </div>
-
-                        {/* User A Task - Start */}
-                        <div className="absolute top-0 left-8 w-24 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] z-10 shadow-sm">
-                            A: Inicio (CPU)
-                        </div>
-
-                        {/* Await Period */}
-                        <div className="absolute top-8 left-20 bottom-8 border-l-2 border-primary border-dashed w-0 flex items-center">
-                            <span className="bg-white/90 text-primary text-[10px] px-1 ml-2 whitespace-nowrap border border-primary/20 rounded">
-                                ⏳ Esperando I/O (Sin uso CPU)
-                            </span>
-                        </div>
-
-                        {/* User A Task - End */}
-                        <div className="absolute bottom-0 left-8 w-24 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] z-10 shadow-sm">
-                            A: Fin (CPU)
-                        </div>
-
-                        {/* User B Task (Fits in the middle) */}
-                        {/* User B Task (Runs in the gap) */}
-                        <div className="absolute top-1/2 -translate-y-1/2 right-8 w-32 h-12 bg-secondary text-white rounded-lg shadow-md flex items-center justify-center z-20 border-2 border-white animate-pulse" title="¡Usuario B es atendido mientras A espera!">
-                            <div className="text-center">
-                                <div className="font-bold text-xs">Usuario B</div>
-                                <div className="text-[9px]">¡Atendido en el hueco! 🚀</div>
+                    {/* Tres filas en flujo normal, no cajas absolutas sobre una altura fija:
+                        la versión anterior se solapaba en cuanto el panel bajaba de ~420 px. */}
+                    <div className="font-mono text-xs space-y-2">
+                        <div className="flex items-center gap-2">
+                            <span className="w-8 text-gray-600 flex-shrink-0">0s</span>
+                            <div className="flex-1 min-w-0 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] shadow-sm">
+                                A: Inicio (CPU)
                             </div>
                         </div>
 
-                        {/* Time markers */}
-                        <div className="absolute left-0 top-0 text-gray-400 text-[10px]">0s</div>
-                        <div className="absolute left-0 bottom-0 text-gray-400 text-[10px]">10s</div>
+                        <div className="flex items-start gap-2">
+                            <span className="w-8 flex-shrink-0" aria-hidden="true"></span>
+                            <div className="flex-1 min-w-0 border-l-2 border-dashed border-primary pl-3 py-2 flex flex-wrap items-center gap-2">
+                                <span className="bg-white text-primary text-[10px] px-1.5 py-0.5 border border-primary/30 rounded">
+                                    ⏳ Esperando I/O (sin uso de CPU)
+                                </span>
+                                <span className="bg-[#C41461] text-white rounded-lg shadow-md px-3 py-1.5 text-center leading-tight border-2 border-white">
+                                    <span className="font-bold text-xs block">Usuario B</span>
+                                    <span className="text-[10px] block">¡Atendido en el hueco! 🚀</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <span className="w-8 text-gray-600 flex-shrink-0">10s</span>
+                            <div className="flex-1 min-w-0 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] shadow-sm">
+                                A: Fin (CPU)
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -512,60 +506,60 @@
                     topic: 'Lección 1 — Fundamentos',
                     question: '¿Qué función cumple el decorador @app.get("/ruta") en FastAPI?',
                     options: [
-                        'Importa la librería FastAPI al proyecto',
                         'Define qué función se ejecuta cuando un cliente visita esa URL',
-                        'Crea una base de datos automáticamente',
-                        'Instala las dependencias necesarias'
+                        'Importa la librería FastAPI y crea la aplicación del proyecto',
+                        'Comprueba que quien hace la petición tenga permiso sobre esa URL',
+                        'Reserva esa URL para que ninguna otra función pueda usarla'
                     ],
-                    correct: 1,
+                    correct: 0,
                     explanation: 'El decorador mapea una URL (ruta) a una función Python. Cuando un cliente hace una petición GET a esa ruta, FastAPI ejecuta la función decorada y retorna su resultado como JSON.'
                 },
                 {
                     topic: 'Lección 1 — Fundamentos',
                     question: '¿Cuál es la diferencia principal entre REST API y una función Python normal?',
                     options: [
-                        'REST API solo funciona con JavaScript',
-                        'Una función normal no puede retornar datos',
-                        'REST API expone la función a través de HTTP para que cualquier sistema la consuma remotamente',
-                        'No hay ninguna diferencia'
+                        'Una REST API se programa en JavaScript; la función, en Python',
+                        'Una función normal no puede devolver sus datos en formato JSON',
+                        'La REST API valida por sí sola los tipos de los datos recibidos',
+                        'Expone la función por HTTP para que otro sistema la invoque'
                     ],
-                    correct: 2,
+                    correct: 3,
                     explanation: 'Una REST API permite que cualquier sistema (móvil, web, IoT) consuma la función a través de URLs y verbos HTTP (GET, POST, PUT, DELETE), sin importar el lenguaje del cliente.'
                 },
                 {
                     topic: 'Lección 2 — Arquitectura',
                     question: '¿Cuál es la ventaja principal de ASGI sobre WSGI?',
                     options: [
-                        'ASGI es más fácil de instalar',
-                        'ASGI permite manejar múltiples peticiones concurrentemente durante tiempos de espera (I/O)',
-                        'ASGI solo funciona con Flask',
-                        'WSGI es más moderno que ASGI'
+                        'Reparte automáticamente las peticiones entre varios procesos',
+                        'Libera el hilo durante la espera de I/O y atiende otras peticiones',
+                        'Acelera los cálculos de NumPy y de Pandas repartiéndolos en hilos',
+                        'Permite que Flask y Django funcionen sin cambiar una sola línea'
                     ],
                     correct: 1,
-                    explanation: 'WSGI procesa una petición a la vez (secuencial). ASGI permite que el servidor atienda otras peticiones mientras espera operaciones lentas como consultas a bases de datos o carga de modelos.'
+                    explanation: 'Un worker WSGI retiene el hilo durante toda la petición, también mientras espera: para servir a dos usuarios a la vez necesita dos hilos. ASGI libera el hilo durante la espera de I/O, de modo que un solo worker atiende otras peticiones mientras una consulta a la base de datos o una llamada externa está en curso.'
                 },
                 {
                     topic: 'Lección 2 — Arquitectura',
                     question: '¿Qué se genera automáticamente al visitar /docs en una app FastAPI?',
                     options: [
-                        'Un archivo PDF con el código fuente',
-                        'Una interfaz gráfica interactiva (Swagger UI) para probar los endpoints',
-                        'Un reporte de errores del servidor',
-                        'Una copia de seguridad de la base de datos'
+                        'Un archivo PDF con el código fuente completo de la aplicación',
+                        'Un informe con los errores que el servidor ha registrado hoy',
+                        'Una interfaz (Swagger UI) para probar los endpoints en vivo',
+                        'Una copia de seguridad de los datos que guarda el proyecto'
                     ],
-                    correct: 1,
+                    correct: 2,
                     explanation: 'FastAPI genera automáticamente documentación interactiva Swagger UI en /docs, donde cualquier miembro del equipo puede ver los endpoints, sus parámetros, y probarlos directamente desde el navegador.'
                 },
                 {
                     topic: 'Lección 3 — Routing & CRUD',
                     question: '¿Para qué se usa Pydantic (BaseModel) en FastAPI?',
                     options: [
-                        'Para crear las rutas del servidor',
-                        'Para validar y definir la estructura de los datos de entrada automáticamente',
-                        'Para conectar con bases de datos SQL',
-                        'Para generar gráficos estadísticos'
+                        'Para definir las rutas del servidor y sus verbos HTTP',
+                        'Para conectar la aplicación con una base de datos SQL',
+                        'Para dibujar las gráficas estadísticas del informe final',
+                        'Para declarar la estructura de los datos y validarla sola'
                     ],
-                    correct: 1,
+                    correct: 3,
                     explanation: 'Pydantic permite definir modelos de datos con tipos esperados. FastAPI usa estos modelos para validar automáticamente que los datos recibidos tengan la estructura y tipos correctos, retornando errores claros si no.'
                 },
                 {
@@ -584,22 +578,22 @@
                     topic: 'Lección 4 — Concurrencia',
                     question: '¿Cuándo se debe usar async def en lugar de def en FastAPI?',
                     options: [
-                        'Siempre, en todas las funciones',
-                        'Solo para funciones que manejan archivos',
-                        'Para operaciones de I/O (consultas a BD, APIs externas, carga de archivos)',
-                        'Nunca, FastAPI no soporta funciones asíncronas'
+                        'Para operaciones de I/O: consultas a BD o llamadas externas',
+                        'En todas las rutas, porque FastAPI las ejecuta en paralelo',
+                        'En las rutas que leen o escriben archivos grandes en disco',
+                        'En los cálculos pesados con NumPy o Pandas, para acelerarlos'
                     ],
-                    correct: 2,
+                    correct: 0,
                     explanation: 'Se usa async def para operaciones I/O-Bound (base de datos, APIs externas, disco). Para cálculos pesados de CPU (NumPy, Pandas), se recomienda def estándar, ya que async no acelera la computación pura.'
                 },
                 {
                     topic: 'Lección 4 — Concurrencia',
                     question: '¿Qué comando se usa para ejecutar una aplicación FastAPI en desarrollo?',
                     options: [
-                        'python main.py',
-                        'flask run --reload',
+                        'python -m fastapi main.py',
+                        'flask run --app main --reload',
                         'uvicorn main:app --reload',
-                        'npm start'
+                        'gunicorn main:app --reload'
                     ],
                     correct: 2,
                     explanation: 'uvicorn es el servidor ASGI que ejecuta apps FastAPI. "main" es el archivo, "app" es la variable FastAPI(), y "--reload" reinicia automáticamente al guardar cambios durante desarrollo.'
@@ -1007,7 +1001,7 @@ def mi_app_wsgi(environ, start_response):
                                     Históricamente, Python utilizaba WSGI (ej. Flask), comparable a una sesión estándar de R en consola ("monohilo"). Si se ejecuta una operación larga, el proceso se bloquea hasta su finalización.
                                 </p>
                                 <div className="text-xs bg-red-50 text-red-700 p-2 rounded border border-red-100">
-                                    <strong>Resultado:</strong> Sistema de colas bloqueante donde los usuarios esperan secuencialmente.
+                                    <strong>Resultado:</strong> cada petición retiene su hilo de principio a fin, también mientras espera. Para atender a varios usuarios a la vez hace falta levantar más workers o más hilos; lo que no se puede es aprovechar el hueco que deja una espera.
                                 </div>
                             </div>
 
@@ -1029,7 +1023,7 @@ def mi_app_wsgi(environ, start_response):
 
                         <h3 className="text-xl font-semibold text-secondary mb-4 mt-8">Los 3 Superpoderes de FastAPI</h3>
                         <p className="mb-4">
-                            Según Saket Garodia, FastAPI se distingue de otros frameworks Python por tres capacidades fundamentales que lo convierten en la herramienta predilecta para Ciencia de Datos e IA:
+                            FastAPI se distingue de otros frameworks Python por tres capacidades fundamentales que lo convierten en la herramienta predilecta para Ciencia de Datos e IA:
                         </p>
                         <div className="grid md:grid-cols-3 gap-4 mb-6">
                             <div className="usta-card p-5 text-center">
@@ -1064,7 +1058,7 @@ def mi_app_wsgi(environ, start_response):
                             Python cuenta con múltiples frameworks web. Para un estadístico o científico de datos que necesita exponer modelos como APIs, la elección del framework impacta directamente en rendimiento, mantenibilidad y tiempo de desarrollo.
                         </p>
 
-                        <div className="overflow-x-auto mb-6">
+                        <div className="overflow-x-auto mb-6 min-w-0">
                             <table className="w-full text-sm text-left border-collapse">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-100">
                                     <tr>
@@ -1128,7 +1122,7 @@ def mi_app_wsgi(environ, start_response):
                         </div>
 
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
-                            <div className="bg-red-50/50 p-4 rounded-xl border border-red-200">
+                            <div className="bg-red-50/50 p-4 rounded-xl border border-red-200 min-w-0">
                                 <h5 className="font-bold text-red-700 text-sm mb-2">🧪 Flask — El Veterano Minimalista</h5>
                                 <p className="text-xs text-gray-700 mb-2">Flask es un <strong>microframework</strong>: proporciona lo mínimo (routing + templates) y añades extensiones para todo lo demás. Es como comprar una cocina vacía y equiparla pieza por pieza.</p>
                                 <ul className="list-disc pl-4 text-xs text-gray-600 space-y-1">
@@ -1139,7 +1133,7 @@ def mi_app_wsgi(environ, start_response):
                                     <li>❌ Sin documentación API auto-generada</li>
                                 </ul>
                             </div>
-                            <div className="bg-green-50/50 p-4 rounded-xl border border-green-200">
+                            <div className="bg-green-50/50 p-4 rounded-xl border border-green-200 min-w-0">
                                 <h5 className="font-bold text-green-700 text-sm mb-2">⚡ FastAPI — El Estándar Moderno</h5>
                                 <p className="text-xs text-gray-700 mb-2">FastAPI integra validación, documentación y alto rendimiento en un solo paquete. Es como una cocina industrial pre-equipada con los mejores electrodomésticos.</p>
                                 <ul className="list-disc pl-4 text-xs text-gray-600 space-y-1">
@@ -1326,11 +1320,11 @@ async def async_endpoint():
                     <div>
                         <h3 className="text-xl font-semibold text-secondary mb-4">¿Está Flask Muerto? Una Perspectiva Equilibrada</h3>
                         <p className="mb-4">
-                            El entusiasmo por FastAPI puede generar la impresión de que Flask es obsoleto. <strong>Esto no es del todo cierto.</strong> Según un análisis publicado por Leapcell en Medium, la tendencia del mercado favorece claramente a FastAPI para nuevos proyectos de APIs, pero Flask sigue cumpliendo un rol importante en el ecosistema Python.
+                            El entusiasmo por FastAPI puede generar la impresión de que Flask es obsoleto. <strong>Esto no es del todo cierto.</strong> La encuesta <em>State of Python</em> 2025 de JetBrains los deja a cuatro puntos de distancia —FastAPI 38 %, Django 35 %, Flask 34 %—: FastAPI crece deprisa en proyectos nuevos de API, y Flask sigue cumpliendo un rol importante en el ecosistema Python.
                         </p>
 
                         <div className="tip-box p-4 rounded-lg mb-6">
-                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-chart-line"></i> Datos del Ecosistema (2026)</h4>
+                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-chart-line"></i> Datos del ecosistema — JetBrains, <em>State of Python</em> 2025</h4>
                             <div className="grid md:grid-cols-3 gap-4 mt-3">
                                 <div className="bg-white p-3 rounded-lg border border-gray-200 text-center">
                                     <p className="text-2xl font-bold text-secondary">~80k ⭐</p>
@@ -1343,25 +1337,25 @@ async def async_endpoint():
                                     <p className="text-xs text-gray-400">Nacido en 2010</p>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg border border-gray-200 text-center">
-                                    <p className="text-2xl font-bold text-gold">25%</p>
-                                    <p className="text-xs text-gray-600 mt-1">Cuota de FastAPI en encuesta JetBrains 2023</p>
-                                    <p className="text-xs text-gray-400">No existía en 2019</p>
+                                    <p className="text-2xl font-bold text-gold">38 %</p>
+                                    <p className="text-xs text-gray-600 mt-1">Cuota de FastAPI · Django 35 % · Flask 34 %</p>
+                                    <p className="text-xs text-gray-600">Era del 25 % en 2023; no existía en 2019</p>
                                 </div>
                             </div>
                         </div>
 
                         <h3 className="text-lg font-semibold text-secondary mb-4">¿Por Qué Se Dice que Flask Está en Declive?</h3>
                         <p className="mb-4">
-                            El artículo de Leapcell señala varios indicadores que sugieren una reducción en la actividad de Flask:
+                            Se citan a menudo varios indicadores de que el desarrollo de Flask se ha estabilizado. Conviene leerlos con cuidado: describen un proyecto maduro y en mantenimiento, no uno abandonado.
                         </p>
 
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                             <div className="usta-card p-4">
                                 <h5 className="font-bold text-sm text-red-700 mb-2"><i className="fas fa-code-branch"></i> Actividad de Desarrollo</h5>
                                 <ul className="list-disc pl-4 text-xs text-gray-600 space-y-1">
-                                    <li>Flask tiene <strong>un solo mantenedor activo</strong>; su creador original (Armin Ronacher) dejó el proyecto hace años</li>
-                                    <li>Los issues y pull requests son mínimos (un dígito)</li>
-                                    <li>No hay desarrollo de nuevas funcionalidades mayores</li>
+                                    <li>Flask lo mantiene el equipo <strong>Pallets</strong>, no una sola persona; su creador original, Armin Ronacher, ya no lo dirige</li>
+                                    <li>El trabajo publicado es sobre todo <strong>mantenimiento</strong>: correcciones y compatibilidad, no funcionalidad nueva</li>
+                                    <li>Es el perfil de un proyecto <strong>maduro y estable</strong>, no de uno abandonado — compruébelo usted mismo en el repositorio antes de repetirlo</li>
                                 </ul>
                             </div>
                             <div className="usta-card p-4">
@@ -1383,7 +1377,7 @@ async def async_endpoint():
                             A pesar de las tendencias, Flask sigue siendo una herramienta válida y ampliamente usada en el ecosistema Python. <strong>Netflix, LinkedIn y Pinterest</strong> mantienen servicios en producción con Flask.
                         </p>
 
-                        <div className="overflow-x-auto mb-6">
+                        <div className="overflow-x-auto mb-6 min-w-0">
                             <table className="w-full text-sm text-left border-collapse">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-100">
                                     <tr>
@@ -1434,7 +1428,7 @@ async def async_endpoint():
 
                         <h3 className="text-lg font-semibold text-secondary mb-4">La Evolución del Stack de Producción</h3>
                         <p className="mb-4">
-                            Según el análisis de Leapcell, el stack de despliegue en producción ha evolucionado directamente de WSGI a ASGI:
+                            El stack de despliegue en producción ha ido incorporando ASGI junto a WSGI:
                         </p>
 
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
@@ -1639,7 +1633,7 @@ def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
                         <h3 className="text-xl font-semibold text-secondary mb-4">Verbos HTTP en el Contexto Estadístico</h3>
                         <p className="mb-4">Es crucial mapear correctamente las operaciones estadísticas a los verbos HTTP adecuados:</p>
 
-                        <div className="overflow-x-auto mb-6">
+                        <div className="overflow-x-auto mb-6 min-w-0">
                             <table className="w-full text-sm text-left border-collapse">
                                 <thead className="text-xs text-gray-700 uppercase bg-gray-100">
                                     <tr>
@@ -1681,10 +1675,11 @@ def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
 
                         <h4 className="font-semibold text-primary mb-2 flex items-center gap-2"><i className="fas fa-exchange-alt"></i> Comparación: Flask (Manual) vs FastAPI (Automático)</h4>
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
-                            <div className="bg-red-50/50 p-4 rounded-xl border border-red-200">
+                            <div className="bg-red-50/50 p-4 rounded-xl border border-red-200 min-w-0">
                                 <h5 className="font-bold text-red-700 text-sm mb-2">❌ Flask — Validación Manual</h5>
-                                <CodeBlock lang="python" code={`# Fragmento de la versión Flask del bloque anterior: usa su \`app\`, \`request\` y \`jsonify\`.
-@app.route("/predict", methods=["POST"])
+                                <CodeBlock lang="python" code={`# Fragmento de la versión Flask de más arriba («Flask y FastAPI — Lado a Lado»):
+# usa su \`flask_app\`, junto con \`request\` y \`jsonify\`.
+@flask_app.route("/predict", methods=["POST"])
 def predict():
     data = request.get_json()
     if not isinstance(data.get("age"), int):
@@ -1694,9 +1689,10 @@ def predict():
     return jsonify({"success": True})`} />
                                 <p className="text-xs text-red-600 mt-2 italic">Cada campo requiere validación manual. Propenso a errores y verboso.</p>
                             </div>
-                            <div className="bg-green-50/50 p-4 rounded-xl border border-green-200">
+                            <div className="bg-green-50/50 p-4 rounded-xl border border-green-200 min-w-0">
                                 <h5 className="font-bold text-green-700 text-sm mb-2">✅ FastAPI — Validación Automática</h5>
-                                <CodeBlock lang="python" code={`# Continúa el bloque anterior: usa su \`app\` y el \`BaseModel\` de Pydantic.
+                                <CodeBlock lang="python" code={`# Continúa la versión FastAPI de más arriba («Flask y FastAPI — Lado a Lado»):
+# usa su \`app\` de FastAPI y el \`BaseModel\` de Pydantic.
 class Features(BaseModel):
     age: int
     income: float
@@ -1718,7 +1714,7 @@ def predict(data: Features):
                             <p className="text-sm text-gray-700 mb-2">
                                 Copie el código del panel derecho y guárdelo como <code>main.py</code>. Luego ejecute:
                             </p>
-                            <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto"><code>{`uvicorn main:app --reload`}</code></pre>
+                            <pre className="bg-gray-900 text-green-400 p-3 rounded text-sm overflow-x-auto min-w-0"><code>{`uvicorn main:app --reload`}</code></pre>
                             <p className="text-sm text-gray-700 mt-2">Pruebe los endpoints CRUD visitando <code>http://127.0.0.1:8000/docs</code> — la interfaz Swagger le permite probar cada operación (GET, POST, PUT, DELETE) directamente desde el navegador.</p>
                         </div>
                     </div>
@@ -1822,11 +1818,19 @@ curl -X POST "http://127.0.0.1:8000/trigger-retrain"
                     </div>
                 ),
                 pythonCode: `# Continúa el bloque anterior: \`app\` es la aplicación de «API de Registro de Experimentos».
+import time
+
 from fastapi import BackgroundTasks
 
-@app.post("/trigger-retrain")
+def entrenar_modelo_pesado(n_iter: int):
+    """Simula el trabajo largo. Aquí iría el reentrenamiento real."""
+    time.sleep(10)
+    print(f"#> Modelo reentrenado con {n_iter} iteraciones")
+
+# El 202 hay que declararlo: sin status_code, FastAPI responde 200.
+@app.post("/trigger-retrain", status_code=202)
 def iniciar_entrenamiento(background_tasks: BackgroundTasks, n_iter: int = 1000):
-    # Se agenda la tarea, el servidor responde "202 Accepted" al instante
+    # Se agenda la tarea y el servidor responde 202 Accepted al instante
     background_tasks.add_task(entrenar_modelo_pesado, n_iter)
     return {"mensaje": "Entrenamiento iniciado en segundo plano."}`,
                 interactiveType: 'concept'
@@ -1846,7 +1850,7 @@ def iniciar_entrenamiento(background_tasks: BackgroundTasks, n_iter: int = 1000)
                                 <h4 className="font-bold text-lg text-primary mb-3">Checkpoints de Conocimiento</h4>
                                 <ol className="list-decimal pl-5 space-y-3 text-sm text-gray-700">
                                     <li>
-                                        <strong>WSGI vs ASGI:</strong> WSGI es secuencial. ASGI permite concurrencia masiva manejando miles de peticiones simultáneas durante tiempos de espera (I/O).
+                                        <strong>WSGI vs ASGI:</strong> WSGI bloquea el hilo que atiende la petición, también durante las esperas; escala añadiendo workers e hilos. ASGI libera el hilo mientras se espera I/O, así que un mismo worker atiende muchas peticiones simultáneas sin multiplicar los hilos.
                                     </li>
                                     <li>
                                         <strong>Ecosistema:</strong> FastAPI combina la velocidad de ejecución (gracias a Starlette/ASGI), la validación de datos (Pydantic) y la documentación automática (Swagger UI) en un solo paquete cohesivo.
@@ -1903,7 +1907,7 @@ def iniciar_entrenamiento(background_tasks: BackgroundTasks, n_iter: int = 1000)
                             <p className="text-sm text-gray-700 italic leading-relaxed">
                                 <strong>"FastAPI combina la simplicidad de Flask con el poder del rendimiento asíncrono moderno."</strong> Es esencialmente pasar de tener un solo chef en una cocina pequeña a tener toda una cocina industrial moderna, equipada y optimizada para servir a escala.
                             </p>
-                            <p className="text-xs text-gray-500 mt-2">— Adaptado de Saket Garodia, "From Zero to API"</p>
+                            <p className="text-xs text-gray-600 mt-2">— Idea tomada de FastAPI, <em>Tutorial – User Guide</em> (documentación oficial)</p>
                         </div>
 
                         <h3 className="text-xl font-semibold text-secondary mb-4 mt-10 flex items-center gap-2">📝 Cuestionario Interactivo</h3>
@@ -1994,7 +1998,7 @@ FastAPI = (
                         </div>
 
                         <h4 className="font-bold text-lg text-primary mb-3">📋 Mapa de Integración de Temas</h4>
-                        <div className="overflow-x-auto mb-8">
+                        <div className="overflow-x-auto mb-8 min-w-0">
                             <table className="w-full text-sm border-collapse">
                                 <thead>
                                     <tr className="bg-primary/10">
@@ -2062,7 +2066,7 @@ pip freeze > requirements.txt`} />
                         <p className="mb-3 text-sm text-gray-700">
                             Diseñe <strong>dos modelos Pydantic propios</strong> para su dominio. NO copie los del ejemplo de la lección. Sus modelos deben reflejar la naturaleza de los datos de su dominio.
                         </p>
-                        <div className="overflow-x-auto mb-4">
+                        <div className="overflow-x-auto mb-4 min-w-0">
                             <table className="w-full text-sm border-collapse">
                                 <thead>
                                     <tr className="bg-purple-50">
@@ -2114,7 +2118,7 @@ pip freeze > requirements.txt`} />
                         <p className="mb-3 text-sm text-gray-700">
                             Conecte su lógica con el mundo exterior. Su API debe exponer <strong>mínimo estos 4 endpoints</strong>:
                         </p>
-                        <div className="overflow-x-auto mb-4">
+                        <div className="overflow-x-auto mb-4 min-w-0">
                             <table className="w-full text-sm border-collapse">
                                 <thead>
                                     <tr className="bg-secondary/10">
@@ -2260,7 +2264,7 @@ pip freeze > requirements.txt`} />
 
                         <div className="usta-card p-5 border-l-4 border-primary bg-gradient-to-r from-blue-50/30 to-white">
                             <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-graduation-cap"></i> Rúbrica de Evaluación</h4>
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto min-w-0">
                                 <table className="w-full text-xs border-collapse">
                                     <thead>
                                         <tr className="bg-primary/10">
