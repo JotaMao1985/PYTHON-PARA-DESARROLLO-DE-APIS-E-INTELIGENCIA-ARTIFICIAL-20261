@@ -2689,7 +2689,7 @@ def mi_app_wsgi(environ, start_response):
                                                         <td className="px-4 py-3 border border-gray-200 font-bold">Año de creación</td>
                                                         <td className="px-4 py-3 border border-gray-200">2010</td>
                                                         <td className="px-4 py-3 border border-gray-200">2005</td>
-                                                        <td className="px-4 py-3 border border-gray-200 font-bold text-green-700">2018</td>
+                                                        <td className="px-4 py-3 border border-gray-200">2018</td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200 font-bold">Protocolo</td>
@@ -2705,27 +2705,27 @@ def mi_app_wsgi(environ, start_response):
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200 font-bold">Validación de datos</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-red-600">Manual (if/else)</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-600">Forms / Serializers</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-green-600 font-bold">Automática (Pydantic)</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-700">No integrada<span className="block text-xs text-gray-600">Se añade: marshmallow, Pydantic</span></td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-700">Forms / Serializers</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-green-700 font-bold">Automática (Pydantic)</td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200 font-bold">Documentación API</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-red-600">Requiere extensiones</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-600">Django REST Framework</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-green-600 font-bold">Swagger UI automático</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-700">Con extensión<span className="block text-xs text-gray-600">flask-smorest, APIFlask</span></td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-700">Django REST Framework</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-green-700 font-bold">Swagger UI automático</td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200 font-bold">Async nativo</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-red-600">No</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-600">Parcial (3.1+)</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-green-600 font-bold">Sí, nativo</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-700">Parcial (2.0+, 2021)<span className="block text-xs text-gray-600">Con el extra flask[async], sobre WSGI</span></td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-yellow-700">Parcial (Django 3.1+)</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-green-700 font-bold">Sí, nativo</td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
-                                                        <td className="px-4 py-3 border border-gray-200 font-bold">Rendimiento</td>
-                                                        <td className="px-4 py-3 border border-gray-200">Medio (~500 req/s)</td>
-                                                        <td className="px-4 py-3 border border-gray-200">Medio (~400 req/s)</td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-green-600 font-bold">Alto (~3000+ req/s)</td>
+                                                        <td className="px-4 py-3 border border-gray-200 font-bold">Qué hace con la espera</td>
+                                                        <td className="px-4 py-3 border border-gray-200">Un hilo por petición<span className="block text-xs text-gray-600">La espera de I/O lo retiene</span></td>
+                                                        <td className="px-4 py-3 border border-gray-200">Un hilo por petición<span className="block text-xs text-gray-600">Salvo en sus vistas async</span></td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-green-700">Libera el hilo al esperar<span className="block text-xs text-gray-600">En cálculo de CPU, igual que los otros</span></td>
                                                     </tr>
                                                     <tr className="bg-white hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200 font-bold">Ideal para</td>
@@ -2736,6 +2736,13 @@ def mi_app_wsgi(environ, start_response):
                                                 </tbody>
                                             </table>
                                         </div>
+                                            <p className="text-xs text-gray-600 italic mb-6">
+                                                Esta tabla no da peticiones por segundo a propósito. Una cifra así depende del
+                                                endpoint que se mida, del hardware, del número de workers y de si la carga es de
+                                                espera o de cálculo; sin declarar las cuatro condiciones no significa nada y se
+                                                cita como si fuera un hecho. Para comparar de verdad, los <em>TechEmpower
+                                                Framework Benchmarks</em> publican método, ronda y máquina.
+                                            </p>
 
                                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                                             <div className="bg-red-50/50 p-4 rounded-xl border border-red-200 min-w-0">
@@ -2745,7 +2752,7 @@ def mi_app_wsgi(environ, start_response):
                                                     <li>✅ Simplicidad extrema, curva de aprendizaje baja</li>
                                                     <li>✅ Gran ecosistema de extensiones</li>
                                                     <li>❌ Sin validación automática de datos</li>
-                                                    <li>❌ Sin soporte nativo para async</li>
+                                                    <li>⚠️ Acepta async def desde 2.0, pero sobre WSGI: sin ganancia de concurrencia</li>
                                                     <li>❌ Sin documentación API auto-generada</li>
                                                 </ul>
                                             </div>
@@ -2755,7 +2762,7 @@ def mi_app_wsgi(environ, start_response):
                                                 <ul className="list-disc pl-4 text-xs text-gray-600 space-y-1">
                                                     <li>✅ Validación automática con Pydantic</li>
                                                     <li>✅ Swagger UI sin configuración (Redoc, en la semana 7)</li>
-                                                    <li>✅ Async nativo (rendimiento de Node.js/Go)</li>
+                                                    <li>✅ Async sobre ASGI: aprovecha la espera de I/O</li>
                                                     <li>✅ Type hints = documentación viva</li>
                                                     <li>❌ Más reciente, comunidad más pequeña que Flask</li>
                                                 </ul>
@@ -2987,7 +2994,7 @@ async def async_concurrente():
                                         </div>
 
                                         <div className="usta-card p-4 border-l-4 border-gold text-gray-700 mb-6">
-                                            <strong>El punto clave:</strong> Flask fue diseñado en una era <em>pre-asyncio</em> (Python 2.x/3.0). No fue construido para manejar concurrencia moderna ni para generar documentación automática. Adaptarlo a estos paradigmas requiere tantas extensiones que se pierde la ventaja de su simplicidad original.
+                                            <strong>El punto clave:</strong> Flask nació en 2010 sobre WSGI, cuatro años antes de que <code>asyncio</code> entrara en la biblioteca estándar. Acepta <code>async def</code> desde su versión 2.0 (2021), pero cada vista asíncrona corre en su propio bucle dentro del hilo del worker: el contrato WSGI sigue ocupando un hilo por petición, así que no se obtiene la concurrencia de ASGI. Y la documentación automática y la validación se le añaden con extensiones, no vienen en la caja. Nada de esto lo deja obsoleto: lo sitúa.
                                         </div>
 
                                         <h3 className="text-lg font-semibold text-secondary mb-4">Pero Flask NO Está Muerto: Escenarios Donde Sigue Vigente</h3>
@@ -3028,7 +3035,7 @@ async def async_concurrente():
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200">Microservicios de alto rendimiento</td>
                                                         <td className="px-4 py-3 border border-gray-200"><span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold">⚡ FastAPI</span></td>
-                                                        <td className="px-4 py-3 border border-gray-200 text-xs">Rendimiento similar a Node.js/Go</td>
+                                                        <td className="px-4 py-3 border border-gray-200 text-xs">Atiende muchas esperas sin multiplicar hilos</td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-4 py-3 border border-gray-200">Dashboards simples server-side</td>
