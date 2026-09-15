@@ -503,7 +503,7 @@
 
             const questions = [
                 {
-                    topic: 'Lección 1 — Fundamentos',
+                    topic: 'Sección 2 — Fundamentos',
                     question: '¿Qué función cumple el decorador @app.get("/ruta") en FastAPI?',
                     options: [
                         'Define qué función se ejecuta cuando un cliente visita esa URL',
@@ -512,23 +512,23 @@
                         'Reserva esa URL para que ninguna otra función pueda usarla'
                     ],
                     correct: 0,
-                    explanation: 'El decorador mapea una URL (ruta) a una función Python. Cuando un cliente hace una petición GET a esa ruta, FastAPI ejecuta la función decorada y retorna su resultado como JSON.'
+                    explanation: 'El decorador asocia una URL y un verbo a una función Python. Cuando llega un GET a esa ruta, FastAPI ejecuta la función decorada y serializa lo que devuelva. Lo que no hace es crear la aplicación: eso es app = FastAPI(), una línea más arriba.'
                 },
                 {
-                    topic: 'Lección 1 — Fundamentos',
-                    question: '¿Cuál es la diferencia principal entre REST API y una función Python normal?',
+                    topic: 'Sección 5 — Routing y CRUD',
+                    question: 'Su endpoint es @app.get("/analisis/{id}") y la función se declara def ver(id: int). Un cliente pide /analisis/ultimo. ¿Qué responde FastAPI?',
                     options: [
-                        'Una REST API se programa en JavaScript; la función, en Python',
-                        'Una función normal no puede devolver sus datos en formato JSON',
-                        'La REST API valida por sí sola los tipos de los datos recibidos',
-                        'Expone la función por HTTP para que otro sistema la invoque'
+                        '200, con el id como la cadena «ultimo»: la ruta acepta texto',
+                        '404, porque no hay ningún análisis que se llame «ultimo»',
+                        '422, porque «ultimo» no se convierte al int que se declaró',
+                        '500, porque la función recibe un tipo con el que no contaba'
                     ],
-                    correct: 3,
-                    explanation: 'Una REST API permite que cualquier sistema (móvil, web, IoT) consuma la función a través de URLs y verbos HTTP (GET, POST, PUT, DELETE), sin importar el lenguaje del cliente.'
+                    correct: 2,
+                    explanation: 'La anotación id: int es el contrato: FastAPI intenta convertir «ultimo» antes de ejecutar una sola línea de su función, no lo consigue y responde 422 diciendo qué campo falló. El 404 es tentador, pero para llegar a él la función tendría que ejecutarse y buscar el id, y la validación ocurre antes.'
                 },
                 {
-                    topic: 'Lección 2 — Arquitectura',
-                    question: '¿Cuál es la ventaja principal de ASGI sobre WSGI?',
+                    topic: 'Sección 3 — Arquitectura',
+                    question: '¿Cuál es la ventaja de ASGI sobre WSGI con el mismo número de workers?',
                     options: [
                         'Reparte automáticamente las peticiones entre varios procesos',
                         'Libera el hilo durante la espera de I/O y atiende otras peticiones',
@@ -536,67 +536,67 @@
                         'Permite que Flask y Django funcionen sin cambiar una sola línea'
                     ],
                     correct: 1,
-                    explanation: 'Un worker WSGI retiene el hilo durante toda la petición, también mientras espera: para servir a dos usuarios a la vez necesita dos hilos. ASGI libera el hilo durante la espera de I/O, de modo que un solo worker atiende otras peticiones mientras una consulta a la base de datos o una llamada externa está en curso.'
+                    explanation: 'Con los mismos workers, un worker WSGI retiene su hilo toda la petición, también mientras espera. ASGI lo libera durante la espera de I/O, así que atiende otras peticiones en ese hueco. Lo que no hace es acelerar el cálculo: una operación de CPU tarda lo mismo en los dos.'
                 },
                 {
-                    topic: 'Lección 2 — Arquitectura',
-                    question: '¿Qué se genera automáticamente al visitar /docs en una app FastAPI?',
+                    topic: 'Sección 2 — Fundamentos',
+                    question: 'En su modelo Pydantic cambia valores: list[float] por valores: list[int] y recarga /docs. ¿Qué ocurre?',
                     options: [
-                        'Un archivo PDF con el código fuente completo de la aplicación',
-                        'Un informe con los errores que el servidor ha registrado hoy',
-                        'Una interfaz (Swagger UI) para probar los endpoints en vivo',
-                        'Una copia de seguridad de los datos que guarda el proyecto'
-                    ],
-                    correct: 2,
-                    explanation: 'FastAPI genera automáticamente documentación interactiva Swagger UI en /docs, donde cualquier miembro del equipo puede ver los endpoints, sus parámetros, y probarlos directamente desde el navegador.'
-                },
-                {
-                    topic: 'Lección 3 — Routing & CRUD',
-                    question: '¿Para qué se usa Pydantic (BaseModel) en FastAPI?',
-                    options: [
-                        'Para definir las rutas del servidor y sus verbos HTTP',
-                        'Para conectar la aplicación con una base de datos SQL',
-                        'Para dibujar las gráficas estadísticas del informe final',
-                        'Para declarar la estructura de los datos y validarla sola'
+                        'La documentación de /docs hay que escribirla y actualizarla a mano',
+                        'Hay que declarar el nuevo tipo también en el decorador @app.post',
+                        'El servidor responde 422 hasta que se corrija el modelo Pydantic',
+                        '/docs muestra el tipo nuevo sin tocar ninguna otra línea'
                     ],
                     correct: 3,
-                    explanation: 'Pydantic permite definir modelos de datos con tipos esperados. FastAPI usa estos modelos para validar automáticamente que los datos recibidos tengan la estructura y tipos correctos, retornando errores claros si no.'
+                    explanation: 'La página de /docs no es un documento que usted escriba: FastAPI la deriva de las anotaciones de tipo y de los modelos Pydantic. Cambiar el tipo cambia la documentación, y por eso tampoco hay que repetirlo en el decorador, que declara la ruta y el verbo, no los datos.'
                 },
                 {
-                    topic: 'Lección 3 — Routing & CRUD',
-                    question: '¿Cuáles son los 4 verbos HTTP que componen las operaciones CRUD?',
+                    topic: 'Sección 5 — Routing y CRUD',
+                    question: '¿Para qué se usa Pydantic (BaseModel) en FastAPI?',
                     options: [
-                        'SAVE, LOAD, UPDATE, REMOVE',
-                        'GET, POST, PUT, DELETE',
-                        'READ, WRITE, EDIT, ERASE',
-                        'FETCH, SEND, PATCH, CLEAR'
-                    ],
-                    correct: 1,
-                    explanation: 'CRUD = Create (POST), Read (GET), Update (PUT), Delete (DELETE). Estos 4 verbos HTTP estándar cubren todas las operaciones básicas sobre recursos en una API REST.'
-                },
-                {
-                    topic: 'Lección 4 — Concurrencia',
-                    question: '¿Cuándo se debe usar async def en lugar de def en FastAPI?',
-                    options: [
-                        'Para operaciones de I/O: consultas a BD o llamadas externas',
-                        'En todas las rutas, porque FastAPI las ejecuta en paralelo',
-                        'En las rutas que leen o escriben archivos grandes en disco',
-                        'En los cálculos pesados con NumPy o Pandas, para acelerarlos'
+                        'Para declarar la estructura de los datos y validarla sola',
+                        'Para definir las rutas del servidor y sus verbos HTTP',
+                        'Para conectar la aplicación con una base de datos SQL externa',
+                        'Para dibujar las gráficas estadísticas del informe final'
                     ],
                     correct: 0,
-                    explanation: 'Se usa async def para operaciones I/O-Bound (base de datos, APIs externas, disco). Para cálculos pesados de CPU (NumPy, Pandas), se recomienda def estándar, ya que async no acelera la computación pura.'
+                    explanation: 'Un modelo Pydantic declara qué campos se esperan y de qué tipo. FastAPI usa esa declaración para validar cada petición y para escribir la documentación. Las rutas las declara el decorador, no el modelo: son dos contratos distintos.'
                 },
                 {
-                    topic: 'Lección 4 — Concurrencia',
-                    question: '¿Qué comando se usa para ejecutar una aplicación FastAPI en desarrollo?',
+                    topic: 'Sección 5 — Routing y CRUD',
+                    question: 'Su endpoint GET /experimentos/{id} recibe un id que no está en el diccionario. ¿Qué hace el código bien escrito?',
+                    options: [
+                        'Devuelve None y el cliente recibe null con el estado 200',
+                        'Lanza HTTPException(404) con un mensaje que explica el fallo',
+                        'Deja que Python lance KeyError y el servidor responda 500',
+                        'Devuelve un diccionario vacío y el estado 204, sin contenido'
+                    ],
+                    correct: 1,
+                    explanation: 'HTTPException(404) convierte un caso previsto en una respuesta que el cliente entiende. Si se deja subir el KeyError, Uvicorn responde 500 y el cliente ya no distingue «este análisis no existe» de «su servidor se rompió»; además la explicación acaba en el log y no en la respuesta.'
+                },
+                {
+                    topic: 'Sección 6 — Concurrencia',
+                    question: 'En su endpoint necesita consultar una base de datos. ¿Cuándo conviene declararlo async def?',
+                    options: [
+                        'En cuanto la operación sea de I/O, con la librería que sea',
+                        'Si el cuerpo del endpoint no hace cálculos con NumPy ni Pandas',
+                        'Si la librería de BD es asíncrona y la llamada lleva await',
+                        'En ningún caso: Uvicorn ya da un hilo aparte a cada endpoint'
+                    ],
+                    correct: 2,
+                    explanation: 'La regla no es «es I/O, luego async». Con un driver bloqueante —psycopg2, requests, open()— un async def retiene el bucle de eventos y la API rinde PEOR que con def, porque con def FastAPI la habría mandado a un hilo aparte. async def aporta cuando hay una librería asíncrona y un await de por medio.'
+                },
+                {
+                    topic: 'Sección 6 — Concurrencia',
+                    question: 'Su main.py contiene la aplicación y los endpoints, sin bloque __main__. ¿Qué comando la levanta con recarga automática?',
                     options: [
                         'python -m fastapi main.py',
                         'flask run --app main --reload',
-                        'uvicorn main:app --reload',
-                        'gunicorn main:app --reload'
+                        'gunicorn main:app --reload',
+                        'uvicorn main:app --reload'
                     ],
-                    correct: 2,
-                    explanation: 'uvicorn es el servidor ASGI que ejecuta apps FastAPI. "main" es el archivo, "app" es la variable FastAPI(), y "--reload" reinicia automáticamente al guardar cambios durante desarrollo.'
+                    correct: 3,
+                    explanation: 'uvicorn es el servidor ASGI que ejecuta FastAPI: «main» es el archivo, «app» la variable, y --reload reinicia al guardar. gunicorn es real y sirve en producción, pero es WSGI: para FastAPI necesita un worker de Uvicorn y no es el comando de desarrollo.'
                 }
             ];
 
@@ -1173,7 +1173,7 @@ class Input(BaseModel):
     x: float  # ← validación automática
 
 @app.post("/predict")  # ← /docs gratis
-async def predict(data: Input):
+def predict(data: Input):
     return {"resultado": 42}`} />
                                 </div>
                             </div>
@@ -1293,7 +1293,7 @@ class Input(BaseModel):
     x: float   # ← Validación AUTOMÁTICA
 
 @app.post("/predict")
-async def predict_fast(data: Input):
+def predict_fast(data: Input):
     return {"resultado": data.x * 2}
 
 # --- 4. Síncrono vs Asíncrono ---
@@ -1304,11 +1304,16 @@ def sync_endpoint():
     clima = llamar_api_clima()   # 2s bloqueado
     return calcular(datos, clima) # Total: 5s+
 
-# ASÍNCRONO: libera el servidor
+# ASÍNCRONO: libera el hilo, pero NO acelera esta petición
 async def async_endpoint():
-    datos = await consultar_bd()      # lanza y libera
-    clima = await llamar_api_clima()   # lanza y libera
-    return calcular(datos, clima)      # Total: ~3s`,
+    datos = await consultar_bd()       # cede el hilo a otras peticiones
+    clima = await llamar_api_clima()   # cede el hilo a otras peticiones
+    return calcular(datos, clima)      # Total: 5s, igual que arriba
+
+# CONCURRENTE: las dos esperas a la vez (necesita import asyncio)
+async def async_concurrente():
+    datos, clima = await asyncio.gather(consultar_bd(), llamar_api_clima())
+    return calcular(datos, clima)      # Total: ~3s, el máximo de las dos`,
                 interactiveType: 'concept'
             },
             {
@@ -1545,8 +1550,10 @@ class StatsResult(BaseModel):
     media: float
     std: float
 
+# CPU puro: va con def, y FastAPI lo despacha a un hilo aparte.
+# Con async def, este NumPy retendría el bucle de eventos.
 @app.post("/stats", response_model=StatsResult)
-async def stats_fast(data: DatosInput):
+def stats_fast(data: DatosInput):
     arr = np.array(data.valores)
     return StatsResult(
         media=round(float(np.mean(arr)), 4),
