@@ -85,7 +85,7 @@ DESCRIPCION_POR_DEFECTO = {
     3: "Modelado de entidades estadísticas con clases en Python 3.11.9: atributos, "
        "métodos, composición frente a herencia, dataclasses y por qué Pydantic, "
        "SQLAlchemy y FastAPI exigen entender esto primero.",
-    6: "Implementación de APIs con FastAPI: routers, el type hinting como contrato "
+    6: "Implementación de APIs con FastAPI: el type hinting como contrato "
        "ejecutable, OpenAPI, Swagger UI y async/await.",
 }
 
@@ -221,14 +221,12 @@ REPARTO: dict[int, dict] = {
     6: {
         "exposicion": [
             "El type hinting como contrato ejecutable",
-            "Routers y organización modular del proyecto",
-            "OpenAPI, Swagger UI y Redoc: documentación que no se escribe",
+            "OpenAPI y Swagger UI: documentación que no se escribe",
             "async/await: cuándo aporta y cuándo no",
         ],
         "practica": [
             "Reescribir en FastAPI el servicio de la semana 5",
             "Recorrer la documentación interactiva generada en /docs",
-            "Partir la aplicación en routers por responsabilidad",
             "Migrar el proyecto con validación estricta en cada endpoint",
         ],
         "consulta": [
