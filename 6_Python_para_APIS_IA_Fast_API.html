@@ -3257,6 +3257,7 @@ def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
                                                         <th scope="col" className="px-6 py-3 border border-gray-200">Verbo HTTP</th>
                                                         <th scope="col" className="px-6 py-3 border border-gray-200">Operación Análoga</th>
                                                         <th scope="col" className="px-6 py-3 border border-gray-200">Uso en API</th>
+                                                        <th scope="col" className="px-6 py-3 border border-gray-200">Éxito</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -3264,21 +3265,25 @@ def buscar_datos(campo: str, limite: int = 10, orden: str = "asc"):
                                                         <td className="px-6 py-4 border border-gray-200 font-bold text-green-600">GET</td>
                                                         <td className="px-6 py-4 border border-gray-200 font-mono">summary(df), head()</td>
                                                         <td className="px-6 py-4 border border-gray-200">Consultar datos o metadatos.</td>
+                                                        <td className="px-6 py-4 border border-gray-200"><strong>200 OK</strong><span className="block text-xs text-gray-600">Devuelve el recurso.</span></td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-6 py-4 border border-gray-200 font-bold text-blue-600">POST</td>
                                                         <td className="px-6 py-4 border border-gray-200 font-mono">lm(y ~ x), predict()</td>
                                                         <td className="px-6 py-4 border border-gray-200">Enviar nuevos datos/registros.</td>
+                                                        <td className="px-6 py-4 border border-gray-200"><strong>201 Created</strong><span className="block text-xs text-gray-600">Se creó algo nuevo.</span></td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-6 py-4 border border-gray-200 font-bold text-yellow-600">PUT</td>
                                                         <td className="px-6 py-4 border border-gray-200 font-mono">df[i] &lt;- val</td>
                                                         <td className="px-6 py-4 border border-gray-200">Actualizar un registro.</td>
+                                                        <td className="px-6 py-4 border border-gray-200"><strong>200 OK</strong><span className="block text-xs text-gray-600">Devuelve el recurso ya corregido.</span></td>
                                                     </tr>
                                                     <tr className="bg-white border-b hover:bg-gray-50">
                                                         <td className="px-6 py-4 border border-gray-200 font-bold text-red-600">DELETE</td>
                                                         <td className="px-6 py-4 border border-gray-200 font-mono">rm(object)</td>
                                                         <td className="px-6 py-4 border border-gray-200">Eliminar un registro.</td>
+                                                        <td className="px-6 py-4 border border-gray-200"><strong>204 No Content</strong><span className="block text-xs text-gray-600">Sin cuerpo: no queda nada que devolver.</span></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -3323,7 +3328,7 @@ def predict(data: Features):
                                         </div>
 
                                         <p className="mb-4">
-                                            A continuación, implementaremos una API completa para gestionar un registro de experimentos, demostrando el uso de los cuatro verbos principales. Usaremos un diccionario de Python (<code>db</code>) como base de datos en memoria.
+                                            A continuación se implementa una API completa para gestionar un registro de experimentos, con los cuatro verbos y —lo que suele faltar— <strong>el código de estado que le corresponde a cada uno</strong>: 201 al crear, 204 al borrar, 404 cuando el recurso no existe y 409 cuando la petición es válida pero choca con lo que ya hay. Usaremos un diccionario de Python (<code>db</code>) como base de datos en memoria.
                                         </p>
 
                                         <Box type="info">
@@ -3352,12 +3357,21 @@ class Experimento(BaseModel):
 db = {}
 
 # --- CREATE (POST): Registrar nuevo experimento ---
-@app.post("/experimentos")
+# 201 Created hay que declararlo: si no se dice nada, FastAPI responde 200,
+# y el cliente no distingue «lo creé» de «ahí lo tienes».
+@app.post("/experimentos", status_code=201)
 def crear_experimento(exp: Experimento):
     if exp.id in db:
-        raise HTTPException(status_code=400, detail="ID ya existe")
+        # 409 Conflict, no 400: la petición está bien formada; lo que choca
+        # es con el estado actual del servidor.
+        raise HTTPException(status_code=409, detail="Ese id ya está registrado")
     db[exp.id] = exp
-    return {"mensaje": "Registrado", "data": exp}
+    return exp
+
+# --- READ (GET): Consultar la colección completa ---
+@app.get("/experimentos")
+def listar_experimentos():
+    return list(db.values())
 
 # --- READ (GET): Consultar experimento por ID ---
 @app.get("/experimentos/{exp_id}")
@@ -3371,16 +3385,23 @@ def obtener_experimento(exp_id: int):
 def actualizar_experimento(exp_id: int, exp_actualizado: Experimento):
     if exp_id not in db:
         raise HTTPException(status_code=404, detail="Experimento no encontrado")
+    if exp_actualizado.id != exp_id:
+        # Sin esta comprobación, un PUT a /experimentos/1 con "id": 7 en el
+        # cuerpo deja el registro 1 guardando un experimento que dice ser el 7.
+        raise HTTPException(status_code=409,
+                            detail="El id del cuerpo no coincide con el de la ruta")
     db[exp_id] = exp_actualizado
-    return {"mensaje": "Actualizado", "data": exp_actualizado}
+    return exp_actualizado
 
 # --- DELETE (DELETE): Eliminar registro ---
-@app.delete("/experimentos/{exp_id}")
+# 204 No Content: se borró y no queda nada que devolver, así que la función
+# no retorna. Devolver un mensaje con 200 obliga al cliente a leerlo para
+# saber si salió bien.
+@app.delete("/experimentos/{exp_id}", status_code=204)
 def eliminar_experimento(exp_id: int):
     if exp_id not in db:
         raise HTTPException(status_code=404, detail="Experimento no encontrado")
-    del db[exp_id]
-    return {"mensaje": f"Experimento {exp_id} eliminado"}`} />
+    del db[exp_id]`} />
             </div>
         );
 
