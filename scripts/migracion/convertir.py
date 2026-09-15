@@ -101,7 +101,14 @@ def detectar_lang(codigo):
     cuerpo = "\n".join(l for l in s.split("\n") if not l.strip().startswith("#")).strip()
     if cuerpo.startswith(("{", "[")) and '":' in cuerpo:
         return "json"
-    if re.search(r"^\s*(SELECT|CREATE TABLE|INSERT INTO|ALTER TABLE)\b", s, re.I | re.M):
+    # SQL: a `SELECT` se le exige un `FROM` detrás y no ser una llamada ni una
+    # asignación. Sin esas dos condiciones la regla se quedaba con todo lo que
+    # empezara una línea por «select», y las de `python` y `toml` —que van
+    # después— no llegaban a mirar: el `select(models.Autor)` de SQLAlchemy 2.0
+    # y el `select = [...]` de un pyproject.toml salían etiquetados como SQL.
+    if re.search(r"^\s*(CREATE TABLE|INSERT INTO|ALTER TABLE)\b", s, re.I | re.M) or \
+       (re.search(r"^\s*SELECT\s+(?![=(])\S", s, re.I | re.M)
+            and re.search(r"\bFROM\b", s, re.I)):
         return "sql"
     if re.search(r"^(name|on|jobs|services|runtime|envVars):", s, re.M) or \
        re.search(r"^\s+-\s+(uses|run|name):", s, re.M):
