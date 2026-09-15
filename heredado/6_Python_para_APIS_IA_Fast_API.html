@@ -2166,7 +2166,7 @@ pip freeze > requirements.txt`} />
                                     <tr className="border-b border-gray-100">
                                         <td className="p-2"><code className="bg-green-100 text-green-700 px-1 rounded">POST</code></td>
                                         <td className="p-2"><code>/analizar</code> (o nombre propio)</td>
-                                        <td className="p-2">Recibir datos, validarlos, procesarlos, guardarlos en memoria, retornar resultado</td>
+                                        <td className="p-2">Recibir datos, validarlos, procesarlos, guardarlos en memoria y devolver el resultado. Declare <code>status_code=201</code>.</td>
                                     </tr>
                                     <tr className="border-b border-gray-100 bg-gray-50/50">
                                         <td className="p-2"><code className="bg-blue-100 text-blue-700 px-1 rounded">GET</code></td>
@@ -2176,16 +2176,22 @@ pip freeze > requirements.txt`} />
                                     <tr className="border-b border-gray-100">
                                         <td className="p-2"><code className="bg-blue-100 text-blue-700 px-1 rounded">GET</code></td>
                                         <td className="p-2"><code>/historial/{'{id}'}</code></td>
-                                        <td className="p-2">Obtener un análisis específico (manejar 404 con <code>HTTPException</code>)</td>
+                                        <td className="p-2">Obtener un análisis específico, manejando el 404 con <code>HTTPException</code>.</td>
                                     </tr>
                                     <tr className="bg-gray-50/50">
                                         <td className="p-2"><code className="bg-red-100 text-red-700 px-1 rounded">DELETE</code></td>
                                         <td className="p-2"><code>/historial/{'{id}'}</code></td>
-                                        <td className="p-2">Eliminar un análisis (manejar 404)</td>
+                                        <td className="p-2">Eliminar un análisis. Declare <code>status_code=204</code> y maneje el 404 con <code>HTTPException</code>.</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
+                        <p className="text-sm text-gray-700 mb-4">
+                            <strong>En los cuatro:</strong> declare <code>response_model=</code> con el modelo de salida que
+                            diseñó en la Fase 2. Es lo que hace que <code>/docs</code> muestre la forma de la respuesta y no
+                            sólo la de la petición; sin él, el modelo de salida que le costó diseñar no aparece en ninguna
+                            parte y el contrato de su API queda a medias.
+                        </p>
 
                         <h3 className="text-lg font-semibold text-secondary mb-4">Fase 5 — Pruebas y Evidencia <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full ml-2">Semanas 2+3</span></h3>
                         <p className="mb-3 text-sm text-gray-700">
@@ -2303,45 +2309,99 @@ pip freeze > requirements.txt`} />
                                 <table className="w-full text-xs border-collapse">
                                     <thead>
                                         <tr className="bg-primary/10">
-                                            <th className="text-left p-2 font-bold text-primary border-b border-primary/20">Criterio</th>
-                                            <th className="text-center p-2 font-bold text-primary border-b border-primary/20">%</th>
-                                            <th className="text-left p-2 font-bold text-primary border-b border-primary/20">Descripción</th>
+                                            <th className="text-left p-2 font-bold text-primary border-b-2 border-primary/30">Criterio</th>
+                                            <th className="text-center p-2 font-bold text-primary border-b-2 border-primary/30">%</th>
+                                            <th className="text-left p-2 font-bold text-primary border-b-2 border-primary/30">Logrado</th>
+                                            <th className="text-left p-2 font-bold text-primary border-b-2 border-primary/30">En proceso</th>
+                                            <th className="text-left p-2 font-bold text-primary border-b-2 border-primary/30">No logrado</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr className="border-b border-gray-100">
-                                            <td className="p-2 font-bold">Setup y entorno</td>
-                                            <td className="p-2 text-center">10%</td>
-                                            <td className="p-2">Entorno virtual + <code>requirements.txt</code> funcional</td>
+                                            <td className="p-2 font-bold align-top">Preparación del proyecto</td>
+                                            <td className="p-2 text-center align-top font-mono">5 %</td>
+                                            <td className="p-2 align-top">Entorno virtual propio y <code>requirements.txt</code> que instala la API en limpio.</td>
+                                            <td className="p-2 align-top text-gray-600">Falta uno de los dos, o el archivo no instala.</td>
+                                            <td className="p-2 align-top text-gray-600">No hay entorno ni dependencias declaradas.</td>
                                         </tr>
                                         <tr className="border-b border-gray-100 bg-gray-50/50">
-                                            <td className="p-2 font-bold">Modelos Pydantic</td>
-                                            <td className="p-2 text-center">20%</td>
-                                            <td className="p-2">Modelos propios del dominio con validaciones <code>Field()</code></td>
+                                            <td className="p-2 font-bold align-top">Modelos Pydantic</td>
+                                            <td className="p-2 text-center align-top font-mono">20 %</td>
+                                            <td className="p-2 align-top">Dos modelos propios del dominio: el de entrada con al menos dos restricciones <code>Field()</code> justificadas; el de salida con cinco campos calculados o más.</td>
+                                            <td className="p-2 align-top text-gray-600">Los modelos existen, pero sin restricciones o el de salida no llega a cinco campos.</td>
+                                            <td className="p-2 align-top text-gray-600">No hay modelos propios, o son los del ejemplo con otro nombre.</td>
                                         </tr>
                                         <tr className="border-b border-gray-100">
-                                            <td className="p-2 font-bold">Endpoints CRUD</td>
-                                            <td className="p-2 text-center">20%</td>
-                                            <td className="p-2">4 endpoints funcionales con manejo de errores HTTP</td>
+                                            <td className="p-2 font-bold align-top">Lógica de procesamiento</td>
+                                            <td className="p-2 text-center align-top font-mono">15 %</td>
+                                            <td className="p-2 align-top">Función <strong>pura</strong>, sin importar nada de FastAPI; cinco cálculos o más con <code>numpy</code>; <code>ddof=1</code> en varianza y desviación; todo redondeado a cuatro decimales.</td>
+                                            <td className="p-2 align-top text-gray-600">La función existe pero depende de FastAPI, o le faltan cálculos, o no usa <code>ddof=1</code>.</td>
+                                            <td className="p-2 align-top text-gray-600">La lógica está escrita dentro del endpoint.</td>
                                         </tr>
                                         <tr className="border-b border-gray-100 bg-gray-50/50">
-                                            <td className="p-2 font-bold">Evidencia de ejecución</td>
-                                            <td className="p-2 text-center">15%</td>
-                                            <td className="p-2">Capturas/video de 5 pruebas en Swagger UI</td>
+                                            <td className="p-2 font-bold align-top">Endpoints CRUD</td>
+                                            <td className="p-2 text-center align-top font-mono">20 %</td>
+                                            <td className="p-2 align-top">Los cuatro responden; el POST devuelve <code>201</code>; el DELETE, <code>204</code>; los dos casos de «no existe» se manejan con <code>HTTPException(404)</code>.</td>
+                                            <td className="p-2 align-top text-gray-600">Los cuatro responden, pero falta algún código de estado o algún manejo de 404.</td>
+                                            <td className="p-2 align-top text-gray-600">Falta algún endpoint, o el servidor no arranca.</td>
                                         </tr>
                                         <tr className="border-b border-gray-100">
-                                            <td className="p-2 font-bold">Preguntas de reflexión</td>
-                                            <td className="p-2 text-center">20%</td>
-                                            <td className="p-2">Respuestas contextualizadas al proyecto propio</td>
+                                            <td className="p-2 font-bold align-top">Contrato y documentación</td>
+                                            <td className="p-2 text-center align-top font-mono">15 %</td>
+                                            <td className="p-2 align-top">Cada endpoint declara <code>response_model</code>, y <code>/docs</code> muestra el esquema de entrada y el de salida derivados de sus modelos. La captura del 422 enseña el mensaje que Pydantic genera a partir de sus <code>Field()</code>.</td>
+                                            <td className="p-2 align-top text-gray-600"><code>/docs</code> funciona, pero algún endpoint no declara <code>response_model</code>.</td>
+                                            <td className="p-2 align-top text-gray-600">Los endpoints devuelven un <code>dict</code> suelto y <code>/docs</code> no dice qué forma tiene la respuesta.</td>
                                         </tr>
-                                        <tr className="bg-gray-50/50">
-                                            <td className="p-2 font-bold text-gold">Originalidad</td>
-                                            <td className="p-2 text-center font-bold text-gold">15%</td>
-                                            <td className="p-2">Dominio único, código propio (no copiado del ejemplo ni de compañeros)</td>
+                                        <tr className="border-b border-gray-100 bg-gray-50/50">
+                                            <td className="p-2 font-bold align-top">Evidencia de ejecución</td>
+                                            <td className="p-2 text-center align-top font-mono">10 %</td>
+                                            <td className="p-2 align-top">Las cinco pruebas, con captura o video, y en cada una se ve la petición y el código de respuesta.</td>
+                                            <td className="p-2 align-top text-gray-600">Faltan pruebas, o no se ve el código de respuesta.</td>
+                                            <td className="p-2 align-top text-gray-600">No hay evidencia de que la API se haya ejecutado.</td>
+                                        </tr>
+                                        <tr className="border-b border-gray-100">
+                                            <td className="p-2 font-bold align-top">Preguntas de reflexión</td>
+                                            <td className="p-2 text-center align-top font-mono">15 %</td>
+                                            <td className="p-2 align-top">Cada respuesta cita un elemento concreto de su propio código y explica el mecanismo. Mínimo 60 palabras por respuesta.</td>
+                                            <td className="p-2 align-top text-gray-600">Correcta, pero genérica: la misma respuesta serviría para cualquier proyecto.</td>
+                                            <td className="p-2 align-top text-gray-600">Contradice el material, o no responde lo que se pregunta.</td>
+                                        </tr>
+                                        <tr className="bg-primary/5 font-bold">
+                                            <td className="p-2">Total</td>
+                                            <td className="p-2 text-center font-mono">100 %</td>
+                                            <td className="p-2" colSpan="3"></td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                        <div className="usta-card p-5 border-l-4 border-gold bg-gradient-to-r from-yellow-50/30 to-white mb-6">
+                            <h4 className="font-bold text-gold mb-2 flex items-center gap-2"><i className="fas fa-user-check"></i> Condición de entrada: trabajo propio</h4>
+                            <p className="text-sm text-gray-700 mb-0">
+                                Un trabajo cuyo dominio o cuyo código coincida con el ejemplo de la lección o con el de otro
+                                estudiante <strong>no se califica</strong> y se remite al procedimiento de integridad académica.
+                                No es un criterio con puntaje —nadie aprende «originalidad»—: es el umbral para que el trabajo
+                                entre a calificación. Lo mismo vale para el código generado con IA sin declarar, según la
+                                política de uso de esta actividad.
+                            </p>
+                        </div>
+
+                        <div className="usta-card p-5 border-l-4 border-primary mb-6">
+                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-paper-plane"></i> Cómo y cuándo se entrega</h4>
+                            <ul className="text-sm text-gray-700 space-y-1 mb-2">
+                                <li><strong>Modalidad:</strong> individual.</li>
+                                <li><strong>Plazo:</strong> <mark className="bg-yellow-200 px-1">[FECHA Y HORA]</mark></li>
+                                <li><strong>Dónde:</strong> <mark className="bg-yellow-200 px-1">[PLATAFORMA / ENLACE]</mark></li>
+                                <li><strong>Qué:</strong> un único <code>.zip</code> llamado
+                                    <code>apellido_nombre_semana6.zip</code>, con <code>main.py</code>,
+                                    <code>requirements.txt</code>, la carpeta <code>evidencias/</code> y
+                                    <code>reflexiones.pdf</code>.</li>
+                                <li><strong>Cuánto pesa:</strong> <mark className="bg-yellow-200 px-1">[X %]</mark> del
+                                    <mark className="bg-yellow-200 px-1">[CORTE N]</mark>.</li>
+                            </ul>
+                            <p className="text-xs text-gray-600 italic mb-0">
+                                Los campos resaltados los fija el docente al abrir la actividad en la plataforma.
+                            </p>
                         </div>
                     </div>
                 ),
