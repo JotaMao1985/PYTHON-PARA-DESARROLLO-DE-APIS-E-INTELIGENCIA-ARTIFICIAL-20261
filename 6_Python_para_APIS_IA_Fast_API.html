@@ -2467,6 +2467,16 @@ uvicorn main:app --reload`} />
                                             Con el servidor corriendo, este módulo le da tres direcciones que visitar: <code>http://127.0.0.1:8000</code>, el endpoint raíz; <code>http://127.0.0.1:8000/docs</code>, la documentación interactiva; y <code>http://127.0.0.1:8000/bernoulli</code>, el endpoint de Bernoulli. Para detenerlo, <strong>Ctrl + C</strong> en la terminal.
                                         </p>
 
+                                                                                <Box type="info">
+                                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-question-circle"></i> FAQ: ¿Por qué el Puerto 8000?</h4>
+                                            <p className="text-sm text-gray-700">
+                                                Al ejecutar <code>uvicorn main:app --reload</code>, el servidor se inicia en el puerto <strong>8000</strong> por defecto. Piense en su dirección IP como la dirección de un edificio, y el puerto como el <strong>número de apartamento</strong>. El puerto 8000 es simplemente una convención común para desarrollo. En producción, se usaría el puerto 80 (HTTP) o 443 (HTTPS).
+                                            </p>
+                                            <p className="text-xs text-gray-500 mt-2">
+                                                Acceso local: <code>http://127.0.0.1:8000</code> · Documentación: <code>http://127.0.0.1:8000/docs</code>
+                                            </p>
+                                        </Box>
+
                                         <Box type="tip" label="Consejo para los siguientes ejemplos">
                                             <p className="mb-0">Cada lección trae un bloque de código distinto. Para probarlo, <strong>reemplace el contenido</strong> de <code>main.py</code> con el nuevo código: gracias a <code>--reload</code> el servidor se reinicia solo, y no hay que repetir nada de la instalación.</p>
                                         </Box>
@@ -3417,21 +3427,56 @@ def eliminar_experimento(exp_id: int):
                                     <div>
                                         <h3 className="text-xl font-semibold text-secondary mb-4">Optimización y Concurrencia</h3>
                                         <p className="mb-4">
-                                            Entender la naturaleza de la tarea es vital para el rendimiento. Muchas tareas de ML no son puramente
-                                            matemáticas (CPU-Bound), sino que implican tiempos de espera (I/O-Bound), como:
+                                            La sección 3 dejó una regla: <code>async def</code> para las esperas de I/O, <code>def</code> para el cálculo.
+                                            Es un buen resumen y, tomado al pie de la letra, lleva al error más común con FastAPI.
+                                            Aquí se responden las tres preguntas que esa regla no cubre:
                                         </p>
                                         <ul className="list-disc pl-5 space-y-2 mb-4">
-                                            <li>Consultar características (features) de un usuario en una base de datos SQL.</li>
-                                            <li>Cargar un modelo pesado (.pkl) desde el disco o S3.</li>
-                                            <li>Consultar una API externa (ej. servicio de clima).</li>
+                                            <li>¿Qué pasa si declaro <code>async def</code> y dentro llamo a una librería que no sabe esperar?</li>
+                                            <li>¿Y si el trabajo es tan largo que no cabe dentro de una petición?</li>
+                                            <li>¿Cuándo se queda corta la propia aplicación y hace falta otra pieza?</li>
                                         </ul>
 
-                                        <Box type="tip" label="Regla de Oro">En una app síncrona, el servidor se bloquea durante estas esperas. En FastAPI (Asíncrono), el servidor utiliza ese tiempo muerto para procesar otras peticiones. Use <code>async def</code> para operaciones de I/O y <code>def</code> estándar para cálculos pesados de CPU (NumPy/Pandas).
+                                        <Box type="tip" label="Regla de Oro"><code>async def</code> no acelera nada por sí solo: sólo sirve si dentro hay un <code>await</code> sobre una librería asíncrona. Con un driver bloqueante dentro —<code>psycopg2</code>, <code>requests</code>, <code>open()</code>— un <code>async def</code> retiene el bucle de eventos y <strong>todas</strong> las peticiones esperan: rinde peor que el <code>def</code> corriente, que FastAPI habría despachado a un hilo aparte. Use <code>async def</code> para operaciones de I/O y <code>def</code> estándar para cálculos pesados de CPU (NumPy/Pandas).
                                         </Box>
 
-                                        <h3 className="text-lg font-semibold text-secondary mb-2">Tareas en Background</h3>
+                                        <CodeBlock title="Los cuatro casos de async def" lang="python" code={`# La regla real: async def sólo aporta si dentro hay un await sobre
+# una librería asíncrona. Estos son los cuatro casos.
+
+# --- 1. CPU puro: def. FastAPI lo despacha a un hilo aparte. ---
+@app.post("/stats")
+def calcular(datos: DatosInput):
+    return {"media": float(np.mean(datos.valores))}
+
+# --- 2. EL ERROR: I/O bloqueante dentro de async def ---
+#     requests no se espera con await, así que retiene el bucle de
+#     eventos: TODAS las peticiones del servidor se quedan esperando.
+@app.get("/clima-mal")
+async def clima_mal():
+    r = requests.get("https://api.clima.example/hoy")
+    return r.json()
+
+# --- 3. BIEN: librería asíncrona, con await de por medio ---
+@app.get("/clima-bien")
+async def clima_bien():
+    async with httpx.AsyncClient() as cliente:
+        r = await cliente.get("https://api.clima.example/hoy")
+    return r.json()
+
+# --- 4. ACEPTABLE: si la librería es bloqueante y no hay alternativa,
+#     def a secas. FastAPI lo manda al threadpool y el bucle queda
+#     libre para las demás peticiones.
+@app.get("/clima-aceptable")
+def clima_aceptable():
+    r = requests.get("https://api.clima.example/hoy")
+    return r.json()
+
+#> La prueba para saber cuál tiene: si la llamada NO lleva await
+#> delante, es bloqueante, y entonces el endpoint va con def.`} />
+
+                                        <h3 className="text-lg font-semibold text-secondary mb-2">Tareas en segundo plano</h3>
                                         <p className="mb-4">
-                                            Para procesos extremadamente largos (reentrenamiento de modelos), se utilizan <strong>BackgroundTasks</strong> para no hacer esperar al usuario.
+                                            Cuando hay trabajo que hacer <em>después</em> de responder —escribir un registro, mandar un correo, invalidar una caché—, <strong>BackgroundTasks</strong> lo agenda y el cliente no espera. Ojo con el límite: la tarea corre en el <strong>mismo proceso</strong> del servidor, así que ocupa uno de sus hilos mientras dura, y <code>--reload</code> la mata al guardar un archivo. Para un reentrenamiento de verdad, que tarda minutos u horas, hace falta una cola externa —Celery, RQ o ARQ—: es la tercera pregunta de la lista de arriba.
                                         </p>
 
                                         <Box type="info">
@@ -3446,15 +3491,6 @@ curl -X POST "http://127.0.0.1:8000/trigger-retrain"
                                             <p className="text-xs text-gray-500 mt-2 italic">El POST responde inmediatamente con "Entrenamiento iniciado" mientras la tarea pesada se ejecuta en segundo plano.</p>
                                         </Box>
 
-                                        <Box type="info">
-                                            <h4 className="font-bold text-primary mb-2 flex items-center gap-2"><i className="fas fa-question-circle"></i> FAQ: ¿Por qué el Puerto 8000?</h4>
-                                            <p className="text-sm text-gray-700">
-                                                Al ejecutar <code>uvicorn main:app --reload</code>, el servidor se inicia en el puerto <strong>8000</strong> por defecto. Piense en su dirección IP como la dirección de un edificio, y el puerto como el <strong>número de apartamento</strong>. El puerto 8000 es simplemente una convención común para desarrollo. En producción, se usaría el puerto 80 (HTTP) o 443 (HTTPS).
-                                            </p>
-                                            <p className="text-xs text-gray-500 mt-2">
-                                                Acceso local: <code>http://127.0.0.1:8000</code> · Documentación: <code>http://127.0.0.1:8000/docs</code>
-                                            </p>
-                                        </Box>
                                     </div>
 
                 <CodeBlock title="Tareas en Background" lang="python" code={`# Continúa el bloque anterior: \`app\` es la aplicación de «API de Registro de Experimentos».
