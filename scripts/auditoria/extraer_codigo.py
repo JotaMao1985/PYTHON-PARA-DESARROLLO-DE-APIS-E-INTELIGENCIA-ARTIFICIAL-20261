@@ -210,6 +210,13 @@ def de_codeblock(html: str) -> list[dict]:
         lit = RE_LITERAL_CODE.match(html, j + len("code={"))
         if not lit:
             continue
+        # Los atributos tambien pueden ir DETRAS del literal: el modulo 13 los
+        # escribe asi —`code={`...`} lang="python" />`— y es el unico. Mirando
+        # solo delante, sus 26 bloques salian sin lenguaje declarado y el cotejo
+        # de lo declarado contra el contenido no llegaba a hacerse en todo el
+        # modulo: una etiqueta equivocada alli era invisible.
+        cierre = html.find("/>", lit.end())
+        atributos += "" if cierre == -1 else html[lit.end():cierre]
         pista = re.search(r'\blang="([^"]+)"', atributos)
         titulo = re.search(r'\btitle="([^"]*)"', atributos)
         codigo = desescapar_js(lit.group(1))
