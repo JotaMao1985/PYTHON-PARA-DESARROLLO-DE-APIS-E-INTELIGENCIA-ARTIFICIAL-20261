@@ -2255,9 +2255,14 @@
 
         /* Las dos líneas de tiempo de la sección de arquitectura: a la izquierda WSGI,
            donde el usuario B espera a que termine el A, y a la derecha ASGI, donde
-           entra en el hueco que deja el `await`. No es un SVG: son cajas colocadas a
-           mano, y por eso el panel derecho tiene altura fija —sus hijos van en
-           posición absoluta y sin ella se solaparían—. */
+           entra en el hueco que deja el `await`. No es un SVG: son cajas en flujo normal.
+
+           Los dos paneles se rotulan «un worker, un hilo» y llevan un pie que lo dice,
+           porque sin ese supuesto el izquierdo enseña «WSGI atiende de uno en uno», que
+           es falso. Hasta 1fb1473 el panel derecho tenía altura fija con hijos en
+           posición absoluta y la etiqueta de la espera se solapaba con la tarjeta de
+           Usuario B —32 px ya a 1440 px de ventana—; siete de sus ocho etiquetas
+           incumplían el contraste AA, la peor en 1,59. Ahora reflujan y pasan todas. */
         const ComparisonDiagram = () => (
             <div className="grid md:grid-cols-2 gap-4">
                 {/* WSGI */}

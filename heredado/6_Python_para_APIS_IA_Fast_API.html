@@ -1341,12 +1341,12 @@ async def async_concurrente():
                                 <div className="bg-white p-3 rounded-lg border border-gray-200 text-center">
                                     <p className="text-2xl font-bold text-secondary">~80k ⭐</p>
                                     <p className="text-xs text-gray-600 mt-1">FastAPI en GitHub</p>
-                                    <p className="text-xs text-gray-400">Nacido en 2018</p>
+                                    <p className="text-xs text-gray-600">Nacido en 2018 · estrellas a sept. de 2026</p>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg border border-gray-200 text-center">
                                     <p className="text-2xl font-bold text-primary">~68k ⭐</p>
                                     <p className="text-xs text-gray-600 mt-1">Flask en GitHub</p>
-                                    <p className="text-xs text-gray-400">Nacido en 2010</p>
+                                    <p className="text-xs text-gray-600">Nacido en 2010 · estrellas a sept. de 2026</p>
                                 </div>
                                 <div className="bg-white p-3 rounded-lg border border-gray-200 text-center">
                                     <p className="text-2xl font-bold text-gold">38 %</p>
@@ -1363,7 +1363,7 @@ async def async_concurrente():
 
                         <div className="grid md:grid-cols-2 gap-4 mb-6">
                             <div className="usta-card p-4">
-                                <h5 className="font-bold text-sm text-red-700 mb-2"><i className="fas fa-code-branch"></i> Actividad de Desarrollo</h5>
+                                <h5 className="font-bold text-sm text-red-700 mb-2"><i className="fas fa-code-branch"></i> Actividad de desarrollo</h5>
                                 <ul className="list-disc pl-4 text-xs text-gray-600 space-y-1">
                                     <li>Flask lo mantiene el equipo <strong>Pallets</strong>, no una sola persona; su creador original, Armin Ronacher, ya no lo dirige</li>
                                     <li>El trabajo publicado es sobre todo <strong>mantenimiento</strong>: correcciones y compatibilidad, no funcionalidad nueva</li>
@@ -1906,6 +1906,15 @@ def iniciar_entrenamiento(background_tasks: BackgroundTasks, n_iter: int = 1000)
                     <div>
                         <h3 className="text-xl font-semibold text-secondary mb-4">Evaluación y conclusiones</h3>
 
+                        <p className="mb-2 text-sm text-gray-700">
+                            <strong>Respóndalo antes de seguir leyendo.</strong> Son 8 preguntas de selección
+                            múltiple sobre lo que se trabajó en la sesión; cuatro piden aplicar el material a un
+                            caso concreto, no recordar una definición. Lo que viene después —los puntos de control
+                            y el resumen— le sirve para revisar lo que haya fallado.
+                        </p>
+                        <h3 className="text-xl font-semibold text-secondary mb-4 mt-10 flex items-center gap-2">📝 Cuestionario Interactivo</h3>
+                        <InteractiveQuiz />
+
                         <div className="grid md:grid-cols-2 gap-6 mb-8">
                             <div className="usta-card p-5">
                                 <h4 className="font-bold text-lg text-primary mb-3">Puntos de control</h4>
@@ -1971,11 +1980,6 @@ def iniciar_entrenamiento(background_tasks: BackgroundTasks, n_iter: int = 1000)
                             <p className="text-xs text-gray-600 mt-2">— Idea tomada de FastAPI, <em>Tutorial – User Guide</em> (documentación oficial)</p>
                         </div>
 
-                        <h3 className="text-xl font-semibold text-secondary mb-4 mt-10 flex items-center gap-2">📝 Cuestionario Interactivo</h3>
-                        <p className="mb-2 text-sm text-gray-700">
-                            Ponga a prueba su comprensión de los temas cubiertos en este módulo. <strong>8 preguntas</strong> de selección múltiple con retroalimentación inmediata.
-                        </p>
-                        <InteractiveQuiz />
                     </div>
                 ),
                 pythonCode: `# Resumen visual del ecosistema FastAPI
