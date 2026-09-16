@@ -60,47 +60,53 @@ const Tooltip = ({ children, title, text, color = '#3D008D' }) => {
 
 /* Las dos líneas de tiempo de la sección de arquitectura: a la izquierda WSGI,
    donde el usuario B espera a que termine el A, y a la derecha ASGI, donde
-   entra en el hueco que deja el `await`. No es un SVG: son cajas colocadas a
-   mano, y por eso el panel derecho tiene altura fija —sus hijos van en
-   posición absoluta y sin ella se solaparían—. */
+   entra en el hueco que deja el `await`. No es un SVG: son cajas en flujo normal.
+
+   Los dos paneles se rotulan «un worker, un hilo» y llevan un pie que lo dice,
+   porque sin ese supuesto el izquierdo enseña «WSGI atiende de uno en uno», que
+   es falso. Hasta 1fb1473 el panel derecho tenía altura fija con hijos en
+   posición absoluta y la etiqueta de la espera se solapaba con la tarjeta de
+   Usuario B —32 px ya a 1440 px de ventana—; siete de sus ocho etiquetas
+   incumplían el contraste AA, la peor en 1,59. Ahora reflujan y pasan todas. */
 const ComparisonDiagram = () => (
     <div className="grid md:grid-cols-2 gap-4">
         {/* WSGI */}
-        <div className="bg-red-50/50 p-4 rounded-xl border border-red-100">
+        <div className="bg-red-50/50 p-4 rounded-xl border border-red-100 min-w-0" role="img"
+            aria-label="Línea de tiempo con un worker WSGI de un solo hilo: en el segundo 0 el usuario A ocupa el hilo; en el segundo 5 llega el usuario B y espera, porque el hilo sigue ocupado durante la espera de entrada y salida de A; en el segundo 10 A termina y libera el hilo; hasta el segundo 11 no empieza a atenderse a B.">
             <div className="text-center mb-4">
-                <span className="font-bold text-red-800 text-sm uppercase tracking-wider block">Estilo WSGI</span>
-                <span className="text-xs text-red-600">Bloqueante (Un camión en un carril)</span>
+                <span className="font-bold text-red-800 text-sm uppercase tracking-wider block">Estilo WSGI — un worker, un hilo</span>
+                <span className="text-xs text-red-800">El hilo queda ocupado durante toda la espera</span>
             </div>
 
             <div className="space-y-2 font-mono text-xs">
                 {/* Time T1 */}
                 <div className="flex items-center gap-2">
-                    <span className="w-8 text-gray-400">0s</span>
-                    <div className="flex-1 h-10 bg-primary text-white rounded flex items-center justify-center shadow-sm">
+                    <span className="w-8 text-gray-600">0s</span>
+                    <div className="flex-1 min-w-0 h-10 bg-primary text-white rounded flex items-center justify-center shadow-sm">
                         Usuario A (Procesando...)
                     </div>
                 </div>
 
                 {/* Time T2 */}
-                <div className="flex items-center gap-2 opacity-50">
-                    <span className="w-8 text-gray-400">5s</span>
-                    <div className="flex-1 h-10 border-2 border-dashed border-red-300 bg-red-50 text-red-400 rounded flex items-center justify-center">
+                <div className="flex items-center gap-2">
+                    <span className="w-8 text-gray-600">5s</span>
+                    <div className="flex-1 min-w-0 h-10 border-2 border-dashed border-red-400 bg-red-50 text-red-800 rounded flex items-center justify-center">
                         Usuario B (ESPERANDO 🛑)
                     </div>
                 </div>
 
                 {/* Time T3 */}
                 <div className="flex items-center gap-2">
-                    <span className="w-8 text-gray-400">10s</span>
-                    <div className="flex-1 h-10 bg-gray-200 text-gray-500 rounded flex items-center justify-center">
+                    <span className="w-8 text-gray-600">10s</span>
+                    <div className="flex-1 min-w-0 h-10 bg-gray-200 text-gray-700 rounded flex items-center justify-center">
                         Usuario A termina
                     </div>
                 </div>
 
                 {/* Time T4 */}
                 <div className="flex items-center gap-2">
-                    <span className="w-8 text-gray-400">11s</span>
-                    <div className="flex-1 h-10 bg-secondary text-white rounded flex items-center justify-center shadow-sm">
+                    <span className="w-8 text-gray-600">11s</span>
+                    <div className="flex-1 min-w-0 h-10 bg-[#C41461] text-white rounded flex items-center justify-center shadow-sm">
                         Usuario B (Por fin inicia!)
                     </div>
                 </div>
@@ -108,51 +114,58 @@ const ComparisonDiagram = () => (
         </div>
 
         {/* ASGI */}
-        <div className="bg-green-50/50 p-4 rounded-xl border border-green-100">
+        <div className="bg-green-50/50 p-4 rounded-xl border border-green-100 min-w-0" role="img"
+            aria-label="Línea de tiempo con un worker ASGI de un solo hilo: en el segundo 0 la petición de A ocupa la CPU; durante su espera de entrada y salida la CPU queda libre, y el servidor atiende al usuario B en ese hueco; en el segundo 10 A retoma la CPU y termina.">
             <div className="text-center mb-4">
-                <span className="font-bold text-green-800 text-sm uppercase tracking-wider block">Estilo ASGI (FastAPI)</span>
-                <span className="text-xs text-green-600">Asíncrono (Autopista con sobrepaso)</span>
+                <span className="font-bold text-green-800 text-sm uppercase tracking-wider block">Estilo ASGI (FastAPI) — un worker, un hilo</span>
+                <span className="text-xs text-green-800">El hilo se libera durante la espera de I/O</span>
             </div>
 
-            <div className="relative font-mono text-xs h-[180px]">
-                {/* Background grid lines */}
-                <div className="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
-                    <div className="border-b border-black h-8"></div>
-                    <div className="border-b border-black h-8"></div>
-                    <div className="border-b border-black h-8"></div>
-                    <div className="border-b border-black h-8"></div>
-                </div>
-
-                {/* User A Task - Start */}
-                <div className="absolute top-0 left-8 w-24 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] z-10 shadow-sm">
-                    A: Inicio (CPU)
-                </div>
-
-                {/* Await Period */}
-                <div className="absolute top-8 left-20 bottom-8 border-l-2 border-primary border-dashed w-0 flex items-center">
-                    <span className="bg-white/90 text-primary text-[10px] px-1 ml-2 whitespace-nowrap border border-primary/20 rounded">
-                        ⏳ Esperando I/O (Sin uso CPU)
-                    </span>
-                </div>
-
-                {/* User A Task - End */}
-                <div className="absolute bottom-0 left-8 w-24 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] z-10 shadow-sm">
-                    A: Fin (CPU)
-                </div>
-
-                {/* User B Task (Fits in the middle) */}
-                {/* User B Task (Runs in the gap) */}
-                <div className="absolute top-1/2 -translate-y-1/2 right-8 w-32 h-12 bg-secondary text-white rounded-lg shadow-md flex items-center justify-center z-20 border-2 border-white animate-pulse" title="¡Usuario B es atendido mientras A espera!">
-                    <div className="text-center">
-                        <div className="font-bold text-xs">Usuario B</div>
-                        <div className="text-[9px]">¡Atendido en el hueco! 🚀</div>
+            {/* Tres filas en flujo normal, no cajas absolutas sobre una altura fija.
+                La versión anterior clavaba los hijos con `absolute` dentro de un
+                `h-[180px]`, y la etiqueta de la espera llevaba `whitespace-nowrap`:
+                en cuanto el panel bajaba de ~420 px de ancho, la tarjeta de Usuario B
+                le caía encima. Se solapaban 32 px ya a 1440 px de ventana. Así reflujan. */}
+            <div className="font-mono text-xs space-y-2">
+                {/* Usuario A ocupa la CPU */}
+                <div className="flex items-center gap-2">
+                    <span className="w-8 text-gray-600 flex-shrink-0">0s</span>
+                    <div className="flex-1 min-w-0 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] shadow-sm">
+                        A: Inicio (CPU)
                     </div>
                 </div>
 
-                {/* Time markers */}
-                <div className="absolute left-0 top-0 text-gray-400 text-[10px]">0s</div>
-                <div className="absolute left-0 bottom-0 text-gray-400 text-[10px]">10s</div>
+                {/* La espera de I/O: aquí es donde entra Usuario B */}
+                <div className="flex items-start gap-2">
+                    <span className="w-8 flex-shrink-0" aria-hidden="true"></span>
+                    <div className="flex-1 min-w-0 border-l-2 border-dashed border-primary pl-3 py-2 flex flex-wrap items-center gap-2">
+                        <span className="bg-white text-primary text-[10px] px-1.5 py-0.5 border border-primary/30 rounded">
+                            ⏳ Esperando I/O (sin uso de CPU)
+                        </span>
+                        <span className="bg-[#C41461] text-white rounded-lg shadow-md px-3 py-1.5 text-center leading-tight border-2 border-white">
+                            <span className="font-bold text-xs block">Usuario B</span>
+                            <span className="text-[10px] block">¡Atendido en el hueco! 🚀</span>
+                        </span>
+                    </div>
+                </div>
+
+                {/* Usuario A retoma la CPU y termina */}
+                <div className="flex items-center gap-2">
+                    <span className="w-8 text-gray-600 flex-shrink-0">10s</span>
+                    <div className="flex-1 min-w-0 h-8 bg-primary text-white rounded flex items-center justify-center text-[10px] shadow-sm">
+                        A: Fin (CPU)
+                    </div>
+                </div>
             </div>
         </div>
+
+        {/* El supuesto tiene que ir escrito: sin él, el panel de la izquierda se lee
+            como «WSGI atiende de uno en uno», que es falso y es el error que el
+            cuestionario repetía en su justificación. */}
+        <p className="md:col-span-2 text-xs text-gray-600 italic mt-1 mb-0">
+            Los dos paneles suponen <strong>un worker con un solo hilo</strong>, para que la comparación
+            sea justa. Con cuatro workers, WSGI atiende cuatro peticiones a la vez; lo que sigue sin hacer
+            es aprovechar la espera de I/O de cada una, que es exactamente lo que ASGI sí hace.
+        </p>
     </div>
 );

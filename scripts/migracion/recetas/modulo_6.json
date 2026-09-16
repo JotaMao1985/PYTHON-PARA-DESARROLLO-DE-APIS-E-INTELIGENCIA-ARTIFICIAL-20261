@@ -15,7 +15,7 @@
     "notaPie": "Material de la Semana 6. Pregrado en Estadística · 2026-II.",
     "horas": 4,
     "ra": "Implementar una API con FastAPI aprovechando la documentación automática que genera a partir de los tipos.",
-    "contenidoSyllabus": "Routers y organización modular. El type hinting como contrato ejecutable. OpenAPI, Swagger UI y Redoc. async/await.",
+    "contenidoSyllabus": "El type hinting como contrato ejecutable. OpenAPI y Swagger UI. async/await.",
     "temas": [
       "FastAPI",
       "Uvicorn",
