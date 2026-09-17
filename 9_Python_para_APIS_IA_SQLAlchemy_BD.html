@@ -2744,7 +2744,7 @@ class AutorResponse(AutorBase):
 
                                             <h3 className="text-xl md:text-2xl font-semibold mb-4 text-secondary mt-8">4.4 Endpoint con <code className="bg-gray-100 text-pink-600 px-2 py-0.5 rounded font-mono text-sm border border-gray-200">Depends(get_db)</code></h3>
 
-                                            <CodeBlock title="app/routers/autores.py" lang="sql" code={`from typing import Annotated
+                                            <CodeBlock title="app/routers/autores.py" lang="python" code={`from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import select
@@ -2997,7 +2997,7 @@ def obtener_autor(autor_id: int, db: DBSession):
 
                                             <Accordion items={[{ titulo: "¿Cómo instalar y usar Ruff? (herramienta gratuita)", contenido: (<><div className="mt-3 text-sm text-blue-900 leading-relaxed border-t border-blue-200 pt-3">
                                                     <p><strong>Ruff</strong> reemplaza a Flake8, isort, Black y pyupgrade en una sola herramienta (open source, escrita en Rust, 10–100x más rápido). Instálalo con <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">pip install ruff</code> y agrega esto en tu <code className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-xs">pyproject.toml</code>:</p>
-                                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-3 font-mono text-xs mt-2 overflow-x-auto"><CodeBlock lang="sql" code={`[tool.ruff]
+                                                    <div className="bg-gray-900 text-gray-100 rounded-lg p-3 font-mono text-xs mt-2 overflow-x-auto"><CodeBlock lang="toml" code={`[tool.ruff]
 line-length = 88
 target-version = "py311"
 
