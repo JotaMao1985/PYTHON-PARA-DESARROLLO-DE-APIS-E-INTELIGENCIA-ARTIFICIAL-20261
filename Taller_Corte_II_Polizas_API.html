@@ -2231,7 +2231,7 @@ cat README.md          # léanlo: forma parte del problema`} />
                                 <p className="mb-3">Sustentación de <strong>12 minutos</strong> (grupos de una persona: 9),
                                     repartida por sorteo entre dos sesiones; el repositorio se congela para todos el mismo día.</p>
                                 <Pipeline steps={[
-                                    { num: 1, title: '4 min · demo en vivo, en Docker', desc: 'docker build, docker run -p, curl /health, un POST /polizas que devuelve 201; después reinician el contenedor y piden GET /polizas. Lo que pase con los datos, tienen que poder explicarlo. Sin diapositivas' },
+                                    { num: 1, title: '4 min · demo en vivo, en Docker', desc: 'docker build, docker run -p, curl /health, un POST /polizas que devuelve 201; después GET /polizas dos veces: tras docker restart y tras borrar el contenedor y levantar otro desde la misma imagen. Lo que pase con los datos en cada caso, tienen que poder explicarlo. Sin diapositivas' },
                                     { num: 2, title: '8 min · preguntas dirigidas', desc: 'A un integrante concreto, sobre una línea concreta de SU repositorio, al menos una por integrante. Todos deben poder responder por todo' },
                                 ]} />
                             </div>

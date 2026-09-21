@@ -307,8 +307,9 @@ por qué. Es el único apartado de la bitácora con peso propio.
 las dos sesiones; el repositorio se congela para todos el mismo día.
 
 - **4 min — demo en vivo, en Docker.** `docker build`, `docker run -p`, `curl /health`, un
-  `POST /polizas` que devuelve 201, y después **reinician el contenedor y piden `GET /polizas`**.
-  Lo que pase con los datos, tienen que poder explicarlo. Sin diapositivas.
+  `POST /polizas` que devuelve 201, y después **`GET /polizas` dos veces: tras `docker restart` y
+  tras borrar el contenedor y levantar otro desde la misma imagen**. Lo que pase con los datos en
+  cada caso, tienen que poder explicarlo. Sin diapositivas.
 - **8 min — preguntas dirigidas.** Se pregunta a **un integrante concreto** por **una línea
   concreta** de su repositorio, al menos una pregunta por integrante. Todos deben poder responder
   por todo.
