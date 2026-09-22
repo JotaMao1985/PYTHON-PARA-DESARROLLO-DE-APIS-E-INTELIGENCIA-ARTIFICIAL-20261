@@ -59,3 +59,13 @@ scripts/taller_corte1/
 PLAN_TALLER_CORTE_I.md
 INFORME_AUDITORIA_TALLER.md
 taller_corte1/build/
+
+# Taller Corte II — material docente y fuente del semilla. NUNCA se publica por Pages:
+# la única copia pública del semilla es el repositorio JotaMao1985/polizas-api-v0.
+taller_corte2/docente/
+taller_corte2/rubrica.json
+taller_corte2/semilla/
+taller_corte2/build/
+scripts/taller_corte2/
+PLAN_TALLER_CORTE_II.md
+INFORME_AUDITORIA_TALLER_II.md
