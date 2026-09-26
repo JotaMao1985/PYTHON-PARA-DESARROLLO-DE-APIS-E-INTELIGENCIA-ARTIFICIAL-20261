@@ -16,10 +16,10 @@
     "ra": "Asegurar la integridad de las entradas de un modelo estadístico mediante validadores y modelos anidados.",
     "contenidoSyllabus": "Validadores de campo. Tipos complejos y anotaciones para datos estadísticos. Modelos anidados. Manejo integral del error 422.",
     "temas": [
-      "Pydantic v2",
-      "field_validator",
+      "model_validator",
+      "Annotated y Literal",
       "Modelos anidados",
-      "HTTP 422"
+      "RequestValidationError"
     ],
     "stack": "Pydantic v2 · FastAPI",
     "storageKey": "usta_2026i_apis_cap07"
@@ -46,13 +46,13 @@
     {
       "id": "modulo-2",
       "componente": "ValidadoresSection",
-      "titulo": "4. Validadores de campo",
+      "titulo": "4. Validadores de campo y de modelo",
       "icono": "FunctionSquare"
     },
     {
       "id": "modulo-3",
       "componente": "AnidadosSection",
-      "titulo": "5. Modelos anidados y topología jerárquica",
+      "titulo": "5. Modelos anidados",
       "icono": "Layers"
     },
     {
@@ -64,7 +64,7 @@
     {
       "id": "modulo-5",
       "componente": "SintesisSection",
-      "titulo": "7. Síntesis: pipeline de ingesta seguro",
+      "titulo": "7. Síntesis: del JSON al modelo o al 422",
       "icono": "Grid"
     },
     {
