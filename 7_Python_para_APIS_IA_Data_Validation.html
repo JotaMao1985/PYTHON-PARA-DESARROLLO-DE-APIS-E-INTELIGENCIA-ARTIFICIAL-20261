@@ -2404,66 +2404,10 @@
                                             </div>
 
                                         </section>
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>¿Por qué la estadística en entornos de
-                                                        producción (ingeniería de datos) exige un paradigma estrictamente confirmatorio
-                                                        en contraste con el Análisis Exploratorio de Datos (EDA) interactivo
-                                                        tradicional?</>), opciones: [{ texto: (<>Porque el EDA no utiliza
-                                                                visualizaciones avanzadas o potentes.</>), correcta: false }, { texto: (<>Porque la estadística confirmatoria
-                                                                permite probar múltiples hipótesis sin corregir el valor p.</>), correcta: false }, { texto: (<>Porque los pipelines
-                                                                automatizados carecen de intervención humana para interpretar
-                                                                heurísticamente gráficos o resolver ambigüedades sobre la marcha,
-                                                                requiriendo reglas matemáticas y tipológicas estrictas
-                                                                predefinidas.</>), correcta: true }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: C</strong><br /><br />
-                                                            En producción, no hay un analista "mirando los datos" para decidir
-                                                            empíricamente qué hacer con un valor atípico o un formato no esperado. Las
-                                                            decisiones (rechazar, imputar, procesar iterativamente) deben estar
-                                                            matemática y lógicamente codificadas de antemano ("paradigma confirmatorio")
-                                                            para que el script no caiga en errores silenciosos, a diferencia del EDA
-                                                            donde los descubrimientos y correcciones se hacen de forma interactiva y
-                                                            ad-hoc.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>Describa la Etapa 2 ("Validación de
-                                                        Esquema") del pipeline propuesto y mencione qué tipo de restricciones busca
-                                                        asegurar antes de permitir que los datos avancen.</>), opciones: [{ texto: (<>Trata de imputar automáticamente
-                                                                valores faltantes usando la media aritmética de la columna.</>), correcta: false }, { texto: (<>Asegura que los datos
-                                                                respetan el dominio cardinal esperado (tipos de datos estrictos, rangos
-                                                                lógicos, presencia ineludible de campos obligatorios).</>), correcta: true }, { texto: (<>Elimina las variables altamente
-                                                                correlacionadas para prevenir la multicolinealidad.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            La validación de esquema, que se centraliza en herramientas como Pydantic,
-                                                            funciona funcionalmente como una aduana topológica. Su función primordial es
-                                                            garantizar axiomáticamente que la "morfología" del dato (su tipo estático,
-                                                            formato, longitud requerida) coincida con las expectativas rigurosas de los
-                                                            algoritmos y de la base de datos, abortando o encuarentenando el flujo antes
-                                                            de inducir fallos en el cómputo algebraico posterior.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Argumente cómo la ausencia absoluta de las
-                                                        etapas 1 y 2 en este flujo de trabajo puede derivar en un fenómeno de
-                                                        "inferencias causales espurias" durante la evaluación final de un modelo de
-                                                        Machine Learning.</>), opciones: [{ texto: (<>Porque el modelo se verá forzado a
-                                                                utilizar un algoritmo de clasificación en lugar de regresión, sesgando
-                                                                los resultados.</>), correcta: false }, { texto: (<>Porque la entrada de
-                                                                datos crudos sin tipar (e.g., cadenas interpretadas como categorías o
-                                                                nulos evaluados silenciosamente como ceros) corrompe asintóticamente el
-                                                                cálculo del gradiente, creando correlaciones que son simples artefactos
-                                                                sintácticos del ruido originario.</>), correcta: true }, { texto: (<>Porque las etapas 1 y 2 son las
-                                                                únicas computacionalmente responsables de estimar los p-valores en el
-                                                                diseño final.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            Este es el axioma clásico de "Garbage in, garbage out" (GIGO) llevado al
-                                                            aprendizaje estadístico. Si una variable continua entra como cadena
-                                                            alfanumérica y un algoritmo la "one-hot encodea" de manera no intencionada,
-                                                            o si un <code>NaN</code> es absorbido silenciosamente como un \(0.0\), el
-                                                            modelo destina poder estadístico para ajustar una "relación predictiva"
-                                                            sobre ese error sistémico. Así, las inferencias subsecuentes no describirán
-                                                            el fenómeno epistemológico real, sino los "bugs" heredados por evitar la
-                                                            Etapa 1 y 2.
-                                                        </div></>) }
+                                        <Quiz titulo="Verificación de comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 2 · aplicar</span>En el pipeline de cinco etapas de esta sección llegan dos registros de una encuesta de hogares: uno con <code>edad = -5</code> y otro con <code>edad = 97</code>. ¿Qué hace el pipeline con cada uno?</>), opciones: [{ texto: (<>Rechaza los dos en la validación de esquema, por ser extremos.</>), correcta: false }, { texto: (<>Acepta los dos: la validación de esquema sólo comprueba el tipo.</>), correcta: false }, { texto: (<>Rechaza el -5 en la validación; el 97 pasa y se revisa después.</>), correcta: true }, { texto: (<>Acepta el -5 y lo anota en auditoría; rechaza el 97 por atípico.</>), correcta: false }], justificacion: (<>Un −5 es imposible: viola el dominio de la variable y se rechaza en la etapa 2 («Validación de esquema»), que comprueba tipos y también restricciones de rango. Un 97 es raro pero posible: rechazarlo borraría a una persona que existe y, como explica la sección 4, sesgaría la muestra. Su sitio es la etapa 3, donde se detectan atípicos sin expulsarlos.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 2 · aplicar</span>Un sistema de captura guarda como <code>0</code> el ingreso de quien no quiso declararlo, y nadie valida ese campo. ¿Qué le pasa a la media muestral del ingreso?</>), opciones: [{ texto: (<>Baja, y el cálculo termina sin ningún aviso ni error.</>), correcta: true }, { texto: (<>No cambia: la media sólo usa los valores observados.</>), correcta: false }, { texto: (<>Sube, porque los ceros inflan la varianza del campo.</>), correcta: false }, { texto: (<>Falla con un error de tipo que detiene el análisis.</>), correcta: false }], justificacion: (<>Para cualquier función de media, 0 es un número válido: entra al promedio y lo arrastra hacia abajo sin error. Es el error silencioso del que habla la sección. Para que la media no lo cuente, el dato tiene que llegar como faltante (<code>None</code> o <code>NaN</code>) y alguien tiene que decidir qué hacer con él; un error de tipo sólo saltaría si llegara como texto.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 2 · comprender</span>Una API rechaza una observación y responde sólo <code>&#123;"error": "dato inválido"&#125;</code>. Para el estadístico que consume la API, ¿qué le falta a esa respuesta?</>), opciones: [{ texto: (<>Un código 500, para dejar claro que el fallo fue del servidor.</>), correcta: false }, { texto: (<>Nada: explicar el motivo del rechazo expone la validación.</>), correcta: false }, { texto: (<>Un valor ya corregido por la API, para que pueda reenviarlo.</>), correcta: false }, { texto: (<>El campo, el valor recibido y la regla que no se cumplió.</>), correcta: true }], justificacion: (<>Rechazar sin decir por qué obliga a adivinar. Con el campo (<code>loc</code>), el valor recibido (<code>input</code>) y la regla (<code>type</code> y <code>msg</code>), quien consume la API decide si corrige el dato en origen o lo excluye y lo reporta: es lo que pide la práctica de esta semana, un validador que rechaza y justifica. El fallo es del cliente, no del servidor, y la API no debe inventar un valor «corregido».</>) }
                 ]} />
             </div>
         );
@@ -3525,73 +3469,10 @@ class ObservacionClinica(BaseModel):
                                                 </div>
                                             </div>
                                         </section>
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>¿En qué sentido el tipado estático en
-                                                        Python 3.11 actúa como el equivalente computacional de un "libro de códigos"
-                                                        (codebook) de una encuesta estadística empírica?</>), opciones: [{ texto: (<>Porque provee una
-                                                                taxonomía declarativa explícita que documenta y restringe los límites
-                                                                semánticos/cardinales de cada observación previo a su ingestión en
-                                                                memoria.</>), correcta: true }, { texto: (<>Porque la utilización de `typing`
-                                                                incrementa exponencialmente el rendimiento del bucle estadístico en
-                                                                iteraciones.</>), correcta: false }, { texto: (<>Porque ambos compilan un archivo PDF
-                                                                complementario automáticamente para que el investigador lo revise fuera
-                                                                de línea.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            El <em>codebook</em> en encuestas metodológicas especifica formalmente qué
-                                                            significa cada columna (ej., sexo = 'M', edad en rangos). El tipado estático
-                                                            (`int`, `Optional[float]`, etc.) representa la codificación técnica
-                                                            inmutable de esa arquitectura metodológica. Su rol es asegurar, a nivel del
-                                                            núcleo compilativo de Pydantic, que las reglas semánticas expuestas en ese
-                                                            "libro" actúen verdaderamente como directrices estrictas operacionales, y no
-                                                            solo como un comentario orientativo que puede violarse a voluntad.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>Señale la diferencia operativa e
-                                                        interpretativa fundamental que existe entre declarar un atributo empírico como <code>List[np.float64]</code> frente a <code>npt.NDArray[np.float64]</code>.</>), opciones: [{ texto: (<>`List` es una restricción más
-                                                                estricta porque soporta el broadcasting aritmético sobre datos faltantes
-                                                                nativamente y sin intervención de librerías extras.</>), correcta: false }, { texto: (<>`List` denota simplemente
-                                                                una secuencia genérica interable, mientras que `NDArray` proyecta
-                                                                axiomáticamente un espacio muestral N-dimensional, habilitando el empleo
-                                                                algebraico vectorizado en memoria contigua.</>), correcta: true }, { texto: (<>No existe diferencia
-                                                                estadístico-matemática en runtime; es puramente azúcar sintáctica para
-                                                                los Analizadores de Código (mypy).</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            A nivel conceptual, declarar una `List` le indica matemáticamente al modelo
-                                                            que nos enfrentamos a una colección discreta en donde la posición secuencial
-                                                            importa, pero para iterarla de forma estándar. Por otro lado, un `NDArray`
-                                                            transiciona nuestra abstracción al dominio de la matemática
-                                                            matricial/tensorial (\(\Omega \in \mathbb&#123;R&#125;^&#123;m \times n&#125;\)). Denotarlo nos
-                                                            indica que allí se aplicarán heurísticas de álgebra lineal con alta
-                                                            eficiencia numérica transaccional, garantizando estructura contigua de bajo
-                                                            nivel (optimización C subyacente de NumPy).
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Tomando como base la "Inmersión Teórica",
-                                                        demuestre lógicamente por qué tipar un atributo como <code>Optional[float]</code> fuerza explícitamente a aplicar técnicas de
-                                                        imputación (e.g., MAR/MCAR), blindando el cálculo frente al castigado silencioso
-                                                        de nulos a ceros.</>), opciones: [{ texto: (<>Porque el tipado `Optional` siempre
-                                                                invoca internamente al módulo sklearn.impute bajo el capó para
-                                                                normalizar el flujo estadístico automáticamente.</>), correcta: false }, { texto: (<>Porque al ser la
-                                                                construcción teórica equivalente a una Unión Disjunta (\(T \biguplus
-                                                                \&#123;\text&#123;None&#125;\&#125;\)), las evaluaciones aritméticas estrictas rehusarán
-                                                                coercionar el tipo auxiliar nulo al escalar \(0.0\); deteniéndose
-                                                                agresivamente con TypeErrors ante ausencia de un proceso imputativo
-                                                                deliberado.</>), correcta: true }, { texto: (<>Porque impide programáticamente, por
-                                                                definición CPython, que el campo acceda al uso de cualquier distribución
-                                                                probabilística conocida en bibliotecas como scipy.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            Como explicaba la ecuación 1.1 formal (\( \text&#123;Optional&#125;[T] \equiv T
-                                                            \biguplus \&#123;\text&#123;None&#125;\&#125; \)), el motor de evaluación estático comprende
-                                                            axiomáticamente que un valor `None` NO está anclado posicionalmente en el
-                                                            origen del dominio numérico real (al cero, o \(0.0\)); pertenece cardinalmente
-                                                            a un conjunto distinto donde la aritmética ordinaria entra en estado
-                                                            indefinido. Al imposibilitar que el motor lo evalúe por coerción a variable
-                                                            flotante, al desarrollador y al estadístico no le queda otra alternativa más
-                                                            segura que decidir de forma proactiva: imputar bajo métodos como OLS/Mean
-                                                            sustitutions o asumir Missing At Random y omitir la lectura en bloque
-                                                            (casewise). Esta disidencia teórica defiende el poder de la inferencia.
-                                                        </div></>) }
+                                        <Quiz titulo="Verificación de comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 3 · aplicar</span>En <code>EspecificacionCoche</code> el campo se declara <code>transmision_am_dummy: Annotated[int, Field(ge=0, le=1)]</code>. ¿Qué ocurre al instanciar el modelo con <code>transmision_am_dummy=2</code>?</>), opciones: [{ texto: (<>Se acepta: 2 es un int, y ge y le sólo documentan el esquema.</>), correcta: false }, { texto: (<>Se rechaza con un error en ese campo: 2 no cumple le=1.</>), correcta: true }, { texto: (<>Se acepta, recortado a 1, el valor permitido más cercano.</>), correcta: false }, { texto: (<>Se acepta y se guarda como True, por ser variable dummy.</>), correcta: false }], justificacion: (<>Las restricciones de <code>Field</code> dentro de <code>Annotated</code> se ejecutan al validar: 2 no cumple <code>le=1</code> y Pydantic lanza un <code>ValidationError</code> de tipo <code>less_than_equal</code> en <code>transmision_am_dummy</code>. Pydantic no recorta valores al rango ni reinterpreta enteros como booleanos en un campo <code>int</code>.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 3 · aplicar</span>La solución del Ejercicio 2 declara <code>tratamiento: Literal["placebo", "dosis_baja", "dosis_alta"]</code>. Llega una observación con <code>tratamiento="Placebo"</code>. ¿Qué pasa?</>), opciones: [{ texto: (<>Se acepta y se guarda como "placebo", ya en minúsculas.</>), correcta: false }, { texto: (<>Se acepta tal cual: Literal sólo exige que sea un str.</>), correcta: false }, { texto: (<>Se acepta como None, por no coincidir con ningún nivel.</>), correcta: false }, { texto: (<>Se rechaza: Literal distingue mayúsculas de minúsculas.</>), correcta: true }], justificacion: (<><code>Literal</code> admite exactamente los valores de la lista: <code>"Placebo"</code> no es <code>"placebo"</code> y el error es <code>literal_error</code>. Si se quiere tolerar mayúsculas hay que normalizar antes, con un validador <code>mode='before'</code>, y decirlo. Un valor que no está en la lista es el «nivel fantasma» de la sección 4: la especie <code>"rosa"</code> en iris.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 3 · analizar</span>En <code>EspecificacionCoche</code>: <code>modelo_vehiculo: Optional[str] = Field(default=None)</code> y <code>caballos_fuerza_hp: int | float = Field(..., gt=0)</code>. Llega un registro sin <code>modelo_vehiculo</code> y con <code>caballos_fuerza_hp=0</code>. ¿Qué responde Pydantic?</>), opciones: [{ texto: (<>Error sólo en caballos_fuerza_hp: el campo ausente vale None.</>), correcta: true }, { texto: (<>Error en los dos campos: falta uno de los campos del modelo.</>), correcta: false }, { texto: (<>Lo acepta: 0 es un int válido y el nombre del coche es opcional.</>), correcta: false }, { texto: (<>Error sólo en modelo_vehiculo: Optional obliga a mandar null.</>), correcta: false }], justificacion: (<><code>modelo_vehiculo</code> tiene <code>default=None</code>: si no llega, vale <code>None</code> y no hay error. <code>caballos_fuerza_hp</code> es obligatorio y <code>gt=0</code> excluye el 0, así que el único error está en ese campo. Lo que hace opcional a un campo es el valor por defecto; <code>Optional</code> sólo dice que <code>None</code> es un valor admitido.</>) }
                 ]} />
             </div>
         );
@@ -4685,66 +4566,10 @@ def validar_edad(cls, v: int) -> int:
                                                 </div>
                                             </div>
                                         </section>
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>Explique la distinción práctica entre un
-                                                        validador configurado con <code>mode='before'</code> frente a uno con <code>mode='after'</code> utilizando como ejemplo el saneamiento de una cadena
-                                                        literal de moneda (ej. "$1,500.00").</>), opciones: [{ texto: (<>`before` opera sobre el
-                                                                diccionario "crudo" limpiando el "$" empíricamente ANTES de que el motor
-                                                                intente parsearlo a float, previniendo un TypeError; `after` auditaría
-                                                                el número puro después de convertido (e.g., verificar que no sea
-                                                                negativo).</>), correcta: true }, { texto: (<>Ambos modos funcionan sintácticamente
-                                                                igual, la distinción de `before` es que se lee más rápido por el
-                                                                intérprete.</>), correcta: false }, { texto: (<>`after` siempre evalúa variables
-                                                                booleanas y `before` los numéricos.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            El modo <code>before</code> intercepta el flujo en la frontera del <em>input
-                                                                / output</em> de modo preventivo. Al ser datos observacionales
-                                                            comúnmente corruptos con caracteres sucios, limpiarlos "antes" salva el
-                                                            cálculo de tipos subyacente de abortar irremediablemente. Por otro lado, la
-                                                            lógica empírica del negocio o el paradigma científico (e.g., restricciones
-                                                            de cero continuo) se aplican elegantemente en validadores configurados en
-                                                            modo <code>after</code>.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>Mencione al menos un límite teórico o
-                                                        "regla axiomática continua" que deba auditarse programáticamente antes de
-                                                        proceder a calcular el logaritmo natural de un biomarcador (como un conteo de
-                                                        linfocitos).</>), opciones: [{ texto: (<>Auditar explícitamente
-                                                                que la variable sea estrictamente mayor que cero (\(X > 0\)), ya que
-                                                                numéricamente el logaritmo de ceros y negativos no está definido en el
-                                                                dominio real, abortando cálculos como \(\ln(X)\).</>), correcta: true }, { texto: (<>Evaluar que su media armónica sea
-                                                                equivalente al modo estadístico asintóticamente.</>), correcta: false }, { texto: (<>Comprobar empíricamente que la
-                                                                variable esté siempre estandarizada alrededor del promedio poblacional,
-                                                                con desviación de 1 unidad (\(z-score\)).</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            Es crítico aplicar validadores que asuman reglas "físicas y biológicas" y su
-                                                            dominio subyacente: un campo `gt=0` o un chequeo `@field_validator`
-                                                            personalizado previene de raíz estados asintóticos como un \(-\infty\) al
-                                                            aplicar la función \(\ln(X)\) común en normalización de conteos clínicos. Esto
-                                                            garantiza una robustez matemática del sistema posterior.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Diseñe mentalmente y evalúe la
-                                                        arquitectura de un validador cruzado (usando <code>@model_validator(mode='after')</code>) cuyo objetivo sea asegurar la
-                                                        coherencia temporal y lógica bivariada entre dos covariables: <code>fecha_ingreso</code> y <code>fecha_alta</code> en un estudio de
-                                                        supervivencia.</>), opciones: [{ texto: (<>Exige la instanciación
-                                                                compartida y validación lógica: <code>fecha_alta &gt;= fecha_ingreso</code>. Si es falso, el evento
-                                                                temporal invierte causalidad, falseando severamente los cálculos asiduos
-                                                                de riesgo (Kaplan-Meier), y forzando a eliminar las tuplas
-                                                                problemáticas.</>), correcta: true }, { texto: (<>El empleo de <code>@field_validator</code> individual por atributo cumple idéntica
-                                                                rigurosidad sintáctica sin recurrir al estado general de la
-                                                                observación.</>), correcta: false }, { texto: (<>Es preferible interpolar el dato
-                                                                aberrado antes que expulsarlo estadísticamente en el esquema de
-                                                                validación cruzada.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            La validación contextual cruzada en Pydantic emplea <code>model_validator(mode='after')</code> precisamente porque posee "visión
-                                                            global" (acceso total a los campos poblados en cascada tipo C: <code>self.fecha_alta</code> y <code>self.fecha_ingreso</code>). Modelos de
-                                                            supervivencia calculan el <em>time-to-event</em> como el delta derivativo.
-                                                            Una alta médica previa axiomáticamente a un ingreso hospeda una causalidad
-                                                            ilógica y arrojaría deltas negativos que sesgan cualquier modelo paramétrico
-                                                            posterior, como la regresión de Cox.
-                                                        </div></>) }
+                                        <Quiz titulo="Verificación de comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 4 · aplicar</span>Un campo <code>ingreso: float</code> recibe el texto <code>"1,234.56"</code>, con coma de miles. ¿Qué hace que el modelo lo acepte como <code>1234.56</code>?</>), opciones: [{ texto: (<>Un validador mode='after' que quite la coma del valor convertido.</>), correcta: false }, { texto: (<>Nada: en modo laxo Pydantic ya entiende la coma de los miles.</>), correcta: false }, { texto: (<>Activar strict=True, que lee el número respetando su formato.</>), correcta: false }, { texto: (<>Un validador mode='before' que quite la coma antes de convertir.</>), correcta: true }], justificacion: (<>Pydantic no convierte <code>"1,234.56"</code> a <code>float</code> (error <code>float_parsing</code>). Un validador <code>after</code> nunca llega a ejecutarse, porque la conversión falla antes; <code>strict=True</code> es más exigente todavía y rechaza cualquier texto. Sólo un validador <code>before</code> recibe el texto crudo y puede limpiarlo antes de la conversión.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 4 · analizar</span>En una encuesta de ingresos, un validador rechaza todo ingreso mensual superior a 50 millones de pesos, y los rechazos caen casi todos en los hogares más ricos. ¿Qué pasa con la media calculada sobre los datos aceptados?</>), opciones: [{ texto: (<>Es insesgada, sólo menos precisa: los rechazos son MCAR.</>), correcta: false }, { texto: (<>Es insesgada si se condiciona por estrato: rechazos MAR.</>), correcta: false }, { texto: (<>Subestima la media: el rechazo depende del valor (MNAR).</>), correcta: true }, { texto: (<>No cambia: un validador de rango sólo quita imposibles.</>), correcta: false }], justificacion: (<>La probabilidad de que un dato se excluya depende del propio valor excluido: es el mecanismo MNAR de la taxonomía de Rubin, y la media de lo que queda sale sesgada hacia abajo. Por eso, al recoger datos, se rechaza lo imposible (una edad negativa) y lo improbable se marca para revisión; y cada exclusión va a la bitácora.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 4 · aplicar</span>¿Cuál de estos cuerpos de un <code>@field_validator('edad')</code> rechaza una edad negativa y le dice al cliente, en el 422, el valor recibido y el motivo?</>), opciones: [{ texto: (<><code>if v &lt; 0: return abs(v)  # corrige el signo</code></>), correcta: false }, { texto: (<><code>if v &lt; 0: raise ValueError(f"edad=&#123;v&#125; &lt; 0")</code></>), correcta: true }, { texto: (<><code>if v &lt; 0: return None  # queda como NA</code></>), correcta: false }, { texto: (<><code>if v &lt; 0: print(f"edad=&#123;v&#125; &lt; 0"); return v</code></>), correcta: false }], justificacion: (<>Sólo lanzar <code>ValueError</code> rechaza: Pydantic lo convierte en un error del campo y FastAPI lo devuelve en el 422 con el mensaje tal cual («Value error, edad=-5 &lt; 0»). <code>abs()</code> es la mutación silenciosa que la sección llama antipatrón; devolver <code>None</code> convierte un error de captura en un faltante sin rastro; <code>print()</code> deja el aviso en la consola del servidor y el dato inválido entra.</>) }
                 ]} />
             </div>
         );
@@ -6485,85 +6310,10 @@ Región LON: 51.0 admisiones por 100 000 hab.
                                                     </figure>
                                                 </div></>) }]} />
                                         </section>
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>¿Por qué un modelo jerárquico anidado en
-                                                        Pydantic representa computacionalmente mejor a un diseño de parcelas divididas
-                                                        (split-plot) que una tabla plana (`pandas.DataFrame`)?</>), opciones: [{ texto: (<>Porque el DataFrame consume demasiada
-                                                                memoria con pocos datos heterogéneos y exige limpieza con Expresiones
-                                                                Regulares muy estresantes algorítmicamente.</>), correcta: false }, { texto: (<>Porque la topología o
-                                                                grafo de un modelo Pydantic anidado, como abstracción tipada iterativa,
-                                                                aísla correctamente los efectos fijos/aleatorios de una Unidad Primaria
-                                                                frente a sus múltiples observaciones de Nivel 2 repetidas
-                                                                inter-correlacionadas, replicando estructural y algorítmicamente la
-                                                                dependencia muestral biográfica u originaria.</>), correcta: true }, { texto: (<>Porque Pydantic puede leer grandes
-                                                                archivos TSV más rápido aprovechando multihilo implícito internamente
-                                                                basado de forma subyacente en el esquema GIL.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            En investigación (como <em>split-plots</em> forestales u oftalmológicos
-                                                            cruzados binoculares), las observaciones subyacentes no son i.i.d.
-                                                            (independientes e idénticamente distribuidas). Forzarlas en arreglos
-                                                            matriciales planos para apalancarse en diccionarios anchos es replicar el
-                                                            100% de los datos nivel-superior (el contexto) en columnas concatenadas. Un
-                                                            anidado lo aísla (v.gr., objeto Paciente conteniendo lista Ojos) capturando
-                                                            la covarianza del error anidado sin crear pseudorreplicaciones.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>Mencione al menos un riesgo grave a nivel
-                                                        de integridad de datos que se previene validando el "dominio cardinal" (tamaño
-                                                        mínimo de las colecciones subordinadas) a través de topologías Pydantic con
-                                                        restricciones como `min_length` o longitud paramétrica equivalente.</>), opciones: [{ texto: (<>Inhibe por completo que no se
-                                                                documenten todas las variables y dependencias auxiliares en forma
-                                                                textual en GitHub.</>), correcta: false }, { texto: (<>El error implícito subyacente al
-                                                                desarrollo iterativo ciego y lento por parte de analistas sin
-                                                                optimización tipográfica.</>), correcta: false }, { texto: (<>Previene robustamente
-                                                                inflaciones en tasas de errores Tipo II por pérdida drástica de Potencia
-                                                                Estadística Asintótica (Power); al forzar axiomáticamente con
-                                                                `min_length` un nivel requerido y suficiente equitativo de muestreo
-                                                                subordinado ("n"), impidiendo validación de grupos ineficientes que
-                                                                desestabilizarían el cálculo ANOVA resultante.</>), correcta: true }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: C</strong><br /><br />
-                                                            Conforme a los preceptos teóricos de Neyman-Pearson asociados con un estudio
-                                                            de medidas repetidas o anidados longitudinales, un clúster u organización
-                                                            subordinaria deficiente ("menos de 5 observaciones/paciente", por ejemplo),
-                                                            reduce enormemente el <em>Power</em> del test paramétrico derivado
-                                                            (\(1-\beta\)). Codificar estrictamente directrices sobre `min_length` o
-                                                            límites superiores (`max_length`) expulsa la subrrepresentación sin recurrir
-                                                            a complejas heurísticas o inspecciones oculares aletargadas en un Data
-                                                            Frame.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Sustente algebraicamente cómo el
-                                                        aislamiento espacial de los atributos de nivel superior
-                                                        (<code>CentroInvestigacion</code>) frente a sus subniveles
-                                                        (<code>SesionDinamometro</code>) previene la sobrestimación de los grados de
-                                                        libertad en modelos mixtos de varianza, relacionando la topología Pydantic con
-                                                        el ICC (Ecuación 3.2).</>), opciones: [{ texto: (<>El ICC funciona analíticamente de
-                                                                manera exógena solo en estimadores bayesianos asintóticamente normales,
-                                                                por ende no es mitigable.</>), correcta: false }, { texto: (<>Desagregar explícitamente
-                                                                y anidar variables en estructuras en objetos tipo `BaseModel` paralelos
-                                                                reprime la redundancia vectorial de la matriz de contingencia en pandas,
-                                                                interrumpiendo pseudorreplicaciones estocásticas. Así variables globales
-                                                                asumen apropiadamente sus \(n_2\) o "grados de libertad a nivel clúster"
-                                                                al fragmentar matemáticamente la covarianza e aislar analíticamente el
-                                                                ruido local asumiendo en el ratio Intraclase ( \(\sigma_&#123;\text&#123;entre&#125;&#125;^2
-                                                                / (\sigma_&#123;\text&#123;entre&#125;&#125;^2 + \sigma_&#123;\text&#123;dentro&#125;&#125;^2)\) ) de modo
-                                                                exacto.</>), correcta: true }, { texto: (<>El apilamiento temporal simplemente
-                                                                permite eludir el colapso numérico subyacente propio al invocar
-                                                                librerías en NumPy bajo el C-Engine interno al forzar reevaluaciones
-                                                                aritméticas en series simples y unidimensionales.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            Es la advertencia angular en la bioestadística inferencial clásica: evaluar
-                                                            un subnivel paramétricamente con las covariables replicadas y redundantes
-                                                            del estamento macro superior corrompe profundamente falsos positivos (\(p &lt;
-                                                                0.05\)) resultantes al tratar erróneamente todas las observaciones
-                                                                iteradas como absolutamente estocásticas y aleatorias de origen <em>de
-                                                                novo</em> inflando y alterando el peso asignado al tamaño real
-                                                                experimental (\(N\)), fallando al considerar el modelo matemático
-                                                                propuesto donde la matriz global obedece la distribución
-                                                                \(\sigma_&#123;\text&#123;entre&#125;&#125;^2 / (\sigma_&#123;\text&#123;entre&#125;&#125;^2 +
-                                                                \sigma_&#123;\text&#123;dentro&#125;&#125;^2)\).
-                                                        </div></>) }
+                                        <Quiz titulo="Verificación de comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 5 · aplicar</span>Se valida una <code>SesionDinamometro</code> con cuatro ensayos. Los ensayos 0, 1 y 3 son correctos; el ensayo 2 trae <code>caballos_fuerza_hp=-110</code>. ¿Qué ocurre?</>), opciones: [{ texto: (<>Se rechaza toda la sesión, con loc ('ensayos_experimentales', 2, 'caballos_fuerza_hp').</>), correcta: true }, { texto: (<>Se acepta la sesión con tres ensayos: el ensayo 2 se descarta y la sesión sigue adelante.</>), correcta: false }, { texto: (<>Se acepta la sesión completa y el ensayo 2 queda guardado con caballos_fuerza_hp=None.</>), correcta: false }, { texto: (<>Se rechaza sólo el ensayo 2, con loc ('caballos_fuerza_hp',): el error no lleva ruta.</>), correcta: false }], justificacion: (<>Validar el contenedor valida cada elemento de la lista: un solo ensayo inválido hace fallar toda la <code>SesionDinamometro</code>, y el error indica la ruta completa hasta el campo, con el índice del ensayo. Pydantic no descarta elementos ni los rellena. Conservar los ensayos válidos es una decisión que hay que programar y registrar.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 5 · aplicar</span>En un registro hospitalario diario, ¿cuál de estas reglas compara dos campos de la misma observación y por eso se escribe con <code>@model_validator(mode='after')</code> y no con <code>Field</code> ni con un <code>@field_validator</code>?</>), opciones: [{ texto: (<>La edad del paciente está entre 0 y 120 años cumplidos.</>), correcta: false }, { texto: (<>Las admisiones a UCI no superan las admisiones nuevas.</>), correcta: true }, { texto: (<>El código del hospital sigue el patrón HOSP-000.</>), correcta: false }, { texto: (<>El número de camas del hospital es un entero positivo.</>), correcta: false }], justificacion: (<>Las otras tres reglas miran un solo campo y se resuelven con <code>Field</code> (<code>ge</code>, <code>le</code>, <code>gt</code>, <code>pattern</code>) o con un <code>@field_validator</code>. Comparar las admisiones a UCI con las nuevas exige tener los dos campos ya validados, que es lo que <code>@model_validator(mode='after')</code> ofrece a través de <code>self</code>: es el mismo caso que el de la sección 4, «Validar un campo contra otro».</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 5 · analizar</span>Tras validar una <code>SesionDinamometro</code> con sus <code>ensayos_experimentales</code>, ¿qué queda garantizado para el modelo multinivel que se ajustará después?</>), opciones: [{ texto: (<>Que los efectos aleatorios de sesión ya quedan estimados.</>), correcta: false }, { texto: (<>Que el CCI es cero, porque cada nivel se valida por separado.</>), correcta: false }, { texto: (<>Que cada ensayo es válido y sabe a qué sesión pertenece.</>), correcta: true }, { texto: (<>Que los grados de libertad del ANOVA ya salen corregidos.</>), correcta: false }], justificacion: (<>Pydantic garantiza estructura y validez: cada ensayo cumple sus reglas y va dentro de la sesión a la que pertenece. No estima nada: efectos aleatorios, CCI y grados de libertad son propiedades del modelo que se ajuste después (por ejemplo, un modelo mixto), no del esquema. Lo que el anidamiento evita es perder la pertenencia al grupo, que es justo lo que ese modelo necesita.</>) }
                 ]} />
             </div>
         );
@@ -7325,73 +7075,10 @@ def procesar_datos(lista_datos):
                                         </div>
                                         </div>
                                         </section>
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>De acuerdo a la taxonomía definida en este
-                                                        módulo, ¿qué implica exactamente recibir un código HTTP 422 (Unprocessable
-                                                        Entity) a nivel estadístico?</>), opciones: [{ texto: (<>Que el servidor o base de datos
-                                                                colapsaron asintóticamente por falta de memoria (Out Of Memory).</>), correcta: false }, { texto: (<>Que el Payload o archivo JSON
-                                                                entrante estaba estructural y sintácticamente malformado (e.g. faltaban
-                                                                llaves de cierre).</>), correcta: false }, { texto: (<>Que la sintaxis pura del
-                                                                Payload era correcta (ej. un JSON bien formado), pero su contenido
-                                                                empírico/matemático viola de raíz las reglas formales definidas
-                                                                estáticamente por el modelo (ej. enviar un "doce" donde el tipo estricto
-                                                                exige el `int` 12), abortando la transacción por ser tipológicamente
-                                                                inprocesable.</>), correcta: true }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: C</strong><br /><br />
-                                                            El error 422 es la barrera arquitectónica principal generada automáticamente
-                                                            por interacciones entre FastAPI y Pydantic contra los "dirty data".
-                                                            Significa semánticamente que la entidad superó una lectura periférica
-                                                            computacional, pero fracasó conceptualmente en su validación estricta de
-                                                            parámetros al contrastarse con la firma axiomática diseñada por el analista
-                                                            en el <em>backend</em>.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>En términos de trazabilidad, ¿cuáles son
-                                                        los tres atributos o llaves clave que extrae iterativamente un manejador de
-                                                        excepciones JSON ante un <code>ValidationError</code> individual reportado por
-                                                        Pydantic?</>), opciones: [{ texto: (<>La ubicación estructural
-                                                                anidada del defecto explícito (<code>loc</code>), la categoría basal de
-                                                                la violación de tipado o regla (<code>type</code>), y un mensaje o
-                                                                abstracción textual legible para orientación (<code>msg</code>).</>), correcta: true }, { texto: (<>El instante de ingesta del dato
-                                                                (Timestamp), la clave foránea en la DB en curso, y el identificador web
-                                                                o IP del cliente remitente.</>), correcta: false }, { texto: (<>El valor del log-likelihood del
-                                                                observacional al fallar estadísticamente, la magnitud del error tipo I
-                                                                global y el valor residual exacto.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            Al interceptar activamente la excepción mediante su método interno
-                                                            `.errors()`, la librería expone programáticamente estos tres metadatos
-                                                            (`loc`, `type`, `msg`). Esto fracciona el colapso del bloque y habilita
-                                                            formalmente registrar forense y microscópicamente por qué falló exactamente
-                                                            un experimento entre miles, garantizando la construcción empírica de
-                                                            bitácoras precisas y auditables para reconstruir un flujograma STROBE.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Elabore teóricamente una estrategia
-                                                        conceptual funcional en Python para canalizar un flujo masivo en dos sumideros
-                                                        disjuntos ("Datos Analizables" y "Cuarentena") previniendo el aborto subitáneo
-                                                        general del script frente a un fallo axiomático.</>), opciones: [{ texto: (<>Emplear diseño iterativo
-                                                                que abarque instancias Pydantic encapsuladas en un bloque <code>try / except ValidationError</code>: observaciones que logren
-                                                                compilar transitan estables a una pila en memoria "Saneada", mientras
-                                                                aquellas que detonen la excepción son absorbidas por el <code>except</code> y registradas analíticamente junto al cuerpo
-                                                                original causante, sin paralizar y salvando la vectorización del <code>for</code> circundante.</>), correcta: true }, { texto: (<>Implementar lógicas condicionales
-                                                                asimétricas masivas (<code>if type(x) != float</code>) por todo el
-                                                                archivo nativo omitiendo abstracciones; esto incrementa geométricamente
-                                                                la velocidad y no incurre en costos ocultos paramétricos.</>), correcta: false }, { texto: (<>Aprovechar la orden <code>raise TypeError()</code> interrumpiendo bruscamente a propósito
-                                                                (<em>Fail-Fast</em>) forzando que inspectores corrijan externamente la
-                                                                base de datos MySQL original iterativamente en incontables
-                                                                ensayos-errores.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            Es el <em>core</em> funcional mostrado en el código: la interrupción
-                                                            controlada y asimilada (el bloque <code>except ValidationError</code> en
-                                                            medio de la iteración paramétrica). Esto convierte en diseño a un error
-                                                            crítico y paralizante de ejecución (<em>Crash</em> sistémico y detención del
-                                                            Kernel) en un proceso de depuración científica ordenada y silenciosa
-                                                            (<em>Data Quality Gate</em>). Poner "en Cuarentena" un registro viciado
-                                                            salvaguarda productivamente toda la recolección legítima circundante,
-                                                            honrando así la solidez necesaria del software en producción masiva y la
-                                                            calidad inviolable metodológica.
-                                                        </div></>) }
+                                        <Quiz titulo="Verificación de comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 6 · aplicar</span>Un registro llega con <code>edad=150</code> y <code>estrato=9</code>, y el modelo declara <code>edad: int = Field(le=120)</code> y <code>estrato: int = Field(ge=1, le=6)</code>. ¿Qué contiene <code>e.errors()</code>?</>), opciones: [{ texto: (<>Un único diccionario: Pydantic se detiene en el primer fallo.</>), correcta: false }, { texto: (<>Un diccionario con loc ('edad', 'estrato') y un msg común.</>), correcta: false }, { texto: (<>Dos diccionarios, uno por campo, con su loc, type y msg.</>), correcta: true }, { texto: (<>Dos diccionarios sin loc: el campo sólo se nombra en el msg.</>), correcta: false }], justificacion: (<>Pydantic valida todos los campos y acumula los errores: <code>e.errors()</code> trae un diccionario por violación, con <code>loc</code> <code>('edad',)</code> y <code>('estrato',)</code>, <code>type</code> <code>less_than_equal</code> y su <code>msg</code>. Por eso el cliente puede corregirlo todo en un solo intento, y por eso el 422 de FastAPI lista varios elementos en <code>detail</code>.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 6 · aplicar</span><code>POST /encuestas/</code> recibe como cuerpo una <code>EncuestaCompleta</code> que anida <code>encuestado: Encuestado</code>, con <code>edad: int = Field(ge=0)</code>. Llega <code>"encuestado": &#123;"edad": -5, ...&#125;</code>. ¿Qué devuelve FastAPI si no se ha escrito ningún manejador de errores?</>), opciones: [{ texto: (<>400, con el texto del error de Pydantic dentro del campo detail.</>), correcta: false }, { texto: (<>500, porque el endpoint no captura el ValidationError en un try.</>), correcta: false }, { texto: (<>422 con loc ["edad"]: FastAPI omite la ruta de los submodelos.</>), correcta: false }, { texto: (<>422 con loc ["body", "encuestado", "edad"] y greater_than_equal.</>), correcta: true }], justificacion: (<>FastAPI valida el cuerpo contra el modelo antes de ejecutar la función y, si falla, responde 422 por su cuenta: no hace falta <code>try</code>/<code>except</code>. Cada elemento de <code>detail</code> lleva la ruta completa —<code>"body"</code> porque viene del cuerpo, luego el submodelo y el campo—, que es la misma de <code>e.errors()</code> con <code>"body"</code> delante.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 6 · analizar</span>Se validan 1 000 registros en un bucle. ¿Qué manejo del <code>ValidationError</code> permite después dibujar el diagrama de flujo STROBE, con cuántos registros se excluyeron y por qué?</>), opciones: [{ texto: (<>Capturarlo y guardar cada registro, con su e.errors(), en una cuarentena.</>), correcta: true }, { texto: (<>Capturar cualquier Exception con pass, para que el bucle nunca se pare.</>), correcta: false }, { texto: (<>Dejar que suba y detenga el bucle en el primer registro que no valide.</>), correcta: false }, { texto: (<>Capturarlo y sumar 1 a un contador de rechazos, sin guardar el registro.</>), correcta: false }], justificacion: (<>STROBE recomienda informar cuántos registros se excluyeron y por qué. Sólo la cuarentena conserva las dos cosas: el registro y sus errores (<code>loc</code>, <code>type</code>, <code>msg</code>). Un contador da el cuántos pero no el porqué; <code>except Exception: pass</code> es el antipatrón de silenciamiento de esta sección; y detener el bucle deja sin procesar los registros válidos que venían detrás.</>) }
                 ]} />
             </div>
         );
@@ -7467,77 +7154,10 @@ def procesar_datos(lista_datos):
                                         </table>
                                         <p className="text-gray-700 leading-relaxed mb-5">Las anotaciones de NumPy, como <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">npt.NDArray[np.float64]</code>, documentan las funciones de cálculo para mypy, pero no se comprueban al ejecutar y Pydantic no las acepta como campo: en un modelo, un vector de mediciones se declara como <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">list[float]</code> con <code className="bg-gray-100 text-pink-600 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-200">Field</code>.</p>
                                         </section>
-                                        <Quiz titulo="Verificación de Comprensión" preguntas={[
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>Nombre y diferencie brevemente las tres
-                                                        grandes capas conceptuales del pipeline general expuesto en la Síntesis
-                                                        Integradora.</>), opciones: [{ texto: (<>Capas A: Análisis Exploratorio
-                                                                Heurístico; Capa B: Generación de Modelos; Capa C: Exportación HTML de
-                                                                reportes estáticos.</>), correcta: false }, { texto: (<>Capas delimitadas por el tamaño de
-                                                                bytes exclusivamente: Crudos en local, Refinados en Memoria RAM, y
-                                                                Entrenados nativamente en GPU.</>), correcta: false }, { texto: (<>Capa A: Recepción sin
-                                                                Tipado (Ingesta bruta caótica desde sensores o CSV). Capa B: Aduana
-                                                                Transaccional de Tipado usando Pydantic. Capa C: Capa
-                                                                Científica/Estadística Purificada apta para cálculo tensorial,
-                                                                aprendizaje e inserción.</>), correcta: true }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: C</strong><br /><br />
-                                                            La abstracción propuesta en el texto aísla rigurosamente tres momentos
-                                                            críticos con el objetivo final de no trasladar entropía: El dato entra
-                                                            "salvaje" sin garantías computacionales (Capa A), sufre un <em>checkpoint</em> validador matemático imperioso (Capa B) y, una vez
-                                                            instanciado, se deposita pre-limpiado y axiomáticamente certificado (Capa C)
-                                                            hacia componentes analíticos o base de datos sin incurrir en redundancias de <em>try/except</em> diseminadas ineficientemente a lo largo de los cálculos
-                                                            matemáticos.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Medio</span>¿Cuál es el rol o vocación exclusiva
-                                                        conceptual de la instanciación Pydantic (Capa de Data Quality) como filtro
-                                                        estructural antes de proceder a guardar datos al ecosistema SQL?</>), opciones: [{ texto: (<>Disminuir el ancho de banda
-                                                                transaccional utilizando formato columnar serializado internamente por
-                                                                Pydantic hacia PostgreSQL.</>), correcta: false }, { texto: (<>Asegurar como "embudo
-                                                                ineludible" que la escritura en bases de datos asuma estrictamente datos
-                                                                homologados en tipos correctos y matemáticamente racionales, evadiendo
-                                                                fallos transaccionales directos del motor.</>), correcta: true }, { texto: (<>Generar gráficos iterativos
-                                                                incrustados (EDA) antes de autorizar subida al repositorio para una
-                                                                revisión visual final por los data marshals.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: B</strong><br /><br />
-                                                            Al validar centralizadamente y de forma jerárquica en base a un estándar
-                                                            tipificado a nivel semántico de programación, el sistema pre-filtra todos
-                                                            los campos. Al llegar al nivel ORM ("persistencia D") la instrucción SQL no
-                                                            corre riesgos estadísticos silenciosos ya que la "aduana" ya aseguró que un
-                                                            ID es <em>strictly UUID</em>, que "salario" jamás será negativo,
-                                                            imposibilitando inofensiva o agresivamente que basura alcance repositorios
-                                                            que confían ciegamente en el backend.
-                                                        </div></>) },
-                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Nivel Avanzado</span>Construya lógicamente una argumentación de
-                                                        fondo que corrobore empíricamente cómo esta infraestructura (Pydantic,
-                                                        validadores) optimiza asintóticamente el Power Numérico general (\(1-\beta\)) al
-                                                        aplicarse en estudios estadísticos contemporáneos de Machine Learning.</>), opciones: [{ texto: (<>Limitar los inputs a
-                                                                regímenes racionales de cardinalidad anula los falsos
-                                                                "nulos-promediados" silentes o edades inverosímiles como covariables
-                                                                (reduciendo el ruido de los residuos). Al disminuir fuertemente el monto
-                                                                global del error aleatorio artificial inducido
-                                                                \(\sigma^2_&#123;\text&#123;dentro&#125;&#125;\) la varianza inexplicable general cae,
-                                                                engrosando y aumentando el divisor F-Estadístico y la potencia de hallar
-                                                                el efecto medible y real de los tratamientos (\(1-\beta\)), logrando así
-                                                                una alta sensitividad sin requerir gastar en sobre-muestreo.</>), correcta: true }, { texto: (<>Se logra incrementar la potencia
-                                                                únicamente por el incremento numérico nominal en \(n\) ya que Pydantic
-                                                                automáticamente interpola datos nuevos creando series sintéticas
-                                                                gigantescas (generación bayesiana simulada de la data).</>), correcta: false }, { texto: (<>El esfuerzo se diluye puramente en
-                                                                mantenimiento computacional, limitándose al beneficio del factor C-Speed
-                                                                originario implementado en Python 3.11 sin afección teórica alguna al
-                                                                poder inferencial de los estudios propuestos.</>), correcta: false }], justificacion: (<><div
-                                                            className="mt-3 text-sm text-indigo-900 border-t border-indigo-200 pt-3 leading-relaxed">
-                                                            <strong>Respuesta Correcta: A</strong><br /><br />
-                                                            Es la cumbre argumental científica: "calidad es poder". El esfuerzo de
-                                                            programación robusta funciona como el máximo instrumento analítico para
-                                                            erradicar sesgos sistémicos derivados de los "Dirty Data". Una distribución
-                                                            con falsos ceros no imputados es asintóticamente leptocúrtica y
-                                                            distorsionada; depurarlos no es solo "buenas prácticas de software" sino una
-                                                            obligación matemática primaria a fin de que la Varianza observada (\(s^2\))
-                                                            represente una estimación fiel del fenómeno físico \(\sigma^2\) y no una
-                                                            medida opaca enmascarada del "ruido de manipulación en sistemas de
-                                                            información".
-                                                        </div></>) }
+                                        <Quiz titulo="Verificación de comprensión" preguntas={[
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 7 · aplicar</span>Para la presión sistólica en mmHg, ¿qué declaración rechaza un <code>300</code> y además deja el rango y las unidades a la vista en <code>/docs</code>?</>), opciones: [{ texto: (<><code>presion: float = 120.0  # mmHg, rango válido 60-250</code></>), correcta: false }, { texto: (<><code>presion: float = Field(ge=60, le=250, description="mmHg")</code></>), correcta: true }, { texto: (<><code>presion: float = Field(description="mmHg, de 60 a 250")</code></>), correcta: false }, { texto: (<><code>presion: float = Field(gt=0, description="mmHg, 60-250")</code></>), correcta: false }], justificacion: (<>Sólo <code>ge</code> y <code>le</code> rechazan el 300, y además salen en el esquema como <code>minimum</code> y <code>maximum</code>, así que <code>/docs</code> muestra el rango junto a la <code>description</code> con las unidades. Un comentario no se ejecuta ni llega a <code>/docs</code>; una <code>description</code> que menciona el rango no lo hace cumplir; <code>gt=0</code> acepta el 300.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 7 · analizar</span>La práctica pide un validador que rechace observaciones fuera de rango y justifique el rechazo. Para la edad en una encuesta de hogares, ¿qué regla está mejor justificada?</>), opciones: [{ texto: (<>Rechazar menores de 0 y mayores de 120, y marcar para revisión las de más de 100.</>), correcta: true }, { texto: (<>Rechazar toda edad a más de 3 desviaciones estándar de la media del lote recibido.</>), correcta: false }, { texto: (<>Rechazar las mayores de 90 años: son muy pocas y desplazan la media de la muestra.</>), correcta: false }, { texto: (<>Aceptarlas todas y dejar que un estimador robusto absorba después los valores raros.</>), correcta: false }], justificacion: (<>En una encuesta, el rechazo se justifica con lo imposible —fuera de [0, 120] no hay personas—; lo raro pero posible se marca para revisión. La regla de 3 desviaciones calculada sobre el lote que llega cambia con cada lote (el mismo dato se acepta un día y se rechaza otro) y, como la de 90 años, expulsa observaciones reales: el sesgo MNAR de la sección 4. Aceptarlo todo deja pasar el −5 contra el que la regresión no protesta.</>) },
+                    { pregunta: (<><span className="inline-block mr-2 px-2 py-0.5 rounded text-[0.65rem] uppercase tracking-wider font-bold bg-primary/10 text-primary">Sección 7 · aplicar</span>La tabla de síntesis asocia el modo estricto con <code>ConfigDict(strict=True)</code>. En un modelo con esa configuración y <code>edad: int</code> llega <code>edad="30"</code>, como texto. ¿Qué ocurre?</>), opciones: [{ texto: (<>Se acepta como 30: strict sólo impide pasar decimales a enteros.</>), correcta: false }, { texto: (<>Se acepta como el texto "30", sin convertir, con un aviso en consola.</>), correcta: false }, { texto: (<>Se acepta como 30 y la coerción queda anotada en el propio modelo.</>), correcta: false }, { texto: (<>Se rechaza con int_type: en modo estricto el texto no se convierte.</>), correcta: true }], justificacion: (<>En modo laxo, el de defecto, <code>"30"</code> se convertiría en 30. Con <code>strict=True</code> Pydantic exige el tipo exacto y devuelve <code>int_type</code>: es lo que la tabla de síntesis llama rechazar la conversión automática de tipos. Es preferible que el cliente mande un número a adivinar qué quiso decir. Pydantic no deja constancia de las conversiones que hace.</>) }
                 ]} />
             </div>
         );
