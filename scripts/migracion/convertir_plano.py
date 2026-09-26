@@ -439,8 +439,15 @@ def convertir_cuestionarios(cuerpo, marcas, avisos, prosa):
     guion de barajado, que es el que quita la negrita de la respuesta correcta
     al cargar la página. Sin él —y no se lleva, porque LP-CORE no tiene dónde
     ponerlo— la opción correcta saldría en negrita desde el principio, con la
-    solución a la vista. `Quiz` hace lo mismo que hacía el guion y además
-    califica.
+    solución a la vista. `Quiz` califica, pero **no baraja**: las opciones
+    salen en el orden en que están escritas en el heredado.
+
+    Esa diferencia costó cara. Mientras el guion barajaba, daba igual que el
+    heredado pusiera la clave siempre en el mismo sitio o la escribiera más
+    larga que las demás; sin él, las 18 preguntas del módulo 7 se aprobaban
+    marcando la opción más larga. Por eso el reparto de las claves es ahora
+    responsabilidad de quien escribe el heredado, y por eso este guion avisa
+    cuando un cuestionario se puede aprobar sin leerlo.
     """
     while True:
         m = re.search(r'<div\b[^>]*class="[^"]*\bbg-indigo-50\b[^"]*"[^>]*>', cuerpo)
@@ -456,7 +463,7 @@ def convertir_cuestionarios(cuerpo, marcas, avisos, prosa):
         titulo = (" ".join(texto_plano(titulo.group(1)).split()) if titulo
                   else "Verificación de comprensión")
 
-        preguntas = []
+        preguntas, claves = [], []
         for c in re.finditer(r'<div\b[^>]*class="[^"]*\bspace-y-2\b[^"]*\bmb-4\b[^"]*"[^>]*>',
                              bloque):
             fin_c = fin_elemento(bloque, c.start(), "div")
@@ -481,9 +488,11 @@ def convertir_cuestionarios(cuerpo, marcas, avisos, prosa):
             # «Nivel Avanzado»— va delante del enunciado. `Quiz` no tiene
             # campo para ella, y perderla sería perder lo único que le dice
             # al estudiante cuánto debería costarle la pregunta, así que
-            # entra en el enunciado con su etiqueta.
+            # entra en el enunciado con su etiqueta. El módulo 7 la cambió por
+            # la sección de la que sale la pregunta y el nivel que pide
+            # —«Sección 4 · aplicar»—, que es la marca que usa el módulo 6.
             marca = re.search(r'<span\b[^>]*class="[^"]*\binline-block\b[^"]*"[^>]*>'
-                              r'\s*(Nivel[^<]*)</span>', trozo, re.S)
+                              r'\s*((?:Nivel|Sección)[^<]*)</span>', trozo, re.S)
             rotulo = insignia(marca.group(1)) if marca else ""
 
             campos = ["pregunta: (<>" + rotulo
@@ -494,6 +503,20 @@ def convertir_cuestionarios(cuerpo, marcas, avisos, prosa):
             if just:
                 campos.append("justificacion: (<>" + prosa(just.group(1)).strip() + "</>)")
             preguntas.append("{ " + ", ".join(campos) + " }")
+            largos = [len(" ".join(texto_plano(o).split())) for o, _ in opciones]
+            claves.append((next((i for i, (_, ok) in enumerate(opciones) if ok), -1),
+                           largos))
+
+        # `Quiz` no baraja: lo que el heredado escribe es lo que ve el
+        # estudiante. Dos formas de aprobar sin leer que ya pasaron.
+        if len(claves) >= 2:
+            if len({i for i, _ in claves}) == 1:
+                avisos.append(f"«{titulo}»: la respuesta correcta está siempre en la "
+                              f"opción {chr(97 + claves[0][0])}; Quiz no baraja")
+            if all(i >= 0 and ls[i] == max(ls) and ls.count(max(ls)) == 1
+                   for i, ls in claves):
+                avisos.append(f"«{titulo}»: la respuesta correcta es siempre la opción "
+                              f"más larga; se aprueba sin leer")
 
         if not preguntas:
             avisos.append("un bloque de «Verificación de Comprensión» se quedó sin "
