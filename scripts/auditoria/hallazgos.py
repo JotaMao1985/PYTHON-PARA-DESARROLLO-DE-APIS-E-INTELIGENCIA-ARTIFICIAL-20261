@@ -70,6 +70,11 @@ def p_continuaciones():
                 d.add(n.id)
             elif isinstance(n, ast.arg):
                 d.add(n.arg)
+            elif isinstance(n, ast.ExceptHandler) and n.name:
+                # `except ValidationError as e:` define `e`, pero en el árbol es
+                # una cadena, no un ast.Name: sin esto, un bloque con su propio
+                # `except … as e` «continuaba» a cualquier bloque anterior con una `e`.
+                d.add(n.name)
             elif isinstance(n, (ast.Import, ast.ImportFrom)):
                 for a in n.names:
                     d.add(a.asname or a.name.split(".")[0])
