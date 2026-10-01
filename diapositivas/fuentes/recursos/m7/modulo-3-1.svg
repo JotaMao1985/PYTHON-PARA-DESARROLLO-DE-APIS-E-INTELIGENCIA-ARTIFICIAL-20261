@@ -1,0 +1,324 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 920" font-family="&#x27;Segoe UI&#x27;, &#x27;Helvetica Neue&#x27;, sans-serif">
+                                                        <defs>
+
+                                                            <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                                <stop offset="0%" style="stop-color:#07080f"/>
+                                                                <stop offset="50%" style="stop-color:#0d1017"/>
+                                                                <stop offset="100%" style="stop-color:#07080f"/>
+                                                            </linearGradient>
+
+
+                                                            <linearGradient id="macroGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                                <stop offset="0%" style="stop-color:#f59e0b"/>
+                                                                <stop offset="100%" style="stop-color:#fbbf24"/>
+                                                            </linearGradient>
+                                                            <linearGradient id="microGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                                <stop offset="0%" style="stop-color:#06b6d4"/>
+                                                                <stop offset="100%" style="stop-color:#22d3ee"/>
+                                                            </linearGradient>
+                                                            <linearGradient id="statGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                                <stop offset="0%" style="stop-color:#8b5cf6"/>
+                                                                <stop offset="100%" style="stop-color:#a78bfa"/>
+                                                            </linearGradient>
+
+
+                                                            <linearGradient id="macroFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                                <stop offset="0%" style="stop-color:#1c1708;stop-opacity:0.9"/>
+                                                                <stop offset="100%" style="stop-color:#12100a;stop-opacity:0.95"/>
+                                                            </linearGradient>
+                                                            <linearGradient id="microFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                                <stop offset="0%" style="stop-color:#081518;stop-opacity:0.95"/>
+                                                                <stop offset="100%" style="stop-color:#060f12;stop-opacity:0.95"/>
+                                                            </linearGradient>
+
+
+                                                            <linearGradient id="connGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                                                <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:0.6"/>
+                                                                <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.6"/>
+                                                            </linearGradient>
+
+
+                                                            <filter id="glowAmber" x="-10%" y="-10%" width="120%" height="120%">
+                                                                <feGaussianBlur stdDeviation="6" result="blur"/>
+                                                                <feFlood flood-color="#f59e0b" flood-opacity="0.15"/>
+                                                                <feComposite in2="blur" operator="in"/>
+                                                                <feMerge>
+                                                                    <feMergeNode/>
+                                                                    <feMergeNode in="SourceGraphic"/>
+                                                                </feMerge>
+                                                            </filter>
+                                                            <filter id="glowCyan" x="-10%" y="-10%" width="120%" height="120%">
+                                                                <feGaussianBlur stdDeviation="4" result="blur"/>
+                                                                <feFlood flood-color="#06b6d4" flood-opacity="0.2"/>
+                                                                <feComposite in2="blur" operator="in"/>
+                                                                <feMerge>
+                                                                    <feMergeNode/>
+                                                                    <feMergeNode in="SourceGraphic"/>
+                                                                </feMerge>
+                                                            </filter>
+                                                            <filter id="glowViolet" x="-10%" y="-10%" width="120%" height="120%">
+                                                                <feGaussianBlur stdDeviation="4" result="blur"/>
+                                                                <feFlood flood-color="#8b5cf6" flood-opacity="0.2"/>
+                                                                <feComposite in2="blur" operator="in"/>
+                                                                <feMerge>
+                                                                    <feMergeNode/>
+                                                                    <feMergeNode in="SourceGraphic"/>
+                                                                </feMerge>
+                                                            </filter>
+
+
+                                                            <marker id="arrowCyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#22d3ee" opacity="0.7"/>
+                                                            </marker>
+
+
+                                                            <pattern id="nestPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                                                <circle cx="10" cy="10" r="0.6" fill="#f59e0b" opacity="0.07"/>
+                                                            </pattern>
+                                                        </defs>
+
+
+                                                        <rect width="960" height="920" fill="url(#bgGrad)" rx="16"/>
+
+
+                                                        <text x="480" y="38" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="400" letter-spacing="4" opacity="0.35">PYDANTIC ·
+                                                            SPLIT-PLOT</text>
+                                                        <text x="480" y="64" text-anchor="middle" fill="#ffffff" font-size="19" font-weight="700" letter-spacing="0.5">Visualización de la Topología de
+                                                            Anidamiento</text>
+
+
+                                                        <g filter="url(#glowAmber)">
+                                                            <rect x="40" y="90" width="880" height="710" rx="16" fill="url(#macroFill)" stroke="#f59e0b" stroke-width="2" opacity="0.95"/>
+                                                        </g>
+
+                                                        <rect x="40" y="90" width="880" height="710" rx="16" fill="url(#nestPattern)"/>
+
+
+                                                        <rect x="40" y="90" width="880" height="52" rx="16" fill="#f59e0b" opacity="0.08"/>
+                                                        <rect x="56" y="90" width="848" height="52" rx="0" fill="transparent"/>
+
+                                                        <rect x="40" y="126" width="880" height="16" fill="#f59e0b" opacity="0.08"/>
+                                                        <rect x="40" y="126" width="880" height="16" fill="url(#macroFill)"/>
+
+
+                                                        <rect x="60" y="100" width="100" height="24" rx="12" fill="#f59e0b" opacity="0.2"/>
+                                                        <text x="110" y="116" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="700" letter-spacing="1.5">NIVEL 2</text>
+
+
+                                                        <rect x="172" y="100" width="260" height="24" rx="12" fill="#f59e0b" opacity="0.1" stroke="#f59e0b" stroke-width="0.6"/>
+                                                        <text x="302" y="116" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="600">CLASE CONTENEDORA (MACRO)</text>
+
+
+                                                        <text x="480" y="165" text-anchor="middle" fill="#fbbf24" font-size="22" font-weight="700" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace">SesionDinamometro</text>
+
+
+                                                        <rect x="80" y="190" width="800" height="165" rx="10" fill="#0d0b06" stroke="#f59e0b" stroke-width="0.8" opacity="0.6"/>
+
+
+                                                        <rect x="80" y="190" width="800" height="30" rx="10" fill="#f59e0b" opacity="0.06"/>
+                                                        <rect x="80" y="210" width="800" height="10" fill="#f59e0b" opacity="0.06"/>
+                                                        <rect x="80" y="210" width="800" height="10" fill="#0d0b06" opacity="0.6"/>
+                                                        <text x="105" y="210" fill="#fbbf24" font-size="11" font-weight="600" letter-spacing="1">ATRIBUTOS</text>
+
+
+
+                                                        <circle cx="105" cy="244" r="3" fill="#f59e0b" opacity="0.5"/>
+                                                        <text x="120" y="248" fill="#fbbf24" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" font-weight="600">id_sesion_laboratorio</text>
+                                                        <text x="350" y="248" fill="#ffffff" font-size="12.5" opacity="0.4">:</text>
+                                                        <text x="365" y="248" fill="#22d3ee" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.7">str</text>
+
+
+                                                        <circle cx="105" cy="272" r="3" fill="#f59e0b" opacity="0.5"/>
+                                                        <text x="120" y="276" fill="#fbbf24" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" font-weight="600">marca_tiempo_prueba</text>
+                                                        <text x="350" y="276" fill="#ffffff" font-size="12.5" opacity="0.4">:</text>
+                                                        <text x="365" y="276" fill="#22d3ee" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.7">datetime</text>
+
+
+                                                        <circle cx="105" cy="300" r="3" fill="#f59e0b" opacity="0.5"/>
+                                                        <text x="120" y="304" fill="#fbbf24" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" font-weight="600">investigador_responsable</text>
+                                                        <text x="350" y="304" fill="#ffffff" font-size="12.5" opacity="0.4">:</text>
+                                                        <text x="365" y="304" fill="#22d3ee" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.7">str</text>
+
+
+                                                        <rect x="90" y="318" width="770" height="28" rx="6" fill="#f59e0b" opacity="0.06"/>
+                                                        <circle cx="105" cy="332" r="3" fill="#f59e0b" opacity="0.8"/>
+                                                        <text x="120" y="336" fill="#fbbf24" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" font-weight="700">ensayos_experimentales</text>
+                                                        <text x="350" y="336" fill="#ffffff" font-size="12.5" opacity="0.4">:</text>
+                                                        <text x="365" y="336" fill="#22d3ee" font-size="12.5" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" font-weight="600">List[EnsayoVehiculo]</text>
+
+
+                                                        <rect x="570" y="322" width="95" height="22" rx="11" fill="#f59e0b" opacity="0.15" stroke="#f59e0b" stroke-width="1"/>
+                                                        <text x="617" y="337" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="700" letter-spacing="1">◄ ANIDADO</text>
+
+
+
+                                                        <line x1="480" y1="355" x2="480" y2="400" stroke="url(#connGrad)" stroke-width="2.5"/>
+
+
+                                                        <line x1="175" y1="400" x2="785" y2="400" stroke="#06b6d4" stroke-width="1.5" opacity="0.4"/>
+
+
+                                                        <line x1="175" y1="400" x2="175" y2="440" stroke="#06b6d4" stroke-width="1.5" opacity="0.5" marker-end="url(#arrowCyan)"/>
+                                                        <line x1="480" y1="400" x2="480" y2="440" stroke="#06b6d4" stroke-width="1.5" opacity="0.5" marker-end="url(#arrowCyan)"/>
+                                                        <line x1="785" y1="400" x2="785" y2="440" stroke="#06b6d4" stroke-width="1.5" opacity="0.5" marker-end="url(#arrowCyan)"/>
+
+
+                                                        <circle cx="175" cy="400" r="4" fill="#06b6d4" opacity="0.6"/>
+                                                        <circle cx="480" cy="400" r="4" fill="#06b6d4" opacity="0.6"/>
+                                                        <circle cx="785" cy="400" r="4" fill="#06b6d4" opacity="0.6"/>
+
+
+
+
+                                                        <g filter="url(#glowCyan)">
+                                                            <rect x="60" y="450" width="250" height="265" rx="12" fill="url(#microFill)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
+                                                        </g>
+
+                                                        <rect x="60" y="450" width="250" height="80" rx="12" fill="#06b6d4" opacity="0.06"/>
+                                                        <rect x="60" y="518" width="250" height="12" fill="url(#microFill)"/>
+
+                                                        <rect x="76" y="460" width="82" height="20" rx="10" fill="#06b6d4" opacity="0.2"/>
+                                                        <text x="117" y="474" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="700" letter-spacing="1">NIVEL 1</text>
+
+                                                        <text x="185" y="492" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.45">CLASE DEPENDIENTE (MICRO)</text>
+
+                                                        <text x="185" y="518" text-anchor="middle" fill="#22d3ee" font-size="15" font-weight="700" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace">EnsayoVehiculo[0]</text>
+
+                                                        <line x1="80" y1="535" x2="290" y2="535" stroke="#06b6d4" stroke-width="0.6" opacity="0.3"/>
+
+                                                        <circle cx="88" cy="548" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="100" y="552" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">id_vehiculo</text>
+                                                        <text x="300" y="552" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: str</text>
+
+                                                        <circle cx="88" cy="570" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="100" y="574" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">millas_por_galon_mpg</text>
+                                                        <text x="300" y="574" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: float</text>
+
+                                                        <circle cx="88" cy="592" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="100" y="596" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">cilindros_motor_cyl</text>
+                                                        <text x="300" y="596" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: int</text>
+
+                                                        <circle cx="88" cy="614" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="100" y="618" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">caballos_fuerza_hp</text>
+                                                        <text x="300" y="618" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: int</text>
+
+                                                        <circle cx="88" cy="636" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="100" y="640" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">peso_wt</text>
+                                                        <text x="300" y="640" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: float</text>
+
+
+                                                        <rect x="245" y="670" width="50" height="20" rx="10" fill="#06b6d4" opacity="0.1" stroke="#06b6d4" stroke-width="0.6"/>
+                                                        <text x="270" y="684" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600">[0]</text>
+
+
+                                                        <g filter="url(#glowCyan)">
+                                                            <rect x="355" y="450" width="250" height="265" rx="12" fill="url(#microFill)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
+                                                        </g>
+
+                                                        <rect x="355" y="450" width="250" height="80" rx="12" fill="#06b6d4" opacity="0.06"/>
+                                                        <rect x="355" y="518" width="250" height="12" fill="url(#microFill)"/>
+                                                        <rect x="371" y="460" width="82" height="20" rx="10" fill="#06b6d4" opacity="0.2"/>
+                                                        <text x="412" y="474" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="700" letter-spacing="1">NIVEL 1</text>
+                                                        <text x="480" y="492" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.45">CLASE DEPENDIENTE (MICRO)</text>
+                                                        <text x="480" y="518" text-anchor="middle" fill="#22d3ee" font-size="15" font-weight="700" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace">EnsayoVehiculo[1]</text>
+                                                        <line x1="375" y1="535" x2="585" y2="535" stroke="#06b6d4" stroke-width="0.6" opacity="0.3"/>
+                                                        <circle cx="383" cy="548" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="395" y="552" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">id_vehiculo</text>
+                                                        <text x="595" y="552" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: str</text>
+
+                                                        <circle cx="383" cy="570" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="395" y="574" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">millas_por_galon_mpg</text>
+                                                        <text x="595" y="574" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: float</text>
+
+                                                        <circle cx="383" cy="592" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="395" y="596" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">cilindros_motor_cyl</text>
+                                                        <text x="595" y="596" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: int</text>
+
+                                                        <circle cx="383" cy="614" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="395" y="618" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">caballos_fuerza_hp</text>
+                                                        <text x="595" y="618" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: int</text>
+
+                                                        <circle cx="383" cy="636" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="395" y="640" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">peso_wt</text>
+                                                        <text x="595" y="640" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: float</text>
+
+                                                        <rect x="540" y="670" width="50" height="20" rx="10" fill="#06b6d4" opacity="0.1" stroke="#06b6d4" stroke-width="0.6"/>
+                                                        <text x="565" y="684" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600">[1]</text>
+
+
+                                                        <g filter="url(#glowCyan)">
+                                                            <rect x="650" y="450" width="250" height="265" rx="12" fill="url(#microFill)" stroke="#06b6d4" stroke-width="1.5" opacity="0.95"/>
+                                                        </g>
+
+                                                        <rect x="650" y="450" width="250" height="80" rx="12" fill="#06b6d4" opacity="0.06"/>
+                                                        <rect x="650" y="518" width="250" height="12" fill="url(#microFill)"/>
+                                                        <rect x="666" y="460" width="82" height="20" rx="10" fill="#06b6d4" opacity="0.2"/>
+                                                        <text x="707" y="474" text-anchor="middle" fill="#22d3ee" font-size="9" font-weight="700" letter-spacing="1">NIVEL 1</text>
+                                                        <text x="775" y="492" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.45">CLASE DEPENDIENTE (MICRO)</text>
+                                                        <text x="775" y="518" text-anchor="middle" fill="#22d3ee" font-size="15" font-weight="700" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace">EnsayoVehiculo[2]</text>
+                                                        <line x1="670" y1="535" x2="880" y2="535" stroke="#06b6d4" stroke-width="0.6" opacity="0.3"/>
+                                                        <circle cx="678" cy="548" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="690" y="552" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">id_vehiculo</text>
+                                                        <text x="890" y="552" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: str</text>
+
+                                                        <circle cx="678" cy="570" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="690" y="574" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">millas_por_galon_mpg</text>
+                                                        <text x="890" y="574" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: float</text>
+
+                                                        <circle cx="678" cy="592" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="690" y="596" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">cilindros_motor_cyl</text>
+                                                        <text x="890" y="596" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: int</text>
+
+                                                        <circle cx="678" cy="614" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="690" y="618" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">caballos_fuerza_hp</text>
+                                                        <text x="890" y="618" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: int</text>
+
+                                                        <circle cx="678" cy="636" r="2.5" fill="#06b6d4" opacity="0.5"/>
+                                                        <text x="690" y="640" fill="#22d3ee" font-size="11" font-family="&#x27;Fira Code&#x27;, &#x27;Courier New&#x27;, monospace" opacity="0.8">peso_wt</text>
+                                                        <text x="890" y="640" text-anchor="end" fill="#ffffff" font-size="10" opacity="0.3">: float</text>
+
+                                                        <rect x="835" y="670" width="50" height="20" rx="10" fill="#06b6d4" opacity="0.1" stroke="#06b6d4" stroke-width="0.6"/>
+                                                        <text x="860" y="684" text-anchor="middle" fill="#22d3ee" font-size="10" font-weight="600">[2]</text>
+
+
+                                                        <g filter="url(#glowViolet)">
+                                                            <rect x="60" y="740" width="840" height="48" rx="10" fill="#120e1e" stroke="#8b5cf6" stroke-width="1.2" opacity="0.9"/>
+                                                        </g>
+
+                                                        <rect x="60" y="740" width="5" height="48" rx="2" fill="url(#statGrad)"/>
+
+                                                        <text x="86" y="770" font-size="18" opacity="0.6">📊</text>
+
+                                                        <text x="112" y="758" fill="#a78bfa" font-size="10" font-weight="700" letter-spacing="1.5">EQUIVALENTE ESTADÍSTICO</text>
+
+                                                        <text x="112" y="778" fill="#ffffff" font-size="12" opacity="0.6">
+                                                            <tspan font-weight="600" fill="#fbbf24">Nivel 2</tspan> = Parcela Entera
+                                                            (Whole-Plot)
+                                                            <tspan dx="30" font-weight="600" fill="#22d3ee">Nivel 1</tspan> =
+                                                            Sub-Parcelas (Sub-Plots) anidadas en Parcela Entera
+                                                        </text>
+
+
+                                                        <rect x="40" y="830" width="880" height="60" rx="10" fill="#ffffff" opacity="0.02"/>
+
+                                                        <text x="480" y="852" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="600" letter-spacing="3" opacity="0.3">LEYENDA</text>
+
+
+                                                        <rect x="140" y="866" width="14" height="14" rx="4" fill="none" stroke="#f59e0b" stroke-width="1.5" opacity="0.7"/>
+                                                        <text x="162" y="878" fill="#ffffff" font-size="11" opacity="0.5">Nivel 2 —
+                                                            Clase contenedora (macro)</text>
+
+
+                                                        <rect x="460" y="866" width="14" height="14" rx="4" fill="none" stroke="#06b6d4" stroke-width="1.5" opacity="0.7"/>
+                                                        <text x="482" y="878" fill="#ffffff" font-size="11" opacity="0.5">Nivel 1 —
+                                                            Clase dependiente (micro)</text>
+
+
+                                                        <line x1="740" y1="873" x2="770" y2="873" stroke="url(#connGrad)" stroke-width="2"/>
+                                                        <text x="778" y="878" fill="#ffffff" font-size="11" opacity="0.5">Relación de
+                                                            anidamiento</text>
+
+
+                                                        <text x="480" y="912" text-anchor="middle" fill="#ffffff" font-size="10" opacity="0.18" letter-spacing="1">Pydantic · Split-Plot — Topología de
+                                                            Anidamiento de Modelos</text>
+                                                    </svg>

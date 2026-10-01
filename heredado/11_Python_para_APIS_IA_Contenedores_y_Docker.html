@@ -612,7 +612,7 @@
         }
 
         .stack-layer.hyp {
-            background: #ED1E79;
+            background: #C2185B;
             color: white;
         }
 
@@ -627,13 +627,36 @@
         }
 
         .stack-layer.cont {
-            background: #00B4A6;
+            background: #007A70;
             color: white;
         }
 
         .stack-layer.app {
             background: #fff;
             color: var(--ink);
+        }
+
+        /* Instancias en paralelo (dos VM, dos contenedores) sobre la misma base */
+        /* Tablas anchas: se desplazan por dentro en pantallas estrechas */
+        .tabla-desplazable {
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .stack-row {
+            display: flex;
+        }
+
+        .stack-col {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .stack-col + .stack-col {
+            border-left: 1px solid var(--line);
         }
 
         /* Layer cake (Dockerfile -> imagen) */
@@ -671,16 +694,15 @@
         }
 
         .layer-cake .layer:nth-child(5) {
-            background: #ED1E79;
+            background: #C2185B;
         }
 
         .layer-cake .layer:nth-child(6) {
-            background: #ff5fa0;
+            background: #475569;
         }
 
         .layer-cake .layer:nth-child(7) {
-            background: #FDB913;
-            color: #1e1b1b;
+            background: #007A70;
         }
 
         .layer-cake .layer .layer-tag {
@@ -865,10 +887,10 @@
   <h2 id="reparto-titulo-11" style="margin:0 0 .2rem 0;font-size:1rem;font-weight:800;color:#001A4D;">Cómo se usa este material en la sesión</h2>
   <p style="margin:0 0 .9rem 0;font-size:.86rem;color:#475569;">Semana 11 · sesión de 4 h · 60 min de exposición y 180 min de práctica guiada.</p>
   <div style="display:flex;flex-wrap:wrap;gap:1.4rem;">
-    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Del entorno virtual al contenedor</li><li style="margin:0 0 .3rem 0;">Contenedores frente a máquinas virtuales</li><li style="margin:0 0 .3rem 0;">Estructura del Dockerfile y la imagen base python:3.11.9-slim-bookworm</li><li style="margin:0 0 .3rem 0;">Construcción multietapa</li></ul></div>
-    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Escribir el Dockerfile del proyecto</li><li style="margin:0 0 .3rem 0;">Construir la imagen y ejecutarla</li><li style="margin:0 0 .3rem 0;">Comprobar que la API se comporta igual dentro del contenedor</li></ul></div>
-    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Optimización del tamaño de imagen y del caché de capas</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas</li></ul></div>
-  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Aquí se cierra el adelanto que abrió la semana 1: allí bastaba con saber cuándo elegir un contenedor, y ésta es la semana en la que se construye. La imagen que salga de aquí es la que se despliega en la 12.</p>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#3D008D;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Exposición</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">60 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Del entorno virtual al contenedor (lección 3)</li><li style="margin:0 0 .3rem 0;">Contenedores frente a máquinas virtuales (lección 4)</li><li style="margin:0 0 .3rem 0;">Estructura del Dockerfile (lección 6) y la imagen base python:3.11.9-slim-bookworm (lección 7)</li><li style="margin:0 0 .3rem 0;">Construcción multietapa (lección 9)</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#ED1E79;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Práctica guiada</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">180 min</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Escribir el Dockerfile del proyecto (guiado en la lección 10)</li><li style="margin:0 0 .3rem 0;">Construir la imagen y ejecutarla (lecciones 10 y 11)</li><li style="margin:0 0 .3rem 0;">Comprobar que la API se comporta igual dentro del contenedor (apartado 10.11)</li></ul></div>
+    <div style="flex:1 1 220px;min-width:0;"><div style="font-weight:700;color:#0E7490;font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;margin-bottom:.15rem;">Material de consulta</div><div style="font-size:1.35rem;font-weight:800;color:#001A4D;line-height:1.1;margin-bottom:.4rem;">fuera de sesión</div><ul style="margin:0;padding-left:1.1rem;font-size:.86rem;color:#334155;line-height:1.45;"><li style="margin:0 0 .3rem 0;">Contexto de construcción y <code>.dockerignore</code> (lección 8); optimización del tamaño de la imagen y de la caché de capas (apartados 6.4 y 9.4)</li><li style="margin:0 0 .3rem 0;">Bibliografía y fuentes consultadas (lección 12)</li></ul></div>
+  </div><p style="margin:.9rem 0 0 0;padding-top:.7rem;border-top:1px solid #E2E8F0;font-size:.83rem;color:#475569;line-height:1.5;">Aquí se cierra el adelanto que abrió la semana 1: allí bastaba con saber cuándo elegir un contenedor, y esta es la semana en la que se construye. El <code>Dockerfile</code> que salga de aquí es el que se despliega en la 12.</p>
 </section>
 
 
@@ -887,39 +909,44 @@
                                 nube, el computador de un compañero— sin que el ajuste de un modelo de regresión
                                 devuelva resultados distintos por culpa de una versión diferente de NumPy?</em></p>
 
-                        <p>La respuesta moderna es la <strong>contenerización</strong>. Un contenedor empaqueta
-                            el código, sus dependencias, el intérprete de Python y hasta la configuración del
-                            sistema operativo en un único artefacto inmutable. El estándar de facto para
-                            construir y ejecutar contenedores se llama <strong>Docker</strong>.</p>
+                        <p>La respuesta moderna es la <strong>contenerización</strong>: el código, sus dependencias,
+   el intérprete de Python y hasta la configuración del sistema operativo se empaquetan en
+   una <strong>imagen</strong> —un artefacto inmutable— y esa imagen se ejecuta en un
+   <strong>contenedor</strong>. El estándar de facto para construir imágenes y ejecutar
+   contenedores se llama <strong>Docker</strong>. La lección 3 precisa la diferencia entre
+   ambos términos.</p>
 
                         <div class="box info">
                             <span class="label">Objetivo de aprendizaje</span>
-                            Al finalizar esta unidad, el estudiante distingue contenedores de máquinas
-                            virtuales, redacta un <code>Dockerfile</code> sintáctica y semánticamente correcto
-                            sobre la imagen base <code>python:3.11.9-slim-bookworm</code>, controla qué archivos
-                            se envían al motor de Docker mediante el contexto de construcción, aplica
-                            <em>multi-stage builds</em> para reducir el tamaño y la superficie de ataque de la
-                            imagen final, y empaqueta una API FastAPI que sirva un modelo estadístico sencillo.
+                            Al finalizar esta unidad, el estudiante:
+                            <ul>
+                                <li>distingue contenedores de máquinas virtuales;</li>
+                                <li>redacta un <code>Dockerfile</code> sintáctica y semánticamente correcto
+                                    sobre la imagen base <code>python:3.11.9-slim-bookworm</code>;</li>
+                                <li>controla qué archivos se envían al motor de Docker mediante el contexto
+                                    de construcción y el archivo <code>.dockerignore</code>;</li>
+                                <li>aplica <em>multi-stage builds</em> para reducir el tamaño y la superficie
+                                    de ataque de la imagen final;</li>
+                                <li>empaqueta una API FastAPI que sirve un modelo estadístico sencillo y
+                                    comprueba que se comporta igual dentro y fuera del contenedor.</li>
+                            </ul>
                         </div>
 
-                        <h3>1.1 ¿Qué se construye en esta semana?</h3>
+                        <h3>2.1 ¿Qué se construye en esta semana?</h3>
                         <p>El hilo conductor consiste en empaquetar una API FastAPI llamada
-                            <code>regresion-api</code> que expone un único endpoint:
-                            <code>POST /predicciones</code>, el cual recibe un valor de la variable explicativa
+                            <code>regresion-api</code> que expone dos endpoints: <code>GET /health</code>, un sondeo de vida, y <code>POST /predicciones</code>, el cual recibe un valor de la variable explicativa
                             <code>x</code> y devuelve la predicción <span class="small">ŷ</span> de un modelo
                             de regresión lineal previamente entrenado. La unidad culmina con una imagen Docker
                             construida en dos etapas, ejecutándose como un usuario no privilegiado y de tamaño
                             reducido.
                         </p>
 
-                        <h3>1.2 Prerrequisitos</h3>
+                        <h3>2.2 Prerrequisitos</h3>
                         <ul>
-                            <li>Python 3.11.9, entornos virtuales (<code>venv</code>) y
-                                <code>requirements.txt</code> (Semana I–II).
+                            <li>Python 3.11.9, entornos virtuales (<code>venv</code>) y <code>requirements.txt</code> (semanas 1 y 2).
                             </li>
-                            <li>FastAPI, Pydantic, ASGI, <code>Depends</code>, <code>python-dotenv</code>
-                                (Semana III).</li>
-                            <li>Pruebas con pytest y reproducibilidad sin Docker (Semana IV).</li>
+                            <li>Pydantic (semanas 4 y 7), ASGI (semana 5), FastAPI (semana 6), <code>Depends</code> y configuración con variables de entorno (semana 8).</li>
+                            <li>Pruebas con pytest y reproducibilidad sin Docker (semana 10).</li>
                             <li>Línea de comandos básica (<code>cd</code>, <code>ls</code>, ejecución de
                                 scripts) y un editor de texto.</li>
                         </ul>
@@ -929,9 +956,10 @@
                             Para reproducir los ejemplos se recomienda instalar <strong>Docker Desktop</strong>
                             (Windows, macOS) o <strong>Docker Engine</strong> (distribuciones de Linux). La
                             verificación se hace ejecutando en una terminal:
-                            <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">docker --version</span>
-<span class="sh-out">Docker version 24.x.y, build ...</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">docker run --rm hello-world</span></code></pre>
+                            <pre><code>docker --version
+# Docker version 29.x.y, build ...
+docker run --rm hello-world
+# Hello from Docker!</code></pre>
                             La segunda orden descarga una imagen mínima y la ejecuta. Si imprime el mensaje
                             <em>Hello from Docker!</em>, el entorno está listo.
                         </div>
@@ -954,15 +982,15 @@
                                 y qué versiones se necesitan. Permite reconstruir el entorno virtual con
                                 <code>pip install -r requirements.txt</code>.
                             </li>
-                            <li><strong>Fijación del intérprete y de las semillas aleatorias.</strong>
-                                Garantiza que dos ejecuciones del mismo análisis produzcan los mismos números
-                                en la misma máquina.</li>
+                            <li><strong>Fijación de las semillas aleatorias</strong> (y declaración de la versión del
+   intérprete, por ejemplo en un archivo <code>.python-version</code>).
+   Garantiza que dos ejecuciones del mismo análisis produzcan los mismos números
+   en la misma máquina.</li>
                         </ol>
 
-                        <p>Estas tres herramientas resuelven la reproducibilidad <em>dentro</em> de una misma
-                            máquina, pero dejan abiertas tres preguntas críticas:</p>
+                        <p>Estas herramientas resuelven la reproducibilidad <em>dentro</em> de una misma máquina, pero dejan abiertas tres preguntas críticas:</p>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Pregunta</th>
@@ -972,8 +1000,9 @@
                             <tbody>
                                 <tr>
                                     <td>¿Qué versión del intérprete de Python se está usando?</td>
-                                    <td>No. <code>venv</code> hereda el Python del sistema; cada máquina puede
-                                        tener uno distinto.</td>
+                                    <td>Solo en parte. Un archivo <code>.python-version</code> o una prueba pueden <em>declarar</em>
+   y <em>verificar</em> la versión, pero <code>venv</code> usa el Python que ya tenga instalado cada
+   máquina: no lo provee.</td>
                                 </tr>
                                 <tr>
                                     <td>¿Qué bibliotecas del sistema operativo están disponibles
@@ -989,8 +1018,12 @@
                             </tbody>
                         </table>
 
+                        <p>Un contenedor responde las dos primeras preguntas: la imagen incluye el intérprete y las
+                            bibliotecas del sistema. La tercera —el orden y la configuración con que arrancan varios
+                            procesos— corresponde a un orquestador como Docker Compose, que esta unidad solo menciona.</p>
+
                         <p>El contenedor extiende la idea del entorno virtual al sistema operativo completo: en
-                            lugar de aislar sólo paquetes Python, aísla también la versión del intérprete, las
+                            lugar de aislar solo paquetes Python, aísla también la versión del intérprete, las
                             bibliotecas del sistema y los procesos. La analogía más útil para el lector
                             estadístico es la siguiente:</p>
 
@@ -1002,10 +1035,9 @@
                             completa, capa por capa.
                         </div>
 
-                        <p>El paralelismo es estricto y conviene tenerlo presente durante el resto de la
-                            unidad:</p>
+                        <p>El paralelismo es útil, aunque no exacto (un entorno virtual se puede modificar; una imagen, no), y conviene tenerlo presente durante el resto de la unidad:</p>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Concepto en el entorno virtual</th>
@@ -1040,8 +1072,7 @@
                             <span class="label">Idea central</span>
                             Una <strong>imagen</strong> es una plantilla inmutable. Un <strong>contenedor</strong>
                             es una instancia en ejecución de esa plantilla. La relación es la misma que existe
-                            entre una <em>clase</em> y una <em>instancia</em> en Python, o entre un molde
-                            estadístico y una realización muestral.
+                            entre una <em>clase</em> y una <em>instancia</em> en Python, o entre una distribución y una muestra extraída de ella.
                         </div>
                     </section>
 
@@ -1053,36 +1084,48 @@
                             ejecutar varias aplicaciones aisladas en un mismo computador físico. La diferencia
                             está en <em>dónde</em> se traza la línea de aislamiento.</p>
 
-                        <h3>3.1 Pila de cada tecnología</h3>
+                        <h3>4.1 Pila de cada tecnología</h3>
 
                         <div class="stack-grid">
-                            <div class="stack" role="img" aria-label="Pila de máquinas virtuales">
+                            <div class="stack" role="img" aria-label="Pila de máquinas virtuales, de abajo arriba: hardware físico, sistema operativo anfitrión, hipervisor y, en paralelo, dos máquinas virtuales, cada una con su sistema operativo huésped y su aplicación">
                                 <div class="stack-title">Máquinas virtuales</div>
-                                <div class="stack-layer hw">Hardware físico</div>
-                                <div class="stack-layer os">Sistema operativo anfitrión</div>
+                                <div class="stack-row">
+                                    <div class="stack-col">
+                                        <div class="stack-layer app">App 1 + dependencias</div>
+                                        <div class="stack-layer vm">SO huésped 1 (kernel completo)</div>
+                                    </div>
+                                    <div class="stack-col">
+                                        <div class="stack-layer app">App 2 + dependencias</div>
+                                        <div class="stack-layer vm">SO huésped 2 (kernel completo)</div>
+                                    </div>
+                                </div>
                                 <div class="stack-layer hyp">Hipervisor (VMware, KVM, Hyper-V)</div>
-                                <div class="stack-layer vm">SO huésped 1 (kernel completo)</div>
-                                <div class="stack-layer app">App 1 + dependencias</div>
-                                <div class="stack-layer vm">SO huésped 2 (kernel completo)</div>
-                                <div class="stack-layer app">App 2 + dependencias</div>
+                                <div class="stack-layer os">Sistema operativo anfitrión</div>
+                                <div class="stack-layer hw">Hardware físico</div>
                             </div>
 
-                            <div class="stack" role="img" aria-label="Pila de contenedores">
+                            <div class="stack" role="img" aria-label="Pila de contenedores, de abajo arriba: hardware físico, sistema operativo anfitrión con un único kernel, motor de contenedores y, en paralelo, dos contenedores, cada uno con sus binarios, sus bibliotecas y su aplicación">
                                 <div class="stack-title">Contenedores</div>
-                                <div class="stack-layer hw">Hardware físico</div>
-                                <div class="stack-layer os">Sistema operativo anfitrión (kernel único)</div>
+                                <div class="stack-row">
+                                    <div class="stack-col">
+                                        <div class="stack-layer app">App 1</div>
+                                        <div class="stack-layer cont">Contenedor 1 (binarios + libs)</div>
+                                    </div>
+                                    <div class="stack-col">
+                                        <div class="stack-layer app">App 2</div>
+                                        <div class="stack-layer cont">Contenedor 2 (binarios + libs)</div>
+                                    </div>
+                                </div>
                                 <div class="stack-layer eng">Motor de contenedores (Docker Engine)</div>
-                                <div class="stack-layer cont">Contenedor 1 (binarios + libs)</div>
-                                <div class="stack-layer app">App 1</div>
-                                <div class="stack-layer cont">Contenedor 2 (binarios + libs)</div>
-                                <div class="stack-layer app">App 2</div>
+                                <div class="stack-layer os">Sistema operativo anfitrión (kernel único)</div>
+                                <div class="stack-layer hw">Hardware físico</div>
                             </div>
                         </div>
-                        <p class="small">Figura 3.1 — La VM virtualiza el hardware y carga un sistema operativo
+                        <p class="text-xs text-gray-500 italic text-center mt-2 mb-4">Figura 4.1 — La VM virtualiza el hardware y carga un sistema operativo
                             completo por instancia; el contenedor virtualiza el espacio de usuario y comparte el
                             kernel del anfitrión.</p>
 
-                        <h3>3.2 Mecanismo técnico del aislamiento</h3>
+                        <h3>4.2 Mecanismo técnico del aislamiento</h3>
 
                         <p>El kernel de Linux ofrece dos primitivas que Docker explota directamente:</p>
 
@@ -1093,9 +1136,10 @@
                                 usuario). Cada contenedor obtiene su propia vista y no puede observar los
                                 procesos de otro contenedor o del anfitrión.</li>
                             <li><strong>Control groups (<code>cgroups</code>).</strong> Limitan los recursos
-                                que un grupo de procesos puede consumir: CPU, memoria, ancho de banda de disco
-                                y de red. Sin ellos, un único contenedor podría agotar la memoria del
-                                servidor.</li>
+   que un grupo de procesos puede consumir: CPU, memoria, E/S de disco y número de
+   procesos. Docker no aplica límites por defecto: hay que pedirlos (<code>--memory</code>,
+   <code>--cpus</code>). Sin ellos, un único contenedor podría agotar la memoria del
+   servidor.</li>
                         </ul>
 
                         <div class="box info">
@@ -1103,13 +1147,17 @@
                             Los namespaces y los cgroups son construcciones del kernel de Linux. En macOS y
                             Windows, Docker Desktop ejecuta una pequeña máquina virtual Linux por debajo, y los
                             contenedores corren <em>dentro</em> de esa VM. El estudiante percibe la misma
-                            interfaz, pero conviene saber que en esos sistemas hay un nivel adicional de
-                            indirección.
+   interfaz, pero conviene saber que en esos sistemas hay un nivel adicional de
+   indirección. Además, un Mac con procesador Apple (<code>arm64</code>) construye imágenes
+   <code>arm64</code>, mientras que la mayoría de los servidores en la nube son
+   <code>amd64</code>: una imagen sirve para una arquitectura. Si se construye en un Mac con procesador Apple una
+   imagen que se va a ejecutar en un servidor x86, se indica con
+   <code>docker build --platform linux/amd64 …</code>.
                         </div>
 
-                        <h3>3.3 Comparativa cuantitativa</h3>
+                        <h3>4.3 Comparativa</h3>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Dimensión</th>
@@ -1121,7 +1169,7 @@
                                 <tr>
                                     <td>Tiempo de arranque</td>
                                     <td>Decenas de segundos a minutos (arranca un kernel).</td>
-                                    <td>Milisegundos a segundos (sólo se inician procesos).</td>
+                                    <td>Milisegundos a segundos (solo se inician procesos).</td>
                                 </tr>
                                 <tr>
                                     <td>Tamaño en disco</td>
@@ -1131,7 +1179,7 @@
                                 <tr>
                                     <td>Sobrecarga de memoria</td>
                                     <td>Cada VM reserva su RAM dedicada.</td>
-                                    <td>Sólo la memoria de los procesos del contenedor.</td>
+                                    <td>Solo la memoria de los procesos del contenedor.</td>
                                 </tr>
                                 <tr>
                                     <td>Aislamiento</td>
@@ -1142,7 +1190,7 @@
                                 <tr>
                                     <td>Portabilidad</td>
                                     <td>Atada al hipervisor.</td>
-                                    <td>Universal: cualquier máquina con un motor compatible ejecuta la imagen.</td>
+                                    <td>Portable entre máquinas con Linux (o con una VM Linux) de la misma arquitectura; entre arquitecturas (<code>amd64</code>, <code>arm64</code>) hay que construir la imagen para cada una.</td>
                                 </tr>
                                 <tr>
                                     <td>Caso de uso típico</td>
@@ -1160,15 +1208,15 @@
                                     crossorigin="anonymous"></script>
                                 <div id="aba9c127-cba6-4be3-8dcf-6041ed3b3852" class="plotly-graph-div"
                                     style="height:400px; width:100%;"></div>
-                                <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("aba9c127-cba6-4be3-8dcf-6041ed3b3852")) { Plotly.newPlot("aba9c127-cba6-4be3-8dcf-6041ed3b3852", [{ "hovertemplate": "<b>VM</b><br>%{y}: %{x}<extra></extra>", "marker": { "color": "#FDB913", "line": { "color": "#001A4D", "width": 1 } }, "name": "Máquina virtual", "orientation": "h", "text": ["~45 s", "~4 GB", "~1 GB"], "textposition": "outside", "x": [45, 4000, 1024], "y": ["Tiempo de arranque (s)", "Tamaño en disco (MB)", "Sobrecarga de RAM (MB)"], "type": "bar" }, { "hovertemplate": "<b>Contenedor</b><br>%{y}: %{x}<extra></extra>", "marker": { "color": "#ED1E79", "line": { "color": "#3D008D", "width": 1 } }, "name": "Contenedor", "orientation": "h", "text": ["~0.8 s", "~180 MB", "~64 MB"], "textposition": "outside", "x": [0.8, 180, 64], "y": ["Tiempo de arranque (s)", "Tamaño en disco (MB)", "Sobrecarga de RAM (MB)"], "type": "bar" }], { "template": { "data": { "bar": [{ "error_x": { "color": "#2a3f5f" }, "error_y": { "color": "#2a3f5f" }, "marker": { "line": { "color": "#E5ECF6", "width": 0.5 }, "pattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 } }, "type": "bar" }], "scatter": [{ "fillpattern": { "fillmode": "overlay", "size": 10, "solidity": 0.2 }, "type": "scatter" }] }, "layout": { "autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": { "color": "#2a3f5f" }, "hovermode": "closest", "hoverlabel": { "align": "left" }, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "title": { "x": 0.05 } } }, "title": { "font": { "size": 15, "color": "#1E293B" }, "text": "<b>Máquinas virtuales vs contenedores · órdenes de magnitud</b>", "x": 0.0, "xanchor": "left" }, "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 180, "r": 60, "t": 80, "b": 60 }, "legend": { "font": { "size": 11 }, "orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1.0 }, "xaxis": { "title": { "font": { "size": 11, "color": "#1E293B" }, "text": "Magnitud (escala logarítmica)" }, "type": "log", "gridcolor": "#E2E8F0", "zerolinecolor": "#E2E8F0", "showline": true, "linecolor": "#E2E8F0", "range": [-0.3, 4.0] }, "yaxis": { "tickfont": { "size": 11.5 }, "autorange": "reversed", "gridcolor": "rgba(0,0,0,0)" }, "paper_bgcolor": "white", "plot_bgcolor": "white", "height": 400, "showlegend": true, "barmode": "group", "bargap": 0.25, "bargroupgap": 0.05 }, { "displayModeBar": false, "responsive": true }) };            </script>
+                                <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("aba9c127-cba6-4be3-8dcf-6041ed3b3852")) { Plotly.newPlot("aba9c127-cba6-4be3-8dcf-6041ed3b3852", [{"type": "bar", "orientation": "h", "x": [80, 16, 17], "y": ["Arranque<br><span style='font-size:10px;color:#64748B'>≈ 45 s → ≈ 0,5 s</span>", "Disco<br><span style='font-size:10px;color:#64748B'>≈ 4 GB → ≈ 260 MB</span>", "RAM en reposo<br><span style='font-size:10px;color:#64748B'>≈ 1 GB → ≈ 60 MB</span>"], "text": ["≈ 80×", "≈ 16×", "≈ 17×"], "textposition": "outside", "cliponaxis": false, "textfont": {"color": "#1E293B", "size": 12}, "marker": {"color": "#007A70", "line": {"color": "#001A4D", "width": 1}}, "hovertemplate": "<b>%{y}</b><br>El contenedor mejora ≈ %{x}× a la VM<extra></extra>"}], {"template": {"data": {"bar": [{"error_x": {"color": "#2a3f5f"}, "error_y": {"color": "#2a3f5f"}, "marker": {"line": {"color": "#E5ECF6", "width": 0.5}, "pattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}}, "type": "bar"}], "scatter": [{"fillpattern": {"fillmode": "overlay", "size": 10, "solidity": 0.2}, "type": "scatter"}]}, "layout": {"autotypenumbers": "strict", "colorway": ["#636efa", "#EF553B", "#00cc96", "#ab63fa", "#FFA15A", "#19d3f3", "#FF6692", "#B6E880", "#FF97FF", "#FECB52"], "font": {"color": "#2a3f5f"}, "hovermode": "closest", "hoverlabel": {"align": "left"}, "paper_bgcolor": "white", "plot_bgcolor": "#E5ECF6", "title": {"x": 0.05}}}, "title": {"font": {"size": 14, "color": "#1E293B"}, "text": "<b>El contenedor arranca ~80× más<br>rápido y usa ~16× menos disco<br>y memoria que una VM</b>", "x": 0.0, "xanchor": "left"}, "font": {"family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B"}, "margin": {"l": 10, "r": 70, "t": 110, "b": 60}, "xaxis": {"title": {"font": {"size": 11, "color": "#1E293B"}, "text": "Veces que el contenedor mejora a la VM (valores ilustrativos)"}, "gridcolor": "#E2E8F0", "zerolinecolor": "#E2E8F0", "showline": true, "linecolor": "#E2E8F0", "range": [0, 100], "dtick": 50}, "yaxis": {"tickfont": {"size": 11.5}, "autorange": "reversed", "gridcolor": "rgba(0,0,0,0)", "automargin": true}, "paper_bgcolor": "white", "plot_bgcolor": "white", "height": 400, "showlegend": false, "dragmode": false}, { "displayModeBar": false, "responsive": true }) };            </script>
                             </div>
                         </div>
-                        <p class="chart-caption">Figura 3.2 — Valores típicos en escala logarítmica. Las
-                            diferencias entre VMs y contenedores no son cuantitativas sino de orden de
-                            magnitud: ~50× más rápido en arranque, ~20× menos disco y ~16× menos memoria
-                            para un escenario equivalente de servir una API.</p>
+                        <p class="chart-caption">Figura 4.2 — Valores ilustrativos. Contenedor: medido con la imagen del
+                            ejemplo integrador (Apple Silicon, Docker 29): responde en ≈ 0,5 s, ocupa ≈ 260 MB y usa
+                            ≈ 60 MB de RAM. Máquina virtual: valores típicos de una VM con Linux (≈ 45 s, ≈ 4 GB de
+                            disco, ≈ 1 GB de RAM). Las diferencias no son de matiz sino de orden de magnitud.</p>
 
-                        <h3>3.4 ¿Cuándo elegir una u otra?</h3>
+                        <h3>4.4 ¿Cuándo elegir una u otra?</h3>
                         <p>La elección depende del objetivo:</p>
                         <ul>
                             <li>Si se necesita ejecutar Windows dentro de Linux o aislar máquinas de
@@ -1198,19 +1246,21 @@
                             (Docker Hub) y una sintaxis declarativa (<code>Dockerfile</code>) que cualquier
                             desarrollador puede leer en pocos minutos.</p>
 
-                        <h3>4.1 Cinco ventajas para el ciclo de desarrollo de una API estadística</h3>
+                        <h3>5.1 Cinco ventajas para el ciclo de desarrollo de una API estadística</h3>
 
                         <ol>
                             <li><strong>Reproducibilidad fuerte.</strong> La frase <em>"funciona en mi
-                                    máquina"</em> deja de ser una excusa: la imagen es <em>la</em> máquina. Un
-                                análisis empaquetado en una imagen Docker en 2026 puede reejecutarse en 2030 y
-                                producir los mismos números, suponiendo que la imagen base permanezca
-                                accesible.</li>
+                                    máquina"</em> deja de ser una excusa: la imagen es <em>la</em> máquina. Una imagen
+   construida en 2026 y conservada (en un registro, o con <code>docker save</code>) puede volver a
+   ejecutarse en 2030 con exactamente el mismo software. <em>Reconstruirla</em> desde el
+   <code>Dockerfile</code> es otra cosa: exige que sigan disponibles la imagen base y los paquetes
+   de PyPI, y en otra CPU o arquitectura las últimas cifras decimales de un cálculo en coma
+   flotante pueden diferir.</li>
                             <li><strong>Paridad entre desarrollo, pruebas y producción.</strong> La misma
                                 imagen que se ejecuta en un equipo de desarrollo opera sin cambios en el
                                 servidor de integración continua y en el servidor de producción. Las
-                                diferencias de configuración entre entornos —una de las primeras causas de
-                                incidentes— desaparecen casi por completo.</li>
+   diferencias de configuración entre entornos —una causa frecuente de fallos al
+   desplegar— se reducen mucho.</li>
                             <li><strong>Despliegue como composición de piezas.</strong> Los orquestadores
                                 modernos (Docker Compose, Kubernetes) toman varias imágenes —una API, una base
                                 de datos PostgreSQL, una caché Redis— y las orquestan como un sistema
@@ -1224,20 +1274,19 @@
                                 y servirse a través de FastAPI, todo en una sola unidad versionada.</li>
                         </ol>
 
-                        <h3>4.2 Encaje en el ciclo de desarrollo moderno</h3>
+                        <h3>5.2 Encaje en el ciclo de desarrollo moderno</h3>
 
                         <p>Un flujo típico para una API estadística contenerizada sigue estos pasos:</p>
 
                         <ol>
                             <li>Se escribe el código de la API junto con un <code>Dockerfile</code>.</li>
-                            <li>Cada <code>git push</code> dispara una integración continua que ejecuta
-                                <code>docker build</code> y luego corre la suite de pytest <em>dentro</em> de
-                                un contenedor construido a partir de la imagen.
+                            <li>Cada <code>git push</code> dispara una integración continua (un servidor que ejecuta las pruebas de forma
+   automática en cada cambio) que ejecuta la suite de pytest sobre el código y, si pasa, ejecuta <code>docker build</code>.
                             </li>
                             <li>Si las pruebas pasan, la imagen se etiqueta con el hash del commit y se
                                 publica a un registro privado.</li>
-                            <li>El servidor de producción descarga la imagen y la ejecuta. Lo que se prueba es
-                                idéntico, byte a byte, a lo que se despliega.</li>
+                            <li>El servidor de producción descarga la imagen y la ejecuta: es, byte a byte, la imagen
+   que se construyó en el flujo.</li>
                         </ol>
 
                         <div class="box info">
@@ -1245,11 +1294,12 @@
                             El capítulo previo defendió la reproducibilidad <em>sin Docker</em> como una
                             higiene mínima: fijar versiones, semillas y configuración. Docker no reemplaza
                             esa higiene; la <em>amplifica</em>. Una imagen construida sobre dependencias
-                            flotantes seguirá siendo no determinista. Toda buena práctica de la Semana 10
-                            sigue vigente; lo que cambia es la unidad de empaquetamiento.
+                            flotantes seguirá siendo no determinista. Toda buena práctica de la semana 10
+   sigue vigente; lo que Docker añade es lo que aquella no podía fijar —el sistema operativo
+   y sus bibliotecas, por ejemplo BLAS— y la unidad de empaquetamiento.
                         </div>
 
-                        <h3>4.3 ¿Qué Docker no resuelve?</h3>
+                        <h3>5.3 ¿Qué Docker no resuelve?</h3>
                         <ul>
                             <li>No corrige errores de modelado: una regresión mal especificada empaquetada en
                                 una imagen sigue mal especificada.</li>
@@ -1258,8 +1308,15 @@
                             <li>No reemplaza la documentación: el <code>Dockerfile</code> describe cómo se
                                 construye la imagen; el README sigue siendo necesario para describir
                                 <em>qué</em> hace la API.
-                            </li>
-                        </ul>
+   </li>
+   <li>No congela lo que no se fijó: las dependencias transitivas sin fijar, las etiquetas
+       mutables y un <code>apt-get</code> sin versiones producen imágenes distintas en cada
+       construcción.</li>
+   </ul>
+
+   <p><strong>¿Por qué ahora?</strong> Porque ya existe algo que empaquetar: una API con
+   validación, persistencia y pruebas (semanas 4 a 10), y la semana 12 la despliega en
+   internet.</p>
                     </section>
 
                     <!-- ===================== 5. ESTRUCTURA DE UN DOCKERFILE ===================== -->
@@ -1267,12 +1324,14 @@
                         <h2>5. Estructura de un Dockerfile</h2>
 
                         <p>Un <code>Dockerfile</code> es un archivo de texto plano, sin extensión, que
-                            contiene una secuencia ordenada de <strong>instrucciones</strong>. Cada
-                            instrucción produce una <strong>capa</strong> de la imagen final. La metáfora útil
+                            contiene una secuencia ordenada de <strong>instrucciones</strong>. Las
+   instrucciones que cambian el contenido de la imagen (<code>FROM</code>, <code>COPY</code>,
+   <code>RUN</code>) producen cada una una <strong>capa</strong>; las demás solo registran
+   metadatos (se precisa en 6.3). La metáfora útil
                             es la de un manual de cocina: cada paso recibe el resultado del anterior y agrega
                             algo encima.</p>
 
-                        <h3>5.1 Anatomía mínima</h3>
+                        <h3>6.1 Anatomía mínima</h3>
 
                         <pre><code><span class="cm"># Dockerfile — versión didáctica mínima</span>
 <span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span>
@@ -1291,9 +1350,9 @@
                         <p>Cada palabra mayúscula es una instrucción reconocida por el motor de Docker.
                             A continuación se describen las más importantes.</p>
 
-                        <h3>5.2 Instrucciones esenciales</h3>
+                        <h3>6.2 Instrucciones esenciales</h3>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Instrucción</th>
@@ -1304,8 +1363,8 @@
                             <tbody>
                                 <tr>
                                     <td><code>FROM</code></td>
-                                    <td>Declara la imagen base de la que se parte. Debe ser la primera
-                                        instrucción no comentada.</td>
+                                    <td>Declara la imagen base de la que se parte. Es la primera instrucción
+   (solo <code>ARG</code> puede precederla).</td>
                                     <td><code>FROM python:3.11.9-slim-bookworm</code></td>
                                 </tr>
                                 <tr>
@@ -1316,8 +1375,7 @@
                                 </tr>
                                 <tr>
                                     <td><code>COPY</code></td>
-                                    <td>Copia archivos desde el contexto de construcción (sección 7) a la
-                                        imagen.</td>
+                                    <td>Copia archivos desde el contexto de construcción (lección 8) a la imagen.</td>
                                     <td><code>COPY requirements.txt .</code></td>
                                 </tr>
                                 <tr>
@@ -1352,36 +1410,57 @@
                                     <td>Define el comando por defecto del contenedor. Suele escribirse en
                                         <em>forma exec</em> (lista JSON).
                                     </td>
-                                    <td><code>CMD ["uvicorn", "app.main:app"]</code></td>
-                                </tr>
+                                    <td><code>CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0"]</code></td>
+   </tr>
                                 <tr>
                                     <td><code>ENTRYPOINT</code></td>
                                     <td>Fija el ejecutable del contenedor. Combinado con <code>CMD</code>
                                         permite pasar argumentos por línea de comandos.</td>
                                     <td><code>ENTRYPOINT ["uvicorn"]</code></td>
-                                </tr>
+   </tr>
+   <tr>
+       <td><code>HEALTHCHECK</code></td>
+       <td>Define un sondeo que Docker repite cada cierto tiempo para marcar el contenedor
+           como <code>healthy</code> o <code>unhealthy</code>. No lo reinicia por sí solo.</td>
+       <td><code>HEALTHCHECK CMD python -c "..."</code></td>
+   </tr>
                             </tbody>
                         </table>
 
-                        <h3>5.3 La imagen como una pila de capas</h3>
+                        <div class="box tip">
+                            <span class="label">Del contenedor al navegador: <code>EXPOSE</code>, <code>-p</code> y <code>--host</code></span>
+                            <code>EXPOSE 8000</code> solo <em>documenta</em> el puerto: no lo abre. Para llegar a la
+                            API desde el anfitrión hay que <strong>publicarlo</strong> al lanzar el contenedor, con
+                            <code>docker run -p 8000:8000</code> (formato <code>ANFITRIÓN:CONTENEDOR</code>). Y dentro
+                            del contenedor, Uvicorn debe escuchar en todas las interfaces: por defecto lo hace solo en
+                            <code>127.0.0.1</code>, es decir, únicamente para sí mismo, y el tráfico que entra por
+                            <code>-p</code> no llega hasta ahí. De ahí el <code>--host 0.0.0.0</code> del
+                            <code>CMD</code>.
+                        </div>
 
-                        <p>Cada instrucción <code>FROM</code>, <code>COPY</code>, <code>RUN</code>,
-                            <code>ENV</code>, <code>WORKDIR</code> y <code>USER</code> añade una capa nueva e
-                            inmutable. La imagen final es la superposición de todas ellas. Una imagen
-                            construida con el Dockerfile anterior tiene una estructura conceptual como esta:
+                        <h3>6.3 La imagen como una pila de capas</h3>
+
+                        <p>Las instrucciones <code>FROM</code>, <code>COPY</code>, <code>RUN</code> y <code>ADD</code>
+   (y <code>WORKDIR</code>, cuando crea el directorio) añaden una capa nueva e inmutable con
+   contenido; <code>ENV</code>, <code>USER</code>, <code>EXPOSE</code> y <code>CMD</code> solo
+   anotan metadatos. La imagen final es la superposición de las capas, y al ejecutarla Docker
+   añade encima una capa delgada de lectura y escritura propia del contenedor. Una imagen
+   construida con el Dockerfile anterior tiene una estructura conceptual como esta:
                         </p>
 
-                        <div class="layer-cake" role="img" aria-label="Pila de capas de una imagen Docker">
+                        <div class="layer-cake" role="img" aria-label="Pila de capas, de abajo arriba: imagen base, WORKDIR, COPY de requirements.txt, RUN pip install, COPY del código, metadatos de EXPOSE y CMD y, encima, la capa de lectura y escritura del contenedor">
                             <div class="layer"><span class="layer-tag">CAPA 1</span> Imagen base
                                 <code>python:3.11.9-slim-bookworm</code></div>
                             <div class="layer"><span class="layer-tag">CAPA 2</span> WORKDIR /app</div>
                             <div class="layer"><span class="layer-tag">CAPA 3</span> COPY requirements.txt .</div>
-                            <div class="layer"><span class="layer-tag">CAPA 4</span> RUN pip install -r requirements.txt
+                            <div class="layer"><span class="layer-tag">CAPA 4</span> RUN pip install --no-cache-dir -r requirements.txt
                             </div>
                             <div class="layer"><span class="layer-tag">CAPA 5</span> COPY app/ ./app/</div>
-                            <div class="layer"><span class="layer-tag">CAPA 6</span> EXPOSE 8000 (metadatos)</div>
-                            <div class="layer"><span class="layer-tag">CAPA 7</span> CMD [...] (metadatos)</div>
+                            <div class="layer"><span class="layer-tag">METADATOS</span> EXPOSE 8000 · CMD [...] (no añaden contenido)</div>
+                            <div class="layer"><span class="layer-tag">CONTENEDOR</span> Capa de lectura y escritura: nace al ejecutar y se descarta con <code>docker rm</code></div>
                         </div>
+                        <p class="text-xs text-gray-500 italic text-center mt-2 mb-4">Figura 6.1 — Las capas de la imagen son de solo lectura y se comparten
+                            entre imágenes; el contenedor añade encima la suya, que es donde escribe.</p>
 
                         <div class="box info">
                             <span class="label">Conexión con <code>requirements.txt</code></span>
@@ -1393,7 +1472,7 @@
                             <code>Dockerfile</code> opera sobre la pila completa.
                         </div>
 
-                        <h3>5.4 Caché de capas: una optimización crítica</h3>
+                        <h3>6.4 Caché de capas: una optimización crítica</h3>
 
                         <p>Docker calcula un <em>hash</em> de las entradas de cada instrucción: el contenido
                             de los archivos copiados, los argumentos de <code>RUN</code> y el estado de la
@@ -1411,20 +1490,21 @@
                             <li>Las dependencias cambian semanas o meses; el código cambia varias veces al
                                 día.</li>
                             <li>Si el código cambia pero <code>requirements.txt</code> no, las capas 3 y 4 se
-                                toman del caché y la reconstrucción tarda segundos en lugar de minutos.</li>
+   toman de la caché y la reconstrucción tarda segundos en lugar de minutos.</li>
                         </ul>
 
-                        <pre><code><span class="cm"># Anti-patrón: una sola instrucción COPY rompe la caché en cada cambio</span>
-<span class="df-instr">COPY</span> <span class="df-path">. .</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install -r requirements.txt</span>
+                        <pre><code># Fragmento de un Dockerfile (sin FROM ni WORKDIR)
 
-<span class="cm"># Patrón correcto: dependencias primero, código después</span>
-<span class="df-instr">COPY</span> <span class="df-path">requirements.txt</span> <span class="df-path">.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install --no-cache-dir -r requirements.txt</span>
-<span class="df-instr">COPY</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
-</code></pre>
+# Anti-patrón: una sola instrucción COPY rompe la caché en cada cambio
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
 
-                        <h3>5.5 Forma <em>exec</em> vs forma <em>shell</em></h3>
+# Patrón correcto: dependencias primero, código después
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/</code></pre>
+
+                        <h3>6.5 Forma <em>exec</em> vs forma <em>shell</em></h3>
 
                         <p>Las instrucciones <code>CMD</code>, <code>ENTRYPOINT</code> y <code>RUN</code>
                             aceptan dos sintaxis:</p>
@@ -1443,8 +1523,22 @@
                         <div class="box warn">
                             <span class="label">Cierre limpio</span>
                             Una API estadística que no responde a <code>SIGTERM</code> deja peticiones a
-                            medias y conexiones de base de datos abiertas. Se recomienda usar siempre la
-                            forma exec en producción.
+                            medias y conexiones de base de datos abiertas. Al detener un contenedor, Docker envía <code>SIGTERM</code> y, si el proceso no termina en
+   10 segundos, lo mata con <code>SIGKILL</code>: con la forma exec, <code>docker stop</code> de una API
+   Uvicorn tardó menos de un segundo; con la forma shell, los 10 segundos completos. Se recomienda
+   usar la forma exec en producción.
+                        </div>
+
+                        <div class="box tip">
+                            <span class="label">Cuando el puerto lo decide la plataforma</span>
+                            La forma exec no expande variables de entorno: <code>"--port", "$PORT"</code> pasaría
+                            a Uvicorn la cadena literal <code>$PORT</code>. Plataformas como Render o Railway
+                            (semana 12) asignan el puerto en esa variable, así que allí el <code>CMD</code> se
+                            escribe con un shell que la lea y con <code>exec</code>, para que Uvicorn siga siendo
+                            el proceso principal y reciba <code>SIGTERM</code>:
+                            <pre data-lang="dockerfile"><code>CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]</code></pre>
+                            El mismo patrón sirve para ejecutar una orden antes de arrancar, por ejemplo las
+                            migraciones de Alembic: <code>sh -c "alembic upgrade head &amp;&amp; exec uvicorn …"</code>.
                         </div>
                     </section>
 
@@ -1453,13 +1547,13 @@
                         <h2>6. Imagen base: <code>python:3.11.9-slim-bookworm</code></h2>
 
                         <p>La elección de la imagen base condiciona el tamaño, la seguridad y la rapidez de
-                            construcción del contenedor. La imagen empleada en este curso es
+                            construcción de la imagen. La imagen empleada en este curso es
                             <code>python:3.11.9-slim-bookworm</code>. Conviene desmenuzar su nombre.
                         </p>
 
-                        <h3>6.1 Lectura de la etiqueta</h3>
+                        <h3>7.1 Lectura de la etiqueta</h3>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Componente</th>
@@ -1470,8 +1564,8 @@
                                 <tr>
                                     <td><code>python</code></td>
                                     <td>Repositorio oficial de imágenes con el intérprete CPython preinstalado,
-                                        publicado y mantenido por la Python Software Foundation y la Docker
-                                        Library.</td>
+   mantenido por la comunidad de Docker (el intérprete CPython, en cambio, es el
+   de la Python Software Foundation).</td>
                                 </tr>
                                 <tr>
                                     <td><code>3.11.9</code></td>
@@ -1489,18 +1583,19 @@
                                 <tr>
                                     <td><code>bookworm</code></td>
                                     <td>Nombre en clave de la distribución base: <strong>Debian 12</strong>,
-                                        publicada en junio de 2023 y soportada como <em>stable</em> hasta
-                                        aproximadamente 2028.</td>
+                                        publicada el 10 de junio de 2023. Desde la salida de Debian 13
+   («trixie») es la versión anterior (<em>oldstable</em>), con soporte de largo plazo
+   hasta el 30 de junio de 2028.</td>
                                 </tr>
                             </tbody>
                         </table>
 
-                        <h3>6.2 ¿Por qué esta variante y no otra?</h3>
+                        <h3>7.2 ¿Por qué esta variante y no otra?</h3>
 
                         <p>El repositorio <code>python</code> ofrece varias variantes. Su elección obedece a
                             un compromiso entre tamaño, compatibilidad y seguridad:</p>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Variante</th>
@@ -1526,9 +1621,11 @@
                                     <td><code>python:3.11.9-alpine</code></td>
                                     <td>≈ 50 MB</td>
                                     <td>La más pequeña, pero usa <code>musl</code> en lugar de
-                                        <code>glibc</code>: muchas <em>wheels</em> precompiladas (NumPy,
-                                        pandas, scikit-learn) no son compatibles y deben recompilarse,
-                                        alargando los tiempos de construcción.
+   <code>glibc</code>: algunas bibliotecas científicas (scikit-learn, PyTorch) no
+   publican <em>wheels</em> —paquetes ya compilados que <code>pip</code> instala sin compilar— para
+   <code>musl</code> y obligan a compilar, alargando los
+   tiempos de construcción, y las diferencias de <code>libc</code> pueden causar
+   fallos sutiles.
                                     </td>
                                 </tr>
                             </tbody>
@@ -1538,13 +1635,19 @@
                             <div>
                                 <div id="57e05393-522d-43e4-ae3c-51921b21d0f8" class="plotly-graph-div"
                                     style="height:360px; width:100%;"></div>
-                                <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("57e05393-522d-43e4-ae3c-51921b21d0f8")) { Plotly.newPlot("57e05393-522d-43e4-ae3c-51921b21d0f8", [{ "hovertemplate": "<b>%{y}</b><br>Tamaño: ≈ %{x} MB<extra></extra>", "marker": { "color": ["#FDB913", "#3D008D", "#001A4D"], "line": { "color": ["#001A4D", "#ED1E79", "#001A4D"], "width": 2 } }, "orientation": "h", "text": ["≈ 1 000 MB", "≈ 140 MB", "≈ 50 MB"], "textfont": { "color": "#1E293B", "size": 12 }, "textposition": "outside", "x": [1000, 140, 50], "y": ["python:3.11.9<br><span style='font-size:10px;color:#64748B'>(Debian completa)</span>", "python:3.11.9-slim-bookworm<br><span style='font-size:10px;color:#3D008D'><b>Elección del curso</b></span>", "python:3.11.9-alpine<br><span style='font-size:10px;color:#64748B'>(musl, sin wheels)</span>"], "type": "bar" }], { "annotations": [{ "arrowcolor": "#ED1E79", "arrowhead": 2, "arrowsize": 1, "arrowwidth": 1.2, "ax": 180, "ay": -30, "bgcolor": "rgba(255, 247, 230, 0.85)", "bordercolor": "#FDB913", "borderpad": 4, "borderwidth": 1, "font": { "color": "#ED1E79", "size": 11 }, "showarrow": true, "text": "<i>Equilibrio tamaño / compatibilidad con wheels científicas</i>", "x": 140, "xref": "x", "y": 1, "yref": "y" }], "title": { "font": { "size": 15, "color": "#1E293B" }, "text": "<b>Tamaño aproximado de las variantes oficiales <i>python:3.11.9</i></b>", "x": 0.0, "xanchor": "left" }, "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 210, "r": 80, "t": 70, "b": 60 }, "xaxis": { "title": { "font": { "size": 11, "color": "#1E293B" }, "text": "Tamaño en disco (MB)" }, "gridcolor": "#E2E8F0", "zerolinecolor": "#E2E8F0", "showline": true, "linecolor": "#E2E8F0", "range": [0, 1300] }, "yaxis": { "tickfont": { "size": 11 }, "autorange": "reversed", "gridcolor": "rgba(0,0,0,0)" }, "paper_bgcolor": "white", "plot_bgcolor": "white", "height": 360, "showlegend": false }, { "displayModeBar": false, "responsive": true }) };            </script>
+                                <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("57e05393-522d-43e4-ae3c-51921b21d0f8")) { Plotly.newPlot("57e05393-522d-43e4-ae3c-51921b21d0f8", [{"hovertemplate": "<b>%{y}</b><br>Tamaño: ≈ %{x} MB<extra></extra>", "marker": {"color": ["#FDB913", "#3D008D", "#001A4D"], "line": {"color": ["#001A4D", "#ED1E79", "#001A4D"], "width": 2}}, "orientation": "h", "text": ["≈ 1 000 MB", "≈ 140 MB", "≈ 50 MB"], "textfont": {"color": "#1E293B", "size": 12}, "textposition": "outside", "x": [1000, 140, 50], "y": ["python:3.11.9<br><span style='font-size:10px;color:#64748B'>(Debian completa)</span>", "python:3.11.9-<br>slim-bookworm<br><span style='font-size:10px;color:#3D008D'><b>Elección del curso</b></span>", "python:3.11.9-<br>alpine<br><span style='font-size:10px;color:#64748B'>(musl)</span>"], "type": "bar", "cliponaxis": false}], {"title": {"font": {"size": 15, "color": "#1E293B"}, "text": "<b>La variante slim pesa ~7× menos<br>que la imagen completa</b>", "x": 0.0, "xanchor": "left"}, "font": {"family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B"}, "margin": {"l": 10, "r": 80, "t": 90, "b": 60}, "xaxis": {"title": {"font": {"size": 11, "color": "#1E293B"}, "text": "Tamaño descomprimido (MB, linux/amd64)"}, "gridcolor": "#E2E8F0", "zerolinecolor": "#E2E8F0", "showline": true, "linecolor": "#E2E8F0", "range": [0, 1300], "dtick": 500}, "yaxis": {"tickfont": {"size": 11.5}, "autorange": "reversed", "gridcolor": "rgba(0,0,0,0)", "automargin": true}, "paper_bgcolor": "white", "plot_bgcolor": "white", "height": 360, "showlegend": false, "dragmode": false}, { "displayModeBar": false, "responsive": true }) };            </script>
                             </div>
                         </div>
-                        <p class="chart-caption">Figura 6.1 — La variante <code>slim-bookworm</code> ocupa
+                        <p class="chart-caption">Figura 7.1 — La variante <code>slim-bookworm</code> ocupa
                             una fracción de la imagen completa sin renunciar a la compatibilidad binaria
                             con <code>glibc</code> que exigen las <em>wheels</em> oficiales del ecosistema
-                            científico de Python.</p>
+                            científico de Python. Tamaños aproximados, descomprimidos, para
+                            <code>linux/amd64</code>.</p>
+
+                        <p>Las cifras son tamaños descomprimidos para <code>linux/amd64</code>. Docker Hub anuncia el
+                            tamaño <em>comprimido</em>, mucho menor (unos 50 MB para <code>slim</code>), y en un Mac con
+                            procesador Apple la imagen es <code>arm64</code> y algo mayor (unos 170 MB para
+                            <code>slim</code>).</p>
 
                         <div class="box tip">
                             <span class="label">Recomendación</span>
@@ -1554,7 +1657,7 @@
                             el tamaño final es razonable.
                         </div>
 
-                        <h3>6.3 ¿Qué incluye y qué no incluye?</h3>
+                        <h3>7.3 ¿Qué incluye y qué no incluye?</h3>
 
                         <p>La variante <em>slim</em> incluye:</p>
                         <ul>
@@ -1575,14 +1678,14 @@
 
                         <div class="box info">
                             <span class="label">Cuando una dependencia exige compilar</span>
-                            Si una biblioteca científica no provee <em>wheel</em> para Linux x86_64 y
-                            requiere compilación (caso poco frecuente con NumPy, SciPy o scikit-learn, pero
+                            Si una biblioteca científica no provee <em>wheel</em> para Linux (x86_64 o arm64) y
+   requiere compilación (caso poco frecuente con NumPy, SciPy o scikit-learn, pero
                             posible con paquetes menos comunes), conviene instalar
                             <code>build-essential</code> en una etapa temporal (<em>builder</em>) y
-                            descartarla en la imagen final. Este patrón se desarrolla en la sección 8.
+                            descartarla en la imagen final. Este patrón se desarrolla en la lección 9.
                         </div>
 
-                        <h3>6.4 Pinning explícito de la versión</h3>
+                        <h3>7.4 Fijación explícita de la versión</h3>
 
                         <p>Existe la tentación de escribir <code>FROM python:3.11-slim</code>. Esto produce
                             una imagen reproducible <em>hoy</em>, pero no <em>mañana</em>: la etiqueta flotante
@@ -1592,113 +1695,130 @@
                         </p>
 
                         <p>Para una API estadística, donde la reproducibilidad numérica importa, se prefiere
-                            siempre la versión completa:</p>
+   la versión completa:</p>
 
-                        <pre><code><span class="cm"># No recomendado: la versión flota.</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11-slim</span>
+                        <pre><code># Ejemplos alternativos: en un Dockerfile real se escribe UNA sola línea FROM.
 
-<span class="cm"># Recomendado: versión exacta.</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span>
+# No recomendado: la versión flota.
+FROM python:3.11-slim
 
-<span class="cm"># Reproducibilidad máxima: hash criptográfico de la imagen.</span>
-<span class="cm"># El hash se obtiene con: docker pull python:3.11.9-slim-bookworm</span>
-<span class="cm"># y luego: docker inspect python:3.11.9-slim-bookworm --format='{{index .RepoDigests 0}}'</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm@sha256:abc123...def</span>
-</code></pre>
+# Recomendado: versión exacta.
+FROM python:3.11.9-slim-bookworm
+
+# Reproducibilidad máxima: hash criptográfico de la imagen (el de abajo es ilustrativo).
+# El hash se obtiene con: docker pull python:3.11.9-slim-bookworm
+# y luego: docker inspect python:3.11.9-slim-bookworm --format='{{index .RepoDigests 0}}'
+# (el resultado tiene la forma python@sha256:…; se pega tras la etiqueta, como abajo)
+FROM python:3.11.9-slim-bookworm@sha256:abc123...def</code></pre>
 
                         <p>Fijar el hash digest (<code>@sha256:...</code>) es la forma más estricta de
                             reproducibilidad: garantiza que el contenido de la imagen base es bit a bit el
                             mismo, incluso si la etiqueta cambia.</p>
+
+                        <p>Fijar no es congelar: una imagen fijada no recibe los parches de seguridad de
+                            Debian ni de CPython que aparecen después. El curso la fija para que todos trabajen con
+                            la misma base y sus resultados sean comparables; en un proyecto que se mantiene, la
+                            versión se sube de forma deliberada cada cierto tiempo, con las pruebas en verde y tras
+                            escanear la imagen (apartado 12.2).</p>
                     </section>
 
                     <!-- ===================== 7. CONTEXTO DE CONSTRUCCIÓN ===================== -->
                     <section id="contexto" class="unit">
                         <h2>7. Contexto de construcción</h2>
 
-                        <p>Al ejecutar <code>docker build .</code> el cliente de Docker no compila la imagen
-                            en la máquina local: empaqueta el directorio actual y lo envía a un proceso
-                            llamado <em>daemon</em> de Docker, que es quien efectivamente construye la imagen.
+                        <p>Al ejecutar <code>docker build .</code> el cliente de Docker (la orden <code>docker</code>)
+   no construye la imagen por sí mismo: empaqueta el directorio actual y lo envía al
+   <em>daemon</em>, el proceso del motor de Docker que efectivamente la construye
+   (normalmente en la misma máquina).
                             Ese paquete recibe el nombre de <strong>contexto de construcción</strong>.</p>
 
-                        <h3>7.1 Definición precisa</h3>
+                        <h3>8.1 Definición precisa</h3>
 
                         <p>El contexto es el árbol de archivos enraizado en el directorio que se pasa como
                             último argumento a <code>docker build</code>. La instrucción <code>COPY</code>
-                            sólo puede leer archivos que estén dentro de ese árbol; no puede escapar hacia
+                            solo puede leer archivos que estén dentro de ese árbol; no puede escapar hacia
                             rutas absolutas del anfitrión ni navegar fuera con <code>..</code>.</p>
 
-                        <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">cd /home/usuario/proyectos/regresion-api</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">docker build -t regresion-api:0.1.0 .</span>
-<span class="sh-out">[+] Building 12.4s (10/10) FINISHED</span>
-<span class="sh-out"> => transferring context: 482.31kB                              0.1s</span>
-<span class="sh-out"> => [internal] load build definition from Dockerfile             0.0s</span>
-<span class="sh-out"> => [1/5] FROM docker.io/library/python:3.11.9-slim-bookworm     2.1s</span>
-<span class="sh-out"> => [2/5] WORKDIR /app                                            0.0s</span>
-<span class="sh-out"> => [3/5] COPY requirements.txt .                                 0.0s</span>
-<span class="sh-out"> => [4/5] RUN pip install --no-cache-dir -r requirements.txt    8.7s</span>
-<span class="sh-out"> => [5/5] COPY app/ ./app/                                        0.1s</span>
-<span class="sh-out"> => exporting to image                                            1.4s</span></code></pre>
+                        <pre><code>cd regresion-api
+docker build -t regresion-api:0.1.0 .</code></pre>
+
+                        <p>La salida de BuildKit, abreviada, se parece a esta:</p>
+
+                        <pre data-lang="text"><code>[+] Building 12.4s (10/10) FINISHED
+ =&gt; transferring context: 482.31kB                              0.1s
+ =&gt; [internal] load build definition from Dockerfile             0.0s
+ =&gt; [1/5] FROM docker.io/library/python:3.11.9-slim-bookworm     2.1s
+ =&gt; [2/5] WORKDIR /app                                            0.0s
+ =&gt; [3/5] COPY requirements.txt .                                 0.0s
+ =&gt; [4/5] RUN pip install --no-cache-dir -r requirements.txt    8.7s
+ =&gt; [5/5] COPY app/ ./app/                                        0.1s
+ =&gt; exporting to image                                            1.4s</code></pre>
 
                         <p>La línea <em>transferring context</em> indica que se enviaron 482 KB al daemon. En
                             proyectos descuidados ese número puede crecer hasta varios gigabytes.</p>
 
-                        <h3>7.2 El archivo <code>.dockerignore</code></h3>
+                        <h3>8.2 El archivo <code>.dockerignore</code></h3>
 
                         <p>El mecanismo principal para controlar qué se envía al daemon es el archivo
-                            <code>.dockerignore</code>, situado en la raíz del contexto. Su sintaxis es muy
-                            similar a la de <code>.gitignore</code>. Un <code>.dockerignore</code> razonable
+                            <code>.dockerignore</code>, situado en la raíz del contexto. Su sintaxis se parece a la
+   de <code>.gitignore</code>, con una diferencia que importa: los patrones parten de la raíz del
+   contexto, así que <code>__pycache__</code> a secas solo excluye la carpeta de la raíz; para
+   excluir a cualquier profundidad se escribe <code>**/__pycache__</code>. Un <code>.dockerignore</code> razonable
                             para una API estadística incluye:
                         </p>
 
-                        <pre><code><span class="cm"># .dockerignore</span>
+                        <pre><code># .dockerignore
+# Los patrones parten de la raíz del contexto: «**/» los aplica a cualquier profundidad.
 
-<span class="cm"># Control de versiones</span>
+# Control de versiones
 .git
 .gitignore
 .gitattributes
 
-<span class="cm"># Entornos virtuales locales (no se reutilizan dentro de la imagen)</span>
+# Entornos virtuales locales (no se reutilizan dentro de la imagen)
 .venv
 venv
 env
 
-<span class="cm"># Cachés de Python</span>
-__pycache__
-*.pyc
-*.pyo
+# Cachés de Python
+**/__pycache__
+**/*.pyc
+**/*.pyo
 .pytest_cache
 .mypy_cache
 .ruff_cache
 
-<span class="cm"># Notebooks de exploración (suelen contener datos crudos voluminosos)</span>
+# Notebooks de exploración (suelen contener datos crudos voluminosos)
 notebooks/
-*.ipynb_checkpoints
+**/.ipynb_checkpoints
 
-<span class="cm"># Datos crudos y artefactos pesados</span>
+# Datos crudos, bases de datos locales y artefactos pesados
 data/raw/
 data/interim/
-*.csv
-*.parquet
-*.feather
+**/*.csv
+**/*.parquet
+**/*.feather
+**/*.db
+**/*.sqlite3
 
-<span class="cm"># Configuración local sensible</span>
-.env
-.env.local
-*.pem
-*.key
+# Configuración local sensible
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
 
-<span class="cm"># Documentación e IDE</span>
+# Documentación e IDE
 README.md
 docs/
 .idea/
 .vscode/
-*.swp
+**/*.swp
 
-<span class="cm"># El propio Dockerfile no se necesita dentro de la imagen</span>
+# El propio Dockerfile no se necesita dentro de la imagen
 Dockerfile
 .dockerignore</code></pre>
 
-                        <h3>7.3 ¿Por qué importa tanto este archivo?</h3>
+                        <h3>8.3 ¿Por qué importa tanto este archivo?</h3>
 
                         <ol>
                             <li><strong>Velocidad.</strong> Cada byte sobrante se transfiere y se sube por la
@@ -1719,21 +1839,29 @@ Dockerfile
                             queda registrado en una capa permanente. Aunque luego se elimine con un
                             <code>RUN rm</code>, la capa anterior <em>sigue</em> conservando el archivo. La
                             única protección efectiva es no copiarlo nunca: para eso sirven
-                            <code>.dockerignore</code> y, en pipelines más maduros, los <em>secrets</em>
-                            inyectados como variables de entorno en tiempo de ejecución (Semana III,
-                            <code>python-dotenv</code>).
+   <code>.dockerignore</code> y, cuando un secreto hace falta durante la construcción,
+   <code>RUN --mount=type=secret</code> (nunca <code>ARG</code> ni <code>ENV</code>, que
+   quedan registrados en la imagen). En ejecución, las credenciales se inyectan como
+   variables de entorno (semana 8).
                         </div>
 
-                        <h3>7.4 Verificación práctica</h3>
+                        <h3>8.4 Verificación práctica</h3>
 
                         <p>Para inspeccionar exactamente qué archivos llegarían al daemon antes de construir
                             la imagen, puede prepararse un contexto de prueba:</p>
 
-                        <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">tar --exclude-from=.dockerignore -cvf - . | tar -tvf -</span></code></pre>
+                        <pre data-lang="shell"><code>docker build --no-cache --progress=plain --output type=cacheonly -f - . &lt;&lt;'EOF'
+FROM python:3.11.9-slim-bookworm
+COPY . /ctx
+RUN find /ctx -type f | sort
+EOF</code></pre>
 
-                        <p>Esta orden imita el filtrado de <code>.dockerignore</code> y lista cada entrada que
-                            se enviaría. Es una herramienta valiosa para auditar contextos sospechosamente
-                            grandes.</p>
+                        <p>Esta orden construye una imagen desechable (con <code>--output type=cacheonly</code> no deja ninguna) que solo copia el
+   contexto y, en el registro de la construcción, lista cada archivo que llegó a ella: el contexto real, con el
+   <code>.dockerignore</code> aplicado tal como lo aplica Docker. (<code>tar --exclude-from</code>
+   no sirve para esto: compara los patrones a cualquier profundidad y no entiende <code>**</code>
+   ni <code>!</code>, así que puede mostrar como excluidos archivos que Docker sí enviaría.) Es
+   una herramienta valiosa para auditar contextos sospechosamente grandes.</p>
                     </section>
 
                     <!-- ===================== 8. MULTI-STAGE BUILDS ===================== -->
@@ -1752,9 +1880,9 @@ Dockerfile
                             una nueva instrucción <code>FROM</code> y puede copiar selectivamente artefactos
                             de las anteriores con <code>COPY --from=...</code>.</p>
 
-                        <h3>8.1 Esquema general</h3>
+                        <h3>9.1 Esquema general</h3>
 
-                        <pre><code><span class="cm"># Etapa 1: builder — todo lo que sólo hace falta durante la construcción</span>
+                        <pre><code><span class="cm"># Etapa 1: builder — todo lo que solo hace falta durante la construcción</span>
 <span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">builder</span>
 <span class="cm"># ... instalar compiladores, descargar dependencias, compilar wheels ...</span>
 
@@ -1766,23 +1894,26 @@ Dockerfile
 
                         <p>La imagen final, identificada por la etapa con la última instrucción
                             <code>FROM</code> (o por una etapa nombrada con <code>--target</code>), contiene
-                            sólo lo que se copió explícitamente. Las herramientas de la etapa <em>builder</em>
+   la imagen base de esa etapa más lo que se copió explícitamente. Las herramientas de la etapa <em>builder</em>
                             no aparecen en el resultado.
                         </p>
 
-                        <h3>8.2 Ventajas concretas</h3>
+                        <h3>9.2 Ventajas concretas</h3>
 
                         <ol>
                             <li><strong>Reducción de tamaño.</strong> Un Dockerfile mono-etapa que necesita
-                                compilar puede pesar 800 MB; el mismo proyecto en multi-stage suele quedarse
-                                entre 180 y 250 MB.</li>
+   compilar y conserva el compilador puede pesar unos 750 MB; el mismo proyecto en
+   multi-stage queda en unos 450 MB (−40 %). Si ninguna dependencia necesita compilar, un
+   mono-etapa sin compiladores pesa lo mismo: el multi-stage no adelgaza más, permite
+   compilar sin cargar con el compilador.</li>
                             <li><strong>Separación de dependencias.</strong> Las dependencias de
-                                <em>construcción</em> (compiladores, cabeceras) viven sólo en el builder; las
+                                <em>construcción</em> (compiladores, cabeceras) viven solo en el builder; las
                                 de <em>ejecución</em> (la API y sus paquetes Python) viven en runtime.
                             </li>
                             <li><strong>Superficie de ataque más pequeña.</strong> Sin compiladores ni
-                                gestores de paquetes activos en producción, un atacante que logre ejecutar
-                                código tiene menos herramientas para escalar privilegios.</li>
+   cabeceras de desarrollo en producción (y, con un <code>USER</code> sin privilegios, sin
+   poder instalar nada con <code>apt</code>), un atacante que logre ejecutar
+   código tiene menos herramientas para escalar privilegios.</li>
                             <li><strong>Reutilización de etapas.</strong> Una misma etapa <em>builder</em>
                                 puede alimentar varias imágenes finales (API, worker, job batch) sin
                                 duplicar la instalación de dependencias.</li>
@@ -1790,74 +1921,76 @@ Dockerfile
                                 construirse en paralelo cuando se utiliza el motor BuildKit.</li>
                         </ol>
 
-                        <h3>8.3 Patrón recomendado para Python</h3>
+                        <h3>9.3 Patrón recomendado para Python</h3>
 
                         <p>El patrón más común instala las dependencias en un entorno virtual dentro del
                             builder y copia ese entorno virtual completo a la etapa de runtime. Así se evita
                             reinstalar paquetes en la imagen final.</p>
 
-                        <pre><code><span class="cm"># syntax=docker/dockerfile:1.7</span>
+                        <pre><code># Dockerfile: patrón multietapa recomendado para Python
 
-<span class="cm"># ============================================================</span>
-<span class="cm"># Etapa 1 — builder</span>
-<span class="cm"># ============================================================</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">builder</span>
+# ============================================================
+# Etapa 1 — builder
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS builder
 
-<span class="df-instr">ENV</span> <span class="df-arg">PYTHONDONTWRITEBYTECODE=1 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1</span>
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-<span class="cm"># build-essential sólo se necesita para compilar wheels que no</span>
-<span class="cm"># lleguen precompiladas; se descarta junto con esta etapa.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">apt-get update \
+# build-essential solo se necesita para compilar wheels que no
+# lleguen precompiladas; se descarta junto con esta etapa.
+RUN apt-get update \
  &amp;&amp; apt-get install -y --no-install-recommends build-essential \
- &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+ &amp;&amp; rm -rf /var/lib/apt/lists/*
 
-<span class="cm"># Entorno virtual aislado en /opt/venv (será portable a la etapa runtime)</span>
-<span class="df-instr">RUN</span> <span class="df-arg">python -m venv /opt/venv</span>
-<span class="df-instr">ENV</span> <span class="df-arg">PATH=&quot;/opt/venv/bin:$PATH&quot;</span>
+# Entorno virtual aislado en /opt/venv. Se puede copiar a la etapa runtime
+# porque ambas etapas usan la misma imagen base y la misma ruta.
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-<span class="df-instr">WORKDIR</span> <span class="df-path">/build</span>
-<span class="df-instr">COPY</span> <span class="df-path">requirements.txt</span> <span class="df-path">.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install --upgrade pip \
- &amp;&amp; pip install -r requirements.txt</span>
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-<span class="cm"># ============================================================</span>
-<span class="cm"># Etapa 2 — runtime</span>
-<span class="cm"># ============================================================</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">runtime</span>
+# ============================================================
+# Etapa 2 — runtime
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS runtime
 
-<span class="df-instr">ENV</span> <span class="df-arg">PYTHONDONTWRITEBYTECODE=1 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH=&quot;/opt/venv/bin:$PATH&quot;</span>
+    PATH="/opt/venv/bin:$PATH"
 
-<span class="cm"># Usuario no privilegiado para ejecutar la aplicación.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">groupadd --system --gid 1001 appgroup \
- &amp;&amp; useradd  --system --uid 1001 --gid appgroup --create-home appuser</span>
+# Usuario no privilegiado para ejecutar la aplicación.
+RUN groupadd --system --gid 1001 appgroup \
+ &amp;&amp; useradd --uid 1001 --gid appgroup --create-home appuser
 
-<span class="df-instr">WORKDIR</span> <span class="df-path">/app</span>
+WORKDIR /app
 
-<span class="cm"># Sólo se trae el entorno virtual: ni compiladores ni cachés de apt.</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--from=builder</span> <span class="df-path">/opt/venv</span> <span class="df-path">/opt/venv</span>
+# Solo se trae el entorno virtual: ni compiladores ni cachés de apt.
+COPY --from=builder /opt/venv /opt/venv
 
-<span class="cm"># Código de la aplicación con propietario no-root.</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--chown=appuser:appgroup</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
+# Código de la aplicación: propiedad de root y de solo lectura para appuser.
+COPY app/ ./app/
 
-<span class="df-instr">USER</span> <span class="df-arg">appuser</span>
+USER appuser
 
-<span class="df-instr">EXPOSE</span> <span class="df-arg">8000</span>
-<span class="df-instr">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]
-</code></pre>
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
 
-                        <h3>8.4 Comparación de tamaño</h3>
+                        <h3>9.4 Comparación de tamaño</h3>
 
                         <p>Sobre un proyecto realista que incluye <code>fastapi</code>, <code>uvicorn</code>,
-                            <code>pydantic</code>, <code>numpy</code>, <code>scipy</code> y
-                            <code>scikit-learn</code>, los tamaños observados son aproximadamente:
+   <code>pydantic</code>, <code>numpy</code>, <code>scipy</code> y
+   <code>scikit-learn</code>, los tamaños son aproximadamente los siguientes (estimados para
+   <code>linux/amd64</code> a partir del peso de la base <code>slim</code>, de las <em>wheels</em>
+   científicas y de <code>build-essential</code>, y contrastados con las medidas del proyecto
+   del ejemplo integrador, que siguen a la tabla):
                         </p>
 
-                        <table>
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Estrategia</th>
@@ -1885,43 +2018,56 @@ Dockerfile
                                 </tr>
                                 <tr>
                                     <td><strong>Multi-stage <code>slim-bookworm</code></strong></td>
-                                    <td><strong>≈ 230 MB</strong></td>
-                                    <td>Imagen final sin compiladores, sin caché de apt y sin caché de pip.</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                    <td><strong>≈ 450 MB</strong></td>
+   <td>Compila en el builder y deja el compilador fuera: pesa como un mono-etapa que no hubiera
+       necesitado compilar.</td>
+   </tr>
+   </tbody>
+   </table>
+
+   <p>El mismo experimento, medido con el proyecto del ejemplo integrador (solo
+       <code>fastapi</code>, <code>uvicorn</code> y <code>pydantic</code>) en un Mac con procesador Apple
+       (<code>arm64</code>, unos 40 MB más que en x86; suma de <code>docker history</code>), da: mono-etapa con <code>build-essential</code>
+       persistente ≈ 560 MB; mono-etapa sin compiladores ≈ 235 MB; multi-stage ≈ 260 MB. Es decir, el
+       multi-stage ahorra unos 300 MB frente a conservar el compilador, y pesa unos 25 MB <em>más</em>
+       que un mono-etapa que no lo necesita (el entorno virtual trae su propio <code>pip</code> y <code>setuptools</code>). Se
+       mantiene por la separación entre construir y ejecutar, y porque permite compilar cuando una
+       dependencia lo exige; no porque adelgace siempre.</p>
 
                         <div class="chart-container">
                             <div>
                                 <div id="b796fd1a-b1a4-4e1a-907e-a2c2e5663ffc" class="plotly-graph-div"
                                     style="height:400px; width:100%;"></div>
-                                <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("b796fd1a-b1a4-4e1a-907e-a2c2e5663ffc")) { Plotly.newPlot("b796fd1a-b1a4-4e1a-907e-a2c2e5663ffc", [{ "hovertemplate": "<b>%{y}</b><br>%{x:,} MB<extra></extra>", "marker": { "color": ["#FDB913", "#F59E0B", "#ED1E79", "#3D008D"], "line": { "color": ["#001A4D", "#001A4D", "#001A4D", "#001A4D"], "width": 2 } }, "orientation": "h", "text": ["≈ 1 400 MB  (referencia)", "≈ 750 MB  (-46% vs. completa)", "≈ 420 MB  (-70% vs. completa)", "≈ 230 MB  (-84% vs. completa)"], "textfont": { "color": "#1E293B", "size": 11 }, "textposition": "outside", "x": [1400, 750, 420, 230], "y": ["python:3.11.9 + deps<br><span style='font-size:10px;color:#64748B'>imagen completa</span>", "Mono-etapa slim<br><span style='font-size:10px;color:#64748B'>build-essential persistente</span>", "Mono-etapa slim<br><span style='font-size:10px;color:#64748B'>sólo wheels universales</span>", "Multi-stage slim<br><span style='font-size:10px;color:#3D008D'><b>recomendado</b></span>"], "type": "bar" }], { "shapes": [{ "line": { "color": "#3D008D", "dash": "dot", "width": 1.2 }, "type": "line", "x0": 230, "x1": 230, "xref": "x", "y0": 0, "y1": 1, "yref": "y domain" }], "annotations": [{ "font": { "color": "#3D008D", "size": 10 }, "showarrow": false, "text": "<i>multi-stage ≈ 230 MB</i>", "x": 230, "xanchor": "center", "xref": "x", "y": 1, "yanchor": "bottom", "yref": "y domain" }], "title": { "font": { "size": 15, "color": "#1E293B" }, "text": "<b>Tamaño de imagen según estrategia de construcción</b>", "x": 0.0, "xanchor": "left" }, "font": { "family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B" }, "margin": { "l": 240, "r": 80, "t": 70, "b": 60 }, "xaxis": { "title": { "font": { "size": 11, "color": "#1E293B" }, "text": "Tamaño en disco (MB)" }, "gridcolor": "#E2E8F0", "zerolinecolor": "#E2E8F0", "showline": true, "linecolor": "#E2E8F0", "range": [0, 1700] }, "yaxis": { "tickfont": { "size": 11 }, "autorange": "reversed", "gridcolor": "rgba(0,0,0,0)" }, "paper_bgcolor": "white", "plot_bgcolor": "white", "height": 400, "showlegend": false }, { "displayModeBar": false, "responsive": true }) };            </script>
+                                <script>                window.PLOTLYENV = window.PLOTLYENV || {}; if (document.getElementById("b796fd1a-b1a4-4e1a-907e-a2c2e5663ffc")) { Plotly.newPlot("b796fd1a-b1a4-4e1a-907e-a2c2e5663ffc", [{"type": "bar", "orientation": "h", "x": [1400, 750, 420, 450], "y": ["python:3.11.9<br>+ deps<br><span style='font-size:10px;color:#64748B'>(imagen completa)</span>", "Mono-etapa slim<br><span style='font-size:10px;color:#64748B'>(compilador<br>persistente)</span>", "Mono-etapa slim<br><span style='font-size:10px;color:#64748B'>(solo wheels;<br>referencia)</span>", "Multi-stage slim<br><span style='font-size:10px;color:#3D008D'>(compila y descarta<br>el compilador)</span>"], "text": ["≈ 1 400 MB", "≈ 750 MB", "≈ 420 MB", "≈ 450 MB"], "textposition": "outside", "cliponaxis": false, "textfont": {"color": "#1E293B", "size": 11}, "marker": {"color": ["#FDB913", "#F59E0B", "#94A3B8", "#3D008D"], "line": {"color": ["#001A4D", "#001A4D", "#001A4D", "#001A4D"], "width": 2}}, "hovertemplate": "<b>%{y}</b><br>≈ %{x:,} MB<extra></extra>"}], {"title": {"font": {"size": 15, "color": "#1E293B"}, "text": "<b>Multi-stage: ≈ 450 MB frente<br>a ≈ 750 MB con compilador</b>", "x": 0.0, "xanchor": "left"}, "font": {"family": "Montserrat, Helvetica Neue, Arial, sans-serif", "size": 12, "color": "#1E293B"}, "margin": {"l": 10, "r": 90, "t": 90, "b": 60}, "xaxis": {"title": {"font": {"size": 11, "color": "#1E293B"}, "text": "Tamaño aproximado (MB, linux/amd64)"}, "gridcolor": "#E2E8F0", "zerolinecolor": "#E2E8F0", "showline": true, "linecolor": "#E2E8F0", "range": [0, 1700], "dtick": 750}, "yaxis": {"tickfont": {"size": 11.5}, "autorange": "reversed", "gridcolor": "rgba(0,0,0,0)", "automargin": true}, "paper_bgcolor": "white", "plot_bgcolor": "white", "height": 400, "showlegend": false, "dragmode": false}, { "displayModeBar": false, "responsive": true }) };            </script>
                             </div>
                         </div>
-                        <p class="chart-caption">Figura 8.1 — Cada decisión arquitectónica suma reducción
-                            sobre la anterior: pasar de la imagen completa a <code>slim</code> recorta el
-                            sistema base; eliminar compiladores baja otro tercio; y separar construcción
-                            de ejecución con multi-stage entrega la imagen final más pequeña, sin sacrificar
-                            compatibilidad ni reproducibilidad.</p>
+                        <p class="chart-caption">Figura 9.1 — Tamaños aproximados (<code>amd64</code>; proyecto con numpy,
+                            scipy y scikit-learn). Pasar de la imagen completa a <code>slim</code> recorta el sistema
+                            base; conservar el compilador cuesta unos 300 MB; el multi-stage compila en el builder y lo
+                            deja fuera, con un tamaño similar al de un mono-etapa que no necesitara compilar (la barra
+                            gris, de referencia).</p>
 
-                        <h3>8.5 Construcción dirigida a una etapa específica</h3>
+                        <h3>9.5 Construcción dirigida a una etapa específica</h3>
 
                         <p>Las etapas son útiles también durante el desarrollo: permiten construir hasta un
                             punto intermedio para depurar.</p>
 
-                        <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">docker build --target builder -t regresion-api:builder .</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">docker run --rm -it regresion-api:builder bash</span></code></pre>
+                        <pre><code>docker build --target builder -t regresion-api:builder .
+docker run --rm -it regresion-api:builder bash</code></pre>
 
                         <p>Este patrón abre una shell dentro del builder e inspecciona el entorno virtual
                             instalado, las versiones resueltas por <code>pip</code> y el tamaño exacto de
                             cada dependencia, sin modificar la imagen de producción.</p>
 
                         <div class="box info">
-                            <span class="label">Conexión con la pirámide de testing (Semana 10)</span>
-                            Una etapa intermedia <em>tester</em> resulta natural en una API estadística:
-                            instala el código, ejecuta <code>pytest</code> y, sólo si pasa, deja que el
-                            motor produzca la imagen final. Si las pruebas fallan, la construcción aborta y
-                            la imagen jamás se publica al registro.
+                            <span class="label">Conexión con la pirámide de testing (semana 10)</span>
+                            Las pruebas de la semana 10 se ejecutan <em>antes</em> de construir la imagen: en local
+                            y, en la semana 12, en la integración continua. Una etapa intermedia <em>tester</em>
+                            dentro del <code>Dockerfile</code> es posible, pero BuildKit solo construye las etapas de
+                            las que depende la etapa final: <code>docker build .</code> la omitiría, y solo frenaría
+                            la construcción si la etapa final dependiera de ella (por ejemplo, copiando de ella un
+                            archivo). En este curso las pruebas son un paso aparte del flujo y la imagen de
+                            producción no contiene <code>tests/</code> ni pytest.
                         </div>
                     </section>
 
@@ -1929,46 +2075,49 @@ Dockerfile
                     <section id="integrador" class="unit">
                         <h2>9. Ejemplo integrador: empaquetar una API de regresión</h2>
 
-                        <p>Esta sección reúne todos los conceptos previos en un proyecto funcional. Se
-                            construye una API FastAPI que sirve un modelo de regresión lineal simple
+                        <p>Esta lección reúne los conceptos previos en un proyecto funcional y añade tres piezas
+   nuevas —el usuario no privilegiado, el sondeo <code>HEALTHCHECK</code> y el entorno virtual
+   copiado entre etapas—, que se explican tras el Dockerfile. Se construye una API FastAPI que sirve un modelo de regresión lineal simple
                             entrenado fuera de línea. El paquete final es una imagen Docker construida con
                             multi-stage build, ejecutada por un usuario no privilegiado, basada en
                             <code>python:3.11.9-slim-bookworm</code>.
                         </p>
 
-                        <h3>9.1 Estructura del proyecto</h3>
+                        <h3>10.1 Estructura del proyecto</h3>
 
                         <pre><code>regresion-api/
 ├── app/
 │   ├── __init__.py
-│   ├── main.py            <span class="cm"># Aplicación FastAPI</span>
-│   ├── modelo.py          <span class="cm"># Carga y predicción del modelo</span>
-│   ├── schemas.py         <span class="cm"># Modelos Pydantic</span>
-│   └── modelo.json        <span class="cm"># Coeficientes entrenados</span>
+│   ├── main.py            # Aplicación FastAPI
+│   ├── modelo.py          # Carga y predicción del modelo
+│   ├── schemas.py         # Modelos Pydantic
+│   └── modelo.json        # Coeficientes entrenados
 ├── tests/
 │   ├── __init__.py
 │   └── test_api.py
-├── requirements.txt
+├── requirements.txt       # Dependencias de la imagen de producción
+├── requirements-dev.txt   # Herramientas de prueba (no van en la imagen)
 ├── .dockerignore
 └── Dockerfile</code></pre>
 
-                        <h3>9.2 Modelo entrenado fuera de línea</h3>
+                        <h3>10.2 Modelo entrenado fuera de línea</h3>
 
                         <p>Para mantener el ejemplo autocontenido, el modelo se reduce a una regresión
                             lineal univariada con coeficientes precalculados. En un proyecto real este
-                            archivo lo produciría un script de entrenamiento separado (idealmente
-                            versionado).</p>
+   archivo lo produciría un script de entrenamiento separado (idealmente
+   versionado). El archivo, <code>app/modelo.json</code>, guarda los coeficientes de
+   <em>y</em> = 2.3·<em>x</em> + 1.7 y el dominio de entrenamiento; un JSON no admite
+   comentarios, así que esa explicación va aquí y no dentro del archivo:</p>
 
-                        <pre><code><span class="cm"># app/modelo.json — coeficientes de y = 2.3 * x + 1.7</span>
-{
-    <span class="str">"version"</span>: <span class="str">"0.1.0"</span>,
-    <span class="str">"intercepto"</span>: <span class="num">1.7</span>,
-    <span class="str">"pendiente"</span>: <span class="num">2.3</span>,
-    <span class="str">"x_min"</span>: <span class="num">-10.0</span>,
-    <span class="str">"x_max"</span>: <span class="num">10.0</span>
+                        <pre data-titulo="app/modelo.json" data-lang="json"><code>{
+    "version": "0.1.0",
+    "intercepto": 1.7,
+    "pendiente": 2.3,
+    "x_min": -10.0,
+    "x_max": 10.0
 }</code></pre>
 
-                        <h3>9.3 Carga del modelo (<code>app/modelo.py</code>)</h3>
+                        <h3>10.3 Carga del modelo (<code>app/modelo.py</code>)</h3>
 
                         <pre><code><span class="cm"># app/modelo.py</span>
 <span class="kw">from</span> __future__ <span class="kw">import</span> annotations
@@ -2003,11 +2152,11 @@ RUTA_MODELO = Path(__file__).parent / <span class="str">"modelo.json"</span>
 </code></pre>
 
                         <p>La función <code>cargar_modelo</code>, decorada con <code>@lru_cache</code>, se
-                            integra con el patrón de inyección de dependencias visto en la Semana III: actúa
-                            como una <em>provider</em> reutilizable, costosa la primera vez y barata
-                            después.</p>
+                            integra con el patrón de inyección de dependencias visto en la semana 8: actúa
+   como un <em>proveedor</em> reutilizable (<em>provider</em>), costoso la primera vez y barato
+   después.</p>
 
-                        <h3>9.4 Esquemas Pydantic (<code>app/schemas.py</code>)</h3>
+                        <h3>10.4 Esquemas Pydantic (<code>app/schemas.py</code>)</h3>
 
                         <pre><code><span class="cm"># app/schemas.py</span>
 <span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel, Field, field_validator
@@ -2037,13 +2186,13 @@ RUTA_MODELO = Path(__file__).parent / <span class="str">"modelo.json"</span>
 </code></pre>
 
                         <p>La validación con <code>@field_validator</code> y la respuesta automática HTTP
-                            422 frente a cargas útiles inválidas son herencia directa de las semanas previas
-                            de Pydantic y FastAPI. La pieza nueva es que el contenedor las preserva
-                            exactamente igual al desplegarse.</p>
+                            422 frente a cargas útiles inválidas son herencia directa de las semanas 4, 6 y 7
+   (Pydantic y FastAPI). La pieza nueva es que el contenedor las preserva
+   exactamente igual al desplegarse; el apartado 10.11 lo comprueba.</p>
 
                         <div class="box info">
-                            <span class="label">Dos cotas, dos propósitos</span>
-                            Conviene distinguir las dos cotas que aparecen sobre <code>x</code>:
+                            <span class="label">Dos rangos, dos propósitos</span>
+                            Conviene distinguir los dos rangos que aparecen sobre <code>x</code>:
                             <ul>
                                 <li>El <strong>rango de validación</strong> de Pydantic
                                     (<code>[-1000, 1000]</code>) protege a la API de entradas absurdas o
@@ -2057,11 +2206,11 @@ RUTA_MODELO = Path(__file__).parent / <span class="str">"modelo.json"</span>
                                     <code>extrapolado: true</code> para que el cliente quede advertido.
                                 </li>
                             </ul>
-                            Confundir ambas cotas es un error frecuente: la primera es responsabilidad de
+                            Confundir ambos rangos es un error frecuente: la primera es responsabilidad de
                             FastAPI/Pydantic; la segunda, del estadístico que entrenó el modelo.
                         </div>
 
-                        <h3>9.5 Aplicación FastAPI (<code>app/main.py</code>)</h3>
+                        <h3>10.5 Aplicación FastAPI (<code>app/main.py</code>)</h3>
 
                         <pre><code><span class="cm"># app/main.py</span>
 <span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI, Depends
@@ -2078,7 +2227,7 @@ app = <span class="fn">FastAPI</span>(
 
 <span class="dec">@app.get</span>(<span class="str">"/health"</span>, status_code=<span class="num">200</span>)
 <span class="kw">def</span> <span class="fn">health</span>() -&gt; <span class="builtin">dict</span>[<span class="builtin">str</span>, <span class="builtin">str</span>]:
-    <span class="str">"""Sondeo de vida útil para orquestadores."""</span>
+    <span class="str">"""Sondeo de vida: responde 200 mientras el proceso atienda peticiones."""</span>
     <span class="kw">return</span> {<span class="str">"status"</span>: <span class="str">"ok"</span>}
 
 
@@ -2095,7 +2244,7 @@ app = <span class="fn">FastAPI</span>(
     )
 </code></pre>
 
-                        <h3>9.6 Pruebas mínimas (<code>tests/test_api.py</code>)</h3>
+                        <h3>10.6 Pruebas mínimas (<code>tests/test_api.py</code>)</h3>
 
                         <pre><code><span class="cm"># tests/test_api.py</span>
 <span class="kw">from</span> fastapi.testclient <span class="kw">import</span> TestClient
@@ -2132,19 +2281,27 @@ cliente = <span class="fn">TestClient</span>(app)
     <span class="kw">assert</span> respuesta.status_code == <span class="num">422</span>
 </code></pre>
 
+                        <p>Las pruebas se ejecutan <em>antes</em> de construir la imagen, en un entorno virtual local:</p>
+
+                        <pre data-lang="shell"><code>python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+pytest -q</code></pre>
+
                         <div class="box tip">
                             <span class="label">Dependencias de desarrollo aparte</span>
-                            A partir de FastAPI 0.95, <code>TestClient</code> requiere <code>httpx</code>,
-                            que <em>no</em> aparece en <code>requirements.txt</code>. Esta omisión es
-                            intencional: la imagen de producción no necesita el cliente HTTP de pruebas.
-                            Las dependencias de desarrollo se documentan en un archivo aparte
-                            <code>requirements-dev.txt</code> e incluyen, como mínimo,
-                            <code>pytest==8.2.2</code> y <code>httpx==0.27.0</code>. Esta separación
-                            armoniza con la lógica builder/runtime de la sección 8: las herramientas que
-                            sólo hacen falta para construir o probar quedan fuera del artefacto final.
+                            Desde FastAPI 0.87, <code>TestClient</code> usa <code>httpx</code>, y
+                            <code>fastapi==0.111.0</code> ya lo trae como dependencia: <code>httpx</code> acaba en la
+                            imagen de todos modos. Lo que solo hace falta para probar es <code>pytest</code>, que puede
+                            vivir en un <code>requirements-dev.txt</code> que la imagen de producción no instala:
+                            <pre data-titulo="requirements-dev.txt" data-lang="text"><code>-r requirements.txt
+pytest==8.2.2</code></pre>
+                            En la semana 10 las herramientas de prueba van en el mismo archivo que el resto; separarlas
+                            aquí armoniza con la lógica builder/runtime de la lección 9: lo que solo hace falta para
+                            probar queda fuera del artefacto final.
                         </div>
 
-                        <h3>9.7 Dependencias (<code>requirements.txt</code>)</h3>
+                        <h3>10.7 Dependencias (<code>requirements.txt</code>)</h3>
 
                         <pre><code><span class="cm"># requirements.txt — versiones fijadas para reproducibilidad</span>
 fastapi==0.111.0
@@ -2152,23 +2309,32 @@ uvicorn[standard]==0.30.1
 pydantic==2.7.4</code></pre>
 
                         <p>Las versiones se fijan con <code>==</code> y no con <code>&gt;=</code>, en
-                            coherencia con la Semana 10. Así, dos construcciones separadas por meses
-                            instalan los mismos artefactos.</p>
+   coherencia con la semana 10. Ojo con el alcance: así quedan fijados los tres paquetes que
+   se pidieron, pero <code>pip</code> elige por su cuenta las versiones de las decenas de
+   paquetes de los que estos dependen (<code>starlette</code>, <code>httpx</code>,
+   <code>anyio</code>…), y esas pueden cambiar entre dos construcciones. Para una
+   reproducibilidad completa se congela el árbol entero: <code>pip freeze &gt; requirements.txt</code>
+   en un entorno que ya funciona, o <code>pip-compile --generate-hashes</code> como en la
+   semana 10.</p>
 
-                        <h3>9.8 <code>.dockerignore</code> del proyecto</h3>
+                        <h3>10.8 <code>.dockerignore</code> del proyecto</h3>
 
-                        <pre><code><span class="cm"># .dockerignore</span>
+                        <pre><code># .dockerignore
 .git
 .gitignore
 .venv
 venv
-__pycache__
-*.pyc
+**/__pycache__
+**/*.pyc
 .pytest_cache
 .mypy_cache
 .ruff_cache
-.env
-.env.*
+**/.env
+**/.env.*
+**/*.pem
+**/*.key
+**/*.db
+**/*.sqlite3
 tests/
 notebooks/
 docs/
@@ -2178,124 +2344,243 @@ README.md
 Dockerfile
 .dockerignore</code></pre>
 
-                        <p>Las pruebas se excluyen del contexto de la imagen final: se ejecutan en una etapa
-                            separada del pipeline (o en una etapa <em>tester</em> intermedia, si se desea
-                            ejecutarlas con <code>docker build --target tester</code>).</p>
+                        <p>Las pruebas se excluyen del contexto de la imagen final: se ejecutan como un paso aparte,
+                            antes de construirla (en local o, en la semana 12, en la integración continua).</p>
 
-                        <div class="box tip">
-                            <span class="label">Cuándo incluir <code>tests/</code> en el contexto</span>
-                            Si se desea construir una etapa intermedia <em>tester</em> que ejecute
-                            <code>pytest</code> dentro del contenedor (sección 8.5), debe omitirse la
-                            línea <code>tests/</code> de este <code>.dockerignore</code>; en caso
-                            contrario, la etapa builder no podrá leerlas. La imagen final no se ve
-                            afectada porque la etapa <em>runtime</em> sólo copia <code>app/</code> y el
-                            entorno virtual; los tests nunca llegan a la imagen entregada en producción.
-                        </div>
+                        <p>Dos detalles. Los patrones con <code>**/</code> valen a cualquier profundidad: sin él,
+                            <code>__pycache__</code> solo excluiría la carpeta de la raíz, y las de <code>app/</code>,
+                            que aparecen al ejecutar las pruebas, entrarían a la imagen con el <code>COPY app/</code>. Y
+                            <code>**/*.db</code> impide que la base de datos de desarrollo llegue a la imagen (ver 10.12).</p>
 
-                        <h3>9.9 Dockerfile final (multi-stage)</h3>
+                        <h3>10.9 Dockerfile final (multi-stage)</h3>
 
-                        <pre><code><span class="cm"># Dockerfile</span>
-<span class="cm"># syntax=docker/dockerfile:1.7</span>
+                        <pre><code># Dockerfile
 
-<span class="cm"># ============================================================</span>
-<span class="cm"># Etapa 1 — builder: prepara un entorno virtual con dependencias</span>
-<span class="cm"># ============================================================</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">builder</span>
+# ============================================================
+# Etapa 1 — builder: prepara un entorno virtual con dependencias
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS builder
 
-<span class="df-instr">ENV</span> <span class="df-arg">PYTHONDONTWRITEBYTECODE=1 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1</span>
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
-<span class="cm"># Dependencias de compilación: necesarias sólo si una wheel debe</span>
-<span class="cm"># compilarse desde fuente. Se descartan junto con esta etapa.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">apt-get update \
+# Dependencias de compilación: necesarias solo si una wheel debe compilarse
+# desde fuente (aquí todas traen wheel, así que no se usan). Se descartan
+# junto con esta etapa.
+RUN apt-get update \
  &amp;&amp; apt-get install -y --no-install-recommends build-essential \
- &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+ &amp;&amp; rm -rf /var/lib/apt/lists/*
 
-<span class="cm"># Entorno virtual aislado en /opt/venv. Se eligió esta ruta porque</span>
-<span class="cm"># es portable a la etapa runtime con un único COPY.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">python -m venv /opt/venv</span>
-<span class="df-instr">ENV</span> <span class="df-arg">PATH=&quot;/opt/venv/bin:$PATH&quot;</span>
+# Entorno virtual aislado en /opt/venv. Se copia a la etapa runtime con un único
+# COPY porque ambas etapas usan la misma imagen base y la misma ruta.
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-<span class="df-instr">WORKDIR</span> <span class="df-path">/build</span>
+WORKDIR /build
 
-<span class="cm"># 1) Sólo el archivo de dependencias para maximizar el caché de capas.</span>
-<span class="df-instr">COPY</span> <span class="df-path">requirements.txt</span> <span class="df-path">.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install --upgrade pip \
- &amp;&amp; pip install -r requirements.txt</span>
+# Solo el archivo de dependencias, para aprovechar la caché de capas.
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-<span class="cm"># ============================================================</span>
-<span class="cm"># Etapa 2 — runtime: imagen final, sólo lo necesario para ejecutar</span>
-<span class="cm"># ============================================================</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">runtime</span>
+# ============================================================
+# Etapa 2 — runtime: imagen final, solo lo necesario para ejecutar
+# ============================================================
+FROM python:3.11.9-slim-bookworm AS runtime
 
-<span class="df-instr">ENV</span> <span class="df-arg">PYTHONDONTWRITEBYTECODE=1 \
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH=&quot;/opt/venv/bin:$PATH&quot;</span>
+    PATH="/opt/venv/bin:$PATH"
 
-<span class="cm"># Usuario y grupo del sistema para ejecutar la aplicación sin privilegios.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">groupadd --system --gid 1001 appgroup \
- &amp;&amp; useradd  --system --uid 1001 --gid appgroup --create-home appuser</span>
+# Usuario y grupo del sistema para ejecutar la aplicación sin privilegios.
+RUN groupadd --system --gid 1001 appgroup \
+ &amp;&amp; useradd --uid 1001 --gid appgroup --create-home appuser
 
-<span class="df-instr">WORKDIR</span> <span class="df-path">/app</span>
+WORKDIR /app
 
-<span class="cm"># Entorno virtual completo, traído del builder.</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--from=builder</span> <span class="df-path">/opt/venv</span> <span class="df-path">/opt/venv</span>
+# Entorno virtual completo, traído del builder.
+COPY --from=builder /opt/venv /opt/venv
 
-<span class="cm"># Código de la aplicación, propietario asignado al usuario no-root.</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--chown=appuser:appgroup</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
+# Código de la aplicación: propiedad de root y de solo lectura para appuser.
+COPY app/ ./app/
 
-<span class="df-instr">USER</span> <span class="df-arg">appuser</span>
+USER appuser
 
-<span class="df-instr">EXPOSE</span> <span class="df-arg">8000</span>
+EXPOSE 8000
 
-<span class="cm"># Sondeo de salud: el orquestador interroga el endpoint /health.</span>
-<span class="df-instr">HEALTHCHECK</span> <span class="df-flag">--interval=30s --timeout=5s --start-period=10s --retries=3</span> \
-    <span class="df-arg">CMD python -c &quot;import urllib.request, sys; \
-    sys.exit(0) if urllib.request.urlopen('http://localhost:8000/health').status == 200 else sys.exit(1)&quot;</span>
+# Sondeo de salud: Docker consulta /health y marca el contenedor como healthy o unhealthy.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"
 
-<span class="df-instr">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]
-</code></pre>
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
 
-                        <h3>9.10 Construcción y ejecución</h3>
+                        <div class="box info">
+                            <span class="label">Lo nuevo en este Dockerfile</span>
+                            <ul>
+                                <li><strong>Usuario no privilegiado.</strong> <code>groupadd</code> y
+   <code>useradd</code> crean un grupo y un usuario sin privilegios con uid y gid 1001, y
+   <code>USER</code> hace que el proceso corra como él. El código se copia <em>sin</em>
+   <code>--chown</code>: queda como propiedad de root y de solo lectura para <code>appuser</code>,
+   de modo que quien comprometa el proceso no puede modificar la aplicación.</li>
+                                <li><strong>Variables de Python y de pip.</strong> <code>PYTHONUNBUFFERED=1</code>
+                                    envía los mensajes de la aplicación a <code>docker logs</code> sin esperar;
+                                    <code>PYTHONDONTWRITEBYTECODE=1</code> impide que Python escriba archivos <code>.pyc</code>
+   al ejecutar la aplicación (los cerca de 2000 que <code>pip</code> compila al instalar sí quedan en el
+   entorno virtual); <code>PIP_NO_CACHE_DIR=1</code> impide que pip guarde las wheels
+                                    descargadas.</li>
+                                <li><strong><code>HEALTHCHECK</code>.</strong> Cada 30 s hace una petición a
+                                    <code>/health</code>; Docker marca el contenedor como <code>healthy</code> o
+                                    <code>unhealthy</code> (se ve en <code>docker ps</code>). No lo reinicia: eso lo
+                                    hace un orquestador, o la plataforma con sus propios sondeos.</li>
+                                <li><strong>Entorno virtual copiado entre etapas.</strong> Funciona porque las dos
+                                    etapas usan la misma imagen base y la misma ruta (<code>/opt/venv</code>): un entorno
+                                    virtual guarda la ruta del intérprete con el que se creó y no es reubicable.</li>
+                            </ul>
+                        </div>
 
-                        <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">cd regresion-api</span>
+                        <h3>10.10 Construcción y ejecución</h3>
 
-<span class="cm"># Construye la imagen y la etiqueta con la versión semántica.</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">docker build -t regresion-api:0.1.0 .</span>
+                        <pre data-lang="shell"><code>cd regresion-api
 
-<span class="cm"># Lanza un contenedor en primer plano y publica el puerto 8000.</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">docker run --rm -p 8000:8000 --name regresion regresion-api:0.1.0</span>
+# Construye la imagen y la etiqueta con la versión semántica.
+docker build -t regresion-api:0.1.0 .
 
-<span class="cm"># Desde otra terminal: comprueba el endpoint de salud.</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">curl -s http://localhost:8000/health</span>
-<span class="sh-out">{"status":"ok"}</span>
+# Lanza un contenedor en primer plano y publica el puerto 8000.
+docker run --rm -p 8000:8000 --name regresion regresion-api:0.1.0</code></pre>
 
-<span class="cm"># Solicita una predicción.</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">curl -s -X POST http://localhost:8000/predicciones \
-       -H 'Content-Type: application/json' \
-       -d '{"x": 2.0}'</span>
-<span class="sh-out">{"y_hat":6.3,"extrapolado":false,"version_modelo":"0.1.0"}</span>
+                        <p>Desde otra terminal se consulta el endpoint de salud y se solicita una predicción (la
+                            línea con <code>#</code> que sigue a cada orden es la salida esperada):</p>
 
-<span class="cm"># Solicita la documentación interactiva (Swagger UI).</span>
-<span class="sh-prompt">$</span> <span class="sh-cmd">open http://localhost:8000/docs</span>
-</code></pre>
+                        <pre data-lang="shell"><code>curl -s -w '\n' http://localhost:8000/health
+# {"status":"ok"}
+
+curl -s -w '\n' -X POST http://localhost:8000/predicciones \
+  -H 'Content-Type: application/json' \
+  -d '{"x": 2.0}'
+# {"y_hat":6.3,"extrapolado":false,"version_modelo":"0.1.0"}</code></pre>
+
+                        <p>La documentación interactiva (Swagger UI) está en <code>http://localhost:8000/docs</code>:
+                            se abre desde el navegador y necesita conexión a Internet, porque carga sus recursos
+                            desde un CDN.</p>
 
                         <div class="box info">
                             <span class="label">Verificación</span>
                             Para comprobar que la imagen se ejecuta como usuario no privilegiado, basta con
                             inspeccionar el contenedor en marcha:
-                            <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">docker exec regresion id</span>
-<span class="sh-out">uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)</span></code></pre>
+                            <pre data-lang="shell"><code>docker exec regresion id
+# uid=1001(appuser) gid=1001(appgroup) groups=1001(appgroup)</code></pre>
                             Y medir el tamaño efectivo:
-                            <pre><code><span class="sh-prompt">$</span> <span class="sh-cmd">docker images regresion-api:0.1.0 --format "{{.Size}}"</span>
-<span class="sh-out">187MB</span></code></pre>
+                            <pre data-lang="shell"><code>docker images regresion-api:0.1.0
+docker history regresion-api:0.1.0
+# La suma de la columna SIZE de docker history da ≈ 260 MB en Apple Silicon (≈ 200–220 MB en x86).
+# docker images puede mostrar otra cifra según la versión de Docker y el almacén de imágenes
+# (con Docker 29 y containerd: DISK USAGE ≈ 330 MB y CONTENT SIZE ≈ 73 MB, este último comprimido).</code></pre>
                         </div>
 
-                        <h3>9.11 Recapitulación de decisiones</h3>
+                        <h3>10.11 Comprobar que la API se comporta igual</h3>
 
-                        <table>
+                        <p>La práctica de la semana pide comprobar que la API se comporta igual dentro del contenedor.
+                            La forma más simple es lanzar las <em>mismas peticiones</em> contra la versión local y contra
+                            la del contenedor, y comparar. Con el entorno virtual del proyecto activo, se arranca la API
+                            local en otro puerto, para no chocar con el contenedor, que usa el 8000:</p>
+
+                        <pre data-lang="shell"><code>uvicorn app.main:app --port 8001</code></pre>
+
+                        <p>Desde otra terminal se repiten tres peticiones —una dentro del rango del modelo, una
+                            extrapolada y una inválida— contra los dos puertos, y <code>diff</code> compara las salidas:</p>
+
+                        <pre data-lang="shell"><code>peticiones() {
+  for x in 2.0 50.0 5000.0; do
+    curl -s -w ' [HTTP %{http_code}]\n' -X POST "http://localhost:$1/predicciones" \
+      -H 'Content-Type: application/json' -d "{\"x\": $x}"
+  done
+}
+diff &lt;(peticiones 8001) &lt;(peticiones 8000) &amp;&amp; echo "Respuestas idénticas"</code></pre>
+
+                        <p>Si <code>diff</code> no encuentra diferencias, imprime <code>Respuestas idénticas</code>: la API
+                            responde <code>200</code> con <code>extrapolado: false</code>, <code>200</code> con
+                            <code>extrapolado: true</code> y <code>422</code> exactamente igual en las dos versiones. Si solo
+                            uno de los dos está levantado, <code>curl</code> no obtiene respuesta del otro
+                            (<code>[HTTP 000]</code>) y <code>diff</code> lo muestra; antes conviene comprobar que ambos
+                            responden en <code>/health</code>, porque con los dos apagados la comparación saldría
+                            «idéntica». Los <code>&lt;( … )</code> requieren <code>bash</code> o <code>zsh</code>.</p>
+
+                        <div class="box tip">
+                            <span class="label">Tarea autónoma</span>
+                            Contenerizar el proyecto propio y verificar la equivalencia con el entorno local: repetir esta
+                            comparación con sus propios <em>endpoints</em> (uno que responda bien, uno que falle por
+                            validación y uno que dependa de la configuración o de la base de datos). Los ajustes que suele
+                            exigir el proyecto propio están en el apartado siguiente.
+                        </div>
+
+                        <h3>10.12 De este ejemplo a tu proyecto</h3>
+
+                        <p>El proyecto propio casi nunca se parece al ejemplo. Estos son los ajustes más frecuentes.</p>
+
+                        <p><strong>1. Estructura.</strong> Si el proyecto es plano (<code>main.py</code> en la raíz, sin carpeta
+                            <code>app/</code>), el <code>COPY</code> y el <code>CMD</code> cambian con él:
+                            <code>COPY main.py .</code> y <code>"main:app"</code> en lugar de <code>"app.main:app"</code>. Hay
+                            que copiar también todo lo que el código lee al arrancar: modelos entrenados
+                            (<code>.joblib</code>, <code>.pkl</code>), la carpeta de migraciones, plantillas.</p>
+
+                        <p><strong>2. Variables de entorno.</strong> La imagen no lleva <code>.env</code> (lo excluye el
+                            <code>.dockerignore</code>): la configuración llega al lanzar el contenedor, con
+                            <code>--env-file</code> o con <code>-e</code>. Si la configuración se lee con
+                            <code>pydantic-settings</code> (semana 8), se toma del entorno real cuando no hay archivo
+                            <code>.env</code>, y el código no cambia. En <code>--env-file</code> las comillas se conservan
+                            como parte del valor: se escribe <code>CLAVE=valor</code>, sin comillas (Docker Compose, en cambio,
+                            interpreta las comillas y las quita).</p>
+
+                        <pre data-lang="shell"><code>docker run --rm -p 8000:8000 --env-file .env regresion-api:0.1.0</code></pre>
+
+                        <p><strong>3. Una base SQLite.</strong> SQLite guarda la base en un archivo, y eso plantea tres asuntos:</p>
+                        <ul>
+                            <li>El usuario <code>appuser</code> no puede crear archivos en <code>/app</code> (lo creó
+                                <code>WORKDIR</code> como root). La base necesita un directorio propio: en la etapa
+                                <em>runtime</em>, antes de <code>USER</code>, se añade la línea siguiente, y la URL de la
+                                base apunta allí (por ejemplo <code>sqlite:////data/app.db</code>: cuatro barras, porque
+                                la ruta es absoluta).
+                                <pre data-lang="dockerfile"><code>RUN mkdir /data &amp;&amp; chown appuser:appgroup /data</code></pre>
+                            </li>
+                            <li>Lo que se escribe dentro de un contenedor vive en su capa de escritura y desaparece con
+                                <code>docker rm</code>. Para que los datos sobrevivan, se monta un <strong>volumen</strong>
+                                en ese directorio:
+                                <pre data-lang="shell"><code>docker run -d --name api -p 8000:8000 -v datos:/data regresion-api:0.1.0
+docker restart api    # el contenedor es el mismo: los datos también
+docker rm -f api      # se elimina el contenedor, pero no el volumen «datos»
+docker run -d --name api -p 8000:8000 -v datos:/data regresion-api:0.1.0   # los datos reaparecen</code></pre>
+                            </li>
+                            <li>El <code>.dockerignore</code> excluye <code>**/*.db</code>: la base de desarrollo no debe
+                                viajar en la imagen.</li>
+                        </ul>
+
+                        <p><strong>4. Arranque y puerto.</strong> Si el proyecto usa Alembic, las migraciones se aplican
+                            antes de arrancar; si la plataforma asigna el puerto en <code>$PORT</code>, el <code>CMD</code>
+                            debe leerlo. Ambos casos se resuelven con el <code>CMD</code> con <code>sh -c</code> y
+                            <code>exec</code> del apartado 6.5. Y si el puerto cambia, el <code>HEALTHCHECK</code> debe
+                            sondear ese mismo puerto: de lo contrario el contenedor responde pero Docker lo marca
+                            <code>unhealthy</code>; basta con que el sondeo lea la misma variable
+                            (<code>os.environ.get('PORT', '8000')</code>).</p>
+
+                        <p><strong>5. Un solo comando.</strong> Un archivo <code>docker-compose.yml</code> describe ese mismo
+                            lanzamiento —imagen, puertos, volumen— y se levanta con <code>docker compose up</code>; con
+                            <code>env_file: .env</code> se le pasan las variables.</p>
+
+                        <pre data-titulo="docker-compose.yml" data-lang="yaml"><code>services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - datos:/data
+
+volumes:
+  datos:</code></pre>
+
+                        <h3>10.13 Recapitulación de decisiones</h3>
+
+                        <table class="tabla-desplazable">
                             <thead>
                                 <tr>
                                     <th>Decisión</th>
@@ -2310,32 +2595,33 @@ Dockerfile
                                 </tr>
                                 <tr>
                                     <td>Multi-stage con builder y runtime separados</td>
-                                    <td>Reduce el tamaño y elimina compiladores de la imagen final.</td>
+                                    <td>Elimina compiladores y cabeceras de la imagen final; reduce el tamaño cuando el builder instala algo que el runtime no necesita.</td>
                                 </tr>
                                 <tr>
                                     <td>Entorno virtual en <code>/opt/venv</code></td>
-                                    <td>Hace portable el conjunto completo de dependencias mediante un solo
-                                        <code>COPY --from=builder</code>.
+                                    <td>Permite llevar el conjunto completo de dependencias a la etapa runtime con un solo
+   <code>COPY --from=builder</code>, siempre que ambas etapas usen la misma base y la misma ruta.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>Usuario <code>appuser</code> con UID 1001</td>
                                     <td>Cumple el principio de menor privilegio: el proceso de Uvicorn no
-                                        puede escribir en el sistema de archivos del contenedor fuera de
-                                        <code>/home/appuser</code> y de los archivos de los que
-                                        <code>appuser</code> es propietario en <code>/app</code> (los
-                                        copiados con <code>--chown=appuser:appgroup</code>).
+   puede modificar el código ni el entorno virtual; solo escribe en <code>/tmp</code>, en
+   <code>/home/appuser</code> y en los directorios que se le entreguen. Por eso una base SQLite
+   necesita un directorio propio (10.12).
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><code>HEALTHCHECK</code> declarado</td>
-                                    <td>Permite que orquestadores reinicien el contenedor si la API deja de
-                                        responder.</td>
+                                    <td>Permite que Docker marque el estado del contenedor (<code>docker ps</code> muestra
+   <code>healthy</code> o <code>unhealthy</code>); reiniciarlo exige un orquestador o las
+   sondas propias de la plataforma.</td>
                                 </tr>
                                 <tr>
                                     <td>Forma exec en <code>CMD</code></td>
                                     <td>Asegura que <code>SIGTERM</code> llegue directamente a Uvicorn y que
-                                        el cierre sea limpio.</td>
+   el cierre sea limpio (si el puerto lo decide la plataforma, se conserva con
+   <code>sh -c "exec …"</code>, ver 6.5).</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -2346,82 +2632,86 @@ Dockerfile
                         <h2>10. Autoevaluación</h2>
 
                         <p>Las preguntas siguientes ponen a prueba la comprensión conceptual y la capacidad
-                            de redactar Dockerfiles correctos. Se recomienda intentarlas antes de leer las
-                            soluciones comentadas.</p>
+   de redactar Dockerfiles correctos. Se recomienda intentarlas antes de leer las
+   soluciones comentadas. Como orientación de tiempo: los ejercicios 11.1 a 11.6 se
+   resuelven sin computador (unos 35 minutos); el 11.7 y el 11.8 piden escribir y construir
+   Dockerfiles, y conviene tener Docker a mano (unos 75 minutos).</p>
 
-                        <h3>10.1 Preguntas conceptuales</h3>
+                        <h3>Preguntas conceptuales</h3>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.1 — Diferencia clave</span>
-                            Explíquese, en máximo cuatro líneas, por qué dos contenedores que ejecutan
-                            Python 3.11.9 y NumPy 1.26.4 sobre el mismo computador comparten el kernel del
-                            anfitrión, mientras que dos máquinas virtuales con la misma configuración no.
+                            <span class="label">Ejercicio 11.1 — Diferencia clave</span>
+                            Explíquese, en no más de 60 palabras, por qué dos contenedores que se ejecutan en el mismo
+   computador comparten el kernel del sistema Linux que los ejecuta, mientras que dos
+   máquinas virtuales no comparten el suyo.
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.1</span>
-                            Cada máquina virtual incluye un sistema operativo huésped completo —incluido su
-                            propio kernel— que se ejecuta sobre un hipervisor. Dos VMs en paralelo cargan dos
-                            kernels distintos en memoria. Un contenedor, en cambio, sólo aísla el espacio de
-                            usuario mediante <em>namespaces</em> y <em>cgroups</em> del kernel del anfitrión;
-                            todos los contenedores en una misma máquina comparten ese único kernel y, por
-                            eso, arrancan en milisegundos y consumen mucha menos memoria.
+                            <span class="label">Solución comentada 11.1</span>
+                            Cada máquina virtual incluye un sistema operativo huésped completo —con su propio
+   kernel— sobre un hipervisor: dos VMs cargan dos kernels. Un contenedor solo aísla el
+   espacio de usuario mediante <em>namespaces</em> y <em>cgroups</em> del kernel del
+   anfitrión; todos los contenedores de una máquina comparten ese único kernel y, por eso,
+   arrancan en milisegundos y consumen mucha menos memoria.
                         </div>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.2 — Lectura de etiquetas</span>
+                            <span class="label">Ejercicio 11.2 — Lectura de etiquetas</span>
                             Indíquese qué significa cada componente de la etiqueta
-                            <code>python:3.11.9-slim-bookworm</code> y por qué la elección de
-                            <code>3.11.9</code> es preferible a <code>3.11</code> en una API estadística.
+   <code>python:3.11.9-slim-bookworm</code>, por qué la elección de
+   <code>3.11.9</code> es preferible a <code>3.11</code> en una API estadística y qué fuente
+   de variación elimina esa elección y cuál no.
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.2</span>
+                            <span class="label">Solución comentada 11.2</span>
                             <code>python</code> es el repositorio oficial; <code>3.11.9</code> es la versión
                             exacta del intérprete; <code>slim</code> indica una variante reducida de Debian;
                             <code>bookworm</code> es el nombre en clave de Debian 12. Fijar
-                            <code>3.11.9</code> evita que la etiqueta flotante <code>3.11</code> apunte
-                            automáticamente a un parche posterior, garantizando que las decisiones numéricas
-                            de la API sean reproducibles en el tiempo.
+   <code>3.11.9</code> evita que la etiqueta flotante <code>3.11</code> apunte
+   automáticamente a un parche posterior del intérprete. No garantiza por sí solo
+   resultados numéricos idénticos: para eso hay que fijar también NumPy y SciPy con
+   <code>==</code>, la base por digest y las semillas, y aun así BLAS puede variar con
+   la CPU y el número de hilos.
                         </div>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.3 — Caché de capas</span>
+                            <span class="label">Ejercicio 11.3 — Caché de capas</span>
                             El siguiente fragmento se reconstruye lentamente cada vez que cambia un archivo
                             de la carpeta <code>app/</code>. Identifíquese el problema y propóngase una
                             corrección:
-                            <pre><code><span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span>
-<span class="df-instr">WORKDIR</span> <span class="df-path">/app</span>
-<span class="df-instr">COPY</span> <span class="df-path">. .</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install --no-cache-dir -r requirements.txt</span>
-<span class="df-instr">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>]</code></pre>
+                            <pre><code>FROM python:3.11.9-slim-bookworm
+WORKDIR /app
+COPY . .
+RUN pip install --no-cache-dir -r requirements.txt
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.3</span>
+                            <span class="label">Solución comentada 11.3</span>
                             El problema es que <code>COPY . .</code> incluye el código fuente; cualquier
-                            cambio en <code>app/</code> invalida la capa siguiente y obliga a reinstalar
-                            todas las dependencias. La corrección consiste en separar la copia de
+   cambio en <code>app/</code> invalida esa capa y todas las posteriores, y obliga a
+   reinstalar todas las dependencias. La corrección consiste en separar la copia de
                             <code>requirements.txt</code> de la del código:
-                            <pre><code><span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span>
-<span class="df-instr">WORKDIR</span> <span class="df-path">/app</span>
-<span class="df-instr">COPY</span> <span class="df-path">requirements.txt</span> <span class="df-path">.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install --no-cache-dir -r requirements.txt</span>
-<span class="df-instr">COPY</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
-<span class="df-instr">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>]</code></pre>
+                            <pre><code>FROM python:3.11.9-slim-bookworm
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app/ ./app/
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
                             Mientras <code>requirements.txt</code> no cambie, la capa de instalación se
                             reutiliza y la reconstrucción tarda segundos en lugar de minutos.
                         </div>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.4 — Contexto de construcción</span>
+                            <span class="label">Ejercicio 11.4 — Contexto de construcción</span>
                             Indíquense tres archivos o carpetas que <em>nunca</em> deberían incluirse en una
-                            imagen de producción y descríbase qué problema concreto causa cada uno si llega
-                            a colarse.
+   imagen de producción, descríbase qué problema concreto causa cada uno si llega
+   a colarse y nómbrese el archivo que evita que lleguen al contexto de construcción.
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.4</span>
+                            <span class="label">Solución comentada 11.4</span>
                             Tres ejemplos típicos:
                             <ul>
                                 <li><strong><code>.env</code></strong>: contiene credenciales (claves de API,
@@ -2433,65 +2723,87 @@ Dockerfile
                                     commits, y datos de identidad de los autores. Aumenta el tamaño y la
                                     superficie de información expuesta.</li>
                                 <li><strong><code>data/raw/</code></strong>: archivos crudos de varios
-                                    gigabytes vuelven la imagen pesadísima, ralentizan los despliegues y
-                                    pueden contener información personal sin anonimizar.</li>
-                            </ul>
+                                    gigabytes vuelven la imagen muy pesada, ralentizan los despliegues y
+   pueden contener información personal sin anonimizar.</li>
+   </ul>
+   Otras respuestas válidas: <code>.venv/</code>, <code>__pycache__/</code>, <code>tests/</code>,
+   claves privadas (<code>*.pem</code>), bases de datos locales (<code>*.db</code>). El archivo que
+   lo evita es <code>.dockerignore</code>. Sigue siendo necesario aunque el <code>Dockerfile</code> use
+   <code>COPY</code> selectivo: el contexto completo viaja al daemon, y un <code>COPY . .</code>
+   futuro —o el de otro compañero— lo copiaría todo.
                         </div>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.5 — Multi-stage en propias palabras</span>
-                            Resúmase, en máximo seis líneas, qué problema resuelve un multi-stage build y
-                            cuáles son los dos artefactos que se descartan por completo al pasar a la etapa
-                            de runtime en el ejemplo del curso.
+                            <span class="label">Ejercicio 11.5 — Multi-stage en propias palabras</span>
+                            Resúmase, en no más de 60 palabras, qué problema resuelve un multi-stage build y
+   qué elemento del builder del Dockerfile de 10.9 no llega a la imagen final.
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.5</span>
+                            <span class="label">Solución comentada 11.5</span>
                             Un multi-stage build separa las dependencias necesarias para <em>construir</em>
-                            el software de las necesarias para <em>ejecutarlo</em>. Sólo la última etapa
+                            el software de las necesarias para <em>ejecutarlo</em>. Solo la última etapa
                             forma la imagen entregada; todas las anteriores se descartan. En el ejemplo del
-                            curso, la imagen final no contiene <code>build-essential</code> ni la caché de
-                            paquetes Debian (<code>/var/lib/apt/lists/</code>), reduciendo el tamaño y la
-                            superficie de ataque.
+   curso, lo que no llega a la imagen final es todo el builder: en particular
+   <code>build-essential</code> (el compilador y sus cabeceras), que reduce el tamaño y
+   la superficie de ataque. Borrar <code>/var/lib/apt/lists/</code> o instalar con
+   <code>--no-cache-dir</code> es otra técnica, ortogonal: ahorra espacio dentro de una misma
+   etapa.
                         </div>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.6 — Usuario no privilegiado</span>
-                            Justifíquese por qué la instrucción <code>USER appuser</code> es esencial en una
-                            imagen de producción, incluso aunque las pruebas funcionen igual con
-                            <code>USER root</code>.
+                            <span class="label">Ejercicio 11.6 — Usuario no privilegiado</span>
+                            Suponiendo que el Dockerfile ya creó el usuario <code>appuser</code>, justifíquese por qué se
+   recomienda la instrucción <code>USER appuser</code> en una imagen de producción, incluso
+   aunque las pruebas funcionen igual con <code>USER root</code>.
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.6</span>
+                            <span class="label">Solución comentada 11.6</span>
                             Si una vulnerabilidad permite a un atacante ejecutar código arbitrario dentro
                             del contenedor y el proceso corre como <code>root</code>, ese código actúa como
                             root: puede modificar todos los archivos del contenedor, instalar paquetes,
-                            montar puntos de montaje del anfitrión —si están expuestos— y, en escenarios con
-                            fugas de aislamiento, escalar privilegios al sistema anfitrión. Un usuario no
+   escribir o borrar en los volúmenes del anfitrión que se hayan montado en él y, en
+   escenarios con fugas de aislamiento, escalar privilegios al sistema anfitrión. Un usuario no
                             privilegiado convierte ese mismo escenario en un compromiso mucho más limitado:
                             el atacante hereda los permisos restringidos de <code>appuser</code>, lo que
                             contiene el daño y facilita la respuesta a incidentes.
                         </div>
 
-                        <h3>10.2 Redacción de Dockerfiles</h3>
+                        <h3>Redacción de Dockerfiles</h3>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.7 — Mini-API determinista</span>
+                            <span class="label">Ejercicio 11.7 — Mini-API en un contenedor</span>
                             Redáctese un Dockerfile mono-etapa, basado en
-                            <code>python:3.11.9-slim-bookworm</code>, que empaquete una mini-API FastAPI con
-                            un único endpoint <code>GET /version</code> que devuelva
-                            <code>{"version": "0.1.0"}</code>. Súmense estos requisitos:
+                            <code>python:3.11.9-slim-bookworm</code>, que empaquete la mini-API FastAPI siguiente, con
+                            un único endpoint <code>GET /version</code> que devuelve
+                            <code>{"version": "0.1.0"}</code>:
+                            <pre data-titulo="app/main.py" data-lang="python"><code>from fastapi import FastAPI
+
+app = FastAPI()
+
+
+@app.get("/version")
+def version() -&gt; dict[str, str]:
+    return {"version": "0.1.0"}</code></pre>
+                            Con este <code>requirements.txt</code> (y un <code>app/__init__.py</code> vacío):
+                            <pre data-titulo="requirements.txt" data-lang="text"><code>fastapi==0.111.0
+uvicorn[standard]==0.30.1</code></pre>
+                            Cúmplanse estos requisitos:
                             <ol>
                                 <li>El proceso debe correr como un usuario no privilegiado.</li>
                                 <li>La caché debe permitir que un cambio en el código no reinstale las
                                     dependencias.</li>
-                                <li>El puerto expuesto es 8000.</li>
+                                <li>La API debe responder en <code>http://localhost:8000/version</code> desde el
+                                    anfitrión.</li>
                             </ol>
+                            Compruébese: construir la imagen, lanzarla con <code>docker run --rm -p 8000:8000</code>,
+                            consultar <code>/version</code> con <code>curl</code> y ejecutar
+                            <code>docker run --rm &lt;imagen&gt; id -u</code>, que debe imprimir <code>1001</code>.
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.7</span>
+                            <span class="label">Solución comentada 11.7</span>
                             <pre><code><span class="cm"># Dockerfile mono-etapa, didáctico</span>
 <span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span>
 
@@ -2500,63 +2812,74 @@ Dockerfile
 
 <span class="cm"># Usuario no privilegiado.</span>
 <span class="df-instr">RUN</span> <span class="df-arg">groupadd --system --gid 1001 appgroup \
- &amp;&amp; useradd  --system --uid 1001 --gid appgroup --create-home appuser</span>
+ &amp;&amp; useradd --uid 1001 --gid appgroup --create-home appuser</span>
 
 <span class="df-instr">WORKDIR</span> <span class="df-path">/app</span>
 
-<span class="cm"># Dependencias primero para preservar el caché.</span>
+<span class="cm"># Dependencias primero para preservar la caché.</span>
 <span class="df-instr">COPY</span> <span class="df-path">requirements.txt</span> <span class="df-path">.</span>
 <span class="df-instr">RUN</span> <span class="df-arg">pip install --no-cache-dir -r requirements.txt</span>
 
 <span class="cm"># Código después; cambios aquí no reinstalan paquetes.</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--chown=appuser:appgroup</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
+<span class="df-instr">COPY</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
 
 <span class="df-instr">USER</span> <span class="df-arg">appuser</span>
 <span class="df-instr">EXPOSE</span> <span class="df-arg">8000</span>
 <span class="df-instr">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</code></pre>
                             El orden <em>requirements.txt → pip install → código</em> garantiza que la capa
                             de dependencias se reutilice mientras el archivo de dependencias no cambie. La
-                            instrucción <code>USER appuser</code> aplica el principio de menor privilegio.
+   instrucción <code>USER appuser</code> aplica el principio de menor privilegio. <code>EXPOSE</code>
+   solo documenta el puerto: lo que hace accesible la API desde el anfitrión es publicarlo con
+   <code>-p 8000:8000</code> y que Uvicorn escuche en <code>0.0.0.0</code>. Durante la construcción,
+   <code>pip</code> avisa de que se ejecuta como root; es inocuo, porque la imagen se construye como
+   root y solo el proceso final corre como <code>appuser</code>.
                         </div>
 
                         <div class="box exercise">
-                            <span class="label">Ejercicio 10.8 — Versión multi-stage</span>
+                            <span class="label">Ejercicio 11.8 — Versión multi-stage</span>
                             Reescríbase el Dockerfile del ejercicio anterior empleando dos etapas
                             (<em>builder</em> y <em>runtime</em>). El builder debe instalar las dependencias
-                            en un entorno virtual; la etapa final debe contener únicamente el entorno
-                            virtual y el código.
+                            en un entorno virtual y, para que el ahorro sea visible, <code>build-essential</code>
+                            (como en el ejemplo integrador); la etapa final debe contener únicamente el entorno
+                            virtual y el código. Compárense los tamaños de las
+                            imágenes de 11.7 y 11.8 (suma de <code>docker history</code>).
                         </div>
 
                         <div class="box solution">
-                            <span class="label">Solución comentada 10.8</span>
-                            <pre><code><span class="cm"># syntax=docker/dockerfile:1.7</span>
+                            <span class="label">Solución comentada 11.8</span>
+                            <pre data-titulo="Dockerfile" data-lang="dockerfile"><code># --- builder ---
+FROM python:3.11.9-slim-bookworm AS builder
+ENV PIP_NO_CACHE_DIR=1
+RUN apt-get update \
+ &amp;&amp; apt-get install -y --no-install-recommends build-essential \
+ &amp;&amp; rm -rf /var/lib/apt/lists/*
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+WORKDIR /build
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-<span class="cm"># --- builder ---</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">builder</span>
-<span class="df-instr">ENV</span> <span class="df-arg">PIP_NO_CACHE_DIR=1</span>
-<span class="df-instr">RUN</span> <span class="df-arg">python -m venv /opt/venv</span>
-<span class="df-instr">ENV</span> <span class="df-arg">PATH=&quot;/opt/venv/bin:$PATH&quot;</span>
-<span class="df-instr">WORKDIR</span> <span class="df-path">/build</span>
-<span class="df-instr">COPY</span> <span class="df-path">requirements.txt</span> <span class="df-path">.</span>
-<span class="df-instr">RUN</span> <span class="df-arg">pip install --upgrade pip &amp;&amp; pip install -r requirements.txt</span>
-
-<span class="cm"># --- runtime ---</span>
-<span class="df-instr">FROM</span> <span class="df-arg">python:3.11.9-slim-bookworm</span> <span class="df-flag">AS</span> <span class="df-arg">runtime</span>
-<span class="df-instr">ENV</span> <span class="df-arg">PYTHONDONTWRITEBYTECODE=1 \
+# --- runtime ---
+FROM python:3.11.9-slim-bookworm AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PATH=&quot;/opt/venv/bin:$PATH&quot;</span>
-<span class="df-instr">RUN</span> <span class="df-arg">groupadd --system --gid 1001 appgroup \
- &amp;&amp; useradd  --system --uid 1001 --gid appgroup --create-home appuser</span>
-<span class="df-instr">WORKDIR</span> <span class="df-path">/app</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--from=builder</span> <span class="df-path">/opt/venv</span> <span class="df-path">/opt/venv</span>
-<span class="df-instr">COPY</span> <span class="df-flag">--chown=appuser:appgroup</span> <span class="df-path">app/</span> <span class="df-path">./app/</span>
-<span class="df-instr">USER</span> <span class="df-arg">appuser</span>
-<span class="df-instr">EXPOSE</span> <span class="df-arg">8000</span>
-<span class="df-instr">CMD</span> [<span class="str">"uvicorn"</span>, <span class="str">"app.main:app"</span>, <span class="str">"--host"</span>, <span class="str">"0.0.0.0"</span>, <span class="str">"--port"</span>, <span class="str">"8000"</span>]</code></pre>
-                            La imagen final se reduce porque no contiene los archivos auxiliares de
-                            <code>pip</code> ni los <em>caches</em> intermedios; sólo el entorno virtual y
-                            el código. El patrón es idéntico al del ejemplo integrador y resulta directamente
-                            transferible a otras APIs estadísticas.
+    PATH="/opt/venv/bin:$PATH"
+RUN groupadd --system --gid 1001 appgroup \
+ &amp;&amp; useradd --uid 1001 --gid appgroup --create-home appuser
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+COPY app/ ./app/
+USER appuser
+EXPOSE 8000
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+                            Con <code>build-essential</code> en el builder, la imagen final no lo lleva: el
+   multi-stage se ahorra el compilador y sus cabeceras, que pesan cientos de megabytes.
+   <strong>Sin</strong> él, las dos imágenes pesan casi lo mismo (la de dos etapas incluso unos 25 MB
+   más, porque el entorno virtual trae su propio <code>pip</code> y <code>setuptools</code>): el multi-stage solo
+   compensa cuando el builder contiene algo que el runtime no necesita. Error frecuente: la
+   ruta del entorno virtual debe ser la misma en las dos etapas, y ambas deben usar la misma
+   imagen base. El patrón es el del ejemplo integrador y resulta transferible a otras APIs
+   estadísticas.
                         </div>
                     </section>
 
@@ -2564,7 +2887,7 @@ Dockerfile
                     <section id="cierre" class="unit">
                         <h2>11. Conclusión, buenas prácticas de seguridad y recursos</h2>
 
-                        <h3>11.1 Resumen ejecutivo</h3>
+                        <h3>12.1 Resumen</h3>
                         <ol>
                             <li>Un contenedor extiende la idea del entorno virtual al sistema operativo
                                 completo: aísla paquetes, intérprete, bibliotecas del sistema y procesos.</li>
@@ -2572,7 +2895,8 @@ Dockerfile
                                 los contenedores comparten el kernel del anfitrión y son órdenes de magnitud
                                 más livianos.</li>
                             <li>El <code>Dockerfile</code> describe, instrucción a instrucción, cómo se
-                                reconstruye la imagen. Cada instrucción produce una capa cacheable.</li>
+                                reconstruye la imagen. Las instrucciones que añaden contenido producen capas inmutables que Docker reutiliza
+   desde la caché mientras sus entradas no cambian.</li>
                             <li>La imagen base <code>python:3.11.9-slim-bookworm</code> ofrece un balance
                                 razonable entre tamaño, compatibilidad con el ecosistema científico de
                                 Python y vigencia de soporte.</li>
@@ -2585,111 +2909,98 @@ Dockerfile
                                 ataque.</li>
                         </ol>
 
-                        <h3>11.2 Buenas prácticas de seguridad</h3>
+                        <h3>12.2 Buenas prácticas de seguridad</h3>
 
-                        <div class="box warn">
-                            <span class="label">Lista mínima de seguridad</span>
-                            <ul>
-                                <li><strong>No ejecutar como <code>root</code>.</strong> Crear un usuario
-                                    del sistema con <code>useradd</code> y aplicar <code>USER</code> antes
-                                    del <code>CMD</code> final.</li>
-                                <li><strong>No copiar secretos a la imagen.</strong> Usar
-                                    <code>.dockerignore</code> para excluir <code>.env</code>, claves
-                                    privadas y certificados; inyectar credenciales como variables de
-                                    entorno en tiempo de ejecución.
-                                </li>
-                                <li><strong>Fijar versiones.</strong> Tanto la imagen base
-                                    (<code>3.11.9-slim-bookworm</code>) como las dependencias en
-                                    <code>requirements.txt</code> con <code>==</code>; idealmente, fijar el
-                                    digest <code>@sha256:...</code> de la imagen base.
-                                </li>
-                                <li><strong>Mantener el contexto pequeño y limpio.</strong> Cada archivo
-                                    que no participe en la construcción es una potencial fuga de
-                                    información y un ralentizador del flujo de trabajo.</li>
-                                <li><strong>Reducir la superficie de ataque.</strong> Multi-stage para
-                                    descartar compiladores; una sola responsabilidad por imagen; sin
-                                    <code>curl</code> ni <code>git</code> en producción.
-                                </li>
-                                <li><strong>Escanear vulnerabilidades.</strong> Herramientas como
-                                    <code>docker scout</code>, <code>trivy</code> o <code>grype</code>
-                                    inspeccionan las capas y reportan CVEs conocidas.
-                                </li>
-                                <li><strong>Actualizar regularmente la imagen base.</strong> Reconstruir y
-                                    republicar cuando aparezcan nuevos parches de seguridad de Debian o de
-                                    CPython.</li>
-                                <li><strong>Privilegios mínimos en tiempo de ejecución.</strong> Lanzar
-                                    con <code>docker run --read-only</code> o
-                                    <code>--cap-drop=ALL</code> cuando la aplicación lo permita.
-                                </li>
-                            </ul>
-                        </div>
+                        <p>Cuatro prácticas mínimas, todas vistas en esta unidad:</p>
+                        <ul>
+                            <li><strong>No ejecutar como <code>root</code>.</strong> Crear un usuario
+                                sin privilegios con <code>useradd</code> y aplicar <code>USER</code> antes
+                                del <code>CMD</code> final.</li>
+                            <li><strong>No copiar secretos a la imagen.</strong> Usar
+                                <code>.dockerignore</code> para excluir <code>.env</code>, claves
+                                privadas y certificados; inyectar las credenciales como variables de
+                                entorno en tiempo de ejecución (<code>docker run --env-file</code>) y, si un
+                                secreto hace falta al construir, <code>RUN --mount=type=secret</code>
+                                —nunca <code>ARG</code> ni <code>ENV</code>—.</li>
+                            <li><strong>Fijar versiones.</strong> Tanto la imagen base
+                                (<code>3.11.9-slim-bookworm</code>) como las dependencias en
+                                <code>requirements.txt</code> con <code>==</code>; idealmente, fijar el
+                                digest <code>@sha256:...</code> de la imagen base.</li>
+                            <li><strong>Reducir la superficie de ataque.</strong> Multi-stage para
+                                descartar compiladores; una sola responsabilidad por imagen; sin
+                                <code>curl</code> ni <code>git</code> en producción. Mantener además el
+                                contexto pequeño y limpio.</li>
+                        </ul>
 
-                        <h3>11.3 Compatibilidad con prácticas previas</h3>
+                        <p>Para ampliar, cuando el proyecto lo pida:</p>
+                        <ul>
+                            <li><strong>Escanear vulnerabilidades.</strong> Herramientas como
+                                <code>docker scout</code>, <code>trivy</code> o <code>grype</code>
+                                inspeccionan las capas y reportan CVE (vulnerabilidades publicadas, con
+                                identificador).</li>
+                            <li><strong>Actualizar de forma deliberada.</strong> Fijar no es congelar: una
+                                base fijada no recibe parches. Reconstruir y republicar con versiones nuevas
+                                de Debian o de CPython, con las pruebas en verde y tras escanear la imagen.</li>
+                            <li><strong>Privilegios mínimos en tiempo de ejecución.</strong> Lanzar
+                                con <code>docker run --read-only</code> o
+                                <code>--cap-drop=ALL</code> cuando la aplicación lo permita.</li>
+                        </ul>
+
+                        <h3>12.3 Compatibilidad con prácticas previas</h3>
 
                         <p>Lo aprendido en esta unidad no contradice ninguna de las recomendaciones
                             anteriores del curso, sino que las reafirma:</p>
 
                         <ul>
-                            <li>La validación con Pydantic y la respuesta HTTP 422 (Semana III) operan
+                            <li>La validación con Pydantic y la respuesta HTTP 422 (semanas 4 y 6) operan
                                 dentro del contenedor exactamente igual que fuera; el aislamiento no altera
                                 la semántica de FastAPI.</li>
                             <li>La pirámide de testing sigue rigiendo: las pruebas unitarias se
-                                ejecutan en una etapa <em>tester</em>, antes de construir la imagen final.</li>
+   ejecutan antes de construir la imagen, y la imagen final no lleva pytest.</li>
                             <li>La inyección de dependencias con <code>Depends</code> coexiste con el
-                                contenedor: la configuración se inyecta como variables de entorno y es leída
-                                por <code>python-dotenv</code> al arrancar la aplicación.</li>
+                                contenedor: la configuración se inyecta como variables de entorno al lanzar el contenedor
+   (<code>docker run -e</code> o <code>--env-file</code>) y la aplicación las lee igual que en
+   local (semana 8).</li>
                             <li>La fijación de versiones, semillas y configuración numérica es
                                 el primer paso para una imagen verdaderamente reproducible.</li>
                         </ul>
 
-                        <h3>11.4 Próximos pasos sugeridos</h3>
+                        <h3>12.4 Próximos pasos sugeridos</h3>
                         <ol>
                             <li>Componer múltiples servicios (API + base de datos PostgreSQL + caché Redis)
-                                con Docker Compose.</li>
+   con Docker Compose (el apartado 10.12 muestra el caso mínimo de un solo servicio).</li>
                             <li>Integrar la construcción y publicación de imágenes en una pipeline de
-                                integración continua (Semana posterior).</li>
+   integración continua (semana 12).</li>
                             <li>Versionar las imágenes con etiquetas semánticas y empujarlas a un registro
                                 privado.</li>
                             <li>Estudiar la orquestación a escala con Kubernetes una vez consolidados los
-                                fundamentos de Docker.</li>
+   fundamentos de Docker (queda fuera del alcance de este curso).</li>
                         </ol>
 
-                        <h3>11.5 Recursos adicionales</h3>
+                        <h3>12.5 Recursos adicionales</h3>
                         <ul>
-                            <li>Docker — Documentación oficial:
-                                <code>https://docs.docker.com/</code>
-                            </li>
-                            <li>Dockerfile reference:
-                                <code>https://docs.docker.com/reference/dockerfile/</code>
-                            </li>
-                            <li>BuildKit — Motor de construcción moderno:
-                                <code>https://docs.docker.com/build/buildkit/</code>
-                            </li>
-                            <li>Docker Hub — Repositorio oficial de Python:
-                                <code>https://hub.docker.com/_/python</code>
-                            </li>
-                            <li>Debian 12 «bookworm» — Notas de versión:
-                                <code>https://www.debian.org/releases/bookworm/</code>
-                            </li>
-                            <li>FastAPI — Despliegue con Docker:
-                                <code>https://fastapi.tiangolo.com/deployment/docker/</code>
-                            </li>
-                            <li>OWASP — Docker Security Cheat Sheet:
-                                <code>https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html</code>
-                            </li>
-                            <li>Trivy — Escáner de vulnerabilidades para imágenes:
-                                <code>https://github.com/aquasecurity/trivy</code>
-                            </li>
+                            <li><a href="https://docs.docker.com/" target="_blank" rel="noopener">Docker — Documentación oficial</a></li>
+                            <li><a href="https://docs.docker.com/language/python/" target="_blank" rel="noopener">Docker — Guía de Python</a></li>
+                            <li><a href="https://docs.docker.com/reference/dockerfile/" target="_blank" rel="noopener">Dockerfile reference</a></li>
+                            <li><a href="https://docs.docker.com/build/building/best-practices/" target="_blank" rel="noopener">Docker — Buenas prácticas de construcción</a></li>
+                            <li><a href="https://docs.docker.com/build/concepts/context/" target="_blank" rel="noopener">Docker — Contexto de construcción y <code>.dockerignore</code></a></li>
+                            <li><a href="https://docs.docker.com/build/buildkit/" target="_blank" rel="noopener">BuildKit — Motor de construcción moderno</a></li>
+                            <li><a href="https://hub.docker.com/_/python" target="_blank" rel="noopener">Docker Hub — Repositorio oficial de Python</a></li>
+                            <li><a href="https://www.debian.org/releases/bookworm/" target="_blank" rel="noopener">Debian 12 «bookworm» — Información de la versión</a></li>
+                            <li><a href="https://fastapi.tiangolo.com/deployment/docker/" target="_blank" rel="noopener">FastAPI — Despliegue con Docker</a></li>
+                            <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Docker_Security_Cheat_Sheet.html" target="_blank" rel="noopener">OWASP — Docker Security Cheat Sheet</a></li>
+                            <li><a href="https://github.com/aquasecurity/trivy" target="_blank" rel="noopener">Trivy — Escáner de vulnerabilidades para imágenes</a></li>
                         </ul>
 
                         <div class="box info">
                             <span class="label">Cierre</span>
                             Una imagen Docker bien construida convierte un proyecto estadístico en un
-                            artefacto entregable: portable entre laptops, servidores de cómputo y nubes;
+                            artefacto entregable: portable entre portátiles, servidores de cómputo y nubes;
                             reproducible a través del tiempo; auditable instrucción a instrucción; y, sobre
                             todo, indistinguible en producción de lo que se probó en desarrollo. Esta es la
                             base sobre la cual las semanas siguientes construyen la integración continua,
-                            el versionado de modelos y el despliegue en orquestadores.
+                            el despliegue en una plataforma como servicio (semana 12) y el servicio de modelos
+   entrenados (semana 13).
                         </div>
                     </section>
 
