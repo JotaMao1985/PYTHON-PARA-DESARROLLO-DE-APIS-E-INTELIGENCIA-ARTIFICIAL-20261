@@ -136,7 +136,7 @@ siguen vivas, y `montar.py` necesita las piezas.
 | Guion | Qué hace |
 |---|---|
 | `graficas.py` | `Plotly.newPlot` de `plotly.io.to_html` → `usePlotly` + `ChartFrame`. Descarta el `template` por defecto y la altura, que la fija la clase del marco. |
-| `convertir.py` | Una `<section>` → un componente de sección. `div.box` → `Box`, `<pre>` con resaltado a mano → `CodeBlock`, `box solution` → `Accordion`. |
+| `convertir.py` | Una `<section>` → un componente de sección. `div.box` → `Box`, `<pre>` con resaltado a mano → `CodeBlock`, `box solution` → `Accordion`. El `<pre>` puede declarar `data-titulo="app/modelo.json"` y `data-lang="json"`, que mandan sobre lo que el guion deduce del código: hacen falta cuando el bloque no admite un comentario con su nombre (un JSON con la línea `# archivo` en cabecera se copiaba roto) o cuando la heurística de `lang` no acierta (un `docker build … <<'EOF'` con un `FROM` dentro salía como `dockerfile`). |
 | `convertir_datos.py` | El objeto `courseData` → secciones y gráficas. Ver abajo. |
 | `convertir_plano.py` | Un `<article id>` → un componente de sección. `.tip-box` → `Box`, `<details>` → `Accordion`, los radios de «Verificación de Comprensión» → `Quiz`, y los atributos de los SVG a camelCase. Ver abajo. |
 | `convertir_react.py` | Una entrada del `curriculum` heredado → un componente de sección. El `content` se copia literal, porque ya es JSX; sólo `.tip-box` → `Box`. Ver abajo. |

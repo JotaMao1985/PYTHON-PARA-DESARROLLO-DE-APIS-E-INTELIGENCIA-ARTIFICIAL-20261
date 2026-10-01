@@ -164,9 +164,19 @@ def escapar_jsx(texto):
 
 
 def convertir_pre(m, avisos):
-    """`<pre><code>…</code></pre>` → `<CodeBlock … />`."""
-    codigo = texto_plano(m.group(1)).strip("\n")
-    lang = detectar_lang(codigo)
+    """`<pre><code>…</code></pre>` → `<CodeBlock … />`.
+
+    El `<pre>` puede declarar `data-titulo` y `data-lang`, que mandan sobre lo
+    que se deduce del propio código. Hacen falta cuando el bloque no puede
+    llevar su nombre en un comentario —un JSON no admite comentarios: el de
+    cabecera lo rompía al copiarlo— o cuando la heurística de `detectar_lang`
+    no acierta, como con la salida de una orden. Sin ellos, todo sigue igual.
+    """
+    attrs, cuerpo = m.group(1), m.group(2)
+    codigo = texto_plano(cuerpo).strip("\n")
+    decl_lang = re.search(r'data-lang="([^"]+)"', attrs)
+    decl_titulo = re.search(r'data-titulo="([^"]+)"', attrs)
+    lang = decl_lang.group(1) if decl_lang else detectar_lang(codigo)
     if lang is None:
         avisos.append(f"lang sin determinar para el bloque que empieza por "
                       f"«{codigo.strip()[:46]}…»")
@@ -174,7 +184,7 @@ def convertir_pre(m, avisos):
         marca = "  /* TODO revisar lang */"
     else:
         marca = ""
-    titulo = titulo_de(codigo)
+    titulo = decl_titulo.group(1) if decl_titulo else titulo_de(codigo)
     attr_titulo = f'title="{titulo}" ' if titulo else ""
     # Las comillas invertidas y `${` romperían la plantilla literal de JS.
     seguro = codigo.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${")
@@ -331,8 +341,8 @@ def convertir_seccion(bruto, id_seccion, graficas, avisos):
     def guardar(m):
         marcas.append(convertir_pre(m, avisos))
         return f"@@BLOQUE{len(marcas) - 1}@@"
-    cuerpo = re.sub(r"<pre[^>]*>\s*<code[^>]*>(.*?)</code>\s*</pre>", guardar, cuerpo, flags=re.S)
-    cuerpo = re.sub(r"<pre[^>]*>(.*?)</pre>", guardar, cuerpo, flags=re.S)
+    cuerpo = re.sub(r"<pre([^>]*)>\s*<code[^>]*>(.*?)</code>\s*</pre>", guardar, cuerpo, flags=re.S)
+    cuerpo = re.sub(r"<pre([^>]*)>(.*?)</pre>", guardar, cuerpo, flags=re.S)
 
     # Aquí, y solo aquí: el código ya está apartado y todavía no se ha
     # generado ninguna llave de JSX. Antes borraría las de los bloques;
