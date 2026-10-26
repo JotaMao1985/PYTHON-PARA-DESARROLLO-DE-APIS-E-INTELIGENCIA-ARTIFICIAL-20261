@@ -238,34 +238,37 @@ REPARTO: dict[int, dict] = {
                 "se monta encima de esta API. Entorno: Python 3.11.9 con FastAPI y Uvicorn.",
     },
     7: {
-        # Los minutos NO están puestos a ojo: salen de contar la prosa de cada
-        # <article id="modulo-N"> del propio archivo a 110 palabras/minuto, que es
-        # el ritmo declarado en §5.2 del informe pedagógico. Reproducible con
-        # `python3 scripts/auditoria/hallazgos.py --prosa-modulo7`.
+        # Los minutos de la exposición son tiempo de clase asignado a cada
+        # sección (suman 60, el presupuesto del syllabus), NO minutos de lectura
+        # medidos a 110 palabras/minuto: la nota se lo dice al estudiante.
         "exposicion": [
             "Introducción: por qué validar antes de modelar · 5 min",
-            "Tipos complejos y anotaciones para datos estadísticos · 13 min",
-            "Validadores de campo y de modelo · 19 min",
-            "Modelos anidados y topología jerárquica · 23 min",
-            "Manejo integral del error 422 · 10 min",
+            "Tipos complejos y anotaciones: Optional, Literal y Annotated · 10 min",
+            "Validadores de campo y de modelo, y cómo se redacta un rechazo · 20 min",
+            "Modelos anidados: una sesión y sus ensayos · 12 min",
+            "Del validador al cuerpo del 422 · 13 min",
         ],
         "practica": [
-            "Síntesis: el pipeline de ingesta estadística completo",
-            "Actividad evaluativa: proyecto aplicado",
-            "Construir un validador que rechace observaciones fuera de rango",
-            "Hacer que el rechazo explique su motivo a quien consume la API",
-            "Añadir rangos lógicos y descripciones a los esquemas del proyecto",
+            "Construir un validador que rechace observaciones fuera de rango estadístico "
+            "y justifique el rechazo (sección 4)",
+            "Hacer que el 422 explique su motivo a quien consume la API (sección 6)",
+            "Ejercicios de las secciones 3 a 6",
+            "Arranque de la actividad evaluativa (sección 8)",
         ],
         "consulta": [
-            "Las 1 529 líneas de código de los ejemplos, como referencia",
-            "Bibliografía y fuentes consultadas",
+            "Los recuadros «Para profundizar» de las secciones 3 a 6",
+            "La tabla de síntesis (sección 7), para repasar",
+            "Las preguntas de sustentación (sección 9)",
+            "El código completo de los ejemplos, como referencia",
+            "Bibliografía y fuentes consultadas (sección 10)",
         ],
-        "nota": "Las cinco secciones de exposición suman <strong>70 minutos medidos</strong> "
-                "sobre un presupuesto de 60: cabe, con la sesión ajustada. El módulo entero "
-                "son 120 minutos de prosa, y ésa era la confusión que este bloque deshace — "
-                "los 50 restantes nunca fueron exposición, son la práctica y el código de "
-                "referencia. Si vas justo de tiempo, la sección que mejor aguanta quedar como "
-                "lectura es «Modelos anidados», que es la más larga. "
+        "nota": "Los minutos de cada punto de la exposición son el tiempo de clase que "
+                "se le da a esa sección, no minutos medidos de lectura: en clase se ve "
+                "la idea central de cada sección con su ejemplo, y la prosa completa, los "
+                "recuadros «Para profundizar» y el código se leen fuera de la sesión. El "
+                "trabajo autónomo de la semana, según el syllabus, es añadir rangos lógicos "
+                "y descripciones de campo a los esquemas del proyecto integrador; la "
+                "sección 3 enseña cómo se escriben. "
                 "Entorno: Python 3.11.9 con Pydantic v2 y FastAPI.",
     },
     8: {

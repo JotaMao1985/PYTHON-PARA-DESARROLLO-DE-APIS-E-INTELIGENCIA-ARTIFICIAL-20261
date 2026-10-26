@@ -70,6 +70,11 @@ def p_continuaciones():
                 d.add(n.id)
             elif isinstance(n, ast.arg):
                 d.add(n.arg)
+            elif isinstance(n, ast.ExceptHandler) and n.name:
+                # `except ValidationError as e:` define `e`, pero en el árbol es
+                # una cadena, no un ast.Name: sin esto, un bloque con su propio
+                # `except … as e` «continuaba» a cualquier bloque anterior con una `e`.
+                d.add(n.name)
             elif isinstance(n, (ast.Import, ast.ImportFrom)):
                 for a in n.names:
                     d.add(a.asname or a.name.split(".")[0])
@@ -348,12 +353,20 @@ def p_presupuesto_modulo7():
     """
     El módulo 7 declaraba 128 min de prosa contra 60 de presupuesto. La cuestión
     nunca fue el total del archivo, sino que nada decía qué parte era exposición.
-    La prueba exige que el bloque de reparto declare minutos medidos.
+    La prueba exige que el bloque de reparto dé minutos a cada punto de la
+    exposición y que sumen los 60 del presupuesto.
+
+    Hasta septiembre de 2026 pedía, en vez de eso, que apareciera la expresión
+    «minutos medidos». El reparto la cumplía diciendo que 70 minutos medidos
+    «cabían» en 60, y la prueba no veía la suma. La revisión del capítulo cambió
+    la nota a «no minutos medidos de lectura», que seguía conteniendo la cadena:
+    habría pasado por casualidad. Ahora mira el número.
     """
-    t = mod(7)
-    tiene = "minutos medidos" in t and re.search(r"· \d+ min", t) is not None
-    n = len(re.findall(r"· (\d+) min", t))
-    return tiene, f"módulo 7: bloque de reparto con {n} secciones de exposición cronometradas"
+    # Sólo los puntos de la lista: la cabecera del bloque también dice
+    # «· 60 min de exposición», y contarla daría 120.
+    minutos = [int(m) for m in re.findall(r"· (\d+) min</li>", mod(7))]
+    return (bool(minutos) and sum(minutos) == 60,
+            f"módulo 7: {len(minutos)} puntos de exposición cronometrados, suman {sum(minutos)} min")
 
 
 # ---------------------------------------------------------------------------

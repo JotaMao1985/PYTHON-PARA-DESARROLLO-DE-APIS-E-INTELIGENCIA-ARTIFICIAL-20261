@@ -210,9 +210,13 @@ Cuatro cosas de este material que costaron su rato:
   clase `font-medium` de la opción correcta al cargar la página. Ese guion no
   se lleva —LP-CORE no tiene dónde ponerlo—, así que copiar el marcado tal cual
   dejaría **la respuesta correcta en negrita desde el principio**. Van a `Quiz`,
-  que hace lo mismo y además califica. La insignia de dificultad («Nivel
-  Medio») entra en el enunciado, porque `Quiz` no tiene campo para ella y es lo
-  único que le dice al estudiante cuánto debería costarle.
+  que califica pero **no baraja**: las opciones salen en el orden del heredado.
+  Esto se dio por hecho al migrar y no lo era; sin el barajado, las 18
+  preguntas del módulo 7 se aprobaban marcando siempre la opción más larga. Por
+  eso el guion avisa cuando un cuestionario tiene la clave siempre en la misma
+  letra o siempre en la opción más larga. La insignia («Nivel Medio», o
+  «Sección 4 · aplicar» desde la revisión del módulo 7) entra en el enunciado,
+  porque `Quiz` no tiene campo para ella y es lo único que sitúa la pregunta.
 - **Un `<pre>` con un `<svg>` dentro es un diagrama, no código.** El módulo 7
   mete tres diagramas grandes en la tarjeta oscura de los bloques de código,
   para reutilizar el estilo. Tratarlos como código los aplana: `texto_plano` se
